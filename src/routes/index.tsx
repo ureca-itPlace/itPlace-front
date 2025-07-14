@@ -3,8 +3,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import DefaultLayout from '../layouts/DefaultLayout';
 import LandingPage from '../pages/landingPage';
 import MainPage from '../pages/mainPage';
-import AdminPage from '../pages/adminPage';
-import MyPage from '../pages/myPage';
+import AdminPage from '../pages/adminPage/adminPage';
+import MyPage from '../pages/myPage/myPage';
 import AllBenefitsPage from '../pages/allBenefitsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
