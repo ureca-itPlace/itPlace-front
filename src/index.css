@@ -1,0 +1,47 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'NanumBarunGothic';
+  src: url('/font/nanum-barun-gothic/NanumBarunGothicUltraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumBarunGothic';
+  src: url('/font/nanum-barun-gothic/NanumBarunGothicLight.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumBarunGothic';
+  src: url('/font/nanum-barun-gothic/NanumBarunGothic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumBarunGothic';
+  src: url('/font/nanum-barun-gothic/NanumBarunGothicBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family:
+    'NanumBarunGothic', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Helvetica Neue', 'Helvetica',
+    'Arial', sans-serif;
+}
+
+/*스크롤바 안보이게 */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
