@@ -1,11 +1,11 @@
 // src/routes/index.tsx
 import { createBrowserRouter } from 'react-router-dom';
 import DefaultLayout from '../layouts/DefaultLayout';
-import LandingPage from '../pages/landingPage';
+import LandingPage from '../pages/LandingPage';
 import MainPage from '../pages/mainPage';
 import AdminPage from '../pages/adminPage/adminPage';
 import MyPage from '../pages/myPage/myPage';
-import AllBenefitsPage from '../pages/allBenefitsPage';
+import AllBenefitsPage from '../pages/AllBenefitsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 const router = createBrowserRouter([
