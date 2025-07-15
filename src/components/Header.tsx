@@ -21,7 +21,7 @@ const menus = [
   { id: 'intro', label: '잇플 소개', icon: TbSparkles, path: '/' },
   { id: 'map', label: '잇플 맵', icon: TbMap2, path: '/main' },
   { id: 'benefits', label: '전체 혜택', icon: TbLayoutList, path: '/benefits' },
-  { id: 'mypage', label: '마이페이지', icon: TbUser, path: '/mypage' },
+  { id: 'mypage', label: '마이페이지', icon: TbUser, path: '/mypage/info' },
 ];
 
 export default function Header({ isLoggedIn = false, variant = 'default' }: HeaderProps) {
