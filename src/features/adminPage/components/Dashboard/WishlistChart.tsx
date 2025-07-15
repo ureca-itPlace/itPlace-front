@@ -22,6 +22,7 @@ const WishlistChart = ({
       className="bg-white p-6 rounded-[18px] shadow-sm border border-gray-100"
       style={{ width, height }}
     >
+      {/* 5개로 할 거면 mb-[30px], space-y-[24px]로 */}
       <h3 className="text-title-4 mb-[40px]">
         {title}
         <span className="text-body-1 text-gray-500 ml-3">{subtitle}</span>

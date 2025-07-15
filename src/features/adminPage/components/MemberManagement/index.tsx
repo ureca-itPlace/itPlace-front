@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { TbRefresh } from 'react-icons/tb';
 import { TbSearch } from 'react-icons/tb';
 import { TbExternalLink } from 'react-icons/tb';
-import ReactPaginate from 'react-paginate';
+import Pagination from 'react-js-pagination';
 
 // 회원 데이터 타입
 interface Member {
@@ -190,7 +190,6 @@ const MemberManagement = () => {
   );
 
   // 페이지네이션
-  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentMembers = filteredMembers.slice(startIndex, startIndex + itemsPerPage);
 
@@ -201,8 +200,8 @@ const MemberManagement = () => {
   };
 
   // 페이지 변경 핸들러
-  const handlePageChange = ({ selected }: { selected: number }) => {
-    setCurrentPage(selected + 1);
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
   };
 
   // 등급별 색상
@@ -337,22 +336,25 @@ const MemberManagement = () => {
 
       {/* 페이지네이션 */}
       <div className="flex items-center justify-center mt-[20px]" style={{ width: 1410 }}>
-        <ReactPaginate
-          breakLabel="..."
-          nextLabel=">"
-          onPageChange={handlePageChange}
+        <Pagination
+          activePage={currentPage}
+          itemsCountPerPage={itemsPerPage}
+          totalItemsCount={filteredMembers.length}
           pageRangeDisplayed={5}
-          pageCount={totalPages}
-          previousLabel="<"
-          renderOnZeroPageCount={null}
-          forcePage={currentPage - 1}
-          className="flex items-center space-x-2"
-          pageClassName="px-3 py-2 text-body-2 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors duration-150"
-          activeClassName="bg-purple04 text-white hover:bg-purple04"
-          previousClassName="px-3 py-2 text-body-2 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors duration-150"
-          nextClassName="px-3 py-2 text-body-2 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors duration-150"
-          breakClassName="px-3 py-2 text-body-2 text-gray-700"
-          disabledClassName="opacity-50 cursor-not-allowed"
+          onChange={handlePageChange}
+          innerClass="flex items-center space-x-2"
+          itemClass="px-3 py-2 text-body-2 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors duration-150"
+          linkClass="block w-full h-full"
+          activeClass="bg-purple04 text-white hover:bg-purple04"
+          activeLinkClass="text-white"
+          firstPageText="<<"
+          lastPageText=">>"
+          prevPageText="<"
+          nextPageText=">"
+          hideFirstLastPages={false}
+          hideNavigation={false}
+          hideDisabled={false}
+          disabledClass="opacity-50 cursor-not-allowed"
         />
       </div>
     </div>
