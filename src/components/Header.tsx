@@ -10,7 +10,6 @@ import {
 import clsx from 'clsx';
 import { useLocation, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import api from '../apis/axiosInstance';
 
 type HeaderProps = {
