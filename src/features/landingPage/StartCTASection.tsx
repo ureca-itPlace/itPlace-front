@@ -16,7 +16,7 @@ const StartCTASection = () => {
 
         <div className="mt-10 flex justify-center items-center gap-6 max-sm:flex-col">
           <Button variant="outline" onClick={() => navigate('/login')}>
-            로그인 하기
+            로그인하기
           </Button>
           <Button variant="primary" onClick={() => navigate('/main')}>
             잇플레이스로 가기
