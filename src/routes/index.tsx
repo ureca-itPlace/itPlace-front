@@ -2,9 +2,9 @@
 import { createBrowserRouter } from 'react-router-dom';
 import DefaultLayout from '../layouts/DefaultLayout';
 import LandingPage from '../pages/LandingPage';
-import MainPage from '../pages/mainPage';
-import AdminPage from '../pages/adminPage/adminPage';
-import MyPage from '../pages/myPage/myPage';
+import MainPage from '../pages/MainPage';
+import AdminPage from '../pages/adminPage/AdminPage';
+import MyPage from '../pages/myPage/MyPage';
 import AllBenefitsPage from '../pages/AllBenefitsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
