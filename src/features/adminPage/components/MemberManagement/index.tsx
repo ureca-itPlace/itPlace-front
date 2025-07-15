@@ -327,9 +327,6 @@ const MemberManagement = () => {
       key: 'grade',
       label: '등급',
       width: '100px',
-      render: (value: unknown) => (
-        <span className="px-3 py-1 rounded-full text-body-2 font-medium">{value as string}</span>
-      ),
     },
     { key: 'email', label: '이메일', width: '300px' },
     { key: 'phone', label: '전화 번호', width: '160px' },

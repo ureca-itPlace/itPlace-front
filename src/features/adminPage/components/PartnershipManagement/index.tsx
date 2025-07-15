@@ -10,78 +10,86 @@ import Pagination from '../../../../components/common/Pagination';
 // 제휴처 데이터 타입
 interface Partner {
   id: string;
+  logo: string;
   brand: string;
   category: string;
-  status: '운영중' | '종료' | '준비중';
-  users: number;
-  discountAmount: number;
-  startDate: string;
+  benefitType: string;
+  searchRank: number;
+  favoriteRank: number;
+  usageRank: number;
 }
 
 // 샘플 제휴처 데이터
 const samplePartners: Partner[] = [
   {
     id: '1',
+    logo: 'https://via.placeholder.com/40x40?text=GS',
     brand: 'GS25',
     category: '편의점',
-    status: '운영중',
-    users: 169,
-    discountAmount: 7,
-    startDate: '2024.01.15',
+    benefitType: '할인',
+    searchRank: 169,
+    favoriteRank: 1,
+    usageRank: 7,
   },
   {
     id: '2',
+    logo: 'https://via.placeholder.com/40x40?text=S',
     brand: '스타벅스',
     category: '카페',
-    status: '운영중',
-    users: 89,
-    discountAmount: 3,
-    startDate: '2024.02.20',
+    benefitType: '할인',
+    searchRank: 69,
+    favoriteRank: 7,
+    usageRank: 3,
   },
   {
     id: '3',
+    logo: 'https://via.placeholder.com/40x40?text=P',
     brand: '파리바게트',
     category: '베이커리',
-    status: '운영중',
-    users: 45,
-    discountAmount: 1,
-    startDate: '2024.03.10',
+    benefitType: '할인',
+    searchRank: 45,
+    favoriteRank: 49,
+    usageRank: 1,
   },
   {
     id: '4',
+    logo: 'https://via.placeholder.com/40x40?text=GS',
     brand: 'GS THE FRESH',
     category: '마트',
-    status: '운영중',
-    users: 30,
-    discountAmount: 2,
-    startDate: '2024.04.05',
+    benefitType: '할인',
+    searchRank: 30,
+    favoriteRank: 30,
+    usageRank: 2,
   },
   {
     id: '5',
+    logo: 'https://via.placeholder.com/40x40?text=C',
     brand: 'CGV',
     category: '영화관',
-    status: '종료',
-    users: 25,
-    discountAmount: 88,
-    startDate: '2024.05.01',
+    benefitType: '할인',
+    searchRank: 25,
+    favoriteRank: 25,
+    usageRank: 88,
   },
   {
     id: '6',
+    logo: 'https://via.placeholder.com/40x40?text=L',
     brand: '롯데월드',
     category: '테마파크',
-    status: '운영중',
-    users: 111,
-    discountAmount: 44,
-    startDate: '2024.06.15',
+    benefitType: '할인',
+    searchRank: 111,
+    favoriteRank: 111,
+    usageRank: 44,
   },
   {
     id: '7',
+    logo: 'https://via.placeholder.com/40x40?text=P',
     brand: '프로포즈',
     category: '뷰티',
-    status: '운영중',
-    users: 119,
-    discountAmount: 11,
-    startDate: '2024.07.01',
+    benefitType: '할인',
+    searchRank: 119,
+    favoriteRank: 119,
+    usageRank: 11,
   },
 ];
 
@@ -89,7 +97,7 @@ const PartnershipManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedBenefitType, setSelectedBenefitType] = useState<string | null>(null);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
@@ -106,9 +114,11 @@ const PartnershipManagement = () => {
       partner.category.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory = selectedCategory ? partner.category === selectedCategory : true;
-    const matchesStatus = selectedStatus ? partner.status === selectedStatus : true;
+    const matchesBenefitType = selectedBenefitType
+      ? partner.benefitType === selectedBenefitType
+      : true;
 
-    return matchesSearch && matchesCategory && matchesStatus;
+    return matchesSearch && matchesCategory && matchesBenefitType;
   });
 
   // 페이지네이션
@@ -131,11 +141,11 @@ const PartnershipManagement = () => {
     setCurrentPage(1);
   };
 
-  const handleStatusFilter = (status: string) => {
-    if (status === '전체') {
-      setSelectedStatus(null);
+  const handleBenefitTypeFilter = (benefitType: string) => {
+    if (benefitType === '전체') {
+      setSelectedBenefitType(null);
     } else {
-      setSelectedStatus(selectedStatus === status ? null : status);
+      setSelectedBenefitType(selectedBenefitType === benefitType ? null : benefitType);
     }
     setCurrentPage(1);
   };
@@ -162,41 +172,82 @@ const PartnershipManagement = () => {
 
   const handleFilterReset = () => {
     setSelectedCategory(null);
-    setSelectedStatus(null);
+    setSelectedBenefitType(null);
     setCurrentPage(1);
     setShowFilterDropdown(false);
   };
 
   // 상태 렌더링 함수
-  const renderStatus = (status: string) => {
-    const statusStyles = {
-      운영중: 'bg-green-100 text-green-800',
-      종료: 'bg-red-100 text-red-800',
-      준비중: 'bg-yellow-100 text-yellow-800',
+  const renderBenefitType = (benefitType: string) => {
+    const benefitTypeStyles = {
+      할인: 'bg-blue-100 text-blue-800',
+      적립: 'bg-green-100 text-green-800',
+      무료: 'bg-purple-100 text-purple-800',
     };
 
     return (
       <span
-        className={`px-3 py-1 rounded-full text-body-2 font-medium ${statusStyles[status as keyof typeof statusStyles]}`}
+        className={`px-3 py-1 rounded-full text-body-2 font-medium ${benefitTypeStyles[benefitType as keyof typeof benefitTypeStyles]}`}
       >
-        {status}
+        {benefitType}
       </span>
     );
   };
 
   // 테이블 컬럼 정의
   const columns = [
-    { key: 'brand', label: '브랜드명', width: '200px' },
-    { key: 'category', label: '카테고리', width: '120px' },
     {
-      key: 'status',
-      label: '상태',
-      width: '120px',
-      render: (value: unknown) => renderStatus(value as string),
+      key: 'logo',
+      label: '로고',
+      width: '80px',
+      render: (value: unknown) => (
+        <div className="flex items-center justify-center">
+          <img
+            src={value as string}
+            alt="브랜드 로고"
+            className="w-10 h-10 object-contain rounded-lg"
+          />
+        </div>
+      ),
     },
-    { key: 'users', label: '이용자수', width: '100px' },
-    { key: 'discountAmount', label: '할인혜택', width: '100px' },
-    { key: 'startDate', label: '시작일', width: '140px' },
+    { key: 'brand', label: '제휴처명', width: '150px' },
+    { key: 'category', label: '카테고리', width: '100px' },
+    {
+      key: 'benefitType',
+      label: '혜택 유형',
+      width: '100px',
+      render: (value: unknown) => renderBenefitType(value as string),
+    },
+    {
+      key: 'searchRank',
+      label: '검색 순위',
+      width: '120px',
+      render: (value: unknown) => (
+        <div className="flex items-center justify-center">
+          <span className="text-caption-1 font-medium">{value as number}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'favoriteRank',
+      label: '즐겨찾기 순위',
+      width: '120px',
+      render: (value: unknown) => (
+        <div className="flex items-center justify-center">
+          <span className="text-caption-1 font-medium">{value as number}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'usageRank',
+      label: '이용 순위',
+      width: '120px',
+      render: (value: unknown) => (
+        <div className="flex items-center justify-center">
+          <span className="text-caption-1 font-medium">{value as number}</span>
+        </div>
+      ),
+    },
     {
       key: 'actions',
       label: '',
@@ -233,15 +284,15 @@ const PartnershipManagement = () => {
       onSelect: handleCategoryFilter,
     },
     {
-      title: '상태',
+      title: '혜택 유형',
       options: [
         { label: '전체', value: '전체' },
-        { label: '운영중', value: '운영중' },
-        { label: '종료', value: '종료' },
-        { label: '준비중', value: '준비중' },
+        { label: '할인', value: '할인' },
+        { label: '적립', value: '적립' },
+        { label: '무료', value: '무료' },
       ],
-      selectedValue: selectedStatus,
-      onSelect: handleStatusFilter,
+      selectedValue: selectedBenefitType,
+      onSelect: handleBenefitTypeFilter,
     },
   ];
 
@@ -292,7 +343,7 @@ const PartnershipManagement = () => {
               onToggle={() => setShowFilterDropdown(!showFilterDropdown)}
               filterGroups={filterGroups}
               onReset={handleFilterReset}
-              hasActiveFilters={selectedCategory !== null || selectedStatus !== null}
+              hasActiveFilters={selectedCategory !== null || selectedBenefitType !== null}
             />
           </div>
 
@@ -312,6 +363,7 @@ const PartnershipManagement = () => {
         onRowClick={(row) => handlePartnerDetailClick(row as unknown as Partner)}
         width={1410}
         height={516}
+        rowHeight={50}
         emptyMessage="제휴처가 없습니다."
       />
 
@@ -347,31 +399,81 @@ const PartnershipManagement = () => {
             </div>
 
             {/* 모달 내용 */}
-            <div className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-title-2 font-semibold">{selectedPartner.brand}</h4>
-                  {renderStatus(selectedPartner.status)}
+            <div className="p-6 h-full flex flex-col">
+              {/* 브랜드 정보 */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <img
+                      src={selectedPartner.logo}
+                      alt={`${selectedPartner.brand} 로고`}
+                      className="w-12 h-12 object-contain"
+                    />
+                  </div>
+                  <div>
+                    <h4 className="text-title-2 font-bold text-gray-900 mb-1">
+                      {selectedPartner.brand}
+                    </h4>
+                    <p className="text-body-2 text-gray-600">
+                      영화보다 멋진 당신의 일상을 위하여, 라이프스타일 매거진스!
+                    </p>
+                  </div>
                 </div>
+                <div className="w-20 h-10 bg-gray-100 rounded flex items-center justify-center">
+                  <span className="text-xs font-medium text-gray-700">MEGABOX</span>
+                </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-body-2 text-gray-600">카테고리</p>
-                    <p className="text-body-1 font-medium">{selectedPartner.category}</p>
-                  </div>
-                  <div>
-                    <p className="text-body-2 text-gray-600">이용자수</p>
-                    <p className="text-body-1 font-medium">{selectedPartner.users}명</p>
-                  </div>
-                  <div>
-                    <p className="text-body-2 text-gray-600">할인혜택</p>
-                    <p className="text-body-1 font-medium">{selectedPartner.discountAmount}%</p>
-                  </div>
-                  <div>
-                    <p className="text-body-2 text-gray-600">시작일</p>
-                    <p className="text-body-1 font-medium">{selectedPartner.startDate}</p>
+              {/* 제공 혜택 섹션 */}
+              <div className="mb-8">
+                <h5 className="text-title-5 font-semibold text-gray-900 mb-4">제공 혜택</h5>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-body-2 font-medium text-gray-900">VVIP/VIP 등급 정보</p>
+                      <p className="text-body-2 text-gray-700">
+                        VIP관 내 무료예매 연3회/1+1예매 연9회(총 12회)
+                      </p>
+                      <p className="text-body-2 text-gray-700">
+                        (월 1회 사용 가능, CGV/메가박스 중 택 1)
+                      </p>
+                    </div>
                   </div>
                 </div>
+              </div>
+
+              {/* 이용방법 섹션 */}
+              <div className="flex-1">
+                <h5 className="text-title-5 font-semibold text-gray-900 mb-4">이용방법</h5>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-body-2 text-gray-700">
+                      메가박스-웹/앱 ) 영화예매시 ) 제휴포인트 ) U+멤버십 ) VIP관 할인 ) 멤버십 조
+                      회 ) VIP관 3개 혜택 중 1개 선택 ) 예매
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-body-2 font-medium text-gray-900 mb-2">*꼭 확인하세요</p>
+                    <div className="space-y-2">
+                      <p className="text-body-2 text-gray-700">
+                        - VIP관 무료/1+1 혜택은 2D, 일반관텐트에 한하여 적용 가능하며, 일반관, 컴
+                        포트관에 예약 할 수 있습니다.
+                      </p>
+                      <p className="text-body-2 text-gray-700">
+                        - VIP관 특별관 6천원 할인 혜택은 더 퍼디스, Dolby Atmos, 더 테라스아우트,
+                        Dolby Cinema, MX4D관에 한하여 적용 가능합니다.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 하단 버튼 */}
+              <div className="mt-8 flex justify-center">
+                <button className="w-32 h-12 bg-purple-600 text-white rounded-lg text-body-1 font-medium hover:bg-purple-700 transition-colors">
+                  수정하기
+                </button>
               </div>
             </div>
           </div>
