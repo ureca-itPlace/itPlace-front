@@ -1,31 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @font-face {
   font-family: 'NanumBarunGothic';
-  src: url('/font/nanum-barun-gothic/NanumBarunGothicUltraLight.ttf') format('truetype');
+  src: url('/font/nanum-barun-gothic/NanumBarunGothicUltraLight.otf') format('opentype');
   font-weight: 200;
   font-style: normal;
 }
-
 @font-face {
   font-family: 'NanumBarunGothic';
-  src: url('/font/nanum-barun-gothic/NanumBarunGothicLight.ttf') format('truetype');
+  src: url('/font/nanum-barun-gothic/NanumBarunGothicLight.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
 }
-
 @font-face {
   font-family: 'NanumBarunGothic';
-  src: url('/font/nanum-barun-gothic/NanumBarunGothic.ttf') format('truetype');
+  src: url('/font/nanum-barun-gothic/NanumBarunGothic.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
 }
-
 @font-face {
   font-family: 'NanumBarunGothic';
-  src: url('/font/nanum-barun-gothic/NanumBarunGothicBold.ttf') format('truetype');
+  src: url('/font/nanum-barun-gothic/NanumBarunGothicBold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
 }
@@ -46,4 +45,10 @@
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+@layer utilities {
+  .custom-font {
+    font-family: 'Anton', sans-serif;
+  }
 }

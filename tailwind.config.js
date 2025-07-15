@@ -9,14 +9,14 @@ export default {
       // text-[지정명]
       fontSize: {
         // Title - line-height 130%
-        'title-1': ['2.625rem', { lineHeight: '130%' }],
-        'title-2': ['2rem', { lineHeight: '130%' }],
-        'title-3': ['1.75rem', { lineHeight: '130%' }],
-        'title-4': ['1.5rem', { lineHeight: '130%' }],
-        'title-5': ['1.25rem', { lineHeight: '130%' }],
-        'title-6': ['1.125rem', { lineHeight: '130%' }],
-        'title-7': ['1rem', { lineHeight: '130%' }],
-        'title-8': ['0.875rem', { lineHeight: '130%' }],
+        'title-1': ['2.625rem', { lineHeight: '130%', fontWeight: 'bold' }],
+        'title-2': ['2rem', { lineHeight: '130%', fontWeight: 'bold' }],
+        'title-3': ['1.75rem', { lineHeight: '130%', fontWeight: 'bold' }],
+        'title-4': ['1.5rem', { lineHeight: '130%', fontWeight: 'bold' }],
+        'title-5': ['1.25rem', { lineHeight: '130%', fontWeight: 'bold' }],
+        'title-6': ['1.125rem', { lineHeight: '130%', fontWeight: 'bold' }],
+        'title-7': ['1rem', { lineHeight: '130%', fontWeight: 'bold' }],
+        'title-8': ['0.875rem', { lineHeight: '130%', fontWeight: 'bold' }],
 
         // Body - line-height 150%
         'body-0': ['1.25rem', { lineHeight: '150%' }],
@@ -67,7 +67,7 @@ export default {
       // 그라데이션
       // bg-[지정명]
       backgroundImage: {
-        'gradient-header': 'linear-gradient(90deg, #7638FA 0%, #7638FA 32%, #250961 100%)',
+        'gradient-header': 'linear-gradient(#7638FA 0%, #7638FA 32%, #250961 100%)',
         'gradient-myPage': 'linear-gradient(90deg, #FFBD6D 0%, #FF4C91 28%, #7638FA 100%)',
       },
 
