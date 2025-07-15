@@ -273,12 +273,14 @@ const MemberManagement = () => {
       <div className="flex mb-[28px]" style={{ width: 1410 }}>
         {/* 회원 수 */}
         <div style={{ width: 344, height: 87 }}>
-          <div className="bg-white rounded-[18px] shadow-sm border border-gray-100 p-6 flex items-center h-full border-l-[10px] border-l-purple04">
-            <div>
-              <div className="text-body-2 text-black mb-1">회원 수</div>
-              <div className="text-title-3 font-bold">
-                <span className="text-purple04">{totalMembers.toLocaleString()}</span>
-                <span className="text-black"> 명</span>
+          <div className="rounded-[10px] overflow-hidden shadow-sm border border-gray-100 h-full">
+            <div className="bg-white p-6 flex items-center h-full border-l-[10px] border-l-purple04">
+              <div>
+                <div className="text-body-2 text-black mb-1">회원 수</div>
+                <div className="text-title-3 font-bold">
+                  <span className="text-purple04">{totalMembers.toLocaleString()}</span>
+                  <span className="text-black"> 명</span>
+                </div>
               </div>
             </div>
           </div>
@@ -286,10 +288,12 @@ const MemberManagement = () => {
 
         {/* 최근 업데이트 날짜 */}
         <div className="ml-auto" style={{ width: 1046, height: 87 }}>
-          <div className="bg-white rounded-[18px] shadow-sm border border-gray-100 p-6 flex items-center h-full border-l-[10px] border-l-orange04">
-            <div>
-              <div className="text-body-2 text-black mb-1">최근 업데이트 날짜</div>
-              <div className="text-title-4 text-orange04 font-semibold">{lastUpdated}</div>
+          <div className="rounded-[10px] overflow-hidden shadow-sm border border-gray-100 h-full">
+            <div className="bg-white p-6 flex items-center h-full border-l-[10px] border-l-orange04">
+              <div>
+                <div className="text-body-2 text-black mb-1">최근 업데이트 날짜</div>
+                <div className="text-title-4 text-orange04 font-semibold">{lastUpdated}</div>
+              </div>
             </div>
           </div>
         </div>
