@@ -1,50 +1,70 @@
-import { useState, useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 
-type FormStep = 'login' | 'phoneAuth';
-
 export const AuthTransition = () => {
-  const [formStep, setFormStep] = useState<FormStep>('login');
+  const formCardRef = useRef<HTMLDivElement>(null);
+  const sideCardRef = useRef<HTMLDivElement>(null);
+  const [formStep, setFormStep] = useState<'login' | 'phone-auth'>('login');
 
-  const formCardRef = useRef<HTMLDivElement | null>(null);
-  const sideCardRef = useRef<HTMLDivElement | null>(null);
+  // 카드 위치 차이만큼만 교차 (폼: 왼쪽, 사이드: 오른쪽)
+  const DISTANCE = 481;
 
+  // ✅ 초기 위치 설정 (x: 0)
+  useEffect(() => {
+    gsap.set(formCardRef.current, { x: 0 });
+    gsap.set(sideCardRef.current, { x: 0 });
+  }, []);
+
+  // 👉 로그인 → 번호 인증
   const goToPhoneAuth = () => {
-    const formEl = formCardRef.current;
-    const sideEl = sideCardRef.current;
+    const tl = gsap.timeline();
 
-    if (!formEl || !sideEl) return;
-
-    // 두 카드 동시에 이동
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setFormStep('phoneAuth');
-        // 카드 전환 후 다시 원위치로 슬라이드 인
-        gsap.fromTo(
-          formEl,
-          { x: 100, opacity: 0 },
-          { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }
-        );
-        gsap.fromTo(
-          sideEl,
-          { x: -100, opacity: 0 },
-          { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' }
-        );
+    tl.to(formCardRef.current, {
+      x: DISTANCE,
+      duration: 0.5,
+      ease: 'power2.out',
+      onUpdate: () => {
+        // 카드가 절반 넘게 밀렸을 때 폼 전환
+        const x = gsap.getProperty(formCardRef.current, 'x') as number;
+        if (x > DISTANCE / 2 && formStep !== 'phone-auth') {
+          setFormStep('phone-auth');
+        }
       },
     });
 
-    tl.to(formEl, {
-      x: 583 + 61,
-      opacity: 0,
-      duration: 0.4,
-      ease: 'power2.in',
-    }).to(
-      sideEl,
+    tl.to(
+      sideCardRef.current,
       {
-        x: -(583 + 61),
-        opacity: 0,
-        duration: 0.4,
-        ease: 'power2.in',
+        x: -DISTANCE,
+        duration: 0.5,
+        ease: 'power2.out',
+      },
+      '<'
+    ); // 동시에 실행
+  };
+
+  // 👉 번호 인증 → 로그인
+  const goToLogin = () => {
+    const tl = gsap.timeline();
+
+    tl.to(formCardRef.current, {
+      x: 0,
+      duration: 0.5,
+      ease: 'power2.out',
+      onUpdate: () => {
+        const x = gsap.getProperty(formCardRef.current, 'x') as number;
+        if (x < DISTANCE / 2 && formStep !== 'login') {
+          setFormStep('login');
+        }
+      },
+    });
+
+    tl.to(
+      sideCardRef.current,
+      {
+        x: 0,
+        duration: 0.5,
+        ease: 'power2.out',
       },
       '<'
     );
@@ -52,8 +72,9 @@ export const AuthTransition = () => {
 
   return {
     formStep,
-    goToPhoneAuth,
     formCardRef,
     sideCardRef,
+    goToPhoneAuth,
+    goToLogin,
   };
 };

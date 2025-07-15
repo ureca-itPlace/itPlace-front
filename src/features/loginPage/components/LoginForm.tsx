@@ -16,7 +16,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
   return (
     <>
-      <div className="pr-[40px]">
+      <div>
         <h2 className="text-title-1 font-bold mb-[40px]">로그인</h2>
 
         {/* 이메일 인풋 */}

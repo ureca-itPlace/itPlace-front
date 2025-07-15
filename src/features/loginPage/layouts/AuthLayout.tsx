@@ -5,34 +5,32 @@ import PhoneAuthForm from '../components/PhoneAuthForm';
 import { AuthTransition } from '../hooks/AuthTransition';
 
 const AuthLayout = () => {
-  const { formStep, goToPhoneAuth, goToLogin, formCardRef, sideCardRef } = AuthTransition();
+  const { formStep, formCardRef, sideCardRef, goToPhoneAuth, goToLogin } = AuthTransition();
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-white">
-      <div className="relative w-[1014px] h-[639px] flex items-center justify-between">
-        {/* 왼쪽: 로그인 카드 */}
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      {/* 슬라이드 영역 넉넉하게 확보 + 중앙 배치 */}
+      <div className="relative w-full max-w-[1400px] h-[700px] overflow-hidden mx-auto">
+        {/* Form 카드 (Login or PhoneAuth) */}
         <div
           ref={formCardRef}
-          className="w-[583px] h-full translate-x-[30.5px] transition-transform"
+          className="absolute top-1/2 translate-y-[-50%] w-[583px] h-[639px]"
+          style={{ left: 'calc(50% - 520px)' }} // 중앙 기준 왼쪽 배치
         >
-          <AuthFormCard radius="left">
+          <AuthFormCard radius={formStep === 'login' ? 'left' : 'right'}>
             {formStep === 'login' ? (
-              <LoginForm
-                onGoToPhoneAuth={goToPhoneAuth}
-                onGoToFindEmail={() => {
-                  // TODO: 아이디/비밀번호 찾기 이동 함수
-                }}
-              />
+              <LoginForm onGoToPhoneAuth={goToPhoneAuth} onGoToFindEmail={() => {}} />
             ) : (
               <PhoneAuthForm onGoToLogin={goToLogin} />
             )}
           </AuthFormCard>
         </div>
 
-        {/* 오른쪽: 사이드 카드 */}
+        {/* Side 카드 */}
         <div
           ref={sideCardRef}
-          className="w-[431px] h-full -translate-x-[30.5px] transition-transform z-"
+          className="absolute top-1/2 translate-y-[-50%] w-[431px] h-[639px] z-0"
+          style={{ left: 'calc(50% + 30.5px)' }} // 중앙 기준 오른쪽 배치
         >
           <AuthSideCard />
         </div>
