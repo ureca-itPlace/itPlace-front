@@ -1,5 +1,11 @@
+import StartCTASection from '../features/landingPage/StartCTASection';
+
 const LandingPage = () => {
-  return <div>랜딩 페이지입니다.</div>;
+  return (
+    <div className="h-full">
+      <StartCTASection />
+    </div>
+  );
 };
 
 export default LandingPage;
