@@ -36,10 +36,14 @@ const WishlistChart = ({
               <div className="flex-1 mx-6">
                 <div className="relative h-6 bg-gray-100 rounded-full">
                   <div
-                    className="h-full rounded-full"
+                    className="h-full rounded-full animate-grow-width"
                     style={{
                       backgroundColor: item.color,
                       width: `${barWidth}%`,
+                      animationDelay: `${index * 0.1}s`,
+                      transform: 'scaleX(0)',
+                      transformOrigin: 'left',
+                      animation: `growWidth 1s ease-out ${index * 0.1}s forwards`,
                     }}
                   ></div>
                 </div>
@@ -51,6 +55,17 @@ const WishlistChart = ({
           );
         })}
       </div>
+
+      <style>{`
+        @keyframes growWidth {
+          from {
+            transform: scaleX(0);
+          }
+          to {
+            transform: scaleX(1);
+          }
+        }
+      `}</style>
     </div>
   );
 };
