@@ -10,7 +10,7 @@ type AuthButtonProps = {
 
 const AuthButton = ({ label, onClick, variant = 'default', className }: AuthButtonProps) => {
   const baseClasses =
-    'w-[320px] h-[50px] rounded-[18px] text-body-2 font-bold flex items-center justify-center transition-colors duration-200';
+    'w-[320px] h-[50px] rounded-[18px] text-title-5 flex items-center justify-center transition-colors duration-200';
 
   const variantClasses = {
     default: 'bg-purple02 text-white hover:bg-purple04',

@@ -12,6 +12,7 @@ type AuthInputProps = {
   textColor?: string; // 기본값: black
   placeholderColor?: string; // 기본값: grey03
   disabled?: boolean;
+  disableFocusEffect?: boolean;
 };
 
 const AuthInput = ({
@@ -25,7 +26,12 @@ const AuthInput = ({
   textColor = 'text-black',
   placeholderColor = 'placeholder-grey03',
   disabled = false,
+  disableFocusEffect = false, // 🔹 기본값 false
 }: AuthInputProps) => {
+  const focusClass = disableFocusEffect
+    ? 'focus:outline-none'
+    : 'focus:outline focus:outline-[1px] focus:outline-purple04';
+
   return (
     <input
       name={name}
@@ -35,12 +41,11 @@ const AuthInput = ({
       onChange={onChange}
       disabled={disabled}
       className={clsx(
-        'w-[320px] h-[50px] rounded-[18px] px-4',
-        'text-body-2',
-        'placeholder:text-body-2',
+        'w-[320px] h-[50px] rounded-[18px] px-[16px] text-body-2 placeholder:text-body-2',
         bgColor,
         textColor,
         placeholderColor,
+        focusClass,
         className
       )}
     />
