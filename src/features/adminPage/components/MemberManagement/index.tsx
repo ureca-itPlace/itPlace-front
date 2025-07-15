@@ -5,6 +5,7 @@ import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
+import Pagination from '../../../../components/common/Pagination';
 
 // 회원 데이터 타입
 interface Member {
@@ -443,11 +444,16 @@ const MemberManagement = () => {
         onRowClick={(row) => handlePartnerDetailClick(row as unknown as Member)}
         width={1410}
         height={516}
+        emptyMessage="회원이 없습니다."
+      />
+
+      {/* 페이지네이션 */}
+      <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
         totalItems={filteredMembers.length}
         onPageChange={handlePageChange}
-        emptyMessage="회원이 없습니다."
+        width={1410}
       />
 
       {/* 제휴처 상세정보 모달 */}

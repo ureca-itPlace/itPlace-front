@@ -5,6 +5,7 @@ import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
+import Pagination from '../../../../components/common/Pagination';
 
 // 브랜드 데이터 타입
 interface Brand {
@@ -309,11 +310,16 @@ const BrandManagement = () => {
         onRowClick={(row) => handleBrandDetailClick(row as unknown as Brand)}
         width={1410}
         height={516}
+        emptyMessage="브랜드가 없습니다."
+      />
+
+      {/* 페이지네이션 */}
+      <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
         totalItems={filteredBrands.length}
         onPageChange={handlePageChange}
-        emptyMessage="브랜드가 없습니다."
+        width={1410}
       />
 
       {/* 브랜드 상세정보 모달 */}

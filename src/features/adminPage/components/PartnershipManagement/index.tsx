@@ -5,6 +5,7 @@ import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
+import Pagination from '../../../../components/common/Pagination';
 
 // 제휴처 데이터 타입
 interface Partner {
@@ -311,11 +312,16 @@ const PartnershipManagement = () => {
         onRowClick={(row) => handlePartnerDetailClick(row as unknown as Partner)}
         width={1410}
         height={516}
+        emptyMessage="제휴처가 없습니다."
+      />
+
+      {/* 페이지네이션 */}
+      <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
         totalItems={filteredPartners.length}
         onPageChange={handlePageChange}
-        emptyMessage="제휴처가 없습니다."
+        width={1410}
       />
 
       {/* 제휴처 상세정보 모달 */}
