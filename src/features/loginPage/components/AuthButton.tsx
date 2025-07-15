@@ -15,7 +15,7 @@ const AuthButton = ({ label, onClick, variant = 'default', className }: AuthButt
   const variantClasses = {
     default: 'bg-purple02 text-white hover:bg-purple04',
     kakao: 'bg-[#FEE500] text-black',
-    disabled: 'bg-grey02 text-grey04 cursor-not-allowed',
+    disabled: 'bg-purple02 text-white cursor-not-allowed',
   };
 
   return (

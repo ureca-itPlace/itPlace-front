@@ -6,7 +6,7 @@ type AuthInputProps = {
   type?: string;
   placeholder?: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   bgColor?: string; // 기본값: grey01
   textColor?: string; // 기본값: black
@@ -26,7 +26,7 @@ const AuthInput = ({
   textColor = 'text-black',
   placeholderColor = 'placeholder-grey03',
   disabled = false,
-  disableFocusEffect = false, // 🔹 기본값 false
+  disableFocusEffect = false, // 기본값 false
 }: AuthInputProps) => {
   const focusClass = disableFocusEffect
     ? 'focus:outline-none'
@@ -38,7 +38,7 @@ const AuthInput = ({
       type={type}
       placeholder={placeholder}
       value={value}
-      onChange={onChange}
+      onChange={disabled ? undefined : onChange}
       disabled={disabled}
       className={clsx(
         'w-[320px] h-[50px] rounded-[18px] px-[16px] text-body-2 placeholder:text-body-2',
@@ -46,6 +46,7 @@ const AuthInput = ({
         textColor,
         placeholderColor,
         focusClass,
+        disabled && 'bg-grey02 text-grey04 placeholder:text-grey04',
         className
       )}
     />

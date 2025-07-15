@@ -7,9 +7,10 @@ import { TbClock } from 'react-icons/tb';
 
 type Props = {
   onGoToLogin: () => void;
+  onVerified: () => void;
 };
 
-const VerificationCodeForm = ({ onGoToLogin }: Props) => {
+const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
   const [code, setCode] = useState('');
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +62,7 @@ const VerificationCodeForm = ({ onGoToLogin }: Props) => {
       {/* 다음 버튼 */}
       <AuthButton
         label="다음"
-        onClick={() => console.log('다음으로')}
+        onClick={onVerified}
         variant={code ? 'default' : 'disabled'}
         className="mt-[180px]"
       />
