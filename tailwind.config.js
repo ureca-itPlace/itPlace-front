@@ -67,7 +67,7 @@ export default {
       // 그라데이션
       // bg-[지정명]
       backgroundImage: {
-        'gradient-header': 'linear-gradient(90deg, #7638FA 0%, #7638FA 32%, #250961 100%)',
+        'gradient-header': 'linear-gradient(#7638FA 0%, #7638FA 32%, #250961 100%)',
         'gradient-myPage': 'linear-gradient(90deg, #FFBD6D 0%, #FF4C91 28%, #7638FA 100%)',
       },
 
