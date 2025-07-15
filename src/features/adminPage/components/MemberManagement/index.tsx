@@ -284,22 +284,49 @@ const MemberManagement = () => {
         className="bg-white rounded-[18px] shadow-sm border border-gray-100 overflow-hidden"
         style={{ width: 1410, height: 516 }}
       >
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr style={{ height: 56 }}>
-              <th className="px-6 py-4 text-left text-body-2 font-medium text-gray-700">
+              <th
+                className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"
+                style={{ width: '120px' }}
+              >
                 회원 구분
               </th>
-              <th className="px-6 py-4 text-left text-body-2 font-medium text-gray-700">회원명</th>
-              <th className="px-8 py-4 text-left text-body-2 font-medium text-gray-700">등급</th>
-              <th className="px-6 py-4 text-left text-body-2 font-medium text-gray-700">이메일</th>
-              <th className="px-6 py-4 text-left text-body-2 font-medium text-gray-700">
+              <th
+                className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"
+                style={{ width: '140px' }}
+              >
+                회원명
+              </th>
+              <th
+                className="px-8 py-4 text-left text-body-2 font-medium text-gray-700"
+                style={{ width: '100px' }}
+              >
+                등급
+              </th>
+              <th
+                className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"
+                style={{ width: '300px' }}
+              >
+                이메일
+              </th>
+              <th
+                className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"
+                style={{ width: '160px' }}
+              >
                 전화 번호
               </th>
-              <th className="px-6 py-4 text-left text-body-2 font-medium text-gray-700">
+              <th
+                className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"
+                style={{ width: '140px' }}
+              >
                 생성일자
               </th>
-              <th className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"></th>
+              <th
+                className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"
+                style={{ width: '60px' }}
+              ></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -309,9 +336,19 @@ const MemberManagement = () => {
                 className="hover:bg-gray-50 transition-colors duration-150"
                 style={{ height: 56 }}
               >
-                <td className="px-6 py-4 text-body-2 text-gray-900">{member.name}</td>
-                <td className="px-6 py-4 text-body-2 text-gray-900">{member.nickname}</td>
-                <td className="px-6 py-4">
+                <td
+                  className="px-6 py-4 text-body-2 text-gray-900 truncate"
+                  style={{ width: '120px' }}
+                >
+                  {member.name}
+                </td>
+                <td
+                  className="px-6 py-4 text-body-2 text-gray-900 truncate"
+                  style={{ width: '140px' }}
+                >
+                  {member.nickname}
+                </td>
+                <td className="px-6 py-4" style={{ width: '100px' }}>
                   <span
                     className={`px-3 py-1 rounded-full text-body-3 font-medium ${getGradeColor(
                       member.grade
@@ -320,16 +357,43 @@ const MemberManagement = () => {
                     {member.grade}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-body-2 text-gray-900">{member.email}</td>
-                <td className="px-6 py-4 text-body-2 text-gray-900">{member.phone}</td>
-                <td className="px-6 py-4 text-body-2 text-gray-900">{member.joinDate}</td>
-                <td className="px-6 py-4">
+                <td
+                  className="px-6 py-4 text-body-2 text-gray-900 truncate"
+                  style={{ width: '300px' }}
+                >
+                  {member.email}
+                </td>
+                <td
+                  className="px-6 py-4 text-body-2 text-gray-900 truncate"
+                  style={{ width: '160px' }}
+                >
+                  {member.phone}
+                </td>
+                <td
+                  className="px-6 py-4 text-body-2 text-gray-900 truncate"
+                  style={{ width: '140px' }}
+                >
+                  {member.joinDate}
+                </td>
+                <td className="px-6 py-4" style={{ width: '60px' }}>
                   <button className="flex items-center justify-center text-black hover:text-grey03 transition-colors duration-150">
                     <TbExternalLink size={18} />
                   </button>
                 </td>
               </tr>
             ))}
+            {/* 빈 행 추가하여 테이블 높이 고정
+            {Array.from({ length: itemsPerPage - currentMembers.length }, (_, index) => (
+              <tr key={`empty-${index}`} style={{ height: 56 }}>
+                <td className="px-6 py-4">&nbsp;</td>
+                <td className="px-6 py-4">&nbsp;</td>
+                <td className="px-6 py-4">&nbsp;</td>
+                <td className="px-6 py-4">&nbsp;</td>
+                <td className="px-6 py-4">&nbsp;</td>
+                <td className="px-6 py-4">&nbsp;</td>
+                <td className="px-6 py-4">&nbsp;</td>
+              </tr>
+            ))} */}
           </tbody>
         </table>
       </div>
