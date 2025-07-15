@@ -9,9 +9,9 @@ const AuthLayout = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
-      {/* 슬라이드 영역 넉넉하게 확보 + 중앙 배치 */}
+      {/* 슬라이드 영역 + 중앙 배치 */}
       <div className="relative w-full max-w-[1400px] h-[700px] overflow-hidden mx-auto">
-        {/* Form 카드 (Login or PhoneAuth) */}
+        {/* Form 카드 Swap */}
         <div
           ref={formCardRef}
           className="absolute top-1/2 translate-y-[-50%] w-[583px] h-[639px]"
