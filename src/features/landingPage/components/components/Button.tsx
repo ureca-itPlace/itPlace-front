@@ -12,7 +12,7 @@ const Button = ({ children, variant = 'primary', onClick }: ButtonProps) => {
 
   const variants = {
     primary: 'bg-purple04 text-white',
-    outline: 'border-2 border-purple04 text-purple04 bg-white',
+    outline: 'border-2 border-purple04 text-purple05 bg-white',
   };
 
   return (
