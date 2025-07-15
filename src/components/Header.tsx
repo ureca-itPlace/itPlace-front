@@ -59,7 +59,10 @@ export default function Header({ isLoggedIn = false, variant = 'default' }: Head
       <nav className="flex-1 flex flex-col items-center gap-y-6">
         {menus.map((m) => {
           const Icon = m.icon;
-          const isActive = location.pathname === m.path;
+          const isActive =
+            m.id === 'mypage'
+              ? location.pathname.startsWith('/mypage')
+              : location.pathname === m.path;
           return (
             <Link
               to={m.path}
