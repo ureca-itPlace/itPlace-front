@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TbRefresh } from 'react-icons/tb';
 import { TbSearch } from 'react-icons/tb';
 import { TbExternalLink } from 'react-icons/tb';
 import Pagination from 'react-js-pagination';
-
+import { TbFilter } from 'react-icons/tb';
 // 회원 데이터 타입
 interface Member {
   id: string;
@@ -175,19 +175,42 @@ const sampleMembers: Member[] = [
 const MemberManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedMemberType, setSelectedMemberType] = useState<string | null>(null);
+  const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const filterDropdownRef = useRef<HTMLDivElement>(null);
   const itemsPerPage = 8;
+
+  // 드롭다운 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterDropdownRef.current && !filterDropdownRef.current.contains(event.target as Node)) {
+        setShowFilterDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // 총 회원 수
   const totalMembers = 125587;
   const lastUpdated = '2025.07.11 UT 23:15:05';
 
   // 검색 필터링
-  const filteredMembers = sampleMembers.filter(
-    (member) =>
+  const filteredMembers = sampleMembers.filter((member) => {
+    const matchesSearch =
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.nickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+      member.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesMemberType = selectedMemberType ? member.name === selectedMemberType : true;
+    const matchesGrade = selectedGrade ? member.grade === selectedGrade : true;
+
+    return matchesSearch && matchesMemberType && matchesGrade;
+  });
 
   // 페이지네이션
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -196,6 +219,25 @@ const MemberManagement = () => {
   // 검색어 변경 시 페이지 초기화
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  // 필터 핸들러
+  const handleMemberTypeFilter = (type: string) => {
+    if (type === '전체') {
+      setSelectedMemberType(null);
+    } else {
+      setSelectedMemberType(selectedMemberType === type ? null : type);
+    }
+    setCurrentPage(1);
+  };
+
+  const handleGradeFilter = (grade: string) => {
+    if (grade === '전체') {
+      setSelectedGrade(null);
+    } else {
+      setSelectedGrade(selectedGrade === grade ? null : grade);
+    }
     setCurrentPage(1);
   };
 
@@ -269,19 +311,151 @@ const MemberManagement = () => {
           />
         </div>
 
-        {/* 새로고침 버튼 */}
-        <button
-          onClick={handleRefresh}
-          className="flex items-center justify-center bg-purple04 border border-gray-300 rounded-[12px] hover:bg-purple05 transition-colors duration-200"
-          style={{ width: 50, height: 50 }}
-        >
-          <TbRefresh size={20} className="text-white" />
-        </button>
+        {/* 버튼 그룹 */}
+        <div className="flex items-center gap-3">
+          {/* 필터 버튼 */}
+          <div className="relative">
+            <button
+              onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+              className={`flex items-center justify-center border border-gray-300 rounded-[12px] transition-colors duration-200 ${
+                selectedMemberType !== null || selectedGrade !== null
+                  ? 'bg-purple04 hover:bg-purple05'
+                  : 'bg-gray-100 hover:bg-gray-200'
+              }`}
+              style={{ width: 50, height: 50 }}
+            >
+              <TbFilter
+                size={20}
+                className={
+                  selectedMemberType !== null || selectedGrade !== null
+                    ? 'text-white'
+                    : 'text-gray-600'
+                }
+              />
+            </button>
+
+            {/* 필터 드롭다운 */}
+            {showFilterDropdown && (
+              <div
+                ref={filterDropdownRef}
+                className="absolute top-12 right-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 min-w-[280px]"
+              >
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="text-body-2 font-medium text-gray-700 mb-2">회원 구분</h4>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleMemberTypeFilter('전체')}
+                        className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
+                          selectedMemberType === null
+                            ? 'bg-purple04 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        전체
+                      </button>
+                      <button
+                        onClick={() => handleMemberTypeFilter('U+ 연동')}
+                        className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
+                          selectedMemberType === 'U+ 연동'
+                            ? 'bg-purple04 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        U+ 연동
+                      </button>
+                      <button
+                        onClick={() => handleMemberTypeFilter('일반')}
+                        className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
+                          selectedMemberType === '일반'
+                            ? 'bg-purple04 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        일반
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-body-2 font-medium text-gray-700 mb-2">등급</h4>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => handleGradeFilter('전체')}
+                        className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
+                          selectedGrade === null
+                            ? 'bg-purple04 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        전체
+                      </button>
+                      <button
+                        onClick={() => handleGradeFilter('VVIP')}
+                        className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
+                          selectedGrade === 'VVIP'
+                            ? 'bg-purple04 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        VVIP
+                      </button>
+                      <button
+                        onClick={() => handleGradeFilter('VIP')}
+                        className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
+                          selectedGrade === 'VIP'
+                            ? 'bg-purple04 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        VIP
+                      </button>
+                      <button
+                        onClick={() => handleGradeFilter('우수')}
+                        className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
+                          selectedGrade === '우수'
+                            ? 'bg-purple04 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        우수
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 필터 초기화 버튼 */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <button
+                    onClick={() => {
+                      setSelectedMemberType(null);
+                      setSelectedGrade(null);
+                      setCurrentPage(1);
+                      setShowFilterDropdown(false);
+                    }}
+                    className="w-full px-3 py-2 text-body-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-150"
+                  >
+                    필터 초기화
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 새로고침 버튼 */}
+          <button
+            onClick={handleRefresh}
+            className="flex items-center justify-center bg-purple04 border border-gray-300 rounded-[12px] hover:bg-purple05 transition-colors duration-200"
+            style={{ width: 50, height: 50 }}
+          >
+            <TbRefresh size={20} className="text-white" />
+          </button>
+        </div>
       </div>
 
       {/* 회원 목록 테이블 */}
       <div
-        className="bg-white rounded-[18px] shadow-sm border border-gray-100 overflow-hidden"
+        className="bg-white rounded-[18px] shadow-sm border border-gray-100 overflow-hidden relative"
         style={{ width: 1410, height: 516 }}
       >
         <table className="w-full table-fixed">
