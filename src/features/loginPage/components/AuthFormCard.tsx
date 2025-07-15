@@ -26,7 +26,7 @@ const AuthFormCard = ({ children, radius = 'all' }: Props) => {
 
   return (
     <div
-      className={`w-[583px] h-[639px] bg-white shadow-lg flex flex-col items-center justify-center px-[100px] ${radiusClass}`}
+      className={`w-[583px] h-[639px] bg-white drop-shadow-basic flex flex-col items-center justify-center ${radiusClass}`}
     >
       {children}
     </div>
