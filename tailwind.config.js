@@ -16,6 +16,7 @@ export default {
         'title-6': ['1.125rem', { lineHeight: '130%', fontWeight: 'bold' }],
         'title-7': ['1rem', { lineHeight: '130%', fontWeight: 'bold' }],
         'title-8': ['0.875rem', { lineHeight: '130%', fontWeight: 'bold' }],
+
         // Body - line-height 150%
         'body-0': ['1.25rem', { lineHeight: '150%' }],
         'body-1': ['1.125rem', { lineHeight: '150%' }],
