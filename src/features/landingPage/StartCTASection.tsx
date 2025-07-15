@@ -1,4 +1,4 @@
-import Button from './components/components/button';
+import Button from './components/Button';
 import { useNavigate } from 'react-router-dom';
 
 const StartCTASection = () => {
