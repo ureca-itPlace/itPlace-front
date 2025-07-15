@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { TbRefresh } from 'react-icons/tb';
 import { TbSearch } from 'react-icons/tb';
 import { TbExternalLink } from 'react-icons/tb';
+import { TbX } from 'react-icons/tb';
 import Pagination from 'react-js-pagination';
 import { TbFilter } from 'react-icons/tb';
 // 회원 데이터 타입
@@ -13,6 +14,13 @@ interface Member {
   phone: string;
   grade: 'VIP' | 'VVIP' | '우수';
   joinDate: string;
+}
+
+// 제휴처 이용 내역 타입
+interface PartnerUsage {
+  brand: string;
+  amount: string;
+  date: string;
 }
 
 // 샘플 회원 데이터
@@ -172,12 +180,68 @@ const sampleMembers: Member[] = [
   },
 ];
 
+// 제휴처 이용 내역 샘플 데이터
+const partnerUsageData: PartnerUsage[] = [
+  {
+    brand: 'GS25',
+    amount: '3,000원',
+    date: '25.07.01',
+  },
+  {
+    brand: '세븐일레븐',
+    amount: '13,000원',
+    date: '25.07.05',
+  },
+  {
+    brand: '파리바게트',
+    amount: '73,000원',
+    date: '25.07.10',
+  },
+  {
+    brand: '롯데월드',
+    amount: '53,000원',
+    date: '25.07.11',
+  },
+  {
+    brand: '야놀자 글리우드캠프앤글램핑코아...',
+    amount: '23,000원',
+    date: '25.07.11',
+  },
+  {
+    brand: 'GS25',
+    amount: '3,000원',
+    date: '25.07.01',
+  },
+  {
+    brand: '세븐일레븐',
+    amount: '13,000원',
+    date: '25.07.05',
+  },
+  {
+    brand: '파리바게트',
+    amount: '73,000원',
+    date: '25.07.10',
+  },
+  {
+    brand: '롯데월드',
+    amount: '53,000원',
+    date: '25.07.11',
+  },
+  {
+    brand: '야놀자 글리우드캠프앤글램핑코아...',
+    amount: '23,000원',
+    date: '25.07.11',
+  },
+];
+
 const MemberManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMemberType, setSelectedMemberType] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [showPartnerModal, setShowPartnerModal] = useState(false);
   const filterDropdownRef = useRef<HTMLDivElement>(null);
   const itemsPerPage = 8;
 
@@ -246,23 +310,19 @@ const MemberManagement = () => {
     setCurrentPage(pageNumber);
   };
 
-  // 등급별 색상
-  const getGradeColor = (grade: string) => {
-    switch (grade) {
-      case 'VVIP':
-        return 'text-purple-900 bg-purple-100';
-      case 'VIP':
-        return 'text-purple-600 bg-purple-50';
-      case '우수':
-        return 'text-blue-600 bg-blue-50';
-      default:
-        return 'text-gray-600 bg-gray-50';
-    }
-  };
-
   const handleRefresh = () => {
     // 새로고침 로직
     console.log('데이터 새로고침');
+  };
+
+  const handlePartnerDetailClick = (member: Member) => {
+    setSelectedMember(member);
+    setShowPartnerModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowPartnerModal(false);
+    setSelectedMember(null);
   };
 
   return (
@@ -311,8 +371,18 @@ const MemberManagement = () => {
             placeholder="회원 검색"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-full h-full pl-12 pr-4 border border-gray-300 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full h-full pl-12 pr-10 border border-gray-300 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+              tabIndex={-1}
+            >
+              <TbX size={18} />
+            </button>
+          )}
         </div>
 
         {/* 버튼 그룹 */}
@@ -527,11 +597,7 @@ const MemberManagement = () => {
                   {member.nickname}
                 </td>
                 <td className="px-6 py-4" style={{ width: '100px' }}>
-                  <span
-                    className={`px-3 py-1 rounded-full text-body-3 font-medium ${getGradeColor(
-                      member.grade
-                    )}`}
-                  >
+                  <span className={`px-3 py-1 rounded-full text-body-2 font-medium `}>
                     {member.grade}
                   </span>
                 </td>
@@ -554,7 +620,10 @@ const MemberManagement = () => {
                   {member.joinDate}
                 </td>
                 <td className="px-6 py-4" style={{ width: '60px' }}>
-                  <button className="flex items-center justify-center text-black hover:text-grey03 transition-colors duration-150">
+                  <button
+                    onClick={() => handlePartnerDetailClick(member)}
+                    className="flex items-center justify-center text-black hover:text-grey03 transition-colors duration-150"
+                  >
                     <TbExternalLink size={18} />
                   </button>
                 </td>
@@ -599,6 +668,82 @@ const MemberManagement = () => {
           disabledClass="opacity-50 cursor-not-allowed"
         />
       </div>
+
+      {/* 제휴처 상세정보 모달 */}
+      {showPartnerModal && selectedMember && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={handleCloseModal}
+        >
+          <div
+            className="bg-white rounded-[20px] shadow-lg relative"
+            style={{ width: 800, height: 664 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 모달 헤더 */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-title-5 font-semibold text-gray-900">회원 상세정보</h3>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors duration-150"
+              >
+                <TbX size={24} />
+              </button>
+            </div>
+
+            {/* 모달 내용 */}
+            <div className="pt-[38px] overflow-y-auto" style={{ height: 'calc(664px - 88px)' }}>
+              {/* 회원 정보 */}
+              <div className="mb-6 ml-[40px]">
+                <h4 className="text-title-2 font-semibold mb-2">{selectedMember.nickname}</h4>
+                <p className="text-body-0 text-grey05">
+                  {selectedMember.grade} | 멤버십 번호: 123875793487594857
+                </p>
+              </div>
+
+              {/* 제휴처 이용 내역 테이블 */}
+              <div
+                className="bg-grey01 rounded-[12px] overflow-hidden ml-[40px] mr-[40px]"
+                style={{ height: 'calc(100% - 120px)' }}
+              >
+                <div className="bg-gray-200 px-4 py-3 border-b border-gray-300 ">
+                  <div className="grid grid-cols-12 gap-4">
+                    <div className="col-span-4 text-left text-body-2 font-medium text-gray-700">
+                      브랜드
+                    </div>
+                    <div className="col-span-4 text-center text-body-2 font-medium text-gray-700">
+                      할인 금액
+                    </div>
+                    <div className="col-span-4 text-center text-body-2 font-medium text-gray-700">
+                      날짜
+                    </div>
+                  </div>
+                </div>
+                <div className="overflow-y-auto " style={{ height: 'calc(100% - 48px)' }}>
+                  {partnerUsageData.map((usage, index) => (
+                    <div
+                      key={index}
+                      className="px-4 py-3 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-150"
+                    >
+                      <div className="grid grid-cols-12 gap-8">
+                        <div className="col-span-4 text-body-2 text-gray-900 truncate">
+                          {usage.brand}
+                        </div>
+                        <div className="col-span-4 text-body-2 text-gray-900 text-center pl-4">
+                          {usage.amount}
+                        </div>
+                        <div className="col-span-4 text-body-2 text-gray-900 text-center pl-4">
+                          {usage.date}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
