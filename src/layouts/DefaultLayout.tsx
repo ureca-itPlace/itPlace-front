@@ -1,12 +1,17 @@
 // src/layouts/DefaultLayout.tsx
 import { Outlet } from 'react-router-dom';
+import Header from '../components/Header';
 
 const DefaultLayout = () => {
   return (
-    <>
-      {/* 여기에 공통 Header를 넣음 */}
-      <Outlet />
-    </>
+    <div className="flex">
+      <Header />
+      <main className="flex-1 ml-[81px]">
+        {' '}
+        {/* 헤더(사이드바) 너비만큼 margin-left */}
+        <Outlet />
+      </main>
+    </div>
   );
 };
 
