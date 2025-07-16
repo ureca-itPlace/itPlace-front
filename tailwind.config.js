@@ -87,6 +87,7 @@ export default {
       '2xl': '1536px',
 
       // max-width 기반 반대 방향 브레이크포인트 (웹 우선 대응)
+      'max-xl':{ max: '1536px'}, // 125% 배율 대비
       'max-lg': { max: '1023px' }, // 1023px 이하
       'max-md': { max: '767px' },
       'max-sm': { max: '639px' },
