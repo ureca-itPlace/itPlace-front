@@ -5,6 +5,7 @@
 ## 컴포넌트 목록
 
 ### 1. StatisticsCard
+
 상단 정보 카드 컴포넌트입니다.
 
 ```tsx
@@ -19,10 +20,11 @@ import { StatisticsCard } from '../../../../components/common';
   subtitleColor="text-black"
   width={344}
   height={87}
-/>
+/>;
 ```
 
 ### 2. SearchBar
+
 검색창 컴포넌트입니다.
 
 ```tsx
@@ -35,10 +37,11 @@ import { SearchBar } from '../../../../components/common';
   onClear={() => setSearchTerm('')}
   width={344}
   height={50}
-/>
+/>;
 ```
 
 ### 3. FilterDropdown
+
 필터 드롭다운 컴포넌트입니다.
 
 ```tsx
@@ -62,10 +65,11 @@ const filterGroups = [
   filterGroups={filterGroups}
   onReset={handleFilterReset}
   hasActiveFilters={selectedCategory !== null}
-/>
+/>;
 ```
 
 ### 4. DataTable
+
 데이터 테이블 컴포넌트입니다. (페이지네이션 별도)
 
 ```tsx
@@ -73,11 +77,11 @@ import { DataTable } from '../../../../components/common';
 
 const columns = [
   { key: 'name', label: '이름', width: '200px' },
-  { 
-    key: 'status', 
-    label: '상태', 
+  {
+    key: 'status',
+    label: '상태',
     width: '120px',
-    render: (value) => <span className="badge">{value}</span>
+    render: (value) => <span className="badge">{value}</span>,
   },
 ];
 
@@ -88,10 +92,11 @@ const columns = [
   width={1410}
   height={516}
   emptyMessage="데이터가 없습니다."
-/>
+/>;
 ```
 
 ### 5. Pagination
+
 페이지네이션 컴포넌트입니다.
 
 ```tsx
@@ -104,10 +109,11 @@ import { Pagination } from '../../../../components/common';
   onPageChange={handlePageChange}
   width={1410}
   pageRangeDisplayed={5}
-/>
+/>;
 ```
 
 ### 6. ActionButton
+
 액션 버튼 컴포넌트입니다.
 
 ```tsx
@@ -117,14 +123,15 @@ import { TbRefresh } from 'react-icons/tb';
 <ActionButton
   icon={<TbRefresh size={20} />}
   onClick={handleRefresh}
-  variant="primary"  // 또는 "secondary"
+  variant="primary" // 또는 "secondary"
   size={50}
-/>
+/>;
 ```
 
 ## 사용 예시
 
 ### 회원 관리 페이지
+
 ```tsx
 // 상단 정보 카드들
 <StatisticsCard title="회원 수" value={totalMembers} subtitle="명" />
@@ -141,6 +148,7 @@ import { TbRefresh } from 'react-icons/tb';
 ```
 
 ### 제휴 관리 페이지
+
 ```tsx
 // 동일한 패턴으로 사용
 <StatisticsCard title="제휴처 수" value={totalPartners} subtitle="개" />
@@ -151,6 +159,7 @@ import { TbRefresh } from 'react-icons/tb';
 ```
 
 ### 브랜드 관리 페이지
+
 ```tsx
 // 동일한 패턴으로 사용
 <StatisticsCard title="브랜드 수" value={totalBrands} subtitle="개" />
