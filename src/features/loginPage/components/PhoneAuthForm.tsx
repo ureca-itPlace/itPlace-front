@@ -5,12 +5,14 @@ import CaptchaBox from './CaptchaBox';
 import AuthFooter from './AuthFooter';
 import VerificationCodeForm from './VerificationCodeForm';
 import SignUpForm from './SignUpForm';
+import SignUpFinalForm from './SignUpFinalForm';
 
 type Props = {
-  currentStep: 'phoneAuth' | 'verification' | 'signUp';
+  currentStep: 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal';
   onGoToLogin: () => void;
   onAuthComplete: (data: { name: string; phone: string }) => void;
   onVerified: () => void;
+  onSignUpComplete: () => void;
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
 };
@@ -25,6 +27,7 @@ const PhoneAuthForm = ({
   onGoToLogin,
   onAuthComplete,
   onVerified,
+  onSignUpComplete,
   nameFromPhoneAuth,
   phoneFromPhoneAuth,
 }: Props) => {
@@ -57,11 +60,16 @@ const PhoneAuthForm = ({
         nameFromPhoneAuth={nameFromPhoneAuth}
         phoneFromPhoneAuth={phoneFromPhoneAuth}
         onGoToLogin={onGoToLogin}
+        onNext={onSignUpComplete}
       />
     );
   }
 
-  // ✅ 기본 phoneAuth 화면
+  if (currentStep === 'signUpFinal') {
+    return <SignUpFinalForm onGoToLogin={onGoToLogin} />;
+  }
+
+  // 기본 phoneAuth 화면
   return (
     <div className="w-full flex flex-col items-center">
       {/* 제목 */}

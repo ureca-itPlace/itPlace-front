@@ -4,9 +4,9 @@ import gsap from 'gsap';
 export const AuthTransition = () => {
   const formCardRef = useRef<HTMLDivElement>(null);
   const sideCardRef = useRef<HTMLDivElement>(null);
-  const [formStep, setFormStep] = useState<'login' | 'phoneAuth' | 'verification' | 'signUp'>(
-    'login'
-  );
+  const [formStep, setFormStep] = useState<
+    'login' | 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal'
+  >('login');
 
   const DISTANCE = 481;
 
@@ -72,6 +72,8 @@ export const AuthTransition = () => {
     setFormStep('signUp'); // 내부 교체만
   };
 
+  const goToSignUpFinal = () => setFormStep('signUpFinal');
+
   return {
     formStep,
     formCardRef,
@@ -80,5 +82,6 @@ export const AuthTransition = () => {
     goToPhoneAuth,
     goToVerification,
     goToSignUp,
+    goToSignUpFinal,
   };
 };

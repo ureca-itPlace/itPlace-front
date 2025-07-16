@@ -3,8 +3,6 @@ import AuthFormCard from '../components/AuthFormCard';
 import AuthSideCard from '../components/AuthSideCard';
 import LoginForm from '../components/LoginForm';
 import PhoneAuthForm from '../components/PhoneAuthForm';
-import VerificationCodeForm from '../components/VerificationCodeForm';
-import SignUpForm from '../components/SignUpForm';
 import { AuthTransition } from '../hooks/AuthTransition';
 
 const AuthLayout = () => {
@@ -16,6 +14,7 @@ const AuthLayout = () => {
     goToPhoneAuth,
     goToVerification,
     goToSignUp,
+    goToSignUpFinal,
   } = AuthTransition();
 
   const [userData, setUserData] = useState({ name: '', phone: '' });
@@ -34,7 +33,10 @@ const AuthLayout = () => {
               <LoginForm onGoToPhoneAuth={goToPhoneAuth} onGoToFindEmail={() => {}} />
             )}
 
-            {(formStep === 'phoneAuth' || formStep === 'verification' || formStep === 'signUp') && (
+            {(formStep === 'phoneAuth' ||
+              formStep === 'verification' ||
+              formStep === 'signUp' ||
+              formStep === 'signUpFinal') && (
               <PhoneAuthForm
                 onGoToLogin={goToLogin}
                 currentStep={formStep}
@@ -43,6 +45,7 @@ const AuthLayout = () => {
                   goToVerification();
                 }}
                 onVerified={goToSignUp}
+                onSignUpComplete={goToSignUpFinal}
                 nameFromPhoneAuth={userData.name}
                 phoneFromPhoneAuth={userData.phone}
               />

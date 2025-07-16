@@ -7,9 +7,15 @@ type SignUpFormProps = {
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
   onGoToLogin: () => void;
+  onNext: () => void;
 };
 
-const SignUpForm = ({ nameFromPhoneAuth, phoneFromPhoneAuth, onGoToLogin }: SignUpFormProps) => {
+const SignUpForm = ({
+  nameFromPhoneAuth,
+  phoneFromPhoneAuth,
+  onGoToLogin,
+  onNext,
+}: SignUpFormProps) => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -26,7 +32,7 @@ const SignUpForm = ({ nameFromPhoneAuth, phoneFromPhoneAuth, onGoToLogin }: Sign
     membershipNumber: true,
   });
 
-  // 🔸 API 데이터 불러오기 + 병합
+  // API 데이터 불러오기 + 병합
   useEffect(() => {
     fetch('/api/user-info')
       .then((res) => res.json())
@@ -136,7 +142,7 @@ const SignUpForm = ({ nameFromPhoneAuth, phoneFromPhoneAuth, onGoToLogin }: Sign
       {/* 다음 버튼 */}
       <AuthButton
         label="다음"
-        onClick={() => console.log('회원가입 완료 or 다음 단계')}
+        onClick={onNext}
         variant={isValid ? 'default' : 'disabled'}
         className="w-[320px] max-lg:w-full"
       />
