@@ -5,6 +5,8 @@ interface Column {
   label: string;
   width?: string;
   render?: (value: unknown, row: Record<string, unknown>) => React.ReactNode;
+  headerRender?: () => React.ReactNode;
+  align?: 'left' | 'center' | 'right';
 }
 
 interface DataTableProps {
@@ -35,10 +37,10 @@ const DataTable: React.FC<DataTableProps> = ({
             {columns.map((column) => (
               <th
                 key={column.key}
-                className="px-6 py-4 text-left text-body-2 font-medium text-gray-700"
+                className={`px-6 py-2 text-body-2 font-medium text-gray-700 ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                 style={{ width: column.width }}
               >
-                {column.label}
+                {column.headerRender ? column.headerRender() : column.label}
               </th>
             ))}
           </tr>
@@ -48,7 +50,7 @@ const DataTable: React.FC<DataTableProps> = ({
             <tr style={{ height: 56 }}>
               <td
                 colSpan={columns.length}
-                className="px-6 py-4 text-center text-body-2 text-gray-500"
+                className="px-6 py-2 text-center text-body-2 text-gray-500"
               >
                 {emptyMessage}
               </td>
@@ -66,7 +68,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className="px-6 py-4 text-body-2 text-gray-900 truncate"
+                    className={`px-6 py-2 text-body-2 text-gray-900 truncate ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                     style={{ width: column.width }}
                   >
                     {column.render

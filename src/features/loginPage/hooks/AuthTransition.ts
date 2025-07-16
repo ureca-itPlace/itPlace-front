@@ -4,31 +4,37 @@ import gsap from 'gsap';
 export const AuthTransition = () => {
   const formCardRef = useRef<HTMLDivElement>(null);
   const sideCardRef = useRef<HTMLDivElement>(null);
+
+  // 현재 단계 상태
   const [formStep, setFormStep] = useState<
-    'login' | 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal'
+    'login' | 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal' | 'findEmail'
   >('login');
 
+  // 카드 이동 거리
   const DISTANCE = 481;
 
-  // 초기 위치 설정
+  // 초기 위치 세팅 (로그인 상태)
   useEffect(() => {
     gsap.set(formCardRef.current, { x: 0 });
     gsap.set(sideCardRef.current, { x: 0 });
   }, []);
 
-  const goToPhoneAuth = () => {
+  // 오른쪽으로 슬라이드 → 인증/회원가입 진입용
+  const animateToRight = (targetStep: typeof formStep) => {
     const tl = gsap.timeline();
+
     tl.to(formCardRef.current, {
       x: DISTANCE,
       duration: 0.5,
       ease: 'power2.out',
       onUpdate: () => {
         const x = gsap.getProperty(formCardRef.current, 'x') as number;
-        if (x > DISTANCE / 2 && formStep !== 'phoneAuth') {
-          setFormStep('phoneAuth');
+        if (x > DISTANCE / 2 && formStep !== targetStep) {
+          setFormStep(targetStep);
         }
       },
     });
+
     tl.to(
       sideCardRef.current,
       {
@@ -40,8 +46,10 @@ export const AuthTransition = () => {
     );
   };
 
+  // 왼쪽으로 슬라이드 → 로그인 복귀용
   const goToLogin = () => {
     const tl = gsap.timeline();
+
     tl.to(formCardRef.current, {
       x: 0,
       duration: 0.5,
@@ -53,6 +61,7 @@ export const AuthTransition = () => {
         }
       },
     });
+
     tl.to(
       sideCardRef.current,
       {
@@ -64,15 +73,20 @@ export const AuthTransition = () => {
     );
   };
 
-  const goToVerification = () => {
-    setFormStep('verification'); // 내부 교체만
-  };
+  // 전화번호 인증 진입 (애니메이션 포함)
+  const goToPhoneAuth = () => animateToRight('phoneAuth');
 
-  const goToSignUp = () => {
-    setFormStep('signUp'); // 내부 교체만
-  };
+  // 인증번호 입력 단계 (같은 카드 내 내부 전환)
+  const goToVerification = () => setFormStep('verification');
 
+  // 회원가입 입력 단계 (같은 카드 내 내부 전환)
+  const goToSignUp = () => setFormStep('signUp');
+
+  // 회원가입 완료 단계 (같은 카드 내 내부 전환)
   const goToSignUpFinal = () => setFormStep('signUpFinal');
+
+  // 이메일 찾기 결과 화면 (같은 카드 내 내부 전환)
+  const goToFindEmail = () => setFormStep('findEmail');
 
   return {
     formStep,
@@ -83,5 +97,6 @@ export const AuthTransition = () => {
     goToVerification,
     goToSignUp,
     goToSignUpFinal,
+    goToFindEmail,
   };
 };
