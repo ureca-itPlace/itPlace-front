@@ -37,7 +37,7 @@ const DataTable: React.FC<DataTableProps> = ({
             {columns.map((column) => (
               <th
                 key={column.key}
-                className={`px-6 py-2 text-body-2 font-medium text-gray-700 ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                className={`pl-[40px] py-2 text-body-2 font-medium text-gray-700 ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                 style={{ width: column.width }}
               >
                 {column.headerRender ? column.headerRender() : column.label}
@@ -50,7 +50,7 @@ const DataTable: React.FC<DataTableProps> = ({
             <tr style={{ height: 56 }}>
               <td
                 colSpan={columns.length}
-                className="px-6 py-2 text-center text-body-2 text-gray-500"
+                className="pl-[40px] py-2 text-center text-body-2 text-gray-500"
               >
                 {emptyMessage}
               </td>
@@ -68,7 +68,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className={`px-6 py-2 text-body-2 text-gray-900 truncate ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                    className={`pl-[40px] py-2 text-body-2 text-gray-900 truncate ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                     style={{ width: column.width }}
                   >
                     {column.render
