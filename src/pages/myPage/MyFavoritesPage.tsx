@@ -9,6 +9,7 @@ import { Pagination } from '../../components/common';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
 import SearchBar from '../../components/common/SearchBar';
+import Modal from '../../components/Modal';
 
 interface FavoriteItem {
   benefitId: number;
@@ -21,6 +22,9 @@ export default function MyFavoritesPage() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [benefitFilter, setBenefitFilter] = useState<'default' | 'vipkok'>('default'); // 토글 필터링용 상태
   const [keyword, setKeyword] = useState(''); // 검색용 상태
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // 검색어 기반 필터링
   const searchFiltered = favorites.filter((fav) =>
@@ -79,6 +83,13 @@ export default function MyFavoritesPage() {
     }
   };
 
+  const handleDeleteSelected = () => {
+    console.log('즐겨 찾기 목록 삭제');
+
+    // 🚨 API 연동 시
+    // await api.delete(`/favorites/${userId}`, { data: { benefitIds: selectedItems } });
+  };
+
   // 🚨 진입 시 즐겨찾기 목록 API 호출: API완성되면 주석 해제
   // useEffect(() => {
   //   const fetchFavorites = async () => {
@@ -134,7 +145,7 @@ export default function MyFavoritesPage() {
           {/* 상단 타이틀 */}
           <h1 className="text-title-2 text-black mb-7">찜한 혜택</h1>
 
-          <div className="flex justify-between">
+          <div className="flex justify-between mb-[-10px]">
             {/* 토글 버튼 */}
             <BenefitFilterToggle
               value={benefitFilter}
@@ -155,28 +166,110 @@ export default function MyFavoritesPage() {
             />
           </div>
 
+          {/* 편집 버튼 */}
+          <div className="flex items-center justify-end gap-3 mr-1 mb-1">
+            {!isEditing ? (
+              <button
+                onClick={() => {
+                  setIsEditing(true);
+                  setSelectedItems([]); // 초기화
+                }}
+                className="text-grey05 text-body-0 font-medium"
+              >
+                편집
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    setSelectedItems([]);
+                  }}
+                  className="px-4 py-2 rounded-[8px] bg-grey02 text-black"
+                >
+                  편집 취소
+                </button>
+                <button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="px-4 py-2 rounded-[8px] bg-purple04 text-white"
+                >
+                  삭제하기
+                </button>
+              </>
+            )}
+          </div>
+
+          <Modal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            title="선택한 혜택을 삭제하시겠습니까?"
+            message="삭제하신 혜택은 다시 복구할 수 없습니다."
+            buttons={[
+              {
+                label: '아니요',
+                type: 'secondary',
+                onClick: () => setIsDeleteModalOpen(false),
+              },
+              {
+                label: '삭제하기',
+                type: 'primary',
+                onClick: () => {
+                  handleDeleteSelected(); // 실제 삭제 로직
+                  setIsDeleteModalOpen(false);
+                },
+              },
+            ]}
+          />
+
           {/* 카드 리스트 + 페이지네이션 */}
           <div className="flex flex-col flex-grow">
-            <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px] mt-10">
+            <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px]">
               {currentItems.map((item) => (
                 <div
                   key={item.benefitId}
-                  onClick={() => setSelectedId(item.benefitId)}
-                  className={`relative p-4 border rounded-[18px] cursor-pointer w-[220px] h-[240px] transition-shadow ${
-                    selectedId === item.benefitId ? 'border-purple04 border-2' : 'border-grey03'
+                  onClick={() => {
+                    if (isEditing) {
+                      // 체크박스 토글
+                      if (selectedItems.includes(item.benefitId)) {
+                        setSelectedItems(selectedItems.filter((id) => id !== item.benefitId));
+                      } else {
+                        setSelectedItems([...selectedItems, item.benefitId]);
+                      }
+                    } else {
+                      setSelectedId(item.benefitId); // 상세보기
+                    }
+                  }}
+                  className={`relative p-4 border rounded-[18px] w-[220px] h-[240px] cursor-pointer transition-shadow ${
+                    isEditing
+                      ? selectedItems.includes(item.benefitId)
+                        ? 'border-purple04 border-2'
+                        : 'border-grey03'
+                      : selectedId === item.benefitId
+                        ? 'border-purple04 border-2'
+                        : 'border-grey03'
                   }`}
                 >
-                  {/* 즐겨찾기 해제 버튼 */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveFavorite(item.benefitId);
-                    }}
-                    className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
-                    title="즐겨찾기 해제"
-                  >
-                    <TbStarFilled size={22} />
-                  </button>
+                  {isEditing && (
+                    <input
+                      type="checkbox"
+                      checked={selectedItems.includes(item.benefitId)}
+                      onChange={() => {}}
+                      className="absolute top-5 right-5 w-5 h-5 accent-purple04 appearance-none rounded-md border border-grey03 checked:bg-[url('/images/myPage/icon-check.png')] bg-no-repeat bg-center checked:border-purple04"
+                    />
+                  )}
+                  {/* 즐겨찾기 해제 버튼 (편집 모드일 때는 숨김) */}
+                  {!isEditing && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveFavorite(item.benefitId);
+                      }}
+                      className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
+                      title="즐겨찾기 해제"
+                    >
+                      <TbStarFilled size={22} />
+                    </button>
+                  )}
 
                   <img
                     src={item.image}
@@ -207,20 +300,33 @@ export default function MyFavoritesPage() {
         bottomImageAlt="찜한 혜택 토끼"
         bottomImageFallback="/images/myPage/bunny-favorites.png"
       >
-        <FadeWrapper changeKey={selectedId}>
-          {selectedId ? (
-            <>
-              <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
-              <BenefitDetailTabs
-                benefitId={selectedId}
-                image={favorites.find((f) => f.benefitId === selectedId)?.image ?? ''}
-                name={favorites.find((f) => f.benefitId === selectedId)?.benefitName ?? ''}
-              />
-            </>
-          ) : (
-            <p className="text-grey05">카드를 선택하면 상세 혜택이 표시됩니다.</p>
-          )}
-        </FadeWrapper>
+        {isEditing ? (
+          <FadeWrapper changeKey={selectedId}>
+            <h1 className="text-title-2 text-black mb-4 text-center">선택한 혜택</h1>
+            <div className="flex flex-col items-center justify-center mt-7">
+              <img src="/images/myPage/icon-file.webp" alt="폴더" className="w-[185px] h-auto" />
+              <div className="flex justify-center items-baseline">
+                <p className="text-[96px] font-bold text-orange04 mt-3">{selectedItems.length}</p>
+                <p className="text-title-1 text-grey05 ml-2">개</p>
+              </div>
+            </div>
+          </FadeWrapper>
+        ) : (
+          <FadeWrapper changeKey={selectedId}>
+            {selectedId ? (
+              <>
+                <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
+                <BenefitDetailTabs
+                  benefitId={selectedId}
+                  image={favorites.find((f) => f.benefitId === selectedId)?.image ?? ''}
+                  name={favorites.find((f) => f.benefitId === selectedId)?.benefitName ?? ''}
+                />
+              </>
+            ) : (
+              <p className="text-grey05">카드를 선택하면 상세 혜택이 표시됩니다.</p>
+            )}
+          </FadeWrapper>
+        )}
       </RightAside>
     </>
   );
