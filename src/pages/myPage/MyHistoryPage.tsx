@@ -10,7 +10,11 @@ export default function MyHistoryPage() {
         <p>혜택 이용 내역이 표시됩니다.</p>
       </MainContentWrapper>
 
-      <RightAside bottomImage="/images/myPage/bunny-history.webp" bottomImageAlt="혜택 이력 토끼">
+      <RightAside
+        bottomImage="/images/myPage/bunny-history.webp"
+        bottomImageAlt="혜택 이력 토끼"
+        bottomImageFallback="/images/myPage/bunny-history.png"
+      >
         <FadeWrapper changeKey="history">
           <h1 className="text-xl font-bold mb-4">이용 통계</h1>
           <p>우측 영역에 관련 통계나 그래프 등</p>
