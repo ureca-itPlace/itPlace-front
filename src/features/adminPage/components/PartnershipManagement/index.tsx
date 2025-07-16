@@ -254,8 +254,8 @@ const PartnershipManagement = () => {
     if (sortField !== field) {
       return (
         <div className="flex flex-col ml-2">
-          <TbChevronUp size={16} className="text-gray-400" />
-          <TbChevronDown size={16} className="text-gray-400 -mt-1" />
+          <TbChevronUp size={16} className="text-grey05" />
+          <TbChevronDown size={16} className="text-grey05 -mt-1" />
         </div>
       );
     }
@@ -263,15 +263,15 @@ const PartnershipManagement = () => {
     if (sortDirection === 'asc') {
       return (
         <div className="flex flex-col ml-2">
-          <TbChevronUp size={16} className="text-purple04" />
-          <TbChevronDown size={16} className="text-gray-400 -mt-1" />
+          <TbChevronUp size={16} className="text-orange04" />
+          <TbChevronDown size={16} className="text-grey05 -mt-1" />
         </div>
       );
     } else {
       return (
         <div className="flex flex-col ml-2">
-          <TbChevronUp size={16} className="text-gray-400" />
-          <TbChevronDown size={16} className="text-purple04 -mt-1" />
+          <TbChevronUp size={16} className="text-grey05" />
+          <TbChevronDown size={16} className="text-orange04 -mt-1" />
         </div>
       );
     }
@@ -311,7 +311,7 @@ const PartnershipManagement = () => {
         <button
           onClick={() => handleSort('searchRank')}
           className={`flex items-center justify-start transition-colors duration-150 ${
-            sortField === 'searchRank' ? 'bg-purple01 text-purple04' : 'text-gray-700'
+            sortField === 'searchRank' ? 'text-orange04 rounded-[4px]' : 'text-grey05'
           }`}
         >
           <span>검색 순위</span>
@@ -319,7 +319,7 @@ const PartnershipManagement = () => {
         </button>
       ),
       render: (value: unknown) => (
-        <span className="text-caption-1 font-medium text-left block">{value as number}</span>
+        <span className="text-caption-1 font-medium text-left block">{value as number}위</span>
       ),
     },
     {
@@ -331,7 +331,7 @@ const PartnershipManagement = () => {
         <button
           onClick={() => handleSort('favoriteRank')}
           className={`flex items-center justify-start transition-colors duration-150 ${
-            sortField === 'favoriteRank' ? 'bg-purple01 text-purple04' : 'text-gray-700'
+            sortField === 'favoriteRank' ? ' text-orange04 rounded-[4px]' : 'text-grey05'
           }`}
         >
           <span>즐겨찾기 순위</span>
@@ -339,7 +339,7 @@ const PartnershipManagement = () => {
         </button>
       ),
       render: (value: unknown) => (
-        <span className="text-caption-1 font-medium text-left block">{value as number}</span>
+        <span className="text-caption-1 font-medium text-left block">{value as number}위</span>
       ),
     },
     {
@@ -351,7 +351,7 @@ const PartnershipManagement = () => {
         <button
           onClick={() => handleSort('usageRank')}
           className={`flex items-center justify-start transition-colors duration-150 ${
-            sortField === 'usageRank' ? 'bg-purple01 text-purple04' : 'text-gray-700'
+            sortField === 'usageRank' ? ' text-orange04 rounded-[4px]' : 'text-grey05'
           }`}
         >
           <span>이용 순위</span>
@@ -359,7 +359,7 @@ const PartnershipManagement = () => {
         </button>
       ),
       render: (value: unknown) => (
-        <span className="text-caption-1 font-medium text-left block">{value as number}</span>
+        <span className="text-caption-1 font-medium text-left block">{value as number}위</span>
       ),
     },
     {
