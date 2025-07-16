@@ -1,4 +1,6 @@
 import Dashboard from '../Dashboard';
+import MemberManagement from '../MemberManagement';
+import PartnershipManagement from '../PartnershipManagement';
 
 // 오른쪽 콘텐츠 영역 컴포넌트
 interface ContentSectionProps {
@@ -11,19 +13,9 @@ const ContentSection = ({ activeTab }: ContentSectionProps) => {
       case 'dashboard':
         return <Dashboard />;
       case 'users':
-        return (
-          <div className="pl-[28px] pt-[32px]">
-            <h2 className="text-title-3 mb-6">사용자 관리</h2>
-            <p className="text-body-1">사용자 관리 내용이 여기에 표시됩니다.</p>
-          </div>
-        );
+        return <MemberManagement />;
       case 'partners':
-        return (
-          <div className="pl-[28px] pt-[32px]">
-            <h2 className="text-title-3 mb-6">제휴 관리</h2>
-            <p className="text-body-1">제휴 관리 내용이 여기에 표시됩니다.</p>
-          </div>
-        );
+        return <PartnershipManagement />;
       case 'ai':
         return (
           <div className="pl-[28px] pt-[32px]">
