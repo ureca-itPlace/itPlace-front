@@ -1,5 +1,14 @@
+import { useState } from 'react';
+import StartCTASection from '../features/landingPage/StartCTASection';
+import VideoSection from '../features/landingPage/VideoSection';
+
 const LandingPage = () => {
-  return <div>랜딩 페이지입니다.</div>;
+  const [videoEnded, setVideoEnded] = useState(false);
+  return (
+    <div className="h-full">
+      {videoEnded ? <StartCTASection /> : <VideoSection onVideoEnd={() => setVideoEnded(true)} />}
+    </div>
+  );
 };
 
 export default LandingPage;
