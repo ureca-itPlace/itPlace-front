@@ -413,6 +413,7 @@ const MemberManagement = () => {
           onClear={() => setSearchTerm('')}
           width={344}
           height={50}
+          backgroundColor="white"
         />
 
         <div className="flex items-center gap-3">
