@@ -8,6 +8,7 @@ import BenefitDetailTabs from '../../features/myPage/components/BenefitDetailTab
 import { Pagination } from '../../components/common';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
+import SearchBar from '../../components/common/SearchBar';
 
 interface FavoriteItem {
   benefitId: number;
@@ -19,9 +20,15 @@ export default function MyFavoritesPage() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>(mockFavorites);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [benefitFilter, setBenefitFilter] = useState<'default' | 'vipkok'>('default'); // 토글 필터링용 상태
+  const [keyword, setKeyword] = useState(''); // 검색용 상태
 
-  // ✅ 토글 필터링된 리스트
-  const filteredFavorites = mockFavorites.filter((fav) => {
+  // 검색어 기반 필터링
+  const searchFiltered = favorites.filter((fav) =>
+    fav.benefitName.toLowerCase().includes(keyword.toLowerCase())
+  );
+
+  // ✅ VIP콕 / 기본혜택 토글 필터링 리스트
+  const filteredFavorites = searchFiltered.filter((fav) => {
     const isVipKok = mockTierBenefits.some(
       (tier) => tier.benefitId === fav.benefitId && tier.grade === 'VIP콕'
     );
@@ -125,20 +132,32 @@ export default function MyFavoritesPage() {
       <MainContentWrapper>
         <div className="flex flex-col h-full justify-between">
           {/* 상단 타이틀 */}
-          <h1 className="text-title-2 text-black mb-4">찜한 혜택</h1>
+          <h1 className="text-title-2 text-black mb-2">찜한 혜택</h1>
 
-          {/* 토글 버튼 */}
-          <BenefitFilterToggle
-            value={benefitFilter}
-            onChange={setBenefitFilter}
-            width="w-[300px]"
-            fontSize="text-title-7"
-          />
+          <div className="flex justify-between">
+            {/* 토글 버튼 */}
+            <BenefitFilterToggle
+              value={benefitFilter}
+              onChange={setBenefitFilter}
+              width="w-[300px]"
+              fontSize="text-title-7"
+            />
+
+            {/* 🔍 검색 바 */}
+            <SearchBar
+              placeholder="검색하기"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onClear={() => setKeyword('')}
+              width={344} // 필요시 크기 조정
+              height={50}
+            />
+          </div>
 
           {/* 카드 리스트 + 페이지네이션 */}
           <div>
             <div className="flex-1">
-              <div className="grid grid-cols-3 gap-5 min-h-[520px]">
+              <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px]">
                 {currentItems.map((item) => (
                   <div
                     key={item.benefitId}
@@ -171,7 +190,7 @@ export default function MyFavoritesPage() {
             </div>
 
             {/* ✅ 페이지네이션 */}
-            <div className="mt-4 flex justify-center">
+            <div className="flex justify-center">
               <Pagination
                 currentPage={currentPage}
                 itemsPerPage={itemsPerPage}
@@ -184,7 +203,11 @@ export default function MyFavoritesPage() {
         </div>
       </MainContentWrapper>
 
-      <RightAside bottomImage="/images/myPage/bunny-favorites.webp" bottomImageAlt="찜한 혜택 토끼">
+      <RightAside
+        bottomImage="/images/myPage/bunny-favorites.webp"
+        bottomImageAlt="찜한 혜택 토끼"
+        bottomImageFallback="/images/myPage/bunny-favorites.png"
+      >
         <FadeWrapper changeKey={selectedId}>
           {selectedId ? (
             <>
