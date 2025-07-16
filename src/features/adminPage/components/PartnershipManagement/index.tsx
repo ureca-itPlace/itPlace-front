@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TbRefresh, TbExternalLink, TbX } from 'react-icons/tb';
+import { TbRefresh, TbExternalLink, TbX, TbChevronUp, TbChevronDown } from 'react-icons/tb';
 import StatisticsCard from '../../../../components/common/StatisticsCard';
 import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
@@ -23,9 +23,9 @@ interface Partner {
 const samplePartners: Partner[] = [
   {
     id: '1',
-    logo: 'https://via.placeholder.com/40x40?text=GS',
+    logo: '/images/admin/GS25.png',
     brand: 'GS25',
-    category: '편의점',
+    category: '생활/편의',
     benefitType: '할인',
     searchRank: 169,
     favoriteRank: 1,
@@ -33,9 +33,9 @@ const samplePartners: Partner[] = [
   },
   {
     id: '2',
-    logo: 'https://via.placeholder.com/40x40?text=S',
+    logo: '/images/admin/megabox.png',
     brand: '스타벅스',
-    category: '카페',
+    category: '푸드',
     benefitType: '할인',
     searchRank: 69,
     favoriteRank: 7,
@@ -43,19 +43,19 @@ const samplePartners: Partner[] = [
   },
   {
     id: '3',
-    logo: 'https://via.placeholder.com/40x40?text=P',
+    logo: '/images/admin/paris.png',
     brand: '파리바게트',
-    category: '베이커리',
-    benefitType: '할인',
+    category: '푸드',
+    benefitType: '증정',
     searchRank: 45,
     favoriteRank: 49,
     usageRank: 1,
   },
   {
     id: '4',
-    logo: 'https://via.placeholder.com/40x40?text=GS',
+    logo: '/images/admin/GSthefresh.png',
     brand: 'GS THE FRESH',
-    category: '마트',
+    category: '쇼핑',
     benefitType: '할인',
     searchRank: 30,
     favoriteRank: 30,
@@ -63,9 +63,9 @@ const samplePartners: Partner[] = [
   },
   {
     id: '5',
-    logo: 'https://via.placeholder.com/40x40?text=C',
+    logo: '/images/admin/CGV.png',
     brand: 'CGV',
-    category: '영화관',
+    category: '문화/여가',
     benefitType: '할인',
     searchRank: 25,
     favoriteRank: 25,
@@ -73,9 +73,9 @@ const samplePartners: Partner[] = [
   },
   {
     id: '6',
-    logo: 'https://via.placeholder.com/40x40?text=L',
+    logo: '/images/admin/lotteworld.png',
     brand: '롯데월드',
-    category: '테마파크',
+    category: '액티비티',
     benefitType: '할인',
     searchRank: 111,
     favoriteRank: 111,
@@ -83,13 +83,43 @@ const samplePartners: Partner[] = [
   },
   {
     id: '7',
-    logo: 'https://via.placeholder.com/40x40?text=P',
+    logo: '/images/admin/megabox.png',
     brand: '프로포즈',
-    category: '뷰티',
-    benefitType: '할인',
+    category: '뷰티/건강',
+    benefitType: '증정',
     searchRank: 119,
     favoriteRank: 119,
     usageRank: 11,
+  },
+  {
+    id: '8',
+    logo: '/images/admin/ediya.png',
+    brand: '이디야커피',
+    category: '푸드',
+    benefitType: '할인',
+    searchRank: 88,
+    favoriteRank: 15,
+    usageRank: 22,
+  },
+  {
+    id: '9',
+    logo: '/images/admin/emart24.png',
+    brand: '이마트24',
+    category: '쇼핑',
+    benefitType: '할인',
+    searchRank: 55,
+    favoriteRank: 33,
+    usageRank: 18,
+  },
+  {
+    id: '10',
+    logo: '/images/admin/baskin.png',
+    brand: '배스킨라빈스',
+    category: '푸드',
+    benefitType: '증정',
+    searchRank: 77,
+    favoriteRank: 44,
+    usageRank: 27,
   },
 ];
 
@@ -101,6 +131,10 @@ const PartnershipManagement = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [sortField, setSortField] = useState<'searchRank' | 'favoriteRank' | 'usageRank' | null>(
+    null
+  );
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const itemsPerPage = 8;
 
   // 총 제휴처 수
@@ -121,9 +155,23 @@ const PartnershipManagement = () => {
     return matchesSearch && matchesCategory && matchesBenefitType;
   });
 
+  // 정렬 적용
+  const sortedPartners = [...filteredPartners].sort((a, b) => {
+    if (!sortField) return 0;
+
+    const aValue = a[sortField];
+    const bValue = b[sortField];
+
+    if (sortDirection === 'asc') {
+      return aValue - bValue;
+    } else {
+      return bValue - aValue;
+    }
+  });
+
   // 페이지네이션
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentPartners = filteredPartners.slice(startIndex, startIndex + itemsPerPage);
+  const currentPartners = sortedPartners.slice(startIndex, startIndex + itemsPerPage);
 
   // 검색어 변경 시 페이지 초기화
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,6 +194,22 @@ const PartnershipManagement = () => {
       setSelectedBenefitType(null);
     } else {
       setSelectedBenefitType(selectedBenefitType === benefitType ? null : benefitType);
+    }
+    setCurrentPage(1);
+  };
+
+  // 정렬 핸들러
+  const handleSort = (field: 'searchRank' | 'favoriteRank' | 'usageRank') => {
+    if (sortField === field) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else {
+        setSortField(null);
+        setSortDirection('asc');
+      }
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
     }
     setCurrentPage(1);
   };
@@ -173,25 +237,43 @@ const PartnershipManagement = () => {
   const handleFilterReset = () => {
     setSelectedCategory(null);
     setSelectedBenefitType(null);
+    setSortField(null);
+    setSortDirection('asc');
     setCurrentPage(1);
     setShowFilterDropdown(false);
   };
 
   // 상태 렌더링 함수
   const renderBenefitType = (benefitType: string) => {
-    const benefitTypeStyles = {
-      할인: 'bg-blue-100 text-blue-800',
-      적립: 'bg-green-100 text-green-800',
-      무료: 'bg-purple-100 text-purple-800',
-    };
+    return <span className="text-body-2 font-medium">{benefitType}</span>;
+  };
 
-    return (
-      <span
-        className={`px-3 py-1 rounded-full text-body-2 font-medium ${benefitTypeStyles[benefitType as keyof typeof benefitTypeStyles]}`}
-      >
-        {benefitType}
-      </span>
-    );
+  // 정렬 아이콘 렌더링 함수
+  const renderSortIcon = (field: 'searchRank' | 'favoriteRank' | 'usageRank') => {
+    if (sortField !== field) {
+      return (
+        <div className="flex flex-col ml-2">
+          <TbChevronUp size={16} className="text-gray-400" />
+          <TbChevronDown size={16} className="text-gray-400 -mt-1" />
+        </div>
+      );
+    }
+
+    if (sortDirection === 'asc') {
+      return (
+        <div className="flex flex-col ml-2">
+          <TbChevronUp size={16} className="text-purple04" />
+          <TbChevronDown size={16} className="text-gray-400 -mt-1" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="flex flex-col ml-2">
+          <TbChevronUp size={16} className="text-gray-400" />
+          <TbChevronDown size={16} className="text-purple04 -mt-1" />
+        </div>
+      );
+    }
   };
 
   // 테이블 컬럼 정의
@@ -200,6 +282,7 @@ const PartnershipManagement = () => {
       key: 'logo',
       label: '로고',
       width: '80px',
+      align: 'center' as const,
       render: (value: unknown) => (
         <div className="flex items-center justify-center">
           <img
@@ -210,42 +293,72 @@ const PartnershipManagement = () => {
         </div>
       ),
     },
-    { key: 'brand', label: '제휴처명', width: '150px' },
-    { key: 'category', label: '카테고리', width: '100px' },
+    { key: 'brand', label: '제휴처명', width: '240px' },
+    { key: 'category', label: '카테고리', width: '120px' },
     {
       key: 'benefitType',
       label: '혜택 유형',
-      width: '100px',
+      width: '120px',
       render: (value: unknown) => renderBenefitType(value as string),
     },
     {
       key: 'searchRank',
       label: '검색 순위',
       width: '120px',
+      sortable: true,
+      headerRender: () => (
+        <button
+          onClick={() => handleSort('searchRank')}
+          className={`flex items-center justify-start transition-colors duration-150 ${
+            sortField === 'searchRank' ? 'bg-purple01 text-purple04' : 'text-gray-700'
+          }`}
+        >
+          <span>검색 순위</span>
+          {renderSortIcon('searchRank')}
+        </button>
+      ),
       render: (value: unknown) => (
-        <div className="flex items-center justify-center">
-          <span className="text-caption-1 font-medium">{value as number}</span>
-        </div>
+        <span className="text-caption-1 font-medium text-left block">{value as number}</span>
       ),
     },
     {
       key: 'favoriteRank',
       label: '즐겨찾기 순위',
       width: '120px',
+      sortable: true,
+      headerRender: () => (
+        <button
+          onClick={() => handleSort('favoriteRank')}
+          className={`flex items-center justify-start transition-colors duration-150 ${
+            sortField === 'favoriteRank' ? 'bg-purple01 text-purple04' : 'text-gray-700'
+          }`}
+        >
+          <span>즐겨찾기 순위</span>
+          {renderSortIcon('favoriteRank')}
+        </button>
+      ),
       render: (value: unknown) => (
-        <div className="flex items-center justify-center">
-          <span className="text-caption-1 font-medium">{value as number}</span>
-        </div>
+        <span className="text-caption-1 font-medium text-left block">{value as number}</span>
       ),
     },
     {
       key: 'usageRank',
       label: '이용 순위',
       width: '120px',
+      sortable: true,
+      headerRender: () => (
+        <button
+          onClick={() => handleSort('usageRank')}
+          className={`flex items-center justify-start transition-colors duration-150 ${
+            sortField === 'usageRank' ? 'bg-purple01 text-purple04' : 'text-gray-700'
+          }`}
+        >
+          <span>이용 순위</span>
+          {renderSortIcon('usageRank')}
+        </button>
+      ),
       render: (value: unknown) => (
-        <div className="flex items-center justify-center">
-          <span className="text-caption-1 font-medium">{value as number}</span>
-        </div>
+        <span className="text-caption-1 font-medium text-left block">{value as number}</span>
       ),
     },
     {
@@ -272,13 +385,14 @@ const PartnershipManagement = () => {
       title: '카테고리',
       options: [
         { label: '전체', value: '전체' },
-        { label: '편의점', value: '편의점' },
-        { label: '카페', value: '카페' },
-        { label: '베이커리', value: '베이커리' },
-        { label: '마트', value: '마트' },
-        { label: '영화관', value: '영화관' },
-        { label: '테마파크', value: '테마파크' },
-        { label: '뷰티', value: '뷰티' },
+        { label: '액티비티', value: '액티비티' },
+        { label: '뷰티/건강', value: '뷰티/건강' },
+        { label: '쇼핑', value: '쇼핑' },
+        { label: '생활/편의', value: '생활/편의' },
+        { label: '푸드', value: '푸드' },
+        { label: '문화/여가', value: '문화/여가' },
+        { label: '교육', value: '교육' },
+        { label: '여행/교통', value: '여행/교통' },
       ],
       selectedValue: selectedCategory,
       onSelect: handleCategoryFilter,
@@ -288,8 +402,7 @@ const PartnershipManagement = () => {
       options: [
         { label: '전체', value: '전체' },
         { label: '할인', value: '할인' },
-        { label: '적립', value: '적립' },
-        { label: '무료', value: '무료' },
+        { label: '증정', value: '증정' },
       ],
       selectedValue: selectedBenefitType,
       onSelect: handleBenefitTypeFilter,
@@ -370,7 +483,7 @@ const PartnershipManagement = () => {
       <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
-        totalItems={filteredPartners.length}
+        totalItems={sortedPartners.length}
         onPageChange={handlePageChange}
         width={1410}
       />
