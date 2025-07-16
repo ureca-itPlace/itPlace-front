@@ -54,11 +54,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
         </div>
 
         {/* 로그인 버튼 */}
-        <AuthButton
-          label="로그인"
-          onClick={handleLogin}
-          variant={email && password ? 'default' : 'disabled'}
-        />
+        <AuthButton label="로그인" onClick={handleLogin} />
 
         <AuthLinkRow onGoToPhoneAuth={onGoToPhoneAuth} onGoToFindEmail={onGoToFindEmail} />
         <AuthDivider />
