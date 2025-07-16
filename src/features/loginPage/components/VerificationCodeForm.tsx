@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 const checkVerificationCode = async (phone: string, code: string) => {
   return {
     data: {
-      userStatus: 'NEW_USER', // 'EXISTING_USER' 또는 'NEW_USER'
+      userStatus: 'EXISTING_USER', // 'EXISTING_USER' 또는 'NEW_USER'
       isLocalUser: false, // true면 로컬 가입자, false면 OAuth만 가입
       uplusDataExists: true, // true면 U+ 가입자
       registrationId: 'test-id',
@@ -192,6 +192,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
         subMessageClass={modal.subMessageClass}
         buttons={modal.buttons}
         onClose={closeModal}
+        children={modal.children}
       />
     </>
   );

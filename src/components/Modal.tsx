@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { TbX } from 'react-icons/tb';
 
 interface ButtonType {
@@ -46,7 +47,7 @@ const Modal: React.FC<ModalProps> = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
       onClick={handleOverlayClick}
@@ -71,7 +72,13 @@ const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* 서브 메시지 */}
-        {subMessage && <p className={`text-center w-full ${subMessageClass}`}>{subMessage}</p>}
+        {subMessage && (
+          <p
+            className={`text-center w-full mt-[28px] text-body-0 whitespace-pre-line ${subMessageClass}`}
+          >
+            {subMessage}
+          </p>
+        )}
 
         {/* 입력창 */}
         {input && (
@@ -85,7 +92,7 @@ const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* 하단 자식 요소 */}
-        {children && <div className="mt-[32px] w-full flex justify-center">{children}</div>}
+        {children && <div className="mt-[20px] w-full flex justify-center">{children}</div>}
 
         {/* 버튼 영역 */}
         {buttons.length > 0 && (
@@ -99,7 +106,7 @@ const Modal: React.FC<ModalProps> = ({
               return (
                 <button
                   key={idx}
-                  className={`flex-1 h-[56px] rounded-[10px] text-title-6  transition duration-200 ${typeClass}`}
+                  className={`flex-1 h-[56px] rounded-[10px] text-title-6 transition duration-200 ${typeClass}`}
                   onClick={btn.onClick}
                 >
                   {btn.label}
@@ -109,7 +116,8 @@ const Modal: React.FC<ModalProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body // ✅ 포탈 적용
   );
 };
 
@@ -139,7 +147,9 @@ export default Modal;
 // *   subMessageClass={modal.subMessageClass}
 // *   buttons={modal.buttons}
 // *   onClose={handleClose}
-// * />
+// * >
+// *   {modal.children}
+// * </Modal>
 // *
 // * 주요 props:
 // * - isOpen: 모달 열림 여부
