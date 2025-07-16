@@ -26,7 +26,7 @@ export interface ModalState {
 
 type Props = {
   onGoToLogin: () => void;
-  onVerified: () => void;
+  onVerified: (userInfo: { name: string; phone: string }) => void;
 };
 
 const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
@@ -75,13 +75,18 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
 
   const handleCheckCode = async () => {
     try {
+      // checkVerificationCode API 호출
+      // POST /verification/sms/confirm
+      // 요청: { name, phoneNumber, code }
+      // 응답: { userStatus, isLocalUser, uplusDataExists, uplusData }
       const res = await checkVerificationCode({ name, phoneNumber: phone, code });
-      const { userStatus, isLocalUser, uplusDataExists } = res.data;
+      const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
 
+      // 인증 성공 상태 설정
       setIsVerified(true);
       setCodeError('');
 
-      // 아래는 실제 회원 존재 여부 확인 후 분기
+      // 1. 로컬 계정 가입된 사용자 → 로그인 유도
       if (userStatus === 'EXISTING_USER' && isLocalUser) {
         setModal(
           modalPresets.alreadyJoined(() => {
@@ -89,10 +94,14 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
             onGoToLogin();
           }, closeModal)
         );
-      } else if (userStatus === 'EXISTING_USER') {
+      }
+
+      // 2. OAuth 가입자 + Itplace 기존 유저 → 통합 안내
+      else if (userStatus === 'EXISTING_USER') {
         setModal(
           modalPresets.mergeAccount(
             () => {
+              // 통합하기 클릭 시 → 통합 완료 모달 띄우고 로그인으로 이동
               closeModal();
               setModal(
                 modalPresets.integrationSuccess(() => {
@@ -102,26 +111,47 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
               );
             },
             () => {
-              closeModal();
-              onGoToLogin();
-            }
-          )
-        );
-      } else if (uplusDataExists) {
-        setModal(
-          modalPresets.uplusMember(
-            () => {
-              closeModal();
-              onVerified();
-            },
-            () => {
+              // 그만하기 클릭 시 → 로그인 이동
               closeModal();
               onGoToLogin();
             }
           )
         );
       }
+
+      // 3. 신규 유저 + U+ 멤버 → U+ 정보 사용 여부 물어보기
+      else if (uplusDataExists && uplusData) {
+        setModal(
+          modalPresets.uplusMember(
+            () => {
+              // 예 클릭 → 백엔드에서 받아온 uplusData를 사용
+              closeModal();
+              onVerified({
+                name: uplusData.name,
+                phone: uplusData.phone,
+              });
+            },
+            () => {
+              // 아니요 클릭 → 사용자가 직접 입력한 name, phone 사용
+              closeModal();
+              onVerified({
+                name,
+                phone,
+              });
+            }
+          )
+        );
+      }
+
+      // 4. 완전 신규 사용자 → 기존 입력 정보 그대로 사용
+      else {
+        onVerified({
+          name,
+          phone,
+        });
+      }
     } catch (error: any) {
+      // API 에러 응답에 따른 분기 처리
       const errorCode = error?.response?.data?.code;
       if (errorCode === 'SMS_CODE_MISMATCH') {
         setCodeError('인증번호가 일치하지 않습니다.');
@@ -130,6 +160,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
       } else {
         setCodeError('알 수 없는 오류가 발생했습니다.');
       }
+
+      // 인증 실패 처리
       setIsVerified(false);
     }
   };
@@ -186,7 +218,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
         {/* 다음 버튼 */}
         <AuthButton
           label="다음"
-          onClick={onVerified}
+          onClick={() => onVerified({ name, phone })}
           variant={isVerified ? 'default' : 'disabled'}
           className="mt-[180px]"
         />
