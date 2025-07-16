@@ -130,9 +130,9 @@ export default function MyFavoritesPage() {
   return (
     <>
       <MainContentWrapper>
-        <div className="flex flex-col h-full justify-between">
+        <div className="flex-shrink-0">
           {/* 상단 타이틀 */}
-          <h1 className="text-title-2 text-black mb-2">찜한 혜택</h1>
+          <h1 className="text-title-2 text-black mb-7">찜한 혜택</h1>
 
           <div className="flex justify-between">
             {/* 토글 버튼 */}
@@ -145,60 +145,59 @@ export default function MyFavoritesPage() {
 
             {/* 🔍 검색 바 */}
             <SearchBar
-              placeholder="검색하기"
+              placeholder="제휴처명으로 검색하기"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onClear={() => setKeyword('')}
-              width={344} // 필요시 크기 조정
+              width={280}
               height={50}
+              backgroundColor="#f5f5f5" // ← grey01에 해당하는 HEX 코드
             />
           </div>
 
           {/* 카드 리스트 + 페이지네이션 */}
-          <div>
-            <div className="flex-1">
-              <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px]">
-                {currentItems.map((item) => (
-                  <div
-                    key={item.benefitId}
-                    onClick={() => setSelectedId(item.benefitId)}
-                    className={`relative p-4 border rounded-[18px] cursor-pointer w-[220px] h-[240px] transition-shadow ${
-                      selectedId === item.benefitId ? 'border-purple04 border-2' : 'border-grey03'
-                    }`}
+          <div className="flex flex-col flex-grow">
+            <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px] mt-10">
+              {currentItems.map((item) => (
+                <div
+                  key={item.benefitId}
+                  onClick={() => setSelectedId(item.benefitId)}
+                  className={`relative p-4 border rounded-[18px] cursor-pointer w-[220px] h-[240px] transition-shadow ${
+                    selectedId === item.benefitId ? 'border-purple04 border-2' : 'border-grey03'
+                  }`}
+                >
+                  {/* 즐겨찾기 해제 버튼 */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFavorite(item.benefitId);
+                    }}
+                    className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
+                    title="즐겨찾기 해제"
                   >
-                    {/* 즐겨찾기 해제 버튼 */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveFavorite(item.benefitId);
-                      }}
-                      className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
-                      title="즐겨찾기 해제"
-                    >
-                      <TbStarFilled size={22} />
-                    </button>
+                    <TbStarFilled size={22} />
+                  </button>
 
-                    <img
-                      src={item.image}
-                      alt={item.benefitName}
-                      className="h-[108px] w-auto object-contain mx-auto mt-6"
-                    />
-                    <p className="text-grey05 text-title-5 text-center mt-4">{item.benefitName}</p>
-                  </div>
-                ))}
-              </div>
+                  <img
+                    src={item.image}
+                    alt={item.benefitName}
+                    className="h-[108px] w-auto object-contain mx-auto mt-6"
+                  />
+                  <p className="text-grey05 text-title-5 text-center mt-4">{item.benefitName}</p>
+                </div>
+              ))}
             </div>
+          </div>
 
-            {/* ✅ 페이지네이션 */}
-            <div className="flex justify-center">
-              <Pagination
-                currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                totalItems={filteredFavorites.length}
-                onPageChange={handlePageChange}
-                width={37}
-              />
-            </div>
+          {/* ✅ 페이지네이션 */}
+          <div className="mt-auto flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredFavorites.length}
+              onPageChange={handlePageChange}
+              width={37}
+            />
           </div>
         </div>
       </MainContentWrapper>
