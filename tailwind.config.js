@@ -11,12 +11,11 @@ export default {
         'title-1': ['2.625rem', { lineHeight: '130%', fontWeight: 'bold' }],
         'title-2': ['2rem', { lineHeight: '130%', fontWeight: 'bold' }],
         'title-3': ['1.75rem', { lineHeight: '130%', fontWeight: 'bold' }],
-        'title-4': ['1.5rem', { lineHeight: '130%', fontWeight: 'bold' }],
-        'title-5': ['1.25rem', { lineHeight: '130%', fontWeight: 'bold' }],
-        'title-6': ['1.125rem', { lineHeight: '130%', fontWeight: 'bold' }],
-        'title-7': ['1rem', { lineHeight: '130%', fontWeight: 'bold' }],
-        'title-8': ['0.875rem', { lineHeight: '130%', fontWeight: 'bold' }],
-
+        'title-4': ['1.5rem', { lineHeight: '130%', fontWeight: '500' }],
+        'title-5': ['1.25rem', { lineHeight: '130%', fontWeight: '500' }],
+        'title-6': ['1.125rem', { lineHeight: '130%', fontWeight: '500' }],
+        'title-7': ['1rem', { lineHeight: '130%', fontWeight: '500' }],
+        'title-8': ['0.875rem', { lineHeight: '130%', fontWeight: '500' }],
         // Body - line-height 150%
         'body-0': ['1.25rem', { lineHeight: '150%' }],
         'body-1': ['1.125rem', { lineHeight: '150%' }],
@@ -78,7 +77,7 @@ export default {
       xl: '1280px',
       '2xl': '1536px',
       // max-width 기반 반대 방향 브레이크포인트 (웹 우선 대응)
-      'max-xl':{ max: '1536px'}, // 125% 배율 대비
+      'max-xl': { max: '1536px' }, // 125% 배율 대비
       'max-lg': { max: '1023px' }, // 1023px 이하
       'max-md': { max: '767px' },
       'max-sm': { max: '639px' },
