@@ -6,6 +6,7 @@ import MainPage from '../pages/MainPage';
 import AdminPage from '../pages/adminPage/AdminPage';
 import MyPage from '../pages/myPage/MyPage';
 import AllBenefitsPage from '../pages/AllBenefitsPage';
+import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 const router = createBrowserRouter([
@@ -14,6 +15,8 @@ const router = createBrowserRouter([
   {
     element: <DefaultLayout />,
     children: [
+      { path: '/', element: <LandingPage /> }, // 기본 라우터
+      { path: '/login', element: <LoginPage /> }, // 기본 라우터
       { path: '/main', element: <MainPage /> }, // 각 페이지별 레이아웃이나 자식 라우팅은 각자 작업하면서 자유롭게 추가
       { path: '/mypage', element: <MyPage /> },
       { path: '/benefits', element: <AllBenefitsPage /> },
