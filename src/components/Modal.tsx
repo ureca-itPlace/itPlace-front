@@ -3,7 +3,7 @@ import { TbX } from 'react-icons/tb';
 
 interface ButtonType {
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
   type?: 'primary' | 'secondary';
 }
 
@@ -11,6 +11,8 @@ interface ModalProps {
   isOpen: boolean;
   title?: string;
   message?: string;
+  subMessage?: string;
+  subMessageClass?: string;
   input?: boolean;
   inputValue?: string;
   inputPlaceholder?: string;
@@ -24,6 +26,8 @@ const Modal: React.FC<ModalProps> = ({
   isOpen,
   title,
   message,
+  subMessage = '',
+  subMessageClass = '',
   input = false,
   inputValue = '',
   inputPlaceholder = '',
@@ -51,7 +55,7 @@ const Modal: React.FC<ModalProps> = ({
         ref={modalRef}
         className="relative w-[500px] bg-white rounded-[20px] shadow-xl px-10 py-12 flex flex-col items-center"
       >
-        {/* X 아이콘 */}
+        {/* 닫기 버튼 */}
         <button onClick={onClose} className="absolute top-5 right-5 text-grey03 hover:text-grey04">
           <TbX size={24} />
         </button>
@@ -59,12 +63,15 @@ const Modal: React.FC<ModalProps> = ({
         {/* 제목 */}
         {title && <h2 className="text-title-4 font-bold text-black text-center w-full">{title}</h2>}
 
-        {/* 본문 */}
+        {/* 메시지 */}
         {message && (
           <p className="text-body-0 text-black whitespace-pre-line text-center mt-[16px] w-full">
             {message}
           </p>
         )}
+
+        {/* 서브 메시지 */}
+        {subMessage && <p className={`text-center w-full ${subMessageClass}`}>{subMessage}</p>}
 
         {/* 입력창 */}
         {input && (
@@ -77,7 +84,7 @@ const Modal: React.FC<ModalProps> = ({
           />
         )}
 
-        {/* 하단 글 영역 */}
+        {/* 하단 자식 요소 */}
         {children && <div className="mt-[32px] w-full flex justify-center">{children}</div>}
 
         {/* 버튼 영역 */}
