@@ -363,7 +363,6 @@ const PartnershipManagement = () => {
         onRowClick={(row) => handlePartnerDetailClick(row as unknown as Partner)}
         width={1410}
         height={516}
-        rowHeight={50}
         emptyMessage="제휴처가 없습니다."
       />
 
