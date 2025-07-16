@@ -13,11 +13,12 @@ type Props = {
   mode: 'signup' | 'find';
   currentStep: 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal';
   onGoToLogin: () => void;
-  onAuthComplete: (data: { name: string; phone: string }) => void;
+  onAuthComplete: (data: { name: string; phone: string; registrationId: string }) => void;
   onVerified: () => void;
   onSignUpComplete: () => void;
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
+  registrationIdFromPhoneAuth: string;
 };
 
 const PhoneAuthForm = ({
@@ -29,10 +30,14 @@ const PhoneAuthForm = ({
   onSignUpComplete,
   nameFromPhoneAuth,
   phoneFromPhoneAuth,
+  registrationIdFromPhoneAuth,
 }: Props) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [userCaptchaInput, setUserCaptchaInput] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [gender, setGender] = useState('');
+  const [membershipId, setMembershipId] = useState('');
 
   // 보안문자 외 입력 유효성만 확인
   const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
@@ -58,16 +63,25 @@ const PhoneAuthForm = ({
     }
 
     try {
-      await sendVerificationCode(name, phone);
-      onAuthComplete({ name, phone });
-    } catch (error) {
-      console.warn('백엔드 연결 전 → 강제로 다음 단계로 진행');
-      onAuthComplete({ name, phone });
+      const res = await sendVerificationCode(name, phone);
+      const registrationId = res.data.registrationId;
+      onAuthComplete({ name, phone, registrationId });
+    } catch (error: any) {
+      console.error('전송 실패:', error.response?.data || error.message);
     }
   };
 
   if (currentStep === 'verification') {
-    return <VerificationCodeForm mode={mode} onGoToLogin={onGoToLogin} onVerified={onVerified} />;
+    return (
+      <VerificationCodeForm
+        mode={mode}
+        onGoToLogin={onGoToLogin}
+        onVerified={onVerified}
+        name={nameFromPhoneAuth}
+        phone={phoneFromPhoneAuth}
+        registrationId={registrationIdFromPhoneAuth}
+      />
+    );
   }
 
   if (currentStep === 'signUp') {
@@ -76,13 +90,28 @@ const PhoneAuthForm = ({
         nameFromPhoneAuth={nameFromPhoneAuth}
         phoneFromPhoneAuth={phoneFromPhoneAuth}
         onGoToLogin={onGoToLogin}
-        onNext={onSignUpComplete}
+        onNext={({ birthday, gender, membershipId }) => {
+          setBirthday(birthday);
+          setGender(gender);
+          setMembershipId(membershipId);
+          onSignUpComplete(); // currentStep을 'signUpFinal'로 바꾸는 로직
+        }}
       />
     );
   }
 
   if (currentStep === 'signUpFinal') {
-    return <SignUpFinalForm onGoToLogin={onGoToLogin} />;
+    return (
+      <SignUpFinalForm
+        onGoToLogin={onGoToLogin}
+        registrationId={registrationIdFromPhoneAuth}
+        name={nameFromPhoneAuth}
+        phoneNumber={phoneFromPhoneAuth}
+        birthday={birthday}
+        gender={gender}
+        membershipId={membershipId}
+      />
+    );
   }
 
   return (

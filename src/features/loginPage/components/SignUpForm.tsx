@@ -8,7 +8,13 @@ type SignUpFormProps = {
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
   onGoToLogin: () => void;
-  onNext: () => void;
+  onNext: (data: {
+    name: string;
+    phone: string;
+    birthday: string;
+    gender: string;
+    membershipId: string;
+  }) => void;
 };
 
 const SignUpForm = ({
@@ -144,9 +150,15 @@ const SignUpForm = ({
       {/* 다음 버튼 */}
       <AuthButton
         label="다음"
-        onClick={onNext}
-        variant={isValid ? 'default' : 'disabled'}
-        className="w-[320px] max-lg:w-full"
+        onClick={() =>
+          onNext({
+            name: formData.name,
+            phone: formData.phone,
+            birthday: formData.birth,
+            gender: formData.gender,
+            membershipId: formData.membershipNumber,
+          })
+        }
       />
 
       {/* 하단 링크 */}

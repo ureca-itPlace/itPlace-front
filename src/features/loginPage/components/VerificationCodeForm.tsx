@@ -4,7 +4,7 @@ import AuthInput from './AuthInput';
 import AuthFooter from './AuthFooter';
 import AuthButton from './AuthButton';
 import { TbClock } from 'react-icons/tb';
-import { checkVerificationCode } from '../apis/verification';
+import { checkVerificationCode, sendVerificationCode } from '../apis/verification';
 import Modal from '../../../components/Modal';
 import { modalPresets } from '../constants/modalPresets';
 
@@ -28,9 +28,19 @@ type Props = {
   mode: 'signup' | 'find';
   onGoToLogin: () => void;
   onVerified: (userInfo?: { name: string; phone: string }) => void;
+  name: string;
+  phone: string;
+  registrationId: string;
 };
 
-const VerificationCodeForm = ({ mode, onGoToLogin, onVerified }: Props) => {
+const VerificationCodeForm = ({
+  mode,
+  onGoToLogin,
+  onVerified,
+  name,
+  phone,
+  registrationId,
+}: Props) => {
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
@@ -45,10 +55,6 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified }: Props) => {
   });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  // TODO: 실사용 시 props로 전달받기
-  const name = '홍길동';
-  const phone = '01000000000';
 
   useEffect(() => {
     gsap.fromTo(
@@ -69,18 +75,32 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified }: Props) => {
     });
   };
 
-  const handleResend = () => {
-    console.log('인증번호 재발송 클릭됨');
-    // TODO: 인증번호 재발송 API 호출 위치
+  const handleResend = async () => {
+    try {
+      console.log('재전송 요청', name, phone);
+      await sendVerificationCode(name, phone); //상위에서 받은 휴대 번호
+      setCode('');
+    } catch (error) {
+      console.log('재전송 실패', error);
+    }
   };
 
   const handleCheckCode = async () => {
+    if (!code.trim()) {
+      setCodeError('인증번호를 입력해주세요.');
+      return;
+    }
     try {
-      const res = await checkVerificationCode({ name, phoneNumber: phone, code });
-      const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
-
+      const res = await checkVerificationCode({
+        registrationId,
+        phoneNumber: phone,
+        verificationCode: code,
+      });
+      console.log('인증 성공', res.data);
       setIsVerified(true);
       setCodeError('');
+
+      const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
 
       // 로컬 계정 → 로그인 유도
       if (userStatus === 'EXISTING_USER' && isLocalUser) {
