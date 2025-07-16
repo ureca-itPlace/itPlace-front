@@ -44,8 +44,6 @@ const useValidation = () => {
   };
 
   const validateAll = (formData: FormData) => {
-    const newErrors: Errors = {};
-
     validateField('email', formData.email, formData);
     validateField('password', formData.password, formData);
     validateField('passwordConfirm', formData.passwordConfirm, formData);
