@@ -11,7 +11,7 @@ export const modalPresets = {
       buttons: [{ label: '로그인', onClick: goLogin, type: 'primary' }],
     }) as ModalState,
 
-  mergeAccount: (onMerge: () => void, close: () => void) =>
+  mergeAccount: (onMerge: () => void, onCancel: () => void) =>
     ({
       open: true,
       title: '계정 통합 안내',
@@ -20,6 +20,11 @@ export const modalPresets = {
         '통합을 진행하면 기존 계정의 정보가 유지되며 앞으로는 \n 현재 로그인 방식으로 편리하게 서비스를 이용하실 수 있습니다.',
       subMessageClass: 'text-body-2 text-grey04 mt-[12px]',
       buttons: [
+        {
+          label: '그만하기',
+          onClick: onCancel,
+          type: 'secondary',
+        },
         {
           label: '통합하기',
           onClick: onMerge,
@@ -44,5 +49,15 @@ export const modalPresets = {
         { label: '아니요', onClick: onSkip, type: 'secondary' },
         { label: '예', onClick: onUseData, type: 'primary' },
       ],
+    }) as ModalState,
+
+  integrationSuccess: (onClose: () => void) =>
+    ({
+      open: true,
+      title: '통합에 성공하셨습니다.',
+      message: 'Itplacer계정와 카카오톡 계정/n모두 자유롭게 이용하실 수 있습니다.',
+      subMessage: '',
+      subMessageClass: '',
+      buttons: [{ label: '확인', onClick: onClose, type: 'primary' }],
     }) as ModalState,
 };

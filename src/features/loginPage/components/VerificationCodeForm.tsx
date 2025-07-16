@@ -4,30 +4,16 @@ import AuthInput from './AuthInput';
 import AuthFooter from './AuthFooter';
 import AuthButton from './AuthButton';
 import { TbClock } from 'react-icons/tb';
-// import { checkVerificationCode } from '../apis/verification';
+import { checkVerificationCode } from '../apis/verification';
 import Modal from '../../../components/Modal';
 import { modalPresets } from '../constants/modalPresets';
-import { useNavigate } from 'react-router-dom';
 
-const checkVerificationCode = async (phone: string, code: string) => {
-  return {
-    data: {
-      userStatus: 'EXISTING_USER', // 'EXISTING_USER' 또는 'NEW_USER'
-      isLocalUser: false, // true면 로컬 가입자, false면 OAuth만 가입
-      uplusDataExists: true, // true면 U+ 가입자
-      registrationId: 'test-id',
-    },
-  };
-};
-
-// 버튼 타입 정의
 export interface ModalButton {
   label: string;
   onClick: () => void;
   type: 'primary' | 'secondary';
 }
 
-// 모달 상태 타입 정의
 export interface ModalState {
   open: boolean;
   title: string;
@@ -45,6 +31,9 @@ type Props = {
 
 const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
   const [code, setCode] = useState('');
+  const [codeError, setCodeError] = useState('');
+  const [isVerified, setIsVerified] = useState(false);
+
   const [modal, setModal] = useState<ModalState>({
     open: false,
     title: '',
@@ -55,9 +44,9 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
   });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   // TODO: 실사용 시 props로 전달받기
+  const name = '홍길동';
   const phone = '01000000000';
 
   useEffect(() => {
@@ -67,11 +56,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
       { opacity: 1, duration: 0.5, ease: 'power2.out' }
     );
   }, []);
-
-  const handleResend = () => {
-    console.log('인증번호 재발송 클릭됨');
-    // TODO: 인증번호 재발송 API 호출 위치
-  };
 
   const closeModal = () => {
     setModal({
@@ -84,52 +68,69 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
     });
   };
 
-  const handleVerify = async () => {
-    if (!code.trim()) return;
+  const handleResend = () => {
+    console.log('인증번호 재발송 클릭됨');
+    // TODO: 인증번호 재발송 API 호출 위치
+  };
 
+  const handleCheckCode = async () => {
     try {
-      const res = await checkVerificationCode(phone, code);
-      const { userStatus, isLocalUser, uplusDataExists, registrationId } = res.data;
+      const res = await checkVerificationCode({ name, phoneNumber: phone, code });
+      const { userStatus, isLocalUser, uplusDataExists } = res.data;
 
-      // 기존 회원이면서 우리 플랫폼 가입자일 경우
+      setIsVerified(true);
+      setCodeError('');
+
+      // 아래는 실제 회원 존재 여부 확인 후 분기
       if (userStatus === 'EXISTING_USER' && isLocalUser) {
-        setModal(modalPresets.alreadyJoined(() => navigate('/login'), closeModal));
-      }
-      // 기존 회원이지만 우리 플랫폼 가입자는 아닌 경우 (OAuth 통합)
-      else if (userStatus === 'EXISTING_USER') {
         setModal(
-          modalPresets.mergeAccount(() => {
-            // TODO: 통합 처리 API 필요
-            console.log('계정 통합 실행');
+          modalPresets.alreadyJoined(() => {
             closeModal();
-            onVerified();
+            onGoToLogin();
           }, closeModal)
         );
-      }
-      // U+ 데이터 존재 시 → 간편가입 유도
-      else if (uplusDataExists) {
+      } else if (userStatus === 'EXISTING_USER') {
+        setModal(
+          modalPresets.mergeAccount(
+            () => {
+              closeModal();
+              setModal(
+                modalPresets.integrationSuccess(() => {
+                  closeModal();
+                  onGoToLogin();
+                })
+              );
+            },
+            () => {
+              closeModal();
+              onGoToLogin();
+            }
+          )
+        );
+      } else if (uplusDataExists) {
         setModal(
           modalPresets.uplusMember(
             () => {
-              // TODO: U+ 데이터 자동 입력 처리
-              console.log('U+ 정보 사용');
               closeModal();
               onVerified();
             },
             () => {
               closeModal();
-              onVerified(); // 사용하지 않아도 다음 단계로 진행
+              onGoToLogin();
             }
           )
         );
       }
-      // 신규 가입자
-      else {
-        onVerified();
+    } catch (error: any) {
+      const errorCode = error?.response?.data?.code;
+      if (errorCode === 'SMS_CODE_MISMATCH') {
+        setCodeError('인증번호가 일치하지 않습니다.');
+      } else if (errorCode === 'SMS_CODE_EXPIRED') {
+        setCodeError('인증번호가 만료되었습니다. 다시 요청해주세요.');
+      } else {
+        setCodeError('알 수 없는 오류가 발생했습니다.');
       }
-    } catch (error) {
-      console.warn('백엔드 연결 전이므로 강제로 다음으로 넘깁니다.');
-      onVerified();
+      setIsVerified(false);
     }
   };
 
@@ -144,14 +145,29 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
           <p className="text-title-4">입력해주세요</p>
         </div>
 
-        {/* 인증번호 입력 */}
-        <AuthInput
-          name="code"
-          placeholder="인증번호"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          className="mt-[48px]"
-        />
+        {/* 인증번호 입력 + 확인 버튼 */}
+        <div className="w-[320px] mt-[48px]">
+          <div className="flex items-center relative">
+            <AuthInput
+              name="code"
+              placeholder="인증번호"
+              value={code}
+              onChange={(e) => {
+                setCode(e.target.value);
+                setCodeError('');
+              }}
+              className="pr-[110px]"
+            />
+            <button
+              type="button"
+              onClick={handleCheckCode}
+              className="absolute right-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px]"
+            >
+              확인
+            </button>
+          </div>
+          {codeError && <p className="w-[320px] text-danger text-body-3 mt-[6px]">{codeError}</p>}
+        </div>
 
         {/* 타이머 + 안내 텍스트 */}
         <div className="text-body-3 text-grey03 mt-[20px] w-[320px] flex items-center gap-[4px]">
@@ -170,8 +186,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified }: Props) => {
         {/* 다음 버튼 */}
         <AuthButton
           label="다음"
-          onClick={handleVerify}
-          variant={code.trim() ? 'default' : 'disabled'}
+          onClick={onVerified}
+          variant={isVerified ? 'default' : 'disabled'}
           className="mt-[180px]"
         />
 
