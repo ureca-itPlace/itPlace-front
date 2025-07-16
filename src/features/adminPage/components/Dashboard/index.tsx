@@ -10,7 +10,7 @@ import {
   MostClickedPartnerItem,
   getFavoritesStatistics,
   FavoriteBenefitItem,
-} from './apis/partners';
+} from './apis/DashboardApis';
 import { RankingItem, ClickDataItem, WishlistItem } from './types';
 
 // API 응답을 RankingItem으로 변환하는 함수
