@@ -324,7 +324,16 @@ export default function MyFavoritesPage() {
           <FadeWrapper changeKey={selectedItems.length}>
             <h1 className="text-title-2 text-black mb-4 text-center">선택한 혜택</h1>
             <div className="flex flex-col items-center justify-center mt-7">
-              <img src="/images/myPage/icon-file.webp" alt="폴더" className="w-[185px] h-auto" />
+              <img
+                src="/images/myPage/icon-file.webp"
+                alt="폴더"
+                className="w-[185px] h-auto"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null; // 무한 루프 방지
+                  target.src = '/images/myPage/icon-file.png';
+                }}
+              />
               <div className="flex justify-center items-baseline">
                 <p className="text-[96px] font-bold text-orange04 mt-3">{selectedItems.length}</p>
                 <p className="text-title-1 text-grey05 ml-2">개</p>
