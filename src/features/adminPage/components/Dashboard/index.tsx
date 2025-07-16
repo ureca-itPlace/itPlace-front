@@ -10,8 +10,10 @@ import {
   MostClickedPartnerItem,
   getFavoritesStatistics,
   FavoriteBenefitItem,
+  getPartnerUsageStats,
+  PartnerUsageStatsItem,
 } from './apis/DashboardApis';
-import { RankingItem, ClickDataItem, WishlistItem } from './types';
+import { RankingItem, ClickDataItem, WishlistItem, UsageDataItem } from './types';
 
 // API 응답을 RankingItem으로 변환하는 함수
 const convertToRankingItem = (apiData: PartnerSearchRankingItem[]): RankingItem[] => {
@@ -42,6 +44,16 @@ const convertToWishlistItem = (apiData: FavoriteBenefitItem[]): WishlistItem[] =
   }));
 };
 
+// API 응답을 UsageDataItem으로 변환하는 함수
+const convertToUsageDataItem = (apiData: PartnerUsageStatsItem[]): UsageDataItem[] => {
+  return apiData.map((item) => ({
+    name: item.partnerName,
+    vvip: item.vvipUsageCount,
+    vip: item.vipUsageCount,
+    regular: item.basicUsageCount,
+  }));
+};
+
 // 제휴처별 찜 통계 데이터 (기본 데이터)
 const defaultHouseRegistrationData = [
   { name: '올리브영', value: 1200, color: '#250961' },
@@ -57,8 +69,8 @@ const defaultClickData = [
   { name: '야놀자 클라우드프로그램코리아 (숙박)', value: 62000, color: '#CDB5FF' },
 ];
 
-// 제휴처별 이용 통계 데이터 (기존 데이터 유지)
-const usageData = [
+// 제휴처별 이용 통계 데이터 (기본 데이터)
+const defaultUsageData = [
   { name: 'CGV', vvip: 40, vip: 20, regular: 25 },
   { name: '야놀자글로벌...', vvip: 45, vip: 25, regular: 30 },
   { name: 'GS25', vvip: 45, vip: 8, regular: 15 },
@@ -77,6 +89,7 @@ const Dashboard = () => {
   const [searchRankingData, setSearchRankingData] = useState<RankingItem[]>([]);
   const [clickData, setClickData] = useState<ClickDataItem[]>(defaultClickData);
   const [wishlistData, setWishlistData] = useState<WishlistItem[]>(defaultHouseRegistrationData);
+  const [usageData, setUsageData] = useState<UsageDataItem[]>(defaultUsageData);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -97,6 +110,11 @@ const Dashboard = () => {
           favoritesResponse.data.favoriteBenefits
         );
         setWishlistData(convertedWishlistData);
+
+        // 이용 통계 데이터 가져오기
+        const usageResponse = await getPartnerUsageStats('30d');
+        const convertedUsageData = convertToUsageDataItem(usageResponse.data.usageStats);
+        setUsageData(convertedUsageData);
       } catch (err) {
         console.error('대시보드 데이터 조회 실패:', err);
         // 에러 발생 시 기본 데이터 사용
@@ -109,6 +127,7 @@ const Dashboard = () => {
         ]);
         setClickData(defaultClickData);
         setWishlistData(defaultHouseRegistrationData);
+        setUsageData(defaultUsageData);
       }
     };
 

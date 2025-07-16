@@ -35,6 +35,19 @@ export interface FavoritesStatisticsResponse {
   favoriteBenefits: FavoriteBenefitItem[];
 }
 
+// 제휴처별 이용 통계 관련 타입
+export interface PartnerUsageStatsItem {
+  partnerName: string;
+  vvipUsageCount: number;
+  vipUsageCount: number;
+  basicUsageCount: number;
+  totalUsageCount: number;
+}
+
+export interface PartnerUsageStatsResponse {
+  usageStats: PartnerUsageStatsItem[];
+}
+
 export interface ApiResponse<T = unknown> {
   code: string;
   status: string;
@@ -69,6 +82,16 @@ export const getFavoritesStatistics = async (
 ): Promise<ApiResponse<FavoritesStatisticsResponse>> => {
   const response = await api.get('/benefits/favorites', {
     params: { limit },
+  });
+  return response.data;
+};
+
+// 제휴처별 이용 통계 조회 함수
+export const getPartnerUsageStats = async (
+  period: '7d' | '30d' | '90d' | '1y' = '30d'
+): Promise<ApiResponse<PartnerUsageStatsResponse>> => {
+  const response = await api.get('/partners/usage-stats', {
+    params: { period },
   });
   return response.data;
 };
