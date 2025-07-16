@@ -10,6 +10,7 @@ import { loadCaptchaEnginge, validateCaptcha } from 'react-simple-captcha';
 import { sendVerificationCode } from '../apis/verification';
 
 type Props = {
+  mode: 'signup' | 'find';
   currentStep: 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal';
   onGoToLogin: () => void;
   onAuthComplete: (data: { name: string; phone: string }) => void;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 const PhoneAuthForm = ({
+  mode,
   currentStep,
   onGoToLogin,
   onAuthComplete,
@@ -35,13 +37,13 @@ const PhoneAuthForm = ({
   // 보안문자 외 입력 유효성만 확인
   const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
 
-  // ✅ 새로고침 핸들러
+  // 새로고침 핸들러
   const handleCaptchaRefresh = useCallback(() => {
     loadCaptchaEnginge(6); // 새 캡차 생성
     setUserCaptchaInput('');
   }, []);
 
-  // ✅ CaptchaBox는 useMemo로 고정 렌더링
+  // CaptchaBox는 useMemo로 고정 렌더링
   const memoizedCaptchaBox = useMemo(() => {
     return <CaptchaBox onRefresh={handleCaptchaRefresh} />;
   }, [handleCaptchaRefresh]);
@@ -65,7 +67,7 @@ const PhoneAuthForm = ({
   };
 
   if (currentStep === 'verification') {
-    return <VerificationCodeForm onGoToLogin={onGoToLogin} onVerified={onVerified} />;
+    return <VerificationCodeForm mode={mode} onGoToLogin={onGoToLogin} onVerified={onVerified} />;
   }
 
   if (currentStep === 'signUp') {
