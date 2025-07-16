@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 import CaptchaBox from './CaptchaBox';
