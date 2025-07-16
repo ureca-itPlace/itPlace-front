@@ -35,17 +35,17 @@ const Sidebar = ({ onTabChange }: SidebarProps) => {
         className="text-title-1"
         style={{ marginTop: 24, marginLeft: 34, textShadow: '0px 0px 5px rgba(255,255,255,0.6)' }}
       >
-        IT : PLACE
+        IT: PLACE
       </div>
 
-      <nav className="mt-8" style={{ paddingLeft: 12, paddingRight: 12 }}>
+      <nav className="mt-14" style={{ paddingLeft: 12, paddingRight: 12 }}>
         {menuItems.map((item) => {
           const IconComponent = item.icon;
           return (
             <button
               key={item.id}
               onClick={() => handleTabClick(item.id)}
-              className={`w-full text-left px-4 py-3 mb-2 rounded-[10px] text-body-0 transition-all duration-200 flex items-center ${
+              className={`w-full text-left px-4 py-3 mb-4 rounded-[10px] text-body-0 transition-all duration-200 flex items-center ${
                 selectedTab === item.id
                   ? 'bg-white text-[#250961] font-bold'
                   : 'bg-transparent text-white hover:bg-white/10'
