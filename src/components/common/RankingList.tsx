@@ -14,9 +14,9 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
       className="bg-white p-6 rounded-[18px] shadow-sm border border-gray-100"
       style={{ width, height }}
     >
-      <h3 className="text-title-4 mb-4">
+      <h3 className="text-title-4 font-bold mb-4">
         {title}
-        <span className="text-body-1 text-grey04 ml-3">{subtitle}</span>
+        <span className="text-body-1 font-medium text-grey04 ml-3">{subtitle}</span>
       </h3>
       <div className="space-y-3">
         {data.map((item, index) => (
@@ -37,7 +37,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
             </div>
             <div className="flex items-center gap-2">
               <span
-                className={`text-body-1 w-4 text-center transition-all duration-200 ${
+                className={`text-body-2 font-light w-4 text-center transition-all duration-200 ${
                   item.trend === 'up'
                     ? 'text-orange04'
                     : item.trend === 'down'
@@ -48,7 +48,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
                 {item.trend === 'up' ? '▲' : item.trend === 'down' ? '▼' : '-'}
               </span>
               <span
-                className={`text-body-1 w-8 text-right font-semibold transition-all duration-200 ${
+                className={`text-body-2 font-light w-8 text-right  transition-all duration-200 ${
                   item.trend === 'up'
                     ? 'text-orange04'
                     : item.trend === 'down'

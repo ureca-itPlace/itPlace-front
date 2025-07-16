@@ -24,9 +24,9 @@ const UsageStatistics = ({
       style={{ width, height }}
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-title-4">
+        <h3 className="text-title-4 font-bold">
           {title}
-          <span className="text-body-1 text-gray-500 ml-3">{subtitle}</span>
+          <span className="text-body-1 font-medium text-grey04 ml-3">{subtitle}</span>
         </h3>
         <div className="flex items-center mr-[40px] text-body-1">
           {legends.map((legend, index) => (
