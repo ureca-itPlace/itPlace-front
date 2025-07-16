@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 import CaptchaBox from './CaptchaBox';
@@ -6,6 +6,7 @@ import AuthFooter from './AuthFooter';
 import VerificationCodeForm from './VerificationCodeForm';
 import SignUpForm from './SignUpForm';
 import SignUpFinalForm from './SignUpFinalForm';
+import { loadCaptchaEnginge, validateCaptcha } from 'react-simple-captcha';
 import { sendVerificationCode } from '../apis/verification';
 
 type Props = {
@@ -18,11 +19,6 @@ type Props = {
   phoneFromPhoneAuth: string;
 };
 
-const generateRandomText = () => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-};
-
 const PhoneAuthForm = ({
   currentStep,
   onGoToLogin,
@@ -32,41 +28,46 @@ const PhoneAuthForm = ({
   nameFromPhoneAuth,
   phoneFromPhoneAuth,
 }: Props) => {
+  // 입력 상태
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [captchaText, setCaptchaText] = useState('');
   const [userCaptchaInput, setUserCaptchaInput] = useState('');
 
-  useEffect(() => {
-    setCaptchaText(generateRandomText());
+  // 이름, 전화번호, 보안문자 입력 여부만 체크
+  const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
+
+  // 캡차 새로고침 시 보안문자 재생성 + 입력 초기화
+  const handleCaptchaRefresh = useCallback(() => {
+    loadCaptchaEnginge(6);
+    setUserCaptchaInput('');
   }, []);
 
-  //보안문자 대소문자 무시 비교 포함
-  const isValid =
-    name.trim() &&
-    phone.trim() &&
-    userCaptchaInput.trim() &&
-    userCaptchaInput.trim().toUpperCase() === captchaText.toUpperCase();
+  // 캡차 박스는 useMemo로 렌더 고정
+  const memoizedCaptchaBox = useMemo(() => {
+    return <CaptchaBox onRefresh={handleCaptchaRefresh} />;
+  }, [handleCaptchaRefresh]);
 
+  // 다음 버튼 클릭 시 처리 로직
   const handleNext = async () => {
-    if (!isValid) return;
+    if (!isReadyToValidate) return;
+
+    // 보안문자 검증
+    const isCaptchaValid = validateCaptcha(userCaptchaInput.trim());
+    if (!isCaptchaValid) {
+      alert('보안문자가 일치하지 않습니다.');
+      return;
+    }
 
     try {
-      console.log('📡 인증번호 요청 중...');
-      await sendVerificationCode(name, phone); // TODO: 실제 연결되면 여기서만 다음으로
-      console.log('인증번호 전송 성공');
-      onAuthComplete({ name, phone }); // 정상 성공 시
+      await sendVerificationCode(name, phone);
+      onAuthComplete({ name, phone });
     } catch (error) {
-      console.error('인증번호 전송 실패:', error);
-      // TODO: 사용자에게 알림 표시 (ex: alert('서버와 연결되지 않았습니다.'))
-
-      // [임시 처리] API 없으므로 일단 다음 단계로 넘김
-      console.warn('백엔드 연결 전이므로 강제로 다음으로 넘깁니다.');
+      // 실제 전송 실패 시에도 테스트를 위해 강제로 다음 단계로 넘어감
       onAuthComplete({ name, phone });
     }
   };
 
-  // 렌더링은 조건에 따라 분기
+  // 단계별 폼 전환
   if (currentStep === 'verification') {
     return <VerificationCodeForm onGoToLogin={onGoToLogin} onVerified={onVerified} />;
   }
@@ -86,7 +87,7 @@ const PhoneAuthForm = ({
     return <SignUpFinalForm onGoToLogin={onGoToLogin} />;
   }
 
-  // 기본 phoneAuth 화면
+  // 기본: 전화번호 인증 단계 UI
   return (
     <div className="w-full flex flex-col items-center">
       {/* 제목 */}
@@ -105,7 +106,7 @@ const PhoneAuthForm = ({
         />
       </div>
 
-      {/* 휴대폰 번호 입력 */}
+      {/* 전화번호 입력 */}
       <div className="mt-[20px]">
         <AuthInput
           name="phone"
@@ -115,15 +116,10 @@ const PhoneAuthForm = ({
         />
       </div>
 
-      {/* 캡차 박스 */}
-      <div className="mt-[20px]">
-        <CaptchaBox
-          captchaText={captchaText}
-          onRefresh={() => setCaptchaText(generateRandomText())}
-        />
-      </div>
+      {/* 캡차 이미지 박스 */}
+      <div className="mt-[20px]">{memoizedCaptchaBox}</div>
 
-      {/* 캡차 입력 */}
+      {/* 보안문자 입력 */}
       <div className="mt-[20px]">
         <AuthInput
           name="captcha"
@@ -135,10 +131,14 @@ const PhoneAuthForm = ({
 
       {/* 다음 버튼 */}
       <div className="mt-[20px]">
-        <AuthButton label="다음" onClick={handleNext} variant={isValid ? 'default' : 'disabled'} />
+        <AuthButton
+          label="다음"
+          onClick={handleNext}
+          variant={isReadyToValidate ? 'default' : 'disabled'}
+        />
       </div>
 
-      {/* 하단 링크 */}
+      {/* 로그인 유도 문구 */}
       <AuthFooter
         leftText="이미 회원이신가요?"
         rightText="로그인 하러 가기"

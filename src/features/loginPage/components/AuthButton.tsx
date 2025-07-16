@@ -13,7 +13,7 @@ const AuthButton = ({ label, onClick, variant = 'default', className }: AuthButt
     'w-[320px] h-[50px] rounded-[18px] text-title-5 flex items-center justify-center transition-colors duration-200';
 
   const variantClasses = {
-    default: 'bg-purple02 text-white hover:bg-purple04',
+    default: 'bg-purple04 text-white hover:bg-purple05',
     kakao: 'bg-[#FEE500] text-black',
     disabled: 'bg-purple02 text-white cursor-not-allowed',
   };
