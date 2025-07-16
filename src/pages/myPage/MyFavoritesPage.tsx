@@ -168,34 +168,35 @@ export default function MyFavoritesPage() {
 
           {/* 편집 버튼 */}
           <div className="flex items-center justify-end gap-3 mr-1 mb-1">
-            {!isEditing ? (
+            {isEditing ? (
+              <label className="flex items-center text-grey05 text-body-0 font-medium">
+                <input
+                  type="checkbox"
+                  className="mr-1 w-4 h-4 accent-purple04 appearance-none rounded-[4px] border border-grey03 checked:bg-[url('/images/myPage/icon-check.png')] bg-no-repeat bg-center checked:border-purple04"
+                  checked={
+                    selectedItems.length === filteredFavorites.length &&
+                    filteredFavorites.length > 0
+                  }
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setSelectedItems(filteredFavorites.map((item) => item.benefitId));
+                    } else {
+                      setSelectedItems([]);
+                    }
+                  }}
+                />
+                전체 선택
+              </label>
+            ) : (
               <button
                 onClick={() => {
                   setIsEditing(true);
-                  setSelectedItems([]); // 초기화
+                  setSelectedItems([]);
                 }}
                 className="text-grey05 text-body-0 font-medium"
               >
                 편집
               </button>
-            ) : (
-              <>
-                <button
-                  onClick={() => {
-                    setIsEditing(false);
-                    setSelectedItems([]);
-                  }}
-                  className="px-4 py-2 rounded-[8px] bg-grey02 text-black"
-                >
-                  편집 취소
-                </button>
-                <button
-                  onClick={() => setIsDeleteModalOpen(true)}
-                  className="px-4 py-2 rounded-[8px] bg-purple04 text-white"
-                >
-                  삭제하기
-                </button>
-              </>
             )}
           </div>
 
@@ -283,7 +284,7 @@ export default function MyFavoritesPage() {
           </div>
 
           {/* ✅ 페이지네이션 */}
-          <div className="mt-auto flex justify-center">
+          <div className="mt-auto relativ flex justify-center items-end">
             <Pagination
               currentPage={currentPage}
               itemsPerPage={itemsPerPage}
@@ -291,6 +292,25 @@ export default function MyFavoritesPage() {
               onPageChange={handlePageChange}
               width={37}
             />
+            {isEditing && (
+              <div className="absolute right-[56px] flex gap-3">
+                <button
+                  onClick={() => {
+                    setIsEditing(false);
+                    setSelectedItems([]);
+                  }}
+                  className="px-4 py-2 rounded-[16px] bg-grey01 hover:bg-grey02 text-title-8 text-grey04 "
+                >
+                  편집 취소
+                </button>
+                <button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="px-4 py-2 rounded-[16px] bg-purple04 hover:bg-purple05 text-title-8 text-white"
+                >
+                  삭제하기
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </MainContentWrapper>
@@ -301,7 +321,7 @@ export default function MyFavoritesPage() {
         bottomImageFallback="/images/myPage/bunny-favorites.png"
       >
         {isEditing ? (
-          <FadeWrapper changeKey={selectedId}>
+          <FadeWrapper changeKey={selectedItems.length}>
             <h1 className="text-title-2 text-black mb-4 text-center">선택한 혜택</h1>
             <div className="flex flex-col items-center justify-center mt-7">
               <img src="/images/myPage/icon-file.webp" alt="폴더" className="w-[185px] h-auto" />
