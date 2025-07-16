@@ -6,6 +6,7 @@ import AuthFooter from './AuthFooter';
 import VerificationCodeForm from './VerificationCodeForm';
 import SignUpForm from './SignUpForm';
 import SignUpFinalForm from './SignUpFinalForm';
+import { sendVerificationCode } from '../apis/verification';
 
 type Props = {
   currentStep: 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal';
@@ -31,7 +32,6 @@ const PhoneAuthForm = ({
   nameFromPhoneAuth,
   phoneFromPhoneAuth,
 }: Props) => {
-  // ✅ 훅은 무조건 조건 밖에서 선언해야 함
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [captchaText, setCaptchaText] = useState('');
@@ -41,15 +41,32 @@ const PhoneAuthForm = ({
     setCaptchaText(generateRandomText());
   }, []);
 
-  const isValid = name && phone && userCaptchaInput;
+  //보안문자 대소문자 무시 비교 포함
+  const isValid =
+    name.trim() &&
+    phone.trim() &&
+    userCaptchaInput.trim() &&
+    userCaptchaInput.trim().toUpperCase() === captchaText.toUpperCase();
 
-  const handleNext = () => {
-    if (isValid) {
+  const handleNext = async () => {
+    if (!isValid) return;
+
+    try {
+      console.log('📡 인증번호 요청 중...');
+      await sendVerificationCode(name, phone); // TODO: 실제 연결되면 여기서만 다음으로
+      console.log('인증번호 전송 성공');
+      onAuthComplete({ name, phone }); // 정상 성공 시
+    } catch (error) {
+      console.error('인증번호 전송 실패:', error);
+      // TODO: 사용자에게 알림 표시 (ex: alert('서버와 연결되지 않았습니다.'))
+
+      // [임시 처리] API 없으므로 일단 다음 단계로 넘김
+      console.warn('백엔드 연결 전이므로 강제로 다음으로 넘깁니다.');
       onAuthComplete({ name, phone });
     }
   };
 
-  // ✅ 렌더링은 조건에 따라 분기
+  // 렌더링은 조건에 따라 분기
   if (currentStep === 'verification') {
     return <VerificationCodeForm onGoToLogin={onGoToLogin} onVerified={onVerified} />;
   }

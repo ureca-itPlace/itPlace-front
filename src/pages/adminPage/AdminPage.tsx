@@ -1,5 +1,6 @@
+import AdminLayout from '../../features/adminPage/components/Layout';
 const AdminPage = () => {
-  return <div>관리자페이지입니다.</div>;
+  return <AdminLayout />;
 };
 
 export default AdminPage;

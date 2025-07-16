@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 import ErrorMessage from './ErrorMessage';
 import AuthFooter from './AuthFooter';
 import { TbEye, TbEyeOff } from 'react-icons/tb';
 import useValidation from '../hooks/UseValidation';
+import { signUpFinal } from '../apis/user';
 
 type SignUpFinalFormProps = {
   onGoToLogin: () => void;
@@ -25,7 +26,6 @@ const SignUpFinalForm = ({ onGoToLogin }: SignUpFinalFormProps) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [isValid, setIsValid] = useState(false);
 
   const { errors, emailChecked, checkEmail, validateAll, validateField } = useValidation();
 
@@ -42,17 +42,32 @@ const SignUpFinalForm = ({ onGoToLogin }: SignUpFinalFormProps) => {
     checkEmail();
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const valid = validateAll(formData);
     if (valid && emailChecked) {
-      console.log('🎉 최종 제출:', formData);
+      try {
+        console.log('회원가입 최종 요청 중...');
+        await signUpFinal(formData.email, formData.password);
+        console.log('회원가입 성공');
+        onGoToLogin();
+      } catch (error) {
+        console.error('회원가입 실패:', error);
+        console.warn('백엔드 없음. 강제로 이동');
+        onGoToLogin();
+      }
     }
   };
 
-  useEffect(() => {
-    const valid = validateAll(formData);
-    setIsValid(valid && emailChecked);
-  }, [formData, emailChecked]);
+  // 버튼 활성화 조건: 실시간 계산 (상태 사용 X)
+  const isValid =
+    formData.email &&
+    formData.password &&
+    formData.passwordConfirm &&
+    formData.password === formData.passwordConfirm &&
+    !errors.email &&
+    !errors.password &&
+    !errors.passwordConfirm &&
+    emailChecked;
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -134,6 +149,7 @@ const SignUpFinalForm = ({ onGoToLogin }: SignUpFinalFormProps) => {
         variant={isValid ? 'default' : 'disabled'}
         className="w-[320px] mt-[100px] max-lg:w-full"
       />
+
       {/* 하단 링크 */}
       <AuthFooter
         leftText="이미 회원이신가요?"

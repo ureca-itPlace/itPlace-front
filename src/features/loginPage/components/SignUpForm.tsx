@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 import AuthFooter from './AuthFooter';
+import { getUserInfo } from '../apis/user';
 
 type SignUpFormProps = {
   nameFromPhoneAuth: string;
@@ -34,9 +35,10 @@ const SignUpForm = ({
 
   // API 데이터 불러오기 + 병합
   useEffect(() => {
-    fetch('/api/user-info')
-      .then((res) => res.json())
-      .then((data) => {
+    getUserInfo()
+      .then((res) => {
+        const data = res.data;
+
         setFormData({
           name: data.name || nameFromPhoneAuth,
           phone: data.phone || phoneFromPhoneAuth,
@@ -54,7 +56,7 @@ const SignUpForm = ({
         });
       })
       .catch(() => {
-        // API 실패 시 PhoneAuth 값만 사용
+        // API 실패 시 인증값만 채워주고 나머지는 사용자 입력
         setFormData({
           name: nameFromPhoneAuth,
           phone: phoneFromPhoneAuth,
