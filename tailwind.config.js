@@ -1,6 +1,5 @@
 // tailwind.config.js
 import plugin from 'tailwindcss/plugin';
-
 export default {
   content: ['./src/**/*.{js,ts,jsx,tsx,html}'],
   theme: {
@@ -17,7 +16,6 @@ export default {
         'title-6': ['1.125rem', { lineHeight: '130%', fontWeight: '500' }],
         'title-7': ['1rem', { lineHeight: '130%', fontWeight: '500' }],
         'title-8': ['0.875rem', { lineHeight: '130%', fontWeight: '500' }],
-
         // Body - line-height 150%
         'body-0': ['1.25rem', { lineHeight: '150%' }],
         'body-1': ['1.125rem', { lineHeight: '150%' }],
@@ -33,7 +31,6 @@ export default {
         white: '#FFFFFF',
         danger: '#DC3545',
         success: '#28A745',
-
         // Primary Color
         purple01: '#E6DBFF',
         purple02: '#CDB5FF',
@@ -41,21 +38,18 @@ export default {
         purple04: '#7638FA', // main
         purple05: '#530CC2', // hover
         purple06: '#250961',
-
         // Secondary Color - Orange
         orange01: '#FFEEDC',
         orange02: '#FFD4A0',
         orange03: '#FFBD6D',
         orange04: '#FFA023', // main
         orange05: '#F58700',
-
         // Neutral - Grey
         grey01: '#F5F5F5',
         grey02: '#DDDDDD',
         grey03: '#BCBCBD',
         grey04: '#7A7A7C',
         grey05: '#38383B',
-
         // Pink Color
         pink01: '#FFECEF',
         pink02: '#FFBDC8',
@@ -63,21 +57,18 @@ export default {
         pink04: '#FF0069',
         pink05: '#DF005A',
       },
-
       // 그라데이션
       // bg-[지정명]
       backgroundImage: {
         'gradient-header': 'linear-gradient(#7638FA 0%, #7638FA 32%, #250961 100%)',
         'gradient-myPage': 'linear-gradient(90deg, #FFBD6D 0%, #FF4C91 28%, #7638FA 100%)',
       },
-
       // 드롭 섀도우
       // drop-shadow-[지정명]
       dropShadow: {
         basic: '0px 3px 12px rgba(0, 0, 0, 0.15)',
       },
     },
-
     screens: {
       // 기본 테일윈드 breakpoints 유지
       sm: '640px', // 640px 이상
@@ -85,7 +76,6 @@ export default {
       lg: '1024px',
       xl: '1280px',
       '2xl': '1536px',
-
       // max-width 기반 반대 방향 브레이크포인트 (웹 우선 대응)
       'max-xl': { max: '1536px' }, // 125% 배율 대비
       'max-lg': { max: '1023px' }, // 1023px 이하
