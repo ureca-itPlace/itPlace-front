@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { mockTierBenefits, mockUser } from '../mock/mockData';
 
-interface TierBenefitItem {
-  benefitId: number;
-  grade?: string;
-  isAll?: boolean;
-  content: string;
-}
+// interface TierBenefitItem {
+//   benefitId: number;
+//   grade?: string;
+//   isAll?: boolean;
+//   content: string;
+// }
 
 export default function BenefitDetailTabs({
   benefitId,

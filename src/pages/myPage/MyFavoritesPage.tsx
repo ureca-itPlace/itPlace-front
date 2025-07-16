@@ -3,8 +3,9 @@ import MainContentWrapper from '../../features/myPage/components/MainContentWrap
 import RightAside from '../../features/myPage/components/RightAside';
 import { mockFavorites, mockUser } from '../../features/myPage/mock/mockData';
 import { TbStarFilled } from 'react-icons/tb';
-import api from '../../apis/axiosInstance';
+//import api from '../../apis/axiosInstance';
 import BenefitDetailTabs from '../../features/myPage/components/BenefitDetailTabs';
+import { Pagination } from '../../components/common';
 
 interface FavoriteItem {
   benefitId: number;
@@ -16,7 +17,25 @@ export default function MyFavoritesPage() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>(mockFavorites);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  // ✅ 진입 시 첫 번째 혜택 기본 선택: mock
+  // ✅ 페이지네이션 상태
+  const itemsPerPage = 6;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // ✅ 현재 페이지에 보여줄 데이터 slice
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = favorites.slice(indexOfFirstItem, indexOfLastItem);
+
+  // ✅ 페이지 변경 이벤트
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    // 페이지 바뀌면 첫 번째 아이템 자동 선택
+    const startIndex = (pageNumber - 1) * itemsPerPage;
+    const newFirst = favorites[startIndex];
+    setSelectedId(newFirst ? newFirst.benefitId : null);
+  };
+
+  // ✅ 첫 로드시 기본 선택
   useEffect(() => {
     if (favorites.length > 0 && selectedId === null) {
       setSelectedId(favorites[0].benefitId);
@@ -89,43 +108,63 @@ export default function MyFavoritesPage() {
   return (
     <>
       <MainContentWrapper>
-        <h1 className="text-title-2 text-black mb-4">찜한 혜택</h1>
-        <div className="grid grid-cols-3 gap-10">
-          {favorites.map((item) => (
-            <div
-              key={item.benefitId}
-              onClick={() => setSelectedId(item.benefitId)}
-              className={`relative p-4 border rounded-[18px] cursor-pointer w-[220px] h-[240px] transition-shadow ${
-                selectedId === item.benefitId ? 'border-purple04 border-2' : 'border-grey03'
-              }`}
-            >
-              {/* 즐겨찾기 해제 버튼 */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemoveFavorite(item.benefitId);
-                }}
-                className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
-                title="즐겨찾기 해제"
-              >
-                <TbStarFilled size={22} />
-              </button>
+        <div className="flex flex-col h-full justify-between">
+          {/* 상단 타이틀 */}
+          <h1 className="text-title-2 text-black mb-4">찜한 혜택</h1>
 
-              <img
-                src={item.image}
-                alt={item.benefitName}
-                className="h-[108px] w-auto object-contain mx-auto mt-6"
-              />
-              <p className="text-grey05 text-title-5 text-center mt-4">{item.benefitName}</p>
+          {/* 카드 리스트 + 페이지네이션 */}
+          <div>
+            <div className="flex-1">
+              <div className="grid grid-cols-3 gap-5 min-h-[520px]">
+                {currentItems.map((item) => (
+                  <div
+                    key={item.benefitId}
+                    onClick={() => setSelectedId(item.benefitId)}
+                    className={`relative p-4 border rounded-[18px] cursor-pointer w-[220px] h-[240px] transition-shadow ${
+                      selectedId === item.benefitId ? 'border-purple04 border-2' : 'border-grey03'
+                    }`}
+                  >
+                    {/* 즐겨찾기 해제 버튼 */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveFavorite(item.benefitId);
+                      }}
+                      className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
+                      title="즐겨찾기 해제"
+                    >
+                      <TbStarFilled size={22} />
+                    </button>
+
+                    <img
+                      src={item.image}
+                      alt={item.benefitName}
+                      className="h-[108px] w-auto object-contain mx-auto mt-6"
+                    />
+                    <p className="text-grey05 text-title-5 text-center mt-4">{item.benefitName}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+
+            {/* ✅ 페이지네이션 */}
+            <div className="mt-4 flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                totalItems={favorites.length}
+                onPageChange={handlePageChange}
+                width={37}
+              />
+            </div>
+          </div>
         </div>
       </MainContentWrapper>
 
       <RightAside bottomImage="/images/myPage/bunny-favorites.png" bottomImageAlt="찜한 혜택 토끼">
         {selectedId ? (
           <>
-            <h1 className="text-title-2 text-black mb-4 text-center">상세 혜택</h1>
+            <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
             <BenefitDetailTabs
               benefitId={selectedId}
               image={favorites.find((f) => f.benefitId === selectedId)?.image ?? ''}
@@ -133,7 +172,7 @@ export default function MyFavoritesPage() {
             />
           </>
         ) : (
-          <p>카드를 선택하면 상세 혜택이 표시됩니다.</p>
+          <p className="text-grey05">카드를 선택하면 상세 혜택이 표시됩니다.</p>
         )}
       </RightAside>
     </>
