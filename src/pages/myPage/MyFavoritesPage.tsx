@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import MainContentWrapper from '../../features/myPage/components/MainContentWrapper';
 import RightAside from '../../features/myPage/components/RightAside';
-import { mockFavorites, mockUser, mockTierBenefits } from '../../features/myPage/mock/mockData';
+import { mockFavorites, mockTierBenefits } from '../../features/myPage/mock/mockData';
 import { TbStarFilled } from 'react-icons/tb';
 //import api from '../../apis/axiosInstance';
 import BenefitDetailTabs from '../../features/myPage/components/BenefitDetailTabs';
@@ -184,7 +184,7 @@ export default function MyFavoritesPage() {
         </div>
       </MainContentWrapper>
 
-      <RightAside bottomImage="/images/myPage/bunny-favorites.png" bottomImageAlt="찜한 혜택 토끼">
+      <RightAside bottomImage="/images/myPage/bunny-favorites.webp" bottomImageAlt="찜한 혜택 토끼">
         <FadeWrapper changeKey={selectedId}>
           {selectedId ? (
             <>

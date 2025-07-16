@@ -1,5 +1,3 @@
-import React from 'react';
-
 type FilterType = 'default' | 'vipkok';
 
 interface BenefitFilterToggleProps {
