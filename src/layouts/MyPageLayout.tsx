@@ -3,7 +3,7 @@ import SideMenu from '../features/myPage/components/SideMenu';
 
 export default function MyPageLayout() {
   return (
-    <div className="min-h-screen bg-grey01 p-[28px] flex gap-[28px]">
+    <div className="min-h-screen max-h-screen bg-grey01 p-[28px] flex gap-[28px]">
       {/* 좌측 메뉴 */}
       <SideMenu />
 
