@@ -114,3 +114,42 @@ const Modal: React.FC<ModalProps> = ({
 };
 
 export default Modal;
+
+// * 공통 Modal 컴포넌트
+// *
+// * 사용법 예시:
+// *
+// * const [modal, setModal] = useState({
+// *   isOpen: true,
+// *   title: '타이틀 텍스트',
+// *   message: '본문 메시지',
+// *   subMessage: '서브 메시지 (선택)',
+// *   subMessageClass: '텍스트 클래스명 (선택)',
+// *   buttons: [
+// *     { label: '취소', onClick: handleCancel, type: 'secondary' },
+// *     { label: '확인', onClick: handleConfirm, type: 'primary' }
+// *   ]
+// * });
+// *
+// * <Modal
+// *   isOpen={modal.isOpen}
+// *   title={modal.title}
+// *   message={modal.message}
+// *   subMessage={modal.subMessage}
+// *   subMessageClass={modal.subMessageClass}
+// *   buttons={modal.buttons}
+// *   onClose={handleClose}
+// * />
+// *
+// * 주요 props:
+// * - isOpen: 모달 열림 여부
+// * - title: 상단 제목
+// * - message: 본문 내용 (줄바꿈 지원)
+// * - subMessage: 작은 서브 메시지 (선택)
+// * - subMessageClass: 서브 메시지에 적용할 클래스명
+// * - input: 입력 필드 표시 여부
+// * - inputValue / inputPlaceholder / onInputChange: 입력 관련 속성
+// * - buttons: 하단 버튼 배열 (label, onClick, type: 'primary' | 'secondary')
+// * - children: 커스텀 내용 삽입 가능
+// * - onClose: 외부 클릭 또는 닫기 버튼 클릭 시 실행 함수
+// */
