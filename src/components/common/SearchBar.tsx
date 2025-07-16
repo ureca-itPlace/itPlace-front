@@ -8,6 +8,7 @@ interface SearchBarProps {
   onClear: () => void;
   width?: number;
   height?: number;
+  backgroundColor?: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -17,27 +18,29 @@ const SearchBar: React.FC<SearchBarProps> = ({
   onClear,
   width = 344,
   height = 50,
+  backgroundColor,
 }) => {
   return (
     <div className="relative" style={{ width, height }}>
       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-        <TbSearch size={16} className="text-purple04" />
+        <TbSearch size={18} className="text-purple04" />
       </div>
       <input
         type="text"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full h-full pl-12 pr-10 border border-gray-300 rounded-[12px] focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        className="w-full h-full pl-12 pr-10 rounded-[10px] text-black placeholder-grey03 placeholder:text-body-2 focus:outline-none focus:ring-0 focus:border-gray-300"
+        style={{ backgroundColor }}
       />
       {value && (
         <button
           type="button"
           onClick={onClear}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-grey03 hover:text-grey03 focus:outline-none"
           tabIndex={-1}
         >
-          <TbX size={18} />
+          <TbX size={24} className="text-grey03" />
         </button>
       )}
     </div>
