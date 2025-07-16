@@ -83,6 +83,12 @@ export const mockFavorites: FavoriteItem[] = [
   { benefitId: 40, benefitName: 'GS25', image: '/images/mock/gs25.png' }, // 등급별로 다른 혜택 예시
   { benefitId: 2, benefitName: '투루카', image: '/images/mock/turucar.png' }, // VIP 콕 예시
   { benefitId: 28, benefitName: 'CGV', image: '/images/mock/cgv.png' }, // 모든등급 같은 혜택 예시
+  { benefitId: 41, benefitName: 'GS25', image: '/images/mock/gs25.png' }, // 등급별로 다른 혜택 예시
+  { benefitId: 3, benefitName: '투루카', image: '/images/mock/turucar.png' }, // VIP 콕 예시
+  { benefitId: 29, benefitName: 'CGV', image: '/images/mock/cgv.png' }, // 모든등급 같은 혜택 예시
+  { benefitId: 42, benefitName: 'GS25', image: '/images/mock/gs25.png' }, // 등급별로 다른 혜택 예시
+  { benefitId: 4, benefitName: '투루카', image: '/images/mock/turucar.png' }, // VIP 콕 예시
+  { benefitId: 30, benefitName: 'CGV', image: '/images/mock/cgv.png' }, // 모든등급 같은 혜택 예시
 ];
 
 // 현재 사용자 목업
