@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { TbRefresh, TbExternalLink, TbX, TbChevronUp, TbChevronDown } from 'react-icons/tb';
+import { TbRefresh, TbExternalLink, TbChevronUp, TbChevronDown } from 'react-icons/tb';
 import StatisticsCard from '../../../../components/common/StatisticsCard';
 import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
 import Pagination from '../../../../components/common/Pagination';
+import PartnerDetailModal from './PartnerDetailModal';
 
 // 제휴처 데이터 타입
 interface Partner {
@@ -489,108 +490,11 @@ const PartnershipManagement = () => {
       />
 
       {/* 제휴처 상세정보 모달 */}
-      {showDetailModal && selectedPartner && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleCloseModal}
-        >
-          <div
-            className="bg-white rounded-[20px] shadow-lg relative"
-            style={{ width: 800, height: 664 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* 모달 헤더 */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-title-5 font-semibold text-gray-900">제휴처 상세정보</h3>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors duration-150"
-              >
-                <TbX size={24} />
-              </button>
-            </div>
-
-            {/* 모달 내용 */}
-            <div className="p-6 h-full flex flex-col">
-              {/* 브랜드 정보 */}
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <img
-                      src={selectedPartner.logo}
-                      alt={`${selectedPartner.brand} 로고`}
-                      className="w-12 h-12 object-contain"
-                    />
-                  </div>
-                  <div>
-                    <h4 className="text-title-2 font-bold text-gray-900 mb-1">
-                      {selectedPartner.brand}
-                    </h4>
-                    <p className="text-body-2 text-gray-600">
-                      영화보다 멋진 당신의 일상을 위하여, 라이프스타일 매거진스!
-                    </p>
-                  </div>
-                </div>
-                <div className="w-20 h-10 bg-gray-100 rounded flex items-center justify-center">
-                  <span className="text-xs font-medium text-gray-700">MEGABOX</span>
-                </div>
-              </div>
-
-              {/* 제공 혜택 섹션 */}
-              <div className="mb-8">
-                <h5 className="text-title-5 font-semibold text-gray-900 mb-4">제공 혜택</h5>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-body-2 font-medium text-gray-900">VVIP/VIP 등급 정보</p>
-                      <p className="text-body-2 text-gray-700">
-                        VIP관 내 무료예매 연3회/1+1예매 연9회(총 12회)
-                      </p>
-                      <p className="text-body-2 text-gray-700">
-                        (월 1회 사용 가능, CGV/메가박스 중 택 1)
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 이용방법 섹션 */}
-              <div className="flex-1">
-                <h5 className="text-title-5 font-semibold text-gray-900 mb-4">이용방법</h5>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-body-2 text-gray-700">
-                      메가박스-웹/앱 ) 영화예매시 ) 제휴포인트 ) U+멤버십 ) VIP관 할인 ) 멤버십 조
-                      회 ) VIP관 3개 혜택 중 1개 선택 ) 예매
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-body-2 font-medium text-gray-900 mb-2">*꼭 확인하세요</p>
-                    <div className="space-y-2">
-                      <p className="text-body-2 text-gray-700">
-                        - VIP관 무료/1+1 혜택은 2D, 일반관텐트에 한하여 적용 가능하며, 일반관, 컴
-                        포트관에 예약 할 수 있습니다.
-                      </p>
-                      <p className="text-body-2 text-gray-700">
-                        - VIP관 특별관 6천원 할인 혜택은 더 퍼디스, Dolby Atmos, 더 테라스아우트,
-                        Dolby Cinema, MX4D관에 한하여 적용 가능합니다.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 하단 버튼 */}
-              <div className="mt-8 flex justify-center">
-                <button className="w-32 h-12 bg-purple-600 text-white rounded-lg text-body-1 font-medium hover:bg-purple-700 transition-colors">
-                  수정하기
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <PartnerDetailModal
+        isOpen={showDetailModal}
+        partner={selectedPartner}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
