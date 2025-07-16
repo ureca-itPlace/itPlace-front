@@ -1,12 +1,138 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import StartCTASection from '../features/landingPage/StartCTASection';
 import VideoSection from '../features/landingPage/VideoSection';
+import FeatureSection from '../features/landingPage/FeatureSection';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const LandingPage = () => {
+  const [videoStarted, setVideoStarted] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
+
+  const circle = useRef<HTMLDivElement>(null);
+  const featureSection = useRef<HTMLDivElement>(null);
+  const videoMaskRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // 원 초기 세팅
+    gsap.set(circle.current, {
+      scale: 0.1,
+      opacity: 1,
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      xPercent: -50,
+      yPercent: -50,
+      zIndex: 30,
+    });
+
+    // 비디오 마스크 초기 세팅
+    gsap.set(videoMaskRef.current, {
+      clipPath: 'circle(5% at 50% 50%)',
+      opacity: 0,
+    });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: featureSection.current,
+        start: '20px top',
+        end: '+=500',
+        scrub: 1,
+        markers: true,
+      },
+    });
+
+    // 원 애니메이션
+    tl.to(
+      circle.current,
+      {
+        scale: 40,
+        opacity: 1,
+        ease: 'power1.out',
+      },
+      'sync'
+    );
+
+    // 영상 마스크 애니메이션
+    tl.to(
+      videoMaskRef.current,
+      {
+        clipPath: 'circle(150% at 50% 50%)',
+        opacity: 1,
+        ease: 'power1.out',
+      },
+      'sync'
+    );
+
+    ScrollTrigger.create({
+      trigger: featureSection.current,
+      start: '20px top',
+      end: '+=500',
+      scrub: true,
+      pin: true,
+      onUpdate: (self) => {
+        const progress = self.progress;
+
+        if (progress < 0.95 && videoEnded) {
+          setVideoEnded(false);
+        }
+
+        if (ctaRef.current) {
+          gsap.to(ctaRef.current, {
+            opacity: progress > 0.95 && videoEnded ? 1 : 0,
+            pointerEvents: progress > 0.95 && videoEnded ? 'auto' : 'none',
+            duration: 0.3,
+          });
+        }
+      },
+
+      // 토글로 상태 관리
+      onToggle: (self) => {
+        if (self.isActive) {
+          setVideoStarted(true);
+        } else {
+          setVideoStarted(false);
+          setVideoEnded(false);
+        }
+      },
+    });
+  }, []);
+
   return (
-    <div className="h-full">
-      {videoEnded ? <StartCTASection /> : <VideoSection onVideoEnd={() => setVideoEnded(true)} />}
+    <div className="relative">
+      {/* 보라색 원 */}
+      <div
+        ref={circle}
+        className="circle w-[80vw] h-[80vw] rounded-full bg-purple04 fixed top-1/2 left-1/2 
+        -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"
+      />
+
+      {/* 비디오 */}
+      <div
+        ref={videoMaskRef}
+        className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center overflow-hidden pointer-events-auto"
+        style={{ clipPath: 'circle(5% at 50% 50%)' }}
+      >
+        <VideoSection onVideoEnd={() => setVideoEnded(true)} shouldPlay={videoStarted} />
+      </div>
+
+      {/* 기능 섹션 */}
+      <div ref={featureSection} className="h-[100vh] w-screen flex items-center justify-center">
+        <FeatureSection />
+      </div>
+
+      {/* CTA 섹션 */}
+      <div
+        className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center transition-opacity duration-1000"
+        style={{ opacity: videoEnded ? 1 : 0, pointerEvents: videoEnded ? 'auto' : 'none' }}
+        ref={ctaRef}
+      >
+        <StartCTASection />
+      </div>
     </div>
   );
 };
