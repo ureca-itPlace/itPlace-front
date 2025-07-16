@@ -10,14 +10,22 @@ export interface TierBenefitItem {
 export const mockTierBenefits: TierBenefitItem[] = [
   // VIP콕 인 경우
   {
-    benefitId: 1,
+    benefitId: 2,
     grade: 'VIP콕',
     isAll: false,
     content: '아메리카노(R사이즈) 1잔 무료\n※ ICE/HOT 선택 가능',
     discountValue: 4500,
   },
   {
-    benefitId: 2,
+    benefitId: 3,
+    grade: 'VIP콕',
+    isAll: false,
+    content:
+      '네이버플러스멤버십 1개월 무료 이용권 제공\n무료 예매 연 3회 / 1+1 예매 연 9회 (총 12회)\n(월 1회 사용 가능, CGV/메가박스 중 택 1)\n※ 1+1이란? 1매 유료로 구매 시, 1매 무료 제공',
+    discountValue: 4900,
+  },
+  {
+    benefitId: 4,
     grade: 'VIP콕',
     isAll: false,
     content:
@@ -47,6 +55,48 @@ export const mockTierBenefits: TierBenefitItem[] = [
     content: '2D영화 2천원 할인\n※모든 등급 공통으로 적용되는 혜택 예시',
     discountValue: 2000,
   },
+  {
+    benefitId: 29,
+    grade: 'VVIP',
+    isAll: true,
+    content: '2D영화 2천원 할인\n※모든 등급 공통으로 적용되는 혜택 예시',
+    discountValue: 2000,
+  },
+  {
+    benefitId: 29,
+    grade: 'VIP',
+    isAll: true,
+    content: '2D영화 2천원 할인\n※모든 등급 공통으로 적용되는 혜택 예시',
+    discountValue: 2000,
+  },
+  {
+    benefitId: 29,
+    grade: 'BASIC',
+    isAll: true,
+    content: '2D영화 2천원 할인\n※모든 등급 공통으로 적용되는 혜택 예시',
+    discountValue: 2000,
+  },
+  {
+    benefitId: 30,
+    grade: 'VVIP',
+    isAll: true,
+    content: '2D영화 2천원 할인\n※모든 등급 공통으로 적용되는 혜택 예시',
+    discountValue: 2000,
+  },
+  {
+    benefitId: 30,
+    grade: 'VIP',
+    isAll: true,
+    content: '2D영화 2천원 할인\n※모든 등급 공통으로 적용되는 혜택 예시',
+    discountValue: 2000,
+  },
+  {
+    benefitId: 30,
+    grade: 'BASIC',
+    isAll: true,
+    content: '2D영화 2천원 할인\n※모든 등급 공통으로 적용되는 혜택 예시',
+    discountValue: 2000,
+  },
 
   // 등급별로 다른 혜택
   {
@@ -65,6 +115,48 @@ export const mockTierBenefits: TierBenefitItem[] = [
   },
   {
     benefitId: 40,
+    grade: 'BASIC',
+    isAll: false,
+    content: `5% 할인\n(2만원 이상 주문 시, 최대 4천원)`,
+    discountValue: 5,
+  },
+  {
+    benefitId: 41,
+    grade: 'VVIP',
+    isAll: false,
+    content: `10% 할인\n(2만원 이상 주문 시, 최대 4천원)`,
+    discountValue: 10,
+  },
+  {
+    benefitId: 41,
+    grade: 'VIP',
+    isAll: false,
+    content: `10% 할인\n(2만원 이상 주문 시, 최대 4천원)`,
+    discountValue: 10,
+  },
+  {
+    benefitId: 41,
+    grade: 'BASIC',
+    isAll: false,
+    content: `5% 할인\n(2만원 이상 주문 시, 최대 4천원)`,
+    discountValue: 5,
+  },
+  {
+    benefitId: 42,
+    grade: 'VVIP',
+    isAll: false,
+    content: `10% 할인\n(2만원 이상 주문 시, 최대 4천원)`,
+    discountValue: 10,
+  },
+  {
+    benefitId: 42,
+    grade: 'VIP',
+    isAll: false,
+    content: `10% 할인\n(2만원 이상 주문 시, 최대 4천원)`,
+    discountValue: 10,
+  },
+  {
+    benefitId: 42,
     grade: 'BASIC',
     isAll: false,
     content: `5% 할인\n(2만원 이상 주문 시, 최대 4천원)`,
