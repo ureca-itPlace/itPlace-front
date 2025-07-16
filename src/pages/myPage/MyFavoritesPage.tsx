@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import MainContentWrapper from '../../features/myPage/components/MainContentWrapper';
 import RightAside from '../../features/myPage/components/RightAside';
-import { mockFavorites, mockUser } from '../../features/myPage/mock/mockData';
+import { mockFavorites, mockUser, mockTierBenefits } from '../../features/myPage/mock/mockData';
 import { TbStarFilled } from 'react-icons/tb';
 //import api from '../../apis/axiosInstance';
 import BenefitDetailTabs from '../../features/myPage/components/BenefitDetailTabs';
 import { Pagination } from '../../components/common';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
+import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
 
 interface FavoriteItem {
   benefitId: number;
@@ -17,6 +18,19 @@ interface FavoriteItem {
 export default function MyFavoritesPage() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>(mockFavorites);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [benefitFilter, setBenefitFilter] = useState<'default' | 'vipkok'>('default'); // 토글 필터링용 상태
+
+  // ✅ 토글 필터링된 리스트
+  const filteredFavorites = mockFavorites.filter((fav) => {
+    const isVipKok = mockTierBenefits.some(
+      (tier) => tier.benefitId === fav.benefitId && tier.grade === 'VIP콕'
+    );
+    if (benefitFilter === 'vipkok') {
+      return isVipKok;
+    } else {
+      return !isVipKok;
+    }
+  });
 
   // ✅ 페이지네이션 상태
   const itemsPerPage = 6;
@@ -25,7 +39,7 @@ export default function MyFavoritesPage() {
   // ✅ 현재 페이지에 보여줄 데이터 slice
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = favorites.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredFavorites.slice(indexOfFirstItem, indexOfLastItem);
 
   // ✅ 페이지 변경 이벤트
   const handlePageChange = (pageNumber: number) => {
@@ -113,6 +127,14 @@ export default function MyFavoritesPage() {
           {/* 상단 타이틀 */}
           <h1 className="text-title-2 text-black mb-4">찜한 혜택</h1>
 
+          {/* 토글 버튼 */}
+          <BenefitFilterToggle
+            value={benefitFilter}
+            onChange={setBenefitFilter}
+            width="w-[300px]"
+            fontSize="text-title-7"
+          />
+
           {/* 카드 리스트 + 페이지네이션 */}
           <div>
             <div className="flex-1">
@@ -153,7 +175,7 @@ export default function MyFavoritesPage() {
               <Pagination
                 currentPage={currentPage}
                 itemsPerPage={itemsPerPage}
-                totalItems={favorites.length}
+                totalItems={filteredFavorites.length}
                 onPageChange={handlePageChange}
                 width={37}
               />
