@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { TbRefresh, TbExternalLink, TbX } from 'react-icons/tb';
+import { TbRefresh, TbExternalLink } from 'react-icons/tb';
 import StatisticsCard from '../../../../components/common/StatisticsCard';
 import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
 import Pagination from '../../../../components/common/Pagination';
+import MemberDetailModal from './MemberDetailModal';
 
 // 회원 데이터 타입
 interface Member {
@@ -453,81 +454,13 @@ const MemberManagement = () => {
         width={1410}
       />
 
-      {/* 제휴처 상세정보 모달 */}
-      {showPartnerModal && selectedMember && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={handleCloseModal}
-        >
-          <div
-            className="bg-white rounded-[20px] shadow-lg relative"
-            style={{ width: 800, height: 664 }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* 모달 헤더 */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h3 className="text-title-5 font-semibold text-gray-900">회원 상세정보</h3>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors duration-150"
-              >
-                <TbX size={24} />
-              </button>
-            </div>
-
-            {/* 모달 내용 */}
-            <div className="pt-[38px] overflow-y-auto" style={{ height: 'calc(664px - 88px)' }}>
-              {/* 회원 정보 */}
-              <div className="mb-6 ml-[40px]">
-                <h4 className="text-title-2 font-semibold mb-2">{selectedMember.nickname}</h4>
-                <p className="text-body-0 text-grey05">
-                  {selectedMember.grade} | 멤버십 번호: 123875793487594857
-                </p>
-              </div>
-
-              {/* 제휴처 이용 내역 테이블 */}
-              <div
-                className="bg-grey01 rounded-[12px] overflow-hidden ml-[40px] mr-[40px]"
-                style={{ height: 'calc(100% - 120px)' }}
-              >
-                <div className="bg-gray-200 px-4 py-3 border-b border-gray-300">
-                  <div className="grid grid-cols-12 gap-4">
-                    <div className="col-span-4 text-left text-body-2 font-medium text-gray-700">
-                      브랜드
-                    </div>
-                    <div className="col-span-4 text-center text-body-2 font-medium text-gray-700">
-                      할인 금액
-                    </div>
-                    <div className="col-span-4 text-center text-body-2 font-medium text-gray-700">
-                      날짜
-                    </div>
-                  </div>
-                </div>
-                <div className="overflow-y-auto" style={{ height: 'calc(100% - 48px)' }}>
-                  {partnerUsageData.map((usage, index) => (
-                    <div
-                      key={index}
-                      className="px-4 py-3 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-150"
-                    >
-                      <div className="grid grid-cols-12 gap-8">
-                        <div className="col-span-4 text-body-2 text-gray-900 truncate">
-                          {usage.brand}
-                        </div>
-                        <div className="col-span-4 text-body-2 text-gray-900 text-center pl-4">
-                          {usage.amount}
-                        </div>
-                        <div className="col-span-4 text-body-2 text-gray-900 text-center pl-4">
-                          {usage.date}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 회원 상세정보 모달 */}
+      <MemberDetailModal
+        isOpen={showPartnerModal}
+        member={selectedMember}
+        onClose={handleCloseModal}
+        partnerUsageData={partnerUsageData}
+      />
     </div>
   );
 };
