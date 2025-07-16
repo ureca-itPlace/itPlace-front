@@ -6,6 +6,7 @@ import { TbStarFilled } from 'react-icons/tb';
 //import api from '../../apis/axiosInstance';
 import BenefitDetailTabs from '../../features/myPage/components/BenefitDetailTabs';
 import { Pagination } from '../../components/common';
+import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 
 interface FavoriteItem {
   benefitId: number;
@@ -162,18 +163,20 @@ export default function MyFavoritesPage() {
       </MainContentWrapper>
 
       <RightAside bottomImage="/images/myPage/bunny-favorites.png" bottomImageAlt="찜한 혜택 토끼">
-        {selectedId ? (
-          <>
-            <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
-            <BenefitDetailTabs
-              benefitId={selectedId}
-              image={favorites.find((f) => f.benefitId === selectedId)?.image ?? ''}
-              name={favorites.find((f) => f.benefitId === selectedId)?.benefitName ?? ''}
-            />
-          </>
-        ) : (
-          <p className="text-grey05">카드를 선택하면 상세 혜택이 표시됩니다.</p>
-        )}
+        <FadeWrapper changeKey={selectedId}>
+          {selectedId ? (
+            <>
+              <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
+              <BenefitDetailTabs
+                benefitId={selectedId}
+                image={favorites.find((f) => f.benefitId === selectedId)?.image ?? ''}
+                name={favorites.find((f) => f.benefitId === selectedId)?.benefitName ?? ''}
+              />
+            </>
+          ) : (
+            <p className="text-grey05">카드를 선택하면 상세 혜택이 표시됩니다.</p>
+          )}
+        </FadeWrapper>
       </RightAside>
     </>
   );

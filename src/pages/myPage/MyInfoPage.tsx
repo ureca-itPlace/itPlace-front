@@ -1,5 +1,6 @@
 import MainContentWrapper from '../../features/myPage/components/MainContentWrapper';
 import RightAside from '../../features/myPage/components/RightAside';
+import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 
 export default function MyInfoPage() {
   return (
@@ -10,8 +11,10 @@ export default function MyInfoPage() {
       </MainContentWrapper>
 
       <RightAside bottomImage="/images/myPage/bunny-info.png" bottomImageAlt="회원 정보 토끼">
-        <h1 className="text-xl font-bold mb-4">추가 정보</h1>
-        <p>우측 사이드에 보여줄 내용</p>
+        <FadeWrapper changeKey="info">
+          <h1 className="text-xl font-bold mb-4">추가 정보</h1>
+          <p>우측 사이드에 보여줄 내용</p>
+        </FadeWrapper>
       </RightAside>
     </>
   );
