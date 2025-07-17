@@ -49,8 +49,8 @@ const NoResult: React.FC<NoResultProps> = ({
         <img src={imagePng} alt="no-result" className="w-36 h-auto mb-4" />
       </picture>
 
-      <h2 className={`${message1FontSize} text-title-4 text-grey04 mb-2`}>{message1}</h2>
-      <p className={`${message2FontSize} text-body-1 text-grey03 mb-4`}>{message2}</p>
+      <h2 className={`${message1FontSize} text-title-4 text-grey05 mb-2`}>{message1}</h2>
+      <p className={`${message2FontSize} text-body-1 text-grey04 mb-4`}>{message2}</p>
 
       {buttonText && buttonRoute && (
         <button
