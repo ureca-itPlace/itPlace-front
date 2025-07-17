@@ -90,7 +90,7 @@ const PhoneAuthForm = ({
     // U+ 회원이면 추가 정보 불러오기
     if (isUplus) {
       try {
-        const res = await loadUplusData(registrationId, name, phone);
+        const res = await loadUplusData(registrationId);
 
         birthday = res.data.birthday;
         gender = res.data.gender;
