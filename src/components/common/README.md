@@ -1,8 +1,8 @@
 # 공통 컴포넌트 가이드
 
-관리자 페이지에서 사용할 수 있는 재사용 가능한 공통 컴포넌트들입니다.
-
 ## 컴포넌트 목록
+
+관리자 페이지에서 사용할 수 있는 재사용 가능한 공통 컴포넌트들입니다.
 
 ### 1. StatisticsCard
 
@@ -183,3 +183,64 @@ import { TbRefresh } from 'react-icons/tb';
 - **DataTable**: 순수 테이블 렌더링에만 집중
 - **Pagination**: 페이지네이션 로직과 UI에만 집중
 - **각 페이지**: 비즈니스 로직과 데이터 관리에만 집중
+
+---
+
+마이페이지, 전체 혜택 페이지, 메인페이지 등에서 재사용 가능한 공통 컴포넌트입니다.
+
+### 1 BenefitFilterToggle
+
+- `BenefitFilterToggle`은 **기본 혜택 / VIP 콕** 두 가지 상태를 전환할 수 있는 공통 토글 버튼 컴포넌트입니다.
+- value와 onChange는 반드시 전달해야 합니다.
+- 내부 상태는 이 컴포넌트가 관리하지 않고 부모 컴포넌트에서 관리합니다. 즉, 데이터 바인딩 후 필터링 상태 반영은 부모 컴포넌트에서 직접합니다.
+
+---
+
+## ✅ Props
+
+| Prop       | Type                                   | Required | Default       | Description                                   |
+| ---------- | -------------------------------------- | -------- | ------------- | --------------------------------------------- |
+| `value`    | `'default' \| 'vipkok'`                | ✅       | –             | 현재 선택된 토글 값                           |
+| `onChange` | `(val: 'default' \| 'vipkok') => void` | ✅       | –             | 선택 값이 바뀔 때 호출되는 핸들러             |
+| `width`    | `string`                               | ❌       | `'w-[300px]'` | 전체 토글의 너비(Tailwind 클래스)             |
+| `fontSize` | `string`                               | ❌       | `'text-sm'`   | 버튼 내부 글자의 폰트 사이즈(Tailwind 클래스) |
+
+---
+
+## ✅ 스타일 조정하기
+
+컴포넌트는 width와 fontSize를 props로 받아 Tailwind 클래스 기반으로 조정할 수 있습니다.
+
+```tsx
+<BenefitFilterToggle
+  value={filter}
+  onChange={setFilter}
+  width="w-[200px]" // 토글의 너비
+  fontSize="text-base" // 버튼 글자 크기
+/>
+```
+
+---
+
+## ✅ 기본 사용법
+
+```tsx
+import { useState } from 'react';
+import BenefitFilterToggle from '@/components/common/BenefitFilterToggle';
+
+export default function ExamplePage() {
+  const [filter, setFilter] = useState<'default' | 'vipkok'>('default');
+
+  return (
+    <div>
+      <h1 className="text-xl font-bold mb-4">혜택 필터</h1>
+
+      <BenefitFilterToggle value={filter} onChange={setFilter} />
+
+      <div className="mt-4">
+        <p>선택된 필터: {filter === 'default' ? '기본 혜택' : 'VIP 콕'}</p>
+      </div>
+    </div>
+  );
+}
+```

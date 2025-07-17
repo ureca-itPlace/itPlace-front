@@ -21,7 +21,7 @@ const menus = [
   { id: 'intro', label: '잇플 소개', icon: TbSparkles, path: '/' },
   { id: 'map', label: '잇플 맵', icon: TbMap2, path: '/main' },
   { id: 'benefits', label: '전체 혜택', icon: TbLayoutList, path: '/benefits' },
-  { id: 'mypage', label: '마이페이지', icon: TbUser, path: '/mypage' },
+  { id: 'mypage', label: '마이페이지', icon: TbUser, path: '/mypage/info' },
 ];
 
 export default function Header({ isLoggedIn = false, variant = 'default' }: HeaderProps) {
@@ -59,7 +59,10 @@ export default function Header({ isLoggedIn = false, variant = 'default' }: Head
       <nav className="flex-1 flex flex-col items-center gap-y-6">
         {menus.map((m) => {
           const Icon = m.icon;
-          const isActive = location.pathname === m.path;
+          const isActive =
+            m.id === 'mypage'
+              ? location.pathname.startsWith('/mypage')
+              : location.pathname === m.path;
           return (
             <Link
               to={m.path}
