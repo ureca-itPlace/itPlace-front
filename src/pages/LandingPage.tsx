@@ -1,25 +1,27 @@
 import { useState, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+
 import { useGSAP } from '@gsap/react';
 import StartCTASection from '../features/landingPage/StartCTASection';
 import VideoSection from '../features/landingPage/VideoSection';
 import FeatureSection from '../features/landingPage/FeatureSection';
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
 const LandingPage = () => {
-  const [videoStarted, setVideoStarted] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
-  const circle = useRef<HTMLDivElement>(null);
-  const featureSection = useRef<HTMLDivElement>(null);
+  const circleRef = useRef<HTMLDivElement>(null);
+  const featureSectionRef = useRef<HTMLDivElement>(null);
   const videoMaskRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useGSAP(() => {
     // 원 초기 세팅
-    gsap.set(circle.current, {
+    gsap.set(circleRef.current, {
       scale: 0.1,
       opacity: 1,
       position: 'fixed',
@@ -36,68 +38,80 @@ const LandingPage = () => {
       opacity: 0,
     });
 
+    // 애니메이션 순차 실행
     const tl = gsap.timeline({
       scrollTrigger: {
-        trigger: featureSection.current,
+        trigger: featureSectionRef.current,
         start: '20px top',
-        end: '+=500',
-        scrub: 1,
+        end: 'bottom top',
+        scrub: 0.5,
         markers: true,
       },
     });
-
-    // 원 애니메이션
+    // 원 & 영상 애니메이션
     tl.to(
-      circle.current,
+      circleRef.current,
       {
-        scale: 40,
+        scale: 20,
         opacity: 1,
         ease: 'power1.out',
+        duration: 5,
       },
       'sync'
-    );
-
-    // 영상 마스크 애니메이션
-    tl.to(
+    ).to(
       videoMaskRef.current,
       {
-        clipPath: 'circle(150% at 50% 50%)',
+        clipPath: 'circle(120% at 50% 50%)',
         opacity: 1,
         ease: 'power1.out',
+        duration: 1,
       },
-      'sync'
+      'sync+=0.1'
     );
 
+    // 스크롤 트리거 생성
     ScrollTrigger.create({
-      trigger: featureSection.current,
+      trigger: featureSectionRef.current,
       start: '20px top',
-      end: '+=500',
-      scrub: true,
+      end: 'bottom top',
       pin: true,
+
       onUpdate: (self) => {
+        const video = videoRef.current;
         const progress = self.progress;
 
-        if (progress < 0.95 && videoEnded) {
-          setVideoEnded(false);
+        if (!video) return;
+
+        // 비디오가 끝나지 않았고, 거의 끝에 도달했을 때 아래로 스크롤 시 영상 재생
+        if (self.direction === 1 && !videoEnded && video.paused && progress > 0.95) {
+          video.play().catch((err) => {
+            console.log('비디오 재생 실패:', err);
+          });
         }
 
+        // 비디오가 끝나지 않았는데 위로 스크롤 시 영상 정지
+        if (self.direction === -1 && !videoEnded && !video.paused) {
+          video.pause();
+        }
+
+        // CTA 등장 애니메이션
         if (ctaRef.current) {
-          gsap.to(ctaRef.current, {
-            opacity: progress > 0.95 && videoEnded ? 1 : 0,
-            pointerEvents: progress > 0.95 && videoEnded ? 'auto' : 'none',
-            duration: 0.3,
+          const visible = progress > 0.95 && videoEnded;
+          gsap.set(ctaRef.current, {
+            opacity: visible ? 1 : 0,
+            pointerEvents: visible ? 'auto' : 'none',
           });
         }
       },
 
-      // 토글로 상태 관리
-      onToggle: (self) => {
-        if (self.isActive) {
-          setVideoStarted(true);
-        } else {
-          setVideoStarted(false);
-          setVideoEnded(false);
+      // 역방향 스크롤 후 트리거를 떠났을 때
+      onLeaveBack: () => {
+        const video = videoRef.current;
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
         }
+        setVideoEnded(false);
       },
     });
   }, []);
@@ -106,7 +120,7 @@ const LandingPage = () => {
     <div className="relative">
       {/* 보라색 원 */}
       <div
-        ref={circle}
+        ref={circleRef}
         className="circle w-[80vw] h-[80vw] rounded-full bg-purple04 fixed top-1/2 left-1/2 
         -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"
       />
@@ -117,11 +131,11 @@ const LandingPage = () => {
         className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center overflow-hidden pointer-events-auto"
         style={{ clipPath: 'circle(5% at 50% 50%)' }}
       >
-        <VideoSection onVideoEnd={() => setVideoEnded(true)} shouldPlay={videoStarted} />
+        <VideoSection ref={videoRef} onVideoEnd={() => setVideoEnded(true)} />
       </div>
 
       {/* 기능 섹션 */}
-      <div ref={featureSection} className="h-[100vh] w-screen flex items-center justify-center">
+      <div ref={featureSectionRef} className="h-[100vh] w-screen flex items-center justify-center">
         <FeatureSection />
       </div>
 
