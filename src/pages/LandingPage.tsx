@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
@@ -20,22 +20,29 @@ const LandingPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useGSAP(() => {
-    // 원 초기 세팅
-    gsap.set(circleRef.current, {
-      scale: 0.1,
-      opacity: 1,
+    // 보라색 원 & 영상 중심에 고정
+    const centerFixedStyle = {
       position: 'fixed',
       top: '50%',
       left: '50%',
       xPercent: -50,
       yPercent: -50,
+    };
+
+    // 보라색 원 초기 세팅
+    gsap.set(circleRef.current, {
+      ...centerFixedStyle,
+      scale: 0.1,
+      opacity: 1,
       zIndex: 30,
     });
 
-    // 비디오 마스크 초기 세팅
+    // 영상 마스크 초기 세팅
     gsap.set(videoMaskRef.current, {
-      clipPath: 'circle(5% at 50% 50%)',
+      ...centerFixedStyle,
+      clipPath: 'circle(10% at 50% 50%)',
       opacity: 0,
+      zIndex: 40,
     });
 
     // 애니메이션 순차 실행
@@ -43,16 +50,17 @@ const LandingPage = () => {
       scrollTrigger: {
         trigger: featureSectionRef.current,
         start: '20px top',
-        end: 'bottom top',
+        end: '+=1000',
         scrub: 0.5,
         markers: true,
       },
     });
+
     // 원 & 영상 애니메이션
     tl.to(
       circleRef.current,
       {
-        scale: 20,
+        scale: 30,
         opacity: 1,
         ease: 'power1.out',
         duration: 5,
@@ -73,7 +81,7 @@ const LandingPage = () => {
     ScrollTrigger.create({
       trigger: featureSectionRef.current,
       start: '20px top',
-      end: 'bottom top',
+      end: 'center top',
       pin: true,
 
       onUpdate: (self) => {
@@ -93,15 +101,6 @@ const LandingPage = () => {
         if (self.direction === -1 && !videoEnded && !video.paused) {
           video.pause();
         }
-
-        // CTA 등장 애니메이션
-        if (ctaRef.current) {
-          const visible = progress > 0.95 && videoEnded;
-          gsap.set(ctaRef.current, {
-            opacity: visible ? 1 : 0,
-            pointerEvents: visible ? 'auto' : 'none',
-          });
-        }
       },
 
       // 역방향 스크롤 후 트리거를 떠났을 때
@@ -115,6 +114,16 @@ const LandingPage = () => {
       },
     });
   }, []);
+
+  useEffect(() => {
+    if (videoEnded && ctaRef.current) {
+      gsap.to(ctaRef.current, {
+        opacity: 1,
+        pointerEvents: 'auto',
+        duration: 1,
+      });
+    }
+  }, [videoEnded]);
 
   return (
     <div className="relative">
@@ -131,7 +140,12 @@ const LandingPage = () => {
         className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center overflow-hidden pointer-events-auto"
         style={{ clipPath: 'circle(5% at 50% 50%)' }}
       >
-        <VideoSection ref={videoRef} onVideoEnd={() => setVideoEnded(true)} />
+        <VideoSection
+          ref={videoRef}
+          onVideoEnd={() => {
+            setVideoEnded(true);
+          }}
+        />
       </div>
 
       {/* 기능 섹션 */}
@@ -141,7 +155,7 @@ const LandingPage = () => {
 
       {/* CTA 섹션 */}
       <div
-        className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center transition-opacity duration-1000"
+        className="fixed top-0 left-0 w-screen h-screen z-50 flex items-center justify-center transition-opacity duration-500"
         style={{ opacity: videoEnded ? 1 : 0, pointerEvents: videoEnded ? 'auto' : 'none' }}
         ref={ctaRef}
       >
