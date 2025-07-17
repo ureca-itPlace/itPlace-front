@@ -7,6 +7,7 @@ import { useGSAP } from '@gsap/react';
 import StartCTASection from '../features/landingPage/StartCTASection';
 import VideoSection from '../features/landingPage/VideoSection';
 import FeatureSection from '../features/landingPage/FeatureSection';
+import PurpleCircle from '../features/landingPage/components/PurpleCircle';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
@@ -128,11 +129,7 @@ const LandingPage = () => {
   return (
     <div className="relative">
       {/* 보라색 원 */}
-      <div
-        ref={circleRef}
-        className="circle w-[80vw] h-[80vw] rounded-full bg-purple04 fixed top-1/2 left-1/2 
-        -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none"
-      />
+      <PurpleCircle ref={circleRef} />
 
       {/* 비디오 */}
       <div
