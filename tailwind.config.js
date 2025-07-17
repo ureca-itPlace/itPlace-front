@@ -23,6 +23,13 @@ export default {
         'body-3': ['0.875rem', { lineHeight: '150%' }],
         'body-4': ['0.75rem', { lineHeight: '150%' }],
         'body-5': ['0.625rem', { lineHeight: '150%' }],
+        // Body - line-height 150% fontWeight 600
+        'body-0-bold': ['1.25rem', { lineHeight: '150%', fontWeight: '600' }],
+        'body-1-bold': ['1.125rem', { lineHeight: '150%', fontWeight: '600' }],
+        'body-2-bold': ['1rem', { lineHeight: '150%', fontWeight: '600' }],
+        'body-3-bold': ['0.875rem', { lineHeight: '150%', fontWeight: '600' }],
+        'body-4-bold': ['0.75rem', { lineHeight: '150%', fontWeight: '600' }],
+        'body-5-bold': ['0.625rem', { lineHeight: '150%', fontWeight: '600' }],
       },
       // 컬러
       // bg-[지정명]
