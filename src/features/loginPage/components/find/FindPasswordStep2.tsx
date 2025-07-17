@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import AuthInput from './AuthInput';
-import AuthButton from './AuthButton';
-import ErrorMessage from './ErrorMessage';
-import AuthFooter from './AuthFooter';
+import AuthInput from '../common/AuthInput';
+import AuthButton from '../common/AuthButton';
+import ErrorMessage from '../common/ErrorMessage';
+import AuthFooter from '../common/AuthFooter';
 import { TbEye, TbEyeOff } from 'react-icons/tb';
-import useValidation from '../hooks/UseValidation';
+import useValidation from '../../hooks/UseValidation';
 
 type Props = {
   password: string;

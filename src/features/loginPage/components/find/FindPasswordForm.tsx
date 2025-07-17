@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import FindPasswordStep1 from './FindPasswordStep1';
 import FindPasswordStep2 from './FindPasswordStep2';
-import { sendEmailVerificationCode, checkEmailVerificationCode } from '../apis/verification';
+import { sendEmailVerificationCode, checkEmailVerificationCode } from '../../apis/verification';
 
 type Props = {
   onGoToLogin: () => void;

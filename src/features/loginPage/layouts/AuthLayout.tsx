@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
 // 공통 컴포넌트
-import AuthFormCard from '../components/AuthFormCard';
-import AuthSideCard from '../components/AuthSideCard';
+import AuthFormCard from '../components/common/AuthFormCard';
+import AuthSideCard from '../components/common/AuthSideCard';
 
 // 폼 컴포넌트
-import LoginForm from '../components/LoginForm';
-import PhoneAuthForm from '../components/PhoneAuthForm';
-import FindEmailForm from '../components/FindEmailForm';
-import FindPasswordForm from '../components/FindPasswordForm';
-import OAuthIntegrationForm from '../components/OAuthIntegrationForm'; // OAuth 통합 폼
+import LoginForm from '../components/login/LoginForm';
+import PhoneAuthForm from '../components/verification/PhoneAuthForm';
+import FindEmailForm from '../components/find/FindEmailForm';
+import FindPasswordForm from '../components/find/FindPasswordForm';
+import OAuthIntegrationForm from '../components/signup/OAuthIntegrationForm'; // OAuth 통합 폼
 
 // 상태 전환 관련 훅
 import { AuthTransition } from '../hooks/AuthTransition';

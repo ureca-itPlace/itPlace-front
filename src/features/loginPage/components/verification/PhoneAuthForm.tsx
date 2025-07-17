@@ -1,16 +1,16 @@
 import { useState, useCallback, useMemo } from 'react';
-import Modal from '../../../components/Modal';
-import AuthInput from './AuthInput';
-import AuthButton from './AuthButton';
+import Modal from '../../../../components/Modal';
+import AuthInput from '../common/AuthInput';
+import AuthButton from '../common/AuthButton';
 import CaptchaBox from './CaptchaBox';
-import AuthFooter from './AuthFooter';
+import AuthFooter from '../common/AuthFooter';
 import VerificationCodeForm from './VerificationCodeForm';
-import SignUpForm from './SignUpForm';
-import SignUpFinalForm from './SignUpFinalForm';
-import { showToast } from '../../../utils/toast';
+import SignUpForm from '../signup/SignUpForm';
+import SignUpFinalForm from '../signup/SignUpFinalForm';
+import { showToast } from '../../../../utils/toast';
 import { loadCaptchaEnginge, validateCaptcha } from 'react-simple-captcha';
-import { sendVerificationCode } from '../apis/verification';
-import { loadUplusData } from '../apis/auth';
+import { sendVerificationCode } from '../../apis/verification';
+import { loadUplusData } from '../../apis/auth';
 
 type Props = {
   mode: 'signup' | 'find';

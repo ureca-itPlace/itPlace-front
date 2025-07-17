@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import Modal from '../../../components/Modal';
-import { showToast } from '../../../utils/toast';
-import AuthInput from './AuthInput';
-import AuthButton from './AuthButton';
-import ErrorMessage from './ErrorMessage';
-import EmailVerificationBox from './EmailVerificationBox'; // 이메일 인증 컴포넌트 임포트
-import AuthFooter from './AuthFooter';
+import Modal from '../../../../components/Modal';
+import { showToast } from '../../../../utils/toast';
+import AuthInput from '../common/AuthInput';
+import AuthButton from '../common/AuthButton';
+import ErrorMessage from '../common/ErrorMessage';
+import EmailVerificationBox from '../verification/EmailVerificationBox'; // 이메일 인증 컴포넌트 임포트
+import AuthFooter from '../common/AuthFooter';
 import { TbEye, TbEyeOff } from 'react-icons/tb';
-import useValidation from '../hooks/UseValidation';
-import { signUpFinal } from '../apis/user';
-import { sendEmailVerificationCode, checkEmailVerificationCode } from '../apis/verification';
+import useValidation from '../../hooks/UseValidation';
+import { signUpFinal } from '../../apis/user';
+import { sendEmailVerificationCode, checkEmailVerificationCode } from '../../apis/verification';
 
 type SignUpFinalFormProps = {
   onGoToLogin: () => void;

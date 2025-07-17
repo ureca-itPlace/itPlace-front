@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import AuthInput from './AuthInput';
-import AuthFooter from './AuthFooter';
-import AuthButton from './AuthButton';
+import AuthInput from '../common/AuthInput';
+import AuthFooter from '../common/AuthFooter';
+import AuthButton from '../common/AuthButton';
 import { TbClock } from 'react-icons/tb';
-import { checkVerificationCode, sendVerificationCode } from '../apis/verification';
-import Modal from '../../../components/Modal';
-import { modalPresets } from '../constants/modalPresets';
-import { showToast } from '../../../utils/toast';
+import { checkVerificationCode, sendVerificationCode } from '../../apis/verification';
+import Modal from '../../../../components/Modal';
+import { modalPresets } from '../../constants/modalPresets';
+import { showToast } from '../../../../utils/toast';
 
 export interface ModalButton {
   label: string;

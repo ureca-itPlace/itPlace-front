@@ -1,4 +1,4 @@
-import type { ModalState } from '../components/VerificationCodeForm';
+import type { ModalState } from '../components/verification/VerificationCodeForm';
 
 export const modalPresets = {
   alreadyJoined: (goLogin: () => void, close: () => void) =>

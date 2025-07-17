@@ -1,6 +1,6 @@
 import React from 'react';
-import AuthButton from './AuthButton';
-import AuthFooter from './AuthFooter';
+import AuthButton from '../common/AuthButton';
+import AuthFooter from '../common/AuthFooter';
 
 interface FindEmailFormProps {
   email: string;

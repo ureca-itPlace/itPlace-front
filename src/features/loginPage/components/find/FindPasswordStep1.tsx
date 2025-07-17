@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import Modal from '../../../components/Modal';
-import EmailVerificationBox from './EmailVerificationBox';
-import AuthButton from './AuthButton';
-import AuthFooter from './AuthFooter';
+import Modal from '../../../../components/Modal';
+import EmailVerificationBox from '../verification/EmailVerificationBox';
+import AuthButton from '../common/AuthButton';
+import AuthFooter from '../common/AuthFooter';
 
 type Props = {
   email: string;

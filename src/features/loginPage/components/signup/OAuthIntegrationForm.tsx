@@ -1,6 +1,6 @@
-import AuthInput from './AuthInput';
-import AuthButton from './AuthButton';
-import AuthFooter from './AuthFooter';
+import AuthInput from '../common/AuthInput';
+import AuthButton from '../common/AuthButton';
+import AuthFooter from '../common/AuthFooter';
 
 type OAuthIntegrationFormProps = {
   name: string;

@@ -1,6 +1,6 @@
 // components/EmailVerificationBox.tsx
-import AuthInput from './AuthInput';
-import ErrorMessage from './ErrorMessage';
+import AuthInput from '../common/AuthInput';
+import ErrorMessage from '../common/ErrorMessage';
 
 type Props = {
   email: string;
