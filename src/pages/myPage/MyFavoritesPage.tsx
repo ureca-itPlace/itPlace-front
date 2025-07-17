@@ -24,7 +24,8 @@ export default function MyFavoritesPage() {
   const [benefitFilter, setBenefitFilter] = useState<'default' | 'vipkok'>('default'); // 토글 필터링용 상태
   const [keyword, setKeyword] = useState(''); // 검색용 상태
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]); // 찜 여러개 삭제용 상태
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null); // 찜 단일 삭제용 상태
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // 검색어 기반 필터링
@@ -69,7 +70,7 @@ export default function MyFavoritesPage() {
     }
   }, [favorites, selectedId]);
 
-  // ✅ 즐겨찾기 해제
+  // ✅ 단일 즐겨찾기 해제
   const handleRemoveFavorite = (benefitId: number) => {
     const updated = favorites.filter((item) => item.benefitId !== benefitId);
     setFavorites(updated);
@@ -83,61 +84,10 @@ export default function MyFavoritesPage() {
       }
     }
   };
-
+  // ✅ 목록 즐겨찾기 해제
   const handleDeleteSelected = () => {
     console.log('즐겨 찾기 목록 삭제');
-
-    // 🚨 API 연동 시
-    // await api.delete(`/favorites/${userId}`, { data: { benefitIds: selectedItems } });
   };
-
-  // 🚨 진입 시 즐겨찾기 목록 API 호출: API완성되면 주석 해제
-  // useEffect(() => {
-  //   const fetchFavorites = async () => {
-  //     try {
-  //       const res = await api.get(`/favorites/${mockUser.userId}`, {
-  //         params: { page: 0, size: 6 },
-  //       });
-  //       const data = res.data.data;
-  //       if (data?.content) {
-  //         setFavorites(data.content);
-  //         if (data.content.length > 0) {
-  //           setSelectedId(data.content[0].benefitId); // 기본 첫 번째 선택
-  //         }
-  //       }
-  //     } catch (err) {
-  //       console.error('즐겨찾기 목록 조회 실패', err);
-  //     }
-  //   };
-
-  //   fetchFavorites();
-  // }, []);
-
-  // 🚨 즐겨찾기 해제 API 호출: API 완성되면 주석 해제
-  // const handleRemoveFavorite = async (benefitId: number) => {
-  //   try {
-  //     await api.delete(`/favorites/${mockUser.userId}`, {
-  //       data: {
-  //         benefitIds: [benefitId],
-  //       },
-  //     });
-  //     // API 성공 후 상태 갱신
-  //     const updated = favorites.filter((item) => item.benefitId !== benefitId);
-  //     setFavorites(updated);
-
-  //     // 삭제한 카드가 선택된 상태였다면 선택 해제 또는 첫 번째로 변경
-  //     if (selectedId === benefitId) {
-  //       if (updated.length > 0) {
-  //         setSelectedId(updated[0].benefitId);
-  //       } else {
-  //         setSelectedId(null);
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error('즐겨찾기 해제 실패', err);
-  //     // TODO: 토스트나 에러 핸들링 로직 추가
-  //   }
-  // };
 
   return (
     <>
@@ -205,21 +155,34 @@ export default function MyFavoritesPage() {
 
           <Modal
             isOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
+            onClose={() => {
+              setIsDeleteModalOpen(false);
+              setPendingDeleteId(null);
+            }}
             title="선택한 혜택을 삭제하시겠습니까?"
             message="삭제하신 혜택은 다시 복구할 수 없습니다."
             buttons={[
               {
-                label: '아니요',
+                label: '아니오',
                 type: 'secondary',
-                onClick: () => setIsDeleteModalOpen(false),
+                onClick: () => {
+                  setIsDeleteModalOpen(false);
+                  setPendingDeleteId(null);
+                },
               },
               {
                 label: '삭제하기',
                 type: 'primary',
                 onClick: () => {
-                  handleDeleteSelected(); // 실제 삭제 로직
+                  if (pendingDeleteId !== null) {
+                    // ✅ 단일 삭제
+                    handleRemoveFavorite(pendingDeleteId);
+                  } else {
+                    // ✅ 편집 모드에서 여러 개 삭제
+                    handleDeleteSelected();
+                  }
                   setIsDeleteModalOpen(false);
+                  setPendingDeleteId(null);
                 },
               },
             ]}
@@ -280,7 +243,8 @@ export default function MyFavoritesPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleRemoveFavorite(item.benefitId);
+                          setPendingDeleteId(item.benefitId); // 단일 삭제 ID 기억
+                          setIsDeleteModalOpen(true);
                         }}
                         className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
                         title="즐겨찾기 해제"
@@ -322,7 +286,10 @@ export default function MyFavoritesPage() {
                   편집 취소
                 </button>
                 <button
-                  onClick={() => setIsDeleteModalOpen(true)}
+                  onClick={() => {
+                    setPendingDeleteId(null); // ✅ 여러 개 삭제니까 단일 ID는 초기화
+                    setIsDeleteModalOpen(true);
+                  }}
                   className="px-4 py-2 rounded-[16px] bg-purple04 hover:bg-purple05 text-title-8 text-white"
                 >
                   삭제하기
