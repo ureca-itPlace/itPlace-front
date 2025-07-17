@@ -1,20 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useRef, forwardRef, useImperativeHandle } from 'react';
 
 type VideoSectionProps = {
   onVideoEnd: () => void;
-  shouldPlay: boolean;
 };
 
-const VideoSection = ({ onVideoEnd, shouldPlay }: VideoSectionProps) => {
+const VideoSection = forwardRef<HTMLVideoElement, VideoSectionProps>(({ onVideoEnd }, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  useEffect(() => {
-    if (shouldPlay && videoRef.current) {
-      videoRef.current.play().catch((err) => {
-        console.error('비디오 재생 실패:', err);
-      });
-    }
-  }, [shouldPlay]);
+  // ref를 landingPage로 전달
+  useImperativeHandle(ref, () => videoRef.current as HTMLVideoElement);
 
   return (
     <div className="w-full h-screen overflow-hidden z-40">
@@ -23,12 +17,11 @@ const VideoSection = ({ onVideoEnd, shouldPlay }: VideoSectionProps) => {
         src="/videos/hero-rabbit.mp4"
         muted
         playsInline
-        autoPlay={shouldPlay}
         onEnded={onVideoEnd}
         className="object-cover w-full h-full"
       />
     </div>
   );
-};
+});
 
 export default VideoSection;
