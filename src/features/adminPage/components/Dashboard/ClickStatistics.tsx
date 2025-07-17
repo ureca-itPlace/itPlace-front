@@ -47,13 +47,10 @@ const ClickStatistics = ({
   height = 382,
 }: ClickStatisticsProps) => {
   return (
-    <div
-      className="bg-white p-6 rounded-[18px] shadow-sm border border-gray-100"
-      style={{ width, height }}
-    >
-      <h3 className="text-title-4 font-bold mb-4">
+    <div className="bg-white p-6 rounded-[18px]" style={{ width, height }}>
+      <h3 className="text-title-4  mb-4">
         {title}
-        <span className="text-body-1 font-medium text-grey04 block mt-[12px]">{subtitle}</span>
+        <span className="text-body-1  text-grey04 block mt-[12px]">{subtitle}</span>
       </h3>
       <div className="flex items-center">
         <div className="w-64 h-64">
@@ -81,9 +78,9 @@ const ClickStatistics = ({
           <div className="space-y-4">
             {data.map((item, index) => (
               <div key={index} className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: item.color }}></div>
+                <div className="w-4 h-4" style={{ backgroundColor: item.color }}></div>
                 <div className="flex-1">
-                  <div className="text-body-1 text-black">{item.name}</div>
+                  <div className="text-body-1 text-grey04">{item.name}</div>
                 </div>
               </div>
             ))}

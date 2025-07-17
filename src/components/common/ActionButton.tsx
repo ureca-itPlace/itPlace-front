@@ -18,7 +18,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 
   const variantClasses = {
     primary: 'bg-purple04 hover:bg-purple05 text-white',
-    secondary: 'bg-gray-100 hover:bg-gray-200 text-gray-600',
+    secondary: 'bg-grey01 hover:bg-grey02 text-grey06',
   };
 
   return (

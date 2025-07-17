@@ -30,13 +30,13 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
           <div className="flex items-center justify-between mb-[28px]">
             <div className="flex items-center ml-[16px]">
               <div>
-                <h4 className="text-title-2 font-bold text-black mb-1">{partner.brand}</h4>
+                <h4 className="text-title-2 text-black mb-1">{partner.brand}</h4>
                 <p className="text-body-0 text-grey05 mt-1">
                   영화보다 멋진 당신의 일상을 위하여, 라이프스타일 매거진스!
                 </p>
               </div>
             </div>
-            <div className="w-[120px] h-[120px]  bg-white rounded-lg flex items-center justify-center">
+            <div className="w-[120px] h-[120px]  bg-white  flex items-center justify-center">
               <img
                 src={partner.logo}
                 alt={`${partner.brand} 로고`}
@@ -44,16 +44,27 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
               />
             </div>
           </div>
-
           {/* 제공 혜택 섹션 */}
           <div className="flex mb-8 ml-[16px]">
-            <h5 className="text-title-5 font-semibold text-black mb-4 w-[100px] flex-shrink-0">
-              제공 횟수
-            </h5>
-            <div className="rounded-lg pl-[24px]">
+            <h5 className="text-title-5  text-black mb-4 w-[100px] flex-shrink-0">혜택 내용</h5>
+            <div className=" pl-[24px]">
               <div className="space-y-3">
                 <div>
-                  <p className="text-body-0 font-medium text-grey05">VVIP/VIP 등급 정보</p>
+                  <p className="text-body-0  text-grey05">① VVIP/VIP: 4천원 할인</p>
+                  <p className="text-body-0 text-grey05">우수: 2천원 할인</p>
+                  <p className="text-body-0 text-grey05">② 오리지널/카라멜팝콘 L 4천원 구매권</p>
+                  <p className="text-body-0 text-grey05">or 콤보 3천원 할인권(예매 건당 1매)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* 제공 혜택 섹션 */}
+          <div className="flex mb-8 ml-[16px]">
+            <h5 className="text-title-5  text-black mb-4 w-[100px] flex-shrink-0">제공 횟수</h5>
+            <div className=" pl-[24px]">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-body-0  text-grey05">VVIP/VIP 등급 정보</p>
                   <p className="text-body-0 text-grey05">
                     VIP관 내 무료예매 연3회/1+1예매 연9회(총 12회)
                   </p>
@@ -67,13 +78,11 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
 
           {/* 이용방법 섹션 */}
           <div className="flex mb-8 ml-[16px]">
-            <h5 className="text-title-5 font-semibold text-black mb-4 w-[100px] flex-shrink-0">
-              이용 방법
-            </h5>
-            <div className="rounded-lg pl-[24px]">
+            <h5 className="text-title-5  text-black mb-4 w-[100px] flex-shrink-0">이용 방법</h5>
+            <div className="pl-[24px]">
               <div className="space-y-3">
                 <div>
-                  <p className="text-body-0 font-medium text-grey05">
+                  <p className="text-body-0  text-grey05">
                     메가박스 웹/앱 &gt; 영화예매 &gt; 제휴포인트 &gt; U+멤버십 &gt; VIP콕 할인 &gt;
                     멤버십 조회 &gt; VIP콕 3개 헤택 중 1개 선택 &gt; 예매
                   </p>
@@ -99,7 +108,7 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
         </div>
         {/* 하단 고정 버튼 */}
         <div className="flex justify-center py-2 mt-2">
-          <button className="w-[218px] h-[52px] bg-purple04 text-white rounded-[30px] text-body-0 font-medium hover:bg-purple05 transition-colors sticky bottom-4">
+          <button className="w-[218px] h-[52px] bg-purple04 text-white rounded-[30px] text-body-0  hover:bg-purple05 transition-colors sticky bottom-4">
             수정하기
           </button>
         </div>

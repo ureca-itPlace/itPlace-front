@@ -28,7 +28,7 @@ const Sidebar = ({ onTabChange }: SidebarProps) => {
 
   return (
     <aside
-      className="bg-[#250961] text-white flex flex-col"
+      className="bg-purple06 text-white flex flex-col"
       style={{ width: 370, height: 891, borderRadius: 18 }}
     >
       <div
@@ -47,7 +47,7 @@ const Sidebar = ({ onTabChange }: SidebarProps) => {
               onClick={() => handleTabClick(item.id)}
               className={`w-full text-left px-4 py-3 mb-4 rounded-[10px] text-body-0 transition-all duration-200 flex items-center ${
                 selectedTab === item.id
-                  ? 'bg-white text-[#250961] font-bold'
+                  ? 'bg-white text-purple06'
                   : 'bg-transparent text-white hover:bg-white/10'
               }`}
               style={{ height: 60 }}

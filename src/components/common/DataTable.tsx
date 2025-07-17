@@ -27,17 +27,14 @@ const DataTable: React.FC<DataTableProps> = ({
   emptyMessage = '데이터가 없습니다.',
 }) => {
   return (
-    <div
-      className="bg-white rounded-[18px] shadow-sm border border-gray-100 overflow-hidden relative"
-      style={{ width, height }}
-    >
+    <div className="bg-white rounded-[18px]  overflow-hidden relative" style={{ width, height }}>
       <table className="w-full table-fixed">
-        <thead className="bg-gray-50 border-b border-gray-200">
+        <thead className="border-b border-grey01">
           <tr style={{ height: 56 }}>
             {columns.map((column) => (
               <th
                 key={column.key}
-                className={`pl-[40px] py-2 text-body-2 font-medium text-gray-700 ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                className={`pl-[40px] py-2 text-body-2-bold text-grey05 ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                 style={{ width: column.width }}
               >
                 {column.headerRender ? column.headerRender() : column.label}
@@ -45,12 +42,12 @@ const DataTable: React.FC<DataTableProps> = ({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-grey01">
           {data.length === 0 ? (
             <tr style={{ height: 56 }}>
               <td
                 colSpan={columns.length}
-                className="pl-[40px] py-2 text-center text-body-2 text-gray-500"
+                className="pl-[40px] py-2 text-center text-body-2 text-black"
               >
                 {emptyMessage}
               </td>
@@ -59,7 +56,7 @@ const DataTable: React.FC<DataTableProps> = ({
             data.map((row, index) => (
               <tr
                 key={index}
-                className={`hover:bg-gray-50 transition-colors duration-150 ${
+                className={`hover:bg-grey01 transition-colors duration-150 ${
                   onRowClick ? 'cursor-pointer' : ''
                 }`}
                 style={{ height: 56 }}
@@ -68,7 +65,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className={`pl-[40px] py-2 text-body-2 text-gray-900 truncate ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
+                    className={`pl-[40px] py-2 text-body-2 text-black truncate ${column.align === 'center' ? 'text-center' : column.align === 'right' ? 'text-right' : 'text-left'}`}
                     style={{ width: column.width }}
                   >
                     {column.render

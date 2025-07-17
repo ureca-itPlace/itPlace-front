@@ -18,16 +18,13 @@ const WishlistChart = ({
   const maxValue = Math.max(...data.map((d) => d.value));
 
   return (
-    <div
-      className="bg-white p-6 rounded-[18px] shadow-sm border border-gray-100"
-      style={{ width, height }}
-    >
+    <div className="bg-white p-6 rounded-[18px]" style={{ width, height }}>
       {/* 5개로 할 거면 mb-[30px], space-y-[24px]로 */}
-      <h3 className="text-title-4 font-bold mb-[40px]">
+      <h3 className="text-title-4 mb-[30px]">
         {title}
-        <span className="text-body-1 font-medium text-grey04 ml-3">{subtitle}</span>
+        <span className="text-body-1  text-grey04 ml-3">{subtitle}</span>
       </h3>
-      <div className="space-y-[35px]">
+      <div className="space-y-[24px]">
         {data.map((item, index) => {
           const barWidth = (item.value / maxValue) * 100;
 
@@ -35,7 +32,7 @@ const WishlistChart = ({
             <div key={index} className="flex items-center">
               <span className="text-body-1 w-28 flex-shrink-0 truncate">{item.name}</span>
               <div className="flex-1 mx-6">
-                <div className="relative h-6 bg-gray-100 rounded-full">
+                <div className="relative h-6 bg-grey01 rounded-full">
                   <div
                     className="h-full rounded-full animate-grow-width"
                     style={{
