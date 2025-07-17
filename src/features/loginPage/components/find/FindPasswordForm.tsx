@@ -73,16 +73,10 @@ const FindPasswordForm = ({ onGoToLogin, registrationId, onClickTabEmail }: Prop
       {step === 'verify' ? (
         <FindPasswordStep1
           email={email}
-          verificationCode={verificationCode}
+          registrationId={registrationId}
           onChangeEmail={setEmail}
-          onChangeCode={setVerificationCode}
-          onSendCode={handleSendCode}
-          onVerifyCode={handleVerifyCode}
-          emailSent={emailSent}
-          emailVerified={emailVerified}
-          errorMessage={errorMessage}
           onClickTabEmail={onClickTabEmail}
-          onGoNextStep={() => setStep('reset')} // 하단 확인 버튼 → 다음 단계
+          onGoNextStep={() => setStep('reset')}
         />
       ) : (
         <FindPasswordStep2

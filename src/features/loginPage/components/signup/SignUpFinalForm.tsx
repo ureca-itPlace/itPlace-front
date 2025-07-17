@@ -4,12 +4,11 @@ import { showToast } from '../../../../utils/toast';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import ErrorMessage from '../common/ErrorMessage';
-import EmailVerificationBox from '../verification/EmailVerificationBox'; // 이메일 인증 컴포넌트 임포트
+import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthFooter from '../common/AuthFooter';
 import { TbEye, TbEyeOff } from 'react-icons/tb';
 import useValidation from '../../hooks/UseValidation';
 import { signUpFinal } from '../../apis/user';
-import { sendEmailVerificationCode, checkEmailVerificationCode } from '../../apis/verification';
 
 type SignUpFinalFormProps = {
   onGoToLogin: () => void;
@@ -30,12 +29,11 @@ const SignUpFinalForm = ({
   gender,
   membershipId,
 }: SignUpFinalFormProps) => {
-  // 사용자 입력값
+  // 사용자 입력 상태
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     passwordConfirm: '',
-    verificationCode: '',
   });
 
   // 입력 필드 터치 여부
@@ -45,16 +43,14 @@ const SignUpFinalForm = ({
     passwordConfirm: false,
   });
 
-  // 이메일 인증 상태
-  const [emailSent, setEmailSent] = useState(false);
+  // 이메일 인증 성공 여부
   const [emailVerified, setEmailVerified] = useState(false);
-  const [verificationCodeError, setVerificationCodeError] = useState('');
 
-  // 비밀번호 보기 토글
+  // 비밀번호 보기 토글 상태
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  // 로딩 모달 상태
+  // 모달 상태
   const [modal, setModal] = useState({
     open: false,
     title: '',
@@ -64,7 +60,7 @@ const SignUpFinalForm = ({
   // 유효성 검사 훅
   const { errors, validateAll, validateField } = useValidation();
 
-  // 입력 필드 변경 핸들러
+  // 입력 필드 변경 처리
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updated = { ...formData, [name]: value };
@@ -76,56 +72,7 @@ const SignUpFinalForm = ({
     }
   };
 
-  // 이메일 인증 요청
-  const handleSendEmailCode = async () => {
-    if (!formData.email || errors.email) return;
-
-    setModal({
-      open: true,
-      title: '인증 메일을 전송 중입니다.',
-      loading: true,
-    });
-
-    try {
-      const res = await sendEmailVerificationCode({
-        registrationId,
-        email: formData.email,
-      });
-
-      setModal({ open: false, title: '', loading: false });
-      setEmailSent(true);
-      setVerificationCodeError('');
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || '이메일 인증 요청 실패';
-      setModal({ open: false, title: '', loading: false });
-      setVerificationCodeError(msg);
-      setEmailSent(false);
-    }
-  };
-
-  // 인증번호 확인
-
-  const handleVerifyCode = async () => {
-    try {
-      await checkEmailVerificationCode(formData.email, formData.verificationCode, registrationId);
-      setEmailVerified(true);
-      setVerificationCodeError('');
-
-      showToast('이메일 인증이 완료되었습니다.', 'success');
-    } catch (err: any) {
-      const errorCode = err?.response?.data?.code;
-      if (errorCode === 'EMAIL_CODE_MISMATCH') {
-        setVerificationCodeError('인증번호가 일치하지 않습니다.');
-      } else if (errorCode === 'EMAIL_CODE_EXPIRED') {
-        setVerificationCodeError('인증번호가 만료되었습니다.');
-      } else {
-        setVerificationCodeError('인증에 실패했습니다.');
-      }
-      setEmailVerified(false);
-    }
-  };
-
-  // 최종 회원가입 처리
+  // 회원가입 요청
   const handleNext = async () => {
     const valid = validateAll(formData);
     if (valid && emailVerified) {
@@ -143,15 +90,16 @@ const SignUpFinalForm = ({
         };
 
         const response = await signUpFinal(payload);
-        console.log('응답결과 ', response.data);
+        console.log('회원가입 완료:', response.data);
         onGoToLogin();
       } catch (error) {
-        console.error('회원가입 실패', error);
+        console.error('회원가입 실패:', error);
+        showToast('회원가입에 실패했습니다.', 'error');
       }
     }
   };
 
-  // 회원가입 버튼 활성화 조건
+  // 버튼 활성화 조건
   const isValid =
     formData.email &&
     formData.password &&
@@ -164,12 +112,12 @@ const SignUpFinalForm = ({
 
   return (
     <div className="w-full flex flex-col items-center">
-      {/* 안내 문구 */}
+      {/* 제목 안내 문구 */}
       <div className="w-[320px] text-left">
         <p className="text-title-4">개인정보를 입력해주세요</p>
       </div>
 
-      {/* 이메일 인증 컴포넌트 */}
+      {/* 이메일 인증 영역 */}
       <div className="w-full max-w-[320px] mt-[51px]">
         <EmailVerificationBox
           email={formData.email}
@@ -178,17 +126,12 @@ const SignUpFinalForm = ({
               target: { name: 'email', value: val },
             } as React.ChangeEvent<HTMLInputElement>)
           }
-          verificationCode={formData.verificationCode}
-          onChangeCode={(val) => setFormData((prev) => ({ ...prev, verificationCode: val }))}
-          onSendCode={handleSendEmailCode}
-          onVerifyCode={handleVerifyCode}
-          emailSent={emailSent}
-          emailVerified={emailVerified}
-          errorMessage={(touched.email && errors.email) || verificationCodeError || undefined}
+          registrationId={registrationId}
+          onVerifiedChange={setEmailVerified}
         />
       </div>
 
-      {/* 비밀번호 입력 */}
+      {/* 비밀번호 입력 필드 */}
       <div className="w-full max-w-[320px] mt-[15px]">
         <div className="relative">
           <AuthInput
@@ -209,7 +152,7 @@ const SignUpFinalForm = ({
         {touched.password && errors.password && <ErrorMessage message={errors.password} />}
       </div>
 
-      {/* 비밀번호 확인 입력 */}
+      {/* 비밀번호 확인 필드 */}
       <div className="w-full max-w-[320px] mt-[15px]">
         <div className="relative">
           <AuthInput

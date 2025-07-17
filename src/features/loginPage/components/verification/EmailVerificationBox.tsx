@@ -1,76 +1,97 @@
-// components/EmailVerificationBox.tsx
+import { useState, useEffect } from 'react';
 import AuthInput from '../common/AuthInput';
 import ErrorMessage from '../common/ErrorMessage';
+import Modal from '../../../../components/Modal';
+import useEmailVerification from '../../hooks/useEmailVerification';
 
 type Props = {
   email: string;
   onChangeEmail: (val: string) => void;
-  verificationCode: string;
-  onChangeCode: (val: string) => void;
-  onSendCode: () => void;
-  onVerifyCode: () => void;
-  emailSent: boolean;
-  emailVerified: boolean;
-  errorMessage?: string;
+  registrationId: string;
+  onVerifiedChange?: (verified: boolean) => void;
 };
 
 const EmailVerificationBox = ({
   email,
   onChangeEmail,
-  verificationCode,
-  onChangeCode,
-  onSendCode,
-  onVerifyCode,
-  emailSent,
-  emailVerified,
-  errorMessage,
+  registrationId,
+  onVerifiedChange,
 }: Props) => {
+  const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false); // 로딩 상태
+  const { emailSent, emailVerified, errorMessage, sendCode, verifyCode } = useEmailVerification({
+    email,
+    registrationId,
+    onVerifiedChange,
+  });
+
+  // 인증번호 전송 핸들러 (모달 제어 포함)
+  const handleSendCode = async () => {
+    setLoading(true);
+    try {
+      await sendCode();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full max-w-[320px]">
-      {/* 이메일 입력 필드 */}
+      {/* 이메일 입력 */}
       <div className="relative">
         <AuthInput
           name="email"
-          value={email}
           placeholder="이메일"
+          value={email}
           onChange={(e) => onChangeEmail(e.target.value)}
           disabled={emailVerified}
         />
-        {/* 인증 버튼 */}
         {!emailVerified && (
           <button
             type="button"
-            onClick={onSendCode}
+            onClick={handleSendCode}
             disabled={!email}
             className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition
-              ${!email ? 'bg-grey02 text-grey04 cursor-not-allowed' : 'bg-purple04 text-white'}`}
+              ${!email ? 'bg-grey02 text-grey04' : 'bg-purple04 text-white'}`}
           >
             인증
           </button>
         )}
       </div>
 
-      {/* 이메일 유효성 또는 인증 관련 에러 메시지 */}
+      {/* 에러 메시지 */}
       {errorMessage && <ErrorMessage message={errorMessage} />}
 
-      {/* 인증번호 입력 필드 */}
+      {/* 인증번호 입력 */}
       {emailSent && !emailVerified && (
         <div className="relative mt-[15px]">
           <AuthInput
             name="verificationCode"
             placeholder="인증번호 입력"
-            value={verificationCode}
-            onChange={(e) => onChangeCode(e.target.value)}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
           />
-          {/* 인증 확인 버튼 */}
           <button
             type="button"
-            onClick={onVerifyCode}
+            onClick={() => verifyCode(code)}
             className="absolute right-[12px] top-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px]"
           >
             확인
           </button>
         </div>
+      )}
+
+      {/* 로딩 모달 */}
+      {loading && (
+        <Modal
+          isOpen={loading}
+          title="인증 메일을 전송 중입니다."
+          onClose={() => setLoading(false)}
+        >
+          <div className="w-full flex justify-center mt-[16px]">
+            <div className="w-[32px] h-[32px] border-4 border-purple04 border-t-transparent rounded-full animate-spin" />
+          </div>
+        </Modal>
       )}
     </div>
   );
