@@ -23,6 +23,7 @@ const VideoSection = ({ onVideoEnd, shouldPlay }: VideoSectionProps) => {
         src="/videos/hero-rabbit.mp4"
         muted
         playsInline
+        autoPlay={shouldPlay}
         onEnded={onVideoEnd}
         className="object-cover w-full h-full"
       />
