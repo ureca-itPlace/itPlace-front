@@ -38,6 +38,11 @@
     'Arial', sans-serif;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 /*스크롤바 안보이게 */
 .scrollbar-hide {
   scrollbar-width: none;
