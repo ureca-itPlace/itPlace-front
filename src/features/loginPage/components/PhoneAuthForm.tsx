@@ -8,6 +8,7 @@ import AuthFooter from './AuthFooter';
 import VerificationCodeForm from './VerificationCodeForm';
 import SignUpForm from './SignUpForm';
 import SignUpFinalForm from './SignUpFinalForm';
+import { showToast } from '../../../utils/toast';
 import { loadCaptchaEnginge, validateCaptcha } from 'react-simple-captcha';
 import { sendVerificationCode } from '../apis/verification';
 import { loadUplusData } from '../apis/auth';
@@ -126,7 +127,9 @@ const PhoneAuthForm = ({
 
     const isCaptchaValid = validateCaptcha(userCaptchaInput.trim());
     if (!isCaptchaValid) {
-      setIsModalOpen(true);
+      showToast('입력하신 보안문자가 이미지와 일치하지 않습니다.', 'error', {
+        position: 'bottom-center',
+      });
       return;
     }
 
@@ -135,7 +138,26 @@ const PhoneAuthForm = ({
       const registrationId = res.data.registrationId;
       onAuthComplete({ name, phone, registrationId });
     } catch (error: any) {
-      console.error('전송 실패:', error.response?.data || error.message);
+      const res = error?.response?.data;
+
+      let message = '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
+
+      if (res) {
+        switch (res.code) {
+          case 'INVALID_INPUT':
+            message = '잘못된 번호 형식입니다. 010을 포함한 11자리 전화번호를 입력해주세요.';
+            break;
+          case 'DUPLICATE_PHONE_NUMBER':
+            message = res.message || '이미 사용 중인 전화번호입니다.';
+            break;
+          default:
+            message = res.message || message;
+        }
+      }
+
+      showToast(message, 'error', {
+        position: 'bottom-center',
+      });
     }
   };
 

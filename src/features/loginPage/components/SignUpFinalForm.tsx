@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import Modal from '../../../components/Modal';
+import { showToast } from '../../../utils/toast';
 import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 import ErrorMessage from './ErrorMessage';
+import EmailVerificationBox from './EmailVerificationBox'; // 이메일 인증 컴포넌트 임포트
 import AuthFooter from './AuthFooter';
 import { TbEye, TbEyeOff } from 'react-icons/tb';
 import useValidation from '../hooks/UseValidation';
 import { signUpFinal } from '../apis/user';
 import { sendEmailVerificationCode, checkEmailVerificationCode } from '../apis/verification';
-import EmailVerificationBox from './EmailVerificationBox'; // 이메일 인증 컴포넌트 임포트
 
 type SignUpFinalFormProps = {
   onGoToLogin: () => void;
@@ -103,11 +104,14 @@ const SignUpFinalForm = ({
   };
 
   // 인증번호 확인
+
   const handleVerifyCode = async () => {
     try {
       await checkEmailVerificationCode(formData.email, formData.verificationCode, registrationId);
       setEmailVerified(true);
       setVerificationCodeError('');
+
+      showToast('이메일 인증이 완료되었습니다.', 'success');
     } catch (err: any) {
       const errorCode = err?.response?.data?.code;
       if (errorCode === 'EMAIL_CODE_MISMATCH') {

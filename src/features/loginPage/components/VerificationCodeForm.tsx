@@ -7,6 +7,7 @@ import { TbClock } from 'react-icons/tb';
 import { checkVerificationCode, sendVerificationCode } from '../apis/verification';
 import Modal from '../../../components/Modal';
 import { modalPresets } from '../constants/modalPresets';
+import { showToast } from '../../../utils/toast';
 
 export interface ModalButton {
   label: string;
@@ -98,6 +99,9 @@ const VerificationCodeForm = ({
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timerRef.current!);
+          showToast('인증 시간이 만료되었습니다.', 'error', {
+            position: 'bottom-center',
+          });
         }
         return prev - 1;
       });
@@ -149,6 +153,7 @@ const VerificationCodeForm = ({
       });
 
       setCodeError('');
+      showToast('인증에 성공하였습니다.', 'success'); //인증 성공 시 성공 토스트
 
       const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
 
