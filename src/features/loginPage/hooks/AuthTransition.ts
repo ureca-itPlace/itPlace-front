@@ -7,7 +7,13 @@ export const AuthTransition = () => {
 
   // 현재 단계 상태
   const [formStep, setFormStep] = useState<
-    'login' | 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal' | 'findEmail'
+    | 'login'
+    | 'phoneAuth'
+    | 'verification'
+    | 'signUp'
+    | 'signUpFinal'
+    | 'findEmail'
+    | 'oauthIntegration'
   >('login');
 
   // 카드 이동 거리
@@ -90,6 +96,7 @@ export const AuthTransition = () => {
 
   return {
     formStep,
+    setFormStep,
     formCardRef,
     sideCardRef,
     goToLogin,

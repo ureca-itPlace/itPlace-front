@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import AuthInput from './AuthInput';
-import AuthButton from './AuthButton';
-import AuthFooter from './AuthFooter';
-import { getUserInfo } from '../apis/user';
+import AuthInput from '../common/AuthInput';
+import AuthButton from '../common/AuthButton';
+import AuthFooter from '../common/AuthFooter';
+import { getUserInfo } from '../../apis/user';
 
 type SignUpFormProps = {
   nameFromPhoneAuth: string;

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import AuthInput from './AuthInput';
-import AuthButton from './AuthButton';
-import AuthLinkRow from './AuthLinkRow';
-import AuthDivider from './AuthDivider';
+import AuthInput from '../common/AuthInput';
+import AuthButton from '../common/AuthButton';
+import AuthLinkRow from '../common/AuthLinkRow';
+import AuthDivider from '../common/AuthDivider';
 import KakaoLoginButton from './KakaoLoginButton';
-import { login } from '../apis/auth';
+import { login } from '../../apis/auth';
 
 type Props = {
   onGoToPhoneAuth: () => void;
