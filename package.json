@@ -13,8 +13,10 @@
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@reduxjs/toolkit": "^2.8.2",
+    "@types/lodash": "^4.17.20",
     "axios": "^1.10.0",
     "gsap": "^3.13.0",
+    "lodash": "^4.17.21",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.60.0",
