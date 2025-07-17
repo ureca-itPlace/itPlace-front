@@ -257,14 +257,14 @@ export default function MyFavoritesPage() {
                         setSelectedId(item.benefitId); // 상세보기
                       }
                     }}
-                    className={`relative p-4 border rounded-[18px] w-[220px] h-[240px] cursor-pointer transition-shadow ${
+                    className={`relative p-4 border rounded-[18px] w-[220px] h-[240px] cursor-pointer border-none shadow-[0px_3px_12px_rgba(0,0,0,0.15)] ${
                       isEditing
                         ? selectedItems.includes(item.benefitId)
-                          ? 'border-purple04 border-2'
-                          : 'border-grey03'
+                          ? 'ring-2 ring-purple04'
+                          : ''
                         : selectedId === item.benefitId
-                          ? 'border-purple04 border-2'
-                          : 'border-grey03'
+                          ? 'ring-2 ring-purple04'
+                          : ''
                     }`}
                   >
                     {isEditing && (
