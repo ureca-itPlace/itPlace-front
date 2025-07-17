@@ -496,13 +496,6 @@ const PartnershipManagement = () => {
         />
       </div>
 
-      {/* 검색 상태 표시 */}
-      {debouncedSearchTerm && (
-        <div className="text-sm text-grey03 mt-2">
-          '{debouncedSearchTerm}' 검색 결과: {totalItems}건
-        </div>
-      )}
-
       {/* 페이지네이션 */}
       <Pagination
         currentPage={currentPage}
