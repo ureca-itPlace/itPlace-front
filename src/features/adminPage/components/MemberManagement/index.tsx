@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { TbRefresh, TbExternalLink } from 'react-icons/tb';
+import { debounce } from 'lodash';
 import StatisticsCard from '../../../../components/common/StatisticsCard';
 import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
@@ -7,17 +8,12 @@ import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
 import Pagination from '../../../../components/common/Pagination';
 import MemberDetailModal from './MemberDetailModal';
-
-// 회원 데이터 타입
-interface Member {
-  id: string;
-  name: string;
-  nickname: string;
-  email: string;
-  phone: string;
-  grade: 'VIP' | 'VVIP' | '우수';
-  joinDate: string;
-}
+import {
+  Member,
+  searchMembersWithPagination,
+  getMembersWithPagination,
+  getMemberStatistics,
+} from './apis/MemberManagementApis';
 
 // 제휴처 이용 내역 타입
 interface PartnerUsage {
@@ -25,163 +21,6 @@ interface PartnerUsage {
   amount: string;
   date: string;
 }
-
-// 샘플 회원 데이터
-const sampleMembers: Member[] = [
-  {
-    id: '1',
-    name: 'U+ 연동',
-    nickname: '최영준',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: 'VIP',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '2',
-    name: '일반',
-    nickname: '박용규',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: 'VVIP',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '3',
-    name: '일반',
-    nickname: '염승아',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: 'VIP',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '4',
-    name: 'U+ 연동',
-    nickname: '백세진',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: '우수',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '5',
-    name: 'U+ 연동',
-    nickname: '이희용',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: '우수',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '6',
-    name: '일반',
-    nickname: '정현경',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: 'VIP',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '7',
-    name: 'U+ 연동',
-    nickname: '하령경',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: 'VIP',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '8',
-    name: 'U+ 연동',
-    nickname: '허승현',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: 'VIP',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '9',
-    name: 'U+ 연동',
-    nickname: '허승현',
-    email: 'hello123@google.com',
-    phone: '010-0000-0000',
-    grade: 'VIP',
-    joinDate: '2002.10.22',
-  },
-  {
-    id: '10',
-    name: '일반',
-    nickname: '김민수',
-    email: 'minsu@example.com',
-    phone: '010-1111-1111',
-    grade: 'VVIP',
-    joinDate: '2003.05.15',
-  },
-  {
-    id: '11',
-    name: 'U+ 연동',
-    nickname: '이영희',
-    email: 'younghee@example.com',
-    phone: '010-2222-2222',
-    grade: 'VIP',
-    joinDate: '2004.08.20',
-  },
-  {
-    id: '12',
-    name: '일반',
-    nickname: '박철수',
-    email: 'chulsoo@example.com',
-    phone: '010-3333-3333',
-    grade: '우수',
-    joinDate: '2005.12.10',
-  },
-  {
-    id: '13',
-    name: 'U+ 연동',
-    nickname: '김소영',
-    email: 'soyoung@example.com',
-    phone: '010-4444-4444',
-    grade: 'VIP',
-    joinDate: '2006.03.25',
-  },
-  {
-    id: '14',
-    name: '일반',
-    nickname: '최우진',
-    email: 'woojin@example.com',
-    phone: '010-5555-5555',
-    grade: 'VVIP',
-    joinDate: '2007.07.30',
-  },
-  {
-    id: '15',
-    name: 'U+ 연동',
-    nickname: '정수민',
-    email: 'sumin@example.com',
-    phone: '010-6666-6666',
-    grade: '우수',
-    joinDate: '2008.11.05',
-  },
-  {
-    id: '16',
-    name: '일반',
-    nickname: '강지혜',
-    email: 'jihye@example.com',
-    phone: '010-7777-7777',
-    grade: 'VIP',
-    joinDate: '2009.02.14',
-  },
-  {
-    id: '17',
-    name: 'U+ 연동',
-    nickname: '조민호',
-    email: 'minho@example.com',
-    phone: '010-8888-8888',
-    grade: 'VVIP',
-    joinDate: '2010.06.18',
-  },
-];
 
 // 제휴처 이용 내역 샘플 데이터
 const partnerUsageData: PartnerUsage[] = [
@@ -239,6 +78,9 @@ const partnerUsageData: PartnerUsage[] = [
 
 const MemberManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [members, setMembers] = useState<Member[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMemberType, setSelectedMemberType] = useState<string | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
@@ -247,26 +89,91 @@ const MemberManagement = () => {
   const [showPartnerModal, setShowPartnerModal] = useState(false);
   const itemsPerPage = 8;
 
-  // 총 회원 수
-  const totalMembers = 125587;
-  const lastUpdated = '2025.07.11 UT 23:15:05';
+  // 페이지네이션 정보 상태
+  const [totalItems, setTotalItems] = useState(0);
 
-  // 검색 필터링
-  const filteredMembers = sampleMembers.filter((member) => {
-    const matchesSearch =
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.nickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.email.toLowerCase().includes(searchTerm.toLowerCase());
+  // 통계 데이터 상태
+  const [totalMembers, setTotalMembers] = useState(0);
+  const [lastUpdated, setLastUpdated] = useState('');
 
-    const matchesMemberType = selectedMemberType ? member.name === selectedMemberType : true;
-    const matchesGrade = selectedGrade ? member.grade === selectedGrade : true;
+  // 회원 데이터 로드 함수
+  const loadMembers = useCallback(
+    async (page: number = 1) => {
+      setIsLoading(true);
+      try {
+        const response = await getMembersWithPagination(
+          page,
+          itemsPerPage,
+          selectedMemberType || undefined,
+          selectedGrade || undefined
+        );
+        setMembers(response.data);
+        setTotalItems(response.totalItems);
+        setCurrentPage(response.currentPage);
+      } catch (error) {
+        console.error('회원 데이터 로드 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedMemberType, selectedGrade]
+  );
 
-    return matchesSearch && matchesMemberType && matchesGrade;
-  });
+  // 초기 데이터 로드
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        setIsLoading(true);
+        const statistics = await getMemberStatistics();
+        setTotalMembers(statistics.totalMembers);
+        setLastUpdated(statistics.lastUpdated);
 
-  // 페이지네이션
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentMembers = filteredMembers.slice(startIndex, startIndex + itemsPerPage);
+        // 첫 페이지 데이터 로드
+        await loadMembers(1);
+      } catch (error) {
+        console.error('초기 데이터 로드 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, [loadMembers]);
+
+  // 검색 API 호출 함수
+  const searchMembers = useCallback(async (searchQuery: string) => {
+    setIsLoading(true);
+    try {
+      const response = await searchMembersWithPagination(searchQuery, 1, itemsPerPage);
+      setMembers(response.data);
+      setTotalItems(response.totalItems);
+      setCurrentPage(1);
+    } catch (error) {
+      console.error('검색 API 호출 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // 디바운스된 검색 함수
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchQuery: string) => {
+        setDebouncedSearchTerm(searchQuery);
+        searchMembers(searchQuery);
+      }, 500),
+    [searchMembers]
+  );
+
+  // 검색어 변경 시 디바운스 적용
+  useEffect(() => {
+    debouncedSearch(searchTerm);
+
+    // cleanup 함수로 디바운스 취소
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchTerm, debouncedSearch]);
 
   // 검색어 변경 시 페이지 초기화
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -293,14 +200,57 @@ const MemberManagement = () => {
     setCurrentPage(1);
   };
 
+  // 필터 변경 시 데이터 다시 로드
+  useEffect(() => {
+    if (!debouncedSearchTerm) {
+      loadMembers(1);
+    }
+  }, [selectedMemberType, selectedGrade, debouncedSearchTerm, loadMembers]);
+
   // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    if (debouncedSearchTerm) {
+      // 검색 모드일 때는 검색 결과 페이지네이션
+      const searchPagination = async () => {
+        setIsLoading(true);
+        try {
+          const response = await searchMembersWithPagination(
+            debouncedSearchTerm,
+            pageNumber,
+            itemsPerPage
+          );
+          setMembers(response.data);
+          setTotalItems(response.totalItems);
+          setCurrentPage(pageNumber);
+        } catch (error) {
+          console.error('검색 페이지네이션 실패:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      searchPagination();
+    } else {
+      // 일반 모드일 때는 전체 데이터 페이지네이션
+      loadMembers(pageNumber);
+    }
   };
 
-  const handleRefresh = () => {
-    // 새로고침 로직
-    console.log('데이터 새로고침');
+  const handleRefresh = async () => {
+    try {
+      setIsLoading(true);
+      const statistics = await getMemberStatistics();
+      setTotalMembers(statistics.totalMembers);
+      setLastUpdated(statistics.lastUpdated);
+      setSearchTerm('');
+      setDebouncedSearchTerm('');
+      setCurrentPage(1);
+      await loadMembers(1);
+      console.log('데이터 새로고침 완료');
+    } catch (error) {
+      console.error('데이터 새로고침 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePartnerDetailClick = (member: Member) => {
@@ -437,20 +387,27 @@ const MemberManagement = () => {
       </div>
 
       {/* 회원 목록 테이블 */}
-      <DataTable
-        data={currentMembers as unknown as Record<string, unknown>[]}
-        columns={columns}
-        onRowClick={(row) => handlePartnerDetailClick(row as unknown as Member)}
-        width={1410}
-        height={516}
-        emptyMessage="회원이 없습니다."
-      />
+      <div className="relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white z-10 flex items-center justify-center">
+            <div className="text-grey03">검색 중...</div>
+          </div>
+        )}
+        <DataTable
+          data={members as unknown as Record<string, unknown>[]}
+          columns={columns}
+          onRowClick={(row) => handlePartnerDetailClick(row as unknown as Member)}
+          width={1410}
+          height={516}
+          emptyMessage="회원이 없습니다."
+        />
+      </div>
 
       {/* 페이지네이션 */}
       <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
-        totalItems={filteredMembers.length}
+        totalItems={totalItems}
         onPageChange={handlePageChange}
         width={1410}
       />
