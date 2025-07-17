@@ -8,6 +8,7 @@ import { TbEye, TbEyeOff } from 'react-icons/tb';
 import useValidation from '../hooks/UseValidation';
 import { signUpFinal } from '../apis/user';
 import { sendEmailVerificationCode, checkEmailVerificationCode } from '../apis/verification';
+import EmailVerificationBox from './EmailVerificationBox'; // 이메일 인증 컴포넌트 임포트
 
 type SignUpFinalFormProps = {
   onGoToLogin: () => void;
@@ -76,10 +77,8 @@ const SignUpFinalForm = ({
 
   // 이메일 인증 요청
   const handleSendEmailCode = async () => {
-    // 유효하지 않은 이메일이면 요청하지 않음
     if (!formData.email || errors.email) return;
 
-    // 로딩 모달 띄우기
     setModal({
       open: true,
       title: '인증 메일을 전송 중입니다.',
@@ -92,12 +91,10 @@ const SignUpFinalForm = ({
         email: formData.email,
       });
 
-      // 성공 시 모달 닫고 인증 입력 가능
       setModal({ open: false, title: '', loading: false });
       setEmailSent(true);
       setVerificationCodeError('');
     } catch (err: any) {
-      // 실패 시 에러 메시지 표시
       const msg = err?.response?.data?.message || '이메일 인증 요청 실패';
       setModal({ open: false, title: '', loading: false });
       setVerificationCodeError(msg);
@@ -105,7 +102,7 @@ const SignUpFinalForm = ({
     }
   };
 
-  // 이메일 인증번호 확인
+  // 인증번호 확인
   const handleVerifyCode = async () => {
     try {
       await checkEmailVerificationCode(formData.email, formData.verificationCode, registrationId);
@@ -168,58 +165,24 @@ const SignUpFinalForm = ({
         <p className="text-title-4">개인정보를 입력해주세요</p>
       </div>
 
-      {/* 이메일 입력 */}
+      {/* 이메일 인증 컴포넌트 */}
       <div className="w-full max-w-[320px] mt-[51px]">
-        <div className="relative">
-          <AuthInput
-            name="email"
-            value={formData.email}
-            placeholder="이메일"
-            onChange={handleChange}
-            disabled={emailVerified}
-          />
-          {!emailVerified && (
-            <button
-              type="button"
-              onClick={handleSendEmailCode}
-              disabled={!formData.email || !!errors.email}
-              className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition
-                ${
-                  !formData.email || !!errors.email
-                    ? 'bg-grey02 text-grey04 cursor-not-allowed'
-                    : 'bg-purple04 text-white'
-                }`}
-            >
-              인증하기
-            </button>
-          )}
-        </div>
-        {touched.email && errors.email && <ErrorMessage message={errors.email} />}
+        <EmailVerificationBox
+          email={formData.email}
+          onChangeEmail={(val) =>
+            handleChange({
+              target: { name: 'email', value: val },
+            } as React.ChangeEvent<HTMLInputElement>)
+          }
+          verificationCode={formData.verificationCode}
+          onChangeCode={(val) => setFormData((prev) => ({ ...prev, verificationCode: val }))}
+          onSendCode={handleSendEmailCode}
+          onVerifyCode={handleVerifyCode}
+          emailSent={emailSent}
+          emailVerified={emailVerified}
+          errorMessage={(touched.email && errors.email) || verificationCodeError || undefined}
+        />
       </div>
-
-      {/* 인증번호 입력 */}
-      {emailSent && !emailVerified && (
-        <div className="w-full max-w-[320px] mt-[15px]">
-          <div className="relative">
-            <AuthInput
-              name="verificationCode"
-              placeholder="인증번호 입력"
-              value={formData.verificationCode}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, verificationCode: e.target.value }))
-              }
-            />
-            <button
-              type="button"
-              onClick={handleVerifyCode}
-              className="absolute right-[12px] top-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px]"
-            >
-              확인
-            </button>
-          </div>
-          {verificationCodeError && <ErrorMessage message={verificationCodeError} />}
-        </div>
-      )}
 
       {/* 비밀번호 입력 */}
       <div className="w-full max-w-[320px] mt-[15px]">

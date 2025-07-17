@@ -32,6 +32,7 @@ type Props = {
     phone: string;
     registrationId: string;
     isUplus: boolean;
+    verifiedType: 'new' | 'uplus' | 'local' | 'oauth'; // 인증 결과 타입 전달
   }) => void;
   name: string;
   phone: string;
@@ -240,7 +241,6 @@ const VerificationCodeForm = ({
         <AuthButton
           label="다음"
           onClick={() => {
-            // U+ 회원이라면 uplusDataRef에서 이름, 번호 가져오기
             const resolvedName = uplusDataRef.current?.name ?? name;
             const resolvedPhone = uplusDataRef.current?.phone ?? phone;
 
@@ -249,10 +249,10 @@ const VerificationCodeForm = ({
               phone: resolvedPhone,
               registrationId,
               isUplus: verifiedTypeRef.current === 'uplus',
+              verifiedType: verifiedTypeRef.current!, // 인증 결과 타입 함께 전달
             };
 
             switch (verifiedTypeRef.current) {
-              // 기존 로컬 회원 → 로그인 유도 모달
               case 'local':
                 setModal(
                   modalPresets.alreadyJoined(() => {
@@ -262,7 +262,6 @@ const VerificationCodeForm = ({
                 );
                 break;
 
-              // OAuth 회원 → 계정 통합 안내
               case 'oauth':
                 setModal(
                   modalPresets.mergeAccount(
@@ -283,7 +282,6 @@ const VerificationCodeForm = ({
                 );
                 break;
 
-              // U+ 회원 → 정보 사용 여부 모달 후 데이터 포함 전달
               case 'uplus':
                 setModal(
                   modalPresets.uplusMember(
@@ -299,7 +297,6 @@ const VerificationCodeForm = ({
                 );
                 break;
 
-              // 신규 회원 → 그대로 다음 단계로 진행
               case 'new':
                 onVerified(commonUserInfo);
                 break;

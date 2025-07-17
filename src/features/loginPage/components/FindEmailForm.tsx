@@ -1,12 +1,14 @@
 import React from 'react';
-import AuthButton from './AuthButton'; // 실제 경로에 맞게 수정
-import AuthFooter from './AuthFooter'; // 실제 경로에 맞게 수정
+import AuthButton from './AuthButton';
+import AuthFooter from './AuthFooter';
 
 interface FindEmailFormProps {
   email: string;
   createdAt: string;
   onClickResetPassword: () => void;
   onClickLogin: () => void;
+  onClickTabEmail?: () => void;
+  onClickTabPassword?: () => void; // 상단 탭 클릭 시 비밀번호 찾기로 전환
 }
 
 const FindEmailForm: React.FC<FindEmailFormProps> = ({
@@ -14,6 +16,7 @@ const FindEmailForm: React.FC<FindEmailFormProps> = ({
   createdAt,
   onClickResetPassword,
   onClickLogin,
+  onClickTabPassword,
 }) => {
   return (
     <div className="w-[320px] mx-auto flex flex-col items-center">
@@ -22,7 +25,10 @@ const FindEmailForm: React.FC<FindEmailFormProps> = ({
         <button className="w-[153px] h-[42px] bg-white text-purple04 rounded-[18px] text-title-6">
           아이디 찾기
         </button>
-        <button className="w-[153px] h-[42px] text-grey05 rounded-[18px] text-title-6">
+        <button
+          className="w-[153px] h-[42px] text-grey05 rounded-[18px] text-title-6"
+          onClick={onClickTabPassword}
+        >
           비밀번호 찾기
         </button>
       </div>
@@ -41,7 +47,7 @@ const FindEmailForm: React.FC<FindEmailFormProps> = ({
       {/* 비밀번호 재설정 버튼 */}
       <AuthButton className="mt-[150px]" label="비밀번호 재설정" onClick={onClickResetPassword} />
 
-      {/* 하단 로그인 링크 (가운데 정렬) */}
+      {/* 하단 로그인 링크 */}
       <div className="mt-[8px] flex justify-center">
         <AuthFooter
           leftText="이미 회원이신가요?"

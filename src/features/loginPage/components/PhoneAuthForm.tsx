@@ -17,7 +17,7 @@ type Props = {
   currentStep: 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal';
   onGoToLogin: () => void;
   onAuthComplete: (data: { name: string; phone: string; registrationId: string }) => void;
-  onVerified: () => void;
+  onVerified: (verifiedType: 'new' | 'uplus' | 'local' | 'oauth') => void; // 인증 결과 타입을 상위로 전달
   onSignUpComplete: () => void;
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
@@ -73,11 +73,13 @@ const PhoneAuthForm = ({
     phone,
     registrationId,
     isUplus,
+    verifiedType, // VerificationCodeForm에서 전달받은 유저 타입
   }: {
     name: string;
     phone: string;
     registrationId: string;
     isUplus: boolean;
+    verifiedType: 'new' | 'uplus' | 'local' | 'oauth';
   }) => {
     let birthday = '';
     let gender = '';
@@ -105,8 +107,8 @@ const PhoneAuthForm = ({
     setGender(gender);
     setMembershipId(membershipId);
 
-    // 다음 단계 진행
-    onVerified();
+    // 인증 결과를 상위로 전달하여 흐름 분기
+    onVerified(verifiedType);
   };
 
   // 보안문자 캡차 박스 메모이제이션
@@ -147,7 +149,7 @@ const PhoneAuthForm = ({
       <VerificationCodeForm
         mode={mode}
         onGoToLogin={onGoToLogin}
-        onVerified={handleVerified}
+        onVerified={handleVerified} // 인증 결과를 포함해 전달받음
         name={nameFromPhoneAuth}
         phone={phoneFromPhoneAuth}
         registrationId={registrationIdFromPhoneAuth}
