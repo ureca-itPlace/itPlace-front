@@ -32,7 +32,7 @@ const menuItems = [
 export default function SideMenu() {
   return (
     <aside className="w-[370px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-3">
-      <h1 className="text-title-1 text-purple06 pl-[34px] pb-[80px]">My Page</h1>
+      <h1 className="text-title-1 text-purple06 pl-[34px] pb-[80px]">MY PAGE</h1>
       <nav className="flex flex-col gap-5">
         {menuItems.map((item) => {
           const Icon = item.icon;

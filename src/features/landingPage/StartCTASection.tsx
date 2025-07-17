@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const StartCTASection = () => {
   const navigate = useNavigate();
   return (
-    <div className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6">
+    <div className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
       <div className="absolute left-[-20px] top-5 max-xl:hidden">
         <img src="/images/landing/CTARabbit.svg" alt="CTA토끼" />
       </div>
