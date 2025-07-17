@@ -250,7 +250,8 @@ const PhoneAuthForm = ({
       <Modal
         isOpen={isModalOpen}
         title="보안문자 오류"
-        message="입력하신 보안문자가\n이미지와 일치하지 않습니다."
+        message="입력하신 보안문자가 이미지와 
+        일치하지 않습니다."
         buttons={[
           {
             label: '확인',
