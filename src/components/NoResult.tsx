@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// props 타입 정의 (TypeScript라면 interface로 정의해도 됨)
+// props 타입 정의
 // message1: 상단 제목
 // message2: 하단 설명
 // buttonText: 버튼 문구 (없으면 버튼 안보임)
