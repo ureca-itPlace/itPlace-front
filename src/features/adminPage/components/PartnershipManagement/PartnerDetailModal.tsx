@@ -31,7 +31,7 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
             <div className="flex items-center ml-[16px]">
               <div>
                 <h4 className="text-title-2 font-bold text-black mb-1">{partner.brand}</h4>
-                <p className="text-body-0 text-grey05">
+                <p className="text-body-0 text-grey05 mt-1">
                   영화보다 멋진 당신의 일상을 위하여, 라이프스타일 매거진스!
                 </p>
               </div>
@@ -47,17 +47,17 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
 
           {/* 제공 혜택 섹션 */}
           <div className="flex mb-8 ml-[16px]">
-            <h5 className="text-title-5 font-semibold text-gray-900 mb-4 w-[100px] flex-shrink-0">
+            <h5 className="text-title-5 font-semibold text-black mb-4 w-[100px] flex-shrink-0">
               제공 횟수
             </h5>
             <div className="rounded-lg pl-[24px]">
               <div className="space-y-3">
                 <div>
-                  <p className="text-body-2 font-medium text-gray-900">VVIP/VIP 등급 정보</p>
-                  <p className="text-body-2 text-gray-700">
+                  <p className="text-body-0 font-medium text-grey05">VVIP/VIP 등급 정보</p>
+                  <p className="text-body-0 text-grey05">
                     VIP관 내 무료예매 연3회/1+1예매 연9회(총 12회)
                   </p>
-                  <p className="text-body-2 text-gray-700">
+                  <p className="text-body-0 text-grey05">
                     (월 1회 사용 가능, CGV/메가박스 중 택 1)
                   </p>
                 </div>
@@ -67,18 +67,18 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
 
           {/* 이용방법 섹션 */}
           <div className="flex mb-8 ml-[16px]">
-            <h5 className="text-title-5 font-semibold text-gray-900 mb-4 w-[100px] flex-shrink-0">
+            <h5 className="text-title-5 font-semibold text-black mb-4 w-[100px] flex-shrink-0">
               이용 방법
             </h5>
             <div className="rounded-lg pl-[24px]">
               <div className="space-y-3">
                 <div>
-                  <p className="text-body-2 font-medium text-gray-900">
+                  <p className="text-body-0 font-medium text-grey05">
                     메가박스 웹/앱 &gt; 영화예매 &gt; 제휴포인트 &gt; U+멤버십 &gt; VIP콕 할인 &gt;
                     멤버십 조회 &gt; VIP콕 3개 헤택 중 1개 선택 &gt; 예매
                   </p>
-                  <p className="text-body-2 text-gray-700">*꼭 확인하세요</p>
-                  <p className="text-body-2 text-gray-700">
+                  <p className="text-body-0 text-grey05">*꼭 확인하세요</p>
+                  <p className="text-body-0 text-grey05">
                     - VIP콕 무료/1+1 혜택은 2D, 일반컨텐츠에 한하여 적용 가능하며, 일반관,
                     컴포트관만 예매 할 수 있습니다.- VIP콕 특별관 6천원 할인 혜택은 더부티크, Dolby
                     Atmos, 더부티크스위트, Dolby Cinema, MX4D관에 한하여 적용 가능합니다.- VIP콕
