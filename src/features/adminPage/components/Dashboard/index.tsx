@@ -57,9 +57,10 @@ const convertToUsageDataItem = (apiData: PartnerUsageStatsItem[]): UsageDataItem
 // 제휴처별 찜 통계 데이터 (기본 데이터)
 const defaultHouseRegistrationData = [
   { name: '올리브영', value: 1200, color: '#250961' },
-  { name: '롯데월드', value: 997, color: '#A175FF' },
-  { name: '야놀자 클라우드...', value: 754, color: '#CDB5FF' },
-  { name: 'CGV', value: 509, color: '#F0E8FF' },
+  { name: '롯데월드', value: 997, color: '#530CC2' },
+  { name: '야놀자 클라우드...', value: 754, color: '#7638FA' },
+  { name: 'CGV', value: 509, color: '#A175FF' },
+  { name: '뽀로로파크', value: 309, color: '#CDB5FF' },
 ];
 
 // 가장 클릭한 제휴처 원그래프 데이터 (기본 데이터)
@@ -147,7 +148,7 @@ const Dashboard = () => {
         />
         <WishlistChart
           title="제휴처별 찜 통계"
-          subtitle="회원이 가장 많이 찜한 제휴처 Top 4"
+          subtitle="회원이 가장 많이 찜한 제휴처 Top 5"
           data={wishlistData}
           height={345}
         />

@@ -32,7 +32,7 @@ const Modal: React.FC<ModalProps> = ({
       >
         {/* 모달 헤더 */}
         <div className="bg-grey01 rounded-t-[20px] flex items-center justify-between pl-8 pt-6 pb-4 pr-4">
-          <h3 className="text-title-5 font-medium ">{title}</h3>
+          <h3 className="text-title-5  ">{title}</h3>
           <button onClick={onClose} className="text-grey05">
             <TbX size={36} />
           </button>

@@ -37,9 +37,10 @@ const MemberDetailModal: React.FC<MemberDetailModalProps> = ({
       <div className="pt-[38px]">
         {/* 회원 정보 */}
         <div className="mb-6 ml-[40px]">
-          <h4 className="text-title-2 font-semibold mb-2">{member.nickname}</h4>
+          <h4 className="text-title-2  mb-2">{member.nickname}</h4>
           <p className="text-body-0 text-grey05">
-            {member.grade} | 멤버십 번호: <span className="font-bold">123875793487594857</span>
+            {member.grade} | 멤버십 번호:{' '}
+            <span className="text-body-0-bold">123875793487594857</span>
           </p>
         </div>
 
@@ -48,21 +49,16 @@ const MemberDetailModal: React.FC<MemberDetailModalProps> = ({
           className="bg-grey01 rounded-[12px] overflow-hidden ml-[40px] mr-[40px]"
           style={{ height: 'calc(100% - 120px)' }}
         >
-          <div className="bg-grey02 pl-[42px] py-3 border-b border-grey02">
+          <div className="bg-grey02 pl-[42px] py-4 border-b border-grey02">
             <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-4 text-left text-body-0 font-medium text-grey05">브랜드</div>
-              <div className="col-span-4 text-center text-body-0 font-medium text-grey05">
-                할인 금액
-              </div>
-              <div className="col-span-4 text-center text-body-0 font-medium text-grey05">날짜</div>
+              <div className="col-span-4 text-left text-body-0  text-grey05">브랜드</div>
+              <div className="col-span-4 text-center text-body-0  text-grey05">할인 금액</div>
+              <div className="col-span-4 text-center text-body-0 text-grey05">날짜</div>
             </div>
           </div>
           <div className="overflow-y-auto" style={{ height: 'calc(100% - 48px)' }}>
             {partnerUsageData.map((usage, index) => (
-              <div
-                key={index}
-                className="pl-[42px] py-3 border-b border-gray-200 hover:bg-gray-100 transition-colors duration-150"
-              >
+              <div key={index} className="pl-[42px] py-4 border-b border-white">
                 <div className="grid grid-cols-12 gap-8">
                   <div className="col-span-4 text-body-0 text-black truncate">{usage.brand}</div>
                   <div className="col-span-4 text-body-0 text-black text-center ">

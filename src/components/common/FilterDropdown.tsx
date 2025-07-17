@@ -50,12 +50,12 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <div className="relative">
       <button
         onClick={onToggle}
-        className={`flex items-center justify-center border border-gray-300 rounded-[12px] transition-colors duration-200 ${
-          hasActiveFilters ? 'bg-purple04 hover:bg-purple05' : 'bg-gray-100 hover:bg-gray-200'
+        className={`flex items-center justify-center border border-grey02 rounded-[12px] transition-colors duration-200 ${
+          hasActiveFilters ? 'bg-purple04 hover:bg-purple05' : 'bg-grey01 hover:bg-grey02'
         }`}
         style={{ width: 50, height: 50 }}
       >
-        <TbFilter size={20} className={hasActiveFilters ? 'text-white' : 'text-gray-600'} />
+        <TbFilter size={20} className={hasActiveFilters ? 'text-white' : 'text-grey05'} />
       </button>
 
       {isOpen && (
@@ -66,7 +66,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
           <div className="space-y-4">
             {filterGroups.map((group, index) => (
               <div key={index}>
-                <h4 className="text-body-2 font-medium text-gray-700 mb-2">{group.title}</h4>
+                <h4 className="text-body-2 font-medium text-grey05 mb-2">{group.title}</h4>
                 <div className="flex flex-wrap gap-2">
                   {group.options.map((option) => (
                     <button
@@ -75,7 +75,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
                       className={`px-3 py-1 text-body-3 rounded-lg transition-colors duration-150 ${
                         group.selectedValue === option.value
                           ? 'bg-purple04 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-grey01 text-grey05 hover:bg-grey02'
                       }`}
                     >
                       {option.label}
@@ -86,10 +86,10 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
             ))}
           </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-200">
+          <div className="mt-4 pt-4 border-t border-grey02">
             <button
               onClick={onReset}
-              className="w-full px-3 py-2 text-body-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-150"
+              className="w-full px-3 py-2 text-body-3 bg-grey01 text-grey05 rounded-lg hover:bg-grey02 transition-colors duration-150"
             >
               필터 초기화
             </button>

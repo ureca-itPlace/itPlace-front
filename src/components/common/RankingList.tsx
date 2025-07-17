@@ -10,34 +10,29 @@ interface RankingListProps {
 
 const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: RankingListProps) => {
   return (
-    <div
-      className="bg-white p-6 rounded-[18px] shadow-sm border border-gray-100"
-      style={{ width, height }}
-    >
-      <h3 className="text-title-4 font-bold mb-4">
+    <div className="bg-white p-6 rounded-[18px]" style={{ width, height }}>
+      <h3 className="text-title-4  mb-4">
         {title}
-        <span className="text-body-1 font-medium text-grey04 ml-3">{subtitle}</span>
+        <span className="text-body-1  text-grey04 ml-3">{subtitle}</span>
       </h3>
       <div className="space-y-3">
         {data.map((item, index) => (
           <div
             key={index}
-            className="flex items-center justify-between py-2 transform transition-all duration-300 hover:scale-105 hover:bg-gray-50 rounded-lg px-2"
+            className="flex items-center justify-between py-2 transform transition-all duration-300 hover:scale-105 hover:bg-grey01 rounded-lg px-2"
             style={{
               animation: `fadeInUp 0.4s ease-out ${index * 0.1}s both`,
             }}
           >
             <div className="flex items-center gap-3">
-              <span className="text-body-1 text-title-6 text-grey05 w-4 mr-[37px] font-bold">
+              <span className="text-body-1 text-title-6 text-grey05 w-4 mr-[37px]">
                 {index + 1}
               </span>
-              <span className="text-body-1 transition-colors duration-200 hover:text-blue-600">
-                {item.name}
-              </span>
+              <span className="text-body-1">{item.name}</span>
             </div>
             <div className="flex items-center gap-2">
               <span
-                className={`text-body-2 font-light w-4 text-center transition-all duration-200 ${
+                className={`text-body-2  w-4 text-center transition-all duration-200 ${
                   item.trend === 'up'
                     ? 'text-orange04'
                     : item.trend === 'down'
@@ -48,7 +43,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
                 {item.trend === 'up' ? '▲' : item.trend === 'down' ? '▼' : '-'}
               </span>
               <span
-                className={`text-body-2 font-light w-8 text-right  transition-all duration-200 ${
+                className={`text-body-2  w-8 text-right  transition-all duration-200 ${
                   item.trend === 'up'
                     ? 'text-orange04'
                     : item.trend === 'down'

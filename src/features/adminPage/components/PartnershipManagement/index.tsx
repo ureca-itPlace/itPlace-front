@@ -319,7 +319,7 @@ const PartnershipManagement = () => {
         </button>
       ),
       render: (value: unknown) => (
-        <span className="text-caption-1 font-medium text-left block">{value as number}위</span>
+        <span className="text-caption-1 text-left block">{value as number}위</span>
       ),
     },
     {
@@ -339,7 +339,7 @@ const PartnershipManagement = () => {
         </button>
       ),
       render: (value: unknown) => (
-        <span className="text-caption-1 font-medium text-left block">{value as number}위</span>
+        <span className="text-caption-1 text-left block">{value as number}위</span>
       ),
     },
     {
@@ -359,7 +359,7 @@ const PartnershipManagement = () => {
         </button>
       ),
       render: (value: unknown) => (
-        <span className="text-caption-1 font-medium text-left block">{value as number}위</span>
+        <span className="text-caption-1 text-left block">{value as number}위</span>
       ),
     },
     {
