@@ -53,7 +53,6 @@ const LandingPage = () => {
         start: '20px top',
         end: '+=1000',
         scrub: 0.5,
-        markers: true,
       },
     });
 
