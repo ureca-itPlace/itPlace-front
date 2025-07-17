@@ -29,7 +29,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
   return (
     <div>
-      <h2 className="text-title-1 font-bold mb-[40px]">로그인</h2>
+      <h2 className="text-title-1 mb-[40px]">로그인</h2>
 
       <div className="flex flex-col gap-0 w-full items-center">
         {/* 이메일 입력 */}

@@ -1,22 +1,51 @@
 // features/loginPage/apis/verification.ts
-import axiosInstance from '../../../apis/axiosInstance';
+import api from '../../../apis/axiosInstance';
 
-export const sendVerificationCode = (name: string, phone: string) => {
-  return axiosInstance.post('/auth/send-code', { name, phone });
+//인증번호 요청
+export const sendVerificationCode = async (name: string, phoneNumber: string) => {
+  const response = await api.post('/api/v1/verification/sms', { name, phoneNumber });
+  return response.data;
 };
 
+//인증번호 확인
 export const checkVerificationCode = async ({
-  name,
+  registrationId,
   phoneNumber,
-  code,
+  verificationCode,
 }: {
-  name: string;
+  registrationId: string;
   phoneNumber: string;
-  code: string;
+  verificationCode: string;
 }) => {
-  return await axiosInstance.post('/verification/sms/confirm', {
-    name,
+  return await api.post('api/v1/verification/sms/confirm', {
+    registrationId,
     phoneNumber,
-    code,
+    verificationCode,
+  });
+};
+
+//이메일 인증번호 전송 요청
+export const sendEmailVerificationCode = async ({
+  email,
+  registrationId,
+}: {
+  email: string;
+  registrationId: string;
+}) => {
+  return await api.post('api/v1/verification/email', {
+    registrationId,
+    email,
+  });
+};
+
+export const checkEmailVerificationCode = async (
+  email: string,
+  verificationCode: string,
+  registrationId: string
+) => {
+  return await api.post('api/v1/verification/email/confirm', {
+    registrationId,
+    email,
+    verificationCode,
   });
 };

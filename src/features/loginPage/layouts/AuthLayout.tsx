@@ -27,7 +27,7 @@ const AuthLayout = () => {
   } = AuthTransition();
 
   // 이름, 전화번호 저장
-  const [userData, setUserData] = useState({ name: '', phone: '' });
+  const [userData, setUserData] = useState({ name: '', phone: '', registrationId: '' });
 
   // 현재 인증 목적 ('signup' | 'find')
   const [mode, setMode] = useState<'signup' | 'find'>('signup');
@@ -65,8 +65,8 @@ const AuthLayout = () => {
                 mode={mode}
                 currentStep={formStep}
                 onGoToLogin={goToLogin}
-                onAuthComplete={({ name, phone }) => {
-                  setUserData({ name, phone });
+                onAuthComplete={({ name, phone, registrationId }) => {
+                  setUserData({ name, phone, registrationId });
                   goToVerification();
                 }}
                 onVerified={() => {
@@ -79,6 +79,7 @@ const AuthLayout = () => {
                 onSignUpComplete={goToSignUpFinal}
                 nameFromPhoneAuth={userData.name}
                 phoneFromPhoneAuth={userData.phone}
+                registrationIdFromPhoneAuth={userData.registrationId}
               />
             )}
 
