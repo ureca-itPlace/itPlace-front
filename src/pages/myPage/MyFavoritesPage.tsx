@@ -163,7 +163,7 @@ export default function MyFavoritesPage() {
             message="삭제하신 혜택은 다시 복구할 수 없습니다."
             buttons={[
               {
-                label: '아니요',
+                label: '아니오',
                 type: 'secondary',
                 onClick: () => {
                   setIsDeleteModalOpen(false);
