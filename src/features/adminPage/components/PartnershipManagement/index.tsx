@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { TbRefresh, TbExternalLink, TbChevronUp, TbChevronDown } from 'react-icons/tb';
+import { debounce } from 'lodash';
 import StatisticsCard from '../../../../components/common/StatisticsCard';
 import SearchBar from '../../../../components/common/SearchBar';
 import FilterDropdown from '../../../../components/common/FilterDropdown';
@@ -7,125 +8,18 @@ import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
 import Pagination from '../../../../components/common/Pagination';
 import PartnerDetailModal from './PartnerDetailModal';
-
-// 제휴처 데이터 타입
-interface Partner {
-  id: string;
-  logo: string;
-  brand: string;
-  category: string;
-  benefitType: string;
-  searchRank: number;
-  favoriteRank: number;
-  usageRank: number;
-}
-
-// 샘플 제휴처 데이터
-const samplePartners: Partner[] = [
-  {
-    id: '1',
-    logo: '/images/admin/GS25.png',
-    brand: 'GS25',
-    category: '생활/편의',
-    benefitType: '할인',
-    searchRank: 169,
-    favoriteRank: 1,
-    usageRank: 7,
-  },
-  {
-    id: '2',
-    logo: '/images/admin/megabox.png',
-    brand: '스타벅스',
-    category: '푸드',
-    benefitType: '할인',
-    searchRank: 69,
-    favoriteRank: 7,
-    usageRank: 3,
-  },
-  {
-    id: '3',
-    logo: '/images/admin/paris.png',
-    brand: '파리바게트',
-    category: '푸드',
-    benefitType: '증정',
-    searchRank: 45,
-    favoriteRank: 49,
-    usageRank: 1,
-  },
-  {
-    id: '4',
-    logo: '/images/admin/GSthefresh.png',
-    brand: 'GS THE FRESH',
-    category: '쇼핑',
-    benefitType: '할인',
-    searchRank: 30,
-    favoriteRank: 30,
-    usageRank: 2,
-  },
-  {
-    id: '5',
-    logo: '/images/admin/CGV.png',
-    brand: 'CGV',
-    category: '문화/여가',
-    benefitType: '할인',
-    searchRank: 25,
-    favoriteRank: 25,
-    usageRank: 88,
-  },
-  {
-    id: '6',
-    logo: '/images/admin/lotteworld.png',
-    brand: '롯데월드',
-    category: '액티비티',
-    benefitType: '할인',
-    searchRank: 111,
-    favoriteRank: 111,
-    usageRank: 44,
-  },
-  {
-    id: '7',
-    logo: '/images/admin/megabox.png',
-    brand: '프로포즈',
-    category: '뷰티/건강',
-    benefitType: '증정',
-    searchRank: 119,
-    favoriteRank: 119,
-    usageRank: 11,
-  },
-  {
-    id: '8',
-    logo: '/images/admin/ediya.png',
-    brand: '이디야커피',
-    category: '푸드',
-    benefitType: '할인',
-    searchRank: 88,
-    favoriteRank: 15,
-    usageRank: 22,
-  },
-  {
-    id: '9',
-    logo: '/images/admin/emart24.png',
-    brand: '이마트24',
-    category: '쇼핑',
-    benefitType: '할인',
-    searchRank: 55,
-    favoriteRank: 33,
-    usageRank: 18,
-  },
-  {
-    id: '10',
-    logo: '/images/admin/baskin.png',
-    brand: '배스킨라빈스',
-    category: '푸드',
-    benefitType: '증정',
-    searchRank: 77,
-    favoriteRank: 44,
-    usageRank: 27,
-  },
-];
+import {
+  Partner,
+  searchPartnersWithPagination,
+  getPartnersWithPagination,
+  getPartnerStatistics,
+} from './apis/PartnershipManagementApis';
 
 const PartnershipManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedBenefitType, setSelectedBenefitType] = useState<string | null>(null);
@@ -138,41 +32,102 @@ const PartnershipManagement = () => {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const itemsPerPage = 8;
 
-  // 총 제휴처 수
-  const totalPartners = 128;
-  const lastUpdated = '2025.07.11 UT 23:15:05';
+  // 페이지네이션 정보 상태
+  const [totalItems, setTotalItems] = useState(0);
 
-  // 검색 필터링
-  const filteredPartners = samplePartners.filter((partner) => {
-    const matchesSearch =
-      partner.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      partner.category.toLowerCase().includes(searchTerm.toLowerCase());
+  // 통계 데이터 상태
+  const [totalPartners, setTotalPartners] = useState(0);
+  const [lastUpdated, setLastUpdated] = useState('');
 
-    const matchesCategory = selectedCategory ? partner.category === selectedCategory : true;
-    const matchesBenefitType = selectedBenefitType
-      ? partner.benefitType === selectedBenefitType
-      : true;
+  // 제휴처 데이터 로드 함수
+  const loadPartners = useCallback(
+    async (page: number = 1) => {
+      setIsLoading(true);
+      try {
+        const response = await getPartnersWithPagination(
+          page,
+          itemsPerPage,
+          selectedCategory || undefined,
+          selectedBenefitType || undefined,
+          sortField || undefined,
+          sortDirection
+        );
+        setPartners(response.data);
+        setTotalItems(response.totalItems);
+        setCurrentPage(response.currentPage);
+      } catch (error) {
+        console.error('제휴처 데이터 로드 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedCategory, selectedBenefitType, sortField, sortDirection]
+  );
 
-    return matchesSearch && matchesCategory && matchesBenefitType;
-  });
+  // 초기 데이터 로드
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        setIsLoading(true);
+        const statistics = await getPartnerStatistics();
+        setTotalPartners(statistics.totalPartners);
+        setLastUpdated(statistics.lastUpdated);
 
-  // 정렬 적용
-  const sortedPartners = [...filteredPartners].sort((a, b) => {
-    if (!sortField) return 0;
+        // 첫 페이지 데이터 로드
+        await loadPartners(1);
+      } catch (error) {
+        console.error('초기 데이터 로드 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const aValue = a[sortField];
-    const bValue = b[sortField];
+    loadInitialData();
+  }, [loadPartners]);
 
-    if (sortDirection === 'asc') {
-      return aValue - bValue;
-    } else {
-      return bValue - aValue;
-    }
-  });
+  // 검색 API 호출 함수
+  const searchPartners = useCallback(
+    async (searchQuery: string) => {
+      setIsLoading(true);
+      try {
+        const response = await searchPartnersWithPagination(
+          searchQuery,
+          1,
+          itemsPerPage,
+          sortField || undefined,
+          sortDirection
+        );
+        setPartners(response.data);
+        setTotalItems(response.totalItems);
+        setCurrentPage(1);
+      } catch (error) {
+        console.error('검색 API 호출 실패:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [sortField, sortDirection]
+  );
 
-  // 페이지네이션
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentPartners = sortedPartners.slice(startIndex, startIndex + itemsPerPage);
+  // 디바운스된 검색 함수
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((searchQuery: string) => {
+        setDebouncedSearchTerm(searchQuery);
+        searchPartners(searchQuery);
+      }, 500),
+    [searchPartners]
+  );
+
+  // 검색어 변경 시 디바운스 적용
+  useEffect(() => {
+    debouncedSearch(searchTerm);
+
+    // cleanup 함수로 디바운스 취소
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchTerm, debouncedSearch]);
 
   // 검색어 변경 시 페이지 초기화
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,6 +154,13 @@ const PartnershipManagement = () => {
     setCurrentPage(1);
   };
 
+  // 필터 변경 시 데이터 다시 로드
+  useEffect(() => {
+    if (!debouncedSearchTerm) {
+      loadPartners(1);
+    }
+  }, [selectedCategory, selectedBenefitType, debouncedSearchTerm, loadPartners]);
+
   // 정렬 핸들러
   const handleSort = (field: 'searchRank' | 'favoriteRank' | 'usageRank') => {
     if (sortField === field) {
@@ -215,14 +177,61 @@ const PartnershipManagement = () => {
     setCurrentPage(1);
   };
 
+  // 정렬 변경 시 데이터 다시 로드
+  useEffect(() => {
+    if (!debouncedSearchTerm) {
+      loadPartners(1);
+    } else {
+      searchPartners(debouncedSearchTerm);
+    }
+  }, [sortField, sortDirection, debouncedSearchTerm, loadPartners, searchPartners]);
+
   // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    if (debouncedSearchTerm) {
+      // 검색 모드일 때는 검색 결과 페이지네이션
+      const searchPagination = async () => {
+        setIsLoading(true);
+        try {
+          const response = await searchPartnersWithPagination(
+            debouncedSearchTerm,
+            pageNumber,
+            itemsPerPage,
+            sortField || undefined,
+            sortDirection
+          );
+          setPartners(response.data);
+          setTotalItems(response.totalItems);
+          setCurrentPage(pageNumber);
+        } catch (error) {
+          console.error('검색 페이지네이션 실패:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      searchPagination();
+    } else {
+      // 일반 모드일 때는 전체 데이터 페이지네이션
+      loadPartners(pageNumber);
+    }
   };
 
-  const handleRefresh = () => {
-    // 새로고침 로직
-    console.log('데이터 새로고침');
+  const handleRefresh = async () => {
+    try {
+      setIsLoading(true);
+      const statistics = await getPartnerStatistics();
+      setTotalPartners(statistics.totalPartners);
+      setLastUpdated(statistics.lastUpdated);
+      setSearchTerm('');
+      setDebouncedSearchTerm('');
+      setCurrentPage(1);
+      await loadPartners(1);
+      console.log('데이터 새로고침 완료');
+    } catch (error) {
+      console.error('데이터 새로고침 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePartnerDetailClick = (partner: Partner) => {
@@ -471,20 +480,34 @@ const PartnershipManagement = () => {
       </div>
 
       {/* 제휴처 목록 테이블 */}
-      <DataTable
-        data={currentPartners as unknown as Record<string, unknown>[]}
-        columns={columns}
-        onRowClick={(row) => handlePartnerDetailClick(row as unknown as Partner)}
-        width={1410}
-        height={516}
-        emptyMessage="제휴처가 없습니다."
-      />
+      <div className="relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white z-10 flex items-center justify-center">
+            <div className="text-grey03">검색 중...</div>
+          </div>
+        )}
+        <DataTable
+          data={partners as unknown as Record<string, unknown>[]}
+          columns={columns}
+          onRowClick={(row) => handlePartnerDetailClick(row as unknown as Partner)}
+          width={1410}
+          height={516}
+          emptyMessage="제휴처가 없습니다."
+        />
+      </div>
+
+      {/* 검색 상태 표시 */}
+      {debouncedSearchTerm && (
+        <div className="text-sm text-grey03 mt-2">
+          '{debouncedSearchTerm}' 검색 결과: {totalItems}건
+        </div>
+      )}
 
       {/* 페이지네이션 */}
       <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
-        totalItems={sortedPartners.length}
+        totalItems={totalItems}
         onPageChange={handlePageChange}
         width={1410}
       />
