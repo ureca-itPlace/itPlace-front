@@ -27,7 +27,12 @@ export interface ModalState {
 type Props = {
   mode: 'signup' | 'find';
   onGoToLogin: () => void;
-  onVerified: (userInfo?: { name: string; phone: string }) => void;
+  onVerified: (userInfo: {
+    name: string;
+    phone: string;
+    registrationId: string;
+    isUplus: boolean;
+  }) => void;
   name: string;
   phone: string;
   registrationId: string;
@@ -44,6 +49,15 @@ const VerificationCodeForm = ({
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
+
+  // 타이머 상태 (초 단위)
+  const [timeLeft, setTimeLeft] = useState(180);
+  const timerRef = useRef<number | null>(null);
+
+  // 인증 성공 후 사용자 정보 저장
+  const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | null>(null);
+  const verifiedUserInfoRef = useRef<{ name: string; phone: string } | null>(null);
+  const uplusDataRef = useRef<{ name: string; phone: string } | null>(null);
 
   const [modal, setModal] = useState<ModalState>({
     open: false,
@@ -64,6 +78,39 @@ const VerificationCodeForm = ({
     );
   }, []);
 
+  useEffect(() => {
+    // 컴포넌트 마운트 시 타이머 시작
+    startTimer();
+
+    // 언마운트 시 타이머 정리
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  // 타이머 시작 함수
+  const startTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimeLeft(180);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // 타이머를 mm:ss 형식으로 포맷팅
+  const formatTime = (seconds: number) => {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}:${sec.toString().padStart(2, '0')}`;
+  };
+
+  // 모달 닫기
   const closeModal = () => {
     setModal({
       open: false,
@@ -75,96 +122,57 @@ const VerificationCodeForm = ({
     });
   };
 
+  // 인증번호 재전송 및 타이머 재시작
   const handleResend = async () => {
     try {
-      console.log('재전송 요청', name, phone);
-      await sendVerificationCode(name, phone); //상위에서 받은 휴대 번호
+      await sendVerificationCode(name, phone);
       setCode('');
+      startTimer(); // 타이머 리셋
     } catch (error) {
       console.log('재전송 실패', error);
     }
   };
 
+  // 인증번호 확인
   const handleCheckCode = async () => {
     if (!code.trim()) {
       setCodeError('인증번호를 입력해주세요.');
       return;
     }
+
     try {
       const res = await checkVerificationCode({
         registrationId,
         phoneNumber: phone,
         verificationCode: code,
       });
-      console.log('인증 성공', res.data);
-      setIsVerified(true);
+
       setCodeError('');
 
       const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
 
-      // 로컬 계정 → 로그인 유도
       if (userStatus === 'EXISTING_USER' && isLocalUser) {
-        setModal(
-          modalPresets.alreadyJoined(() => {
-            closeModal();
-            onGoToLogin();
-          }, closeModal)
-        );
+        verifiedTypeRef.current = 'local';
+        setIsVerified(true);
+        return;
       }
 
-      // OAuth 가입자 → 통합 안내
-      else if (userStatus === 'EXISTING_USER') {
-        setModal(
-          modalPresets.mergeAccount(
-            () => {
-              closeModal();
-              setModal(
-                modalPresets.integrationSuccess(() => {
-                  closeModal();
-                  onGoToLogin();
-                })
-              );
-            },
-            () => {
-              closeModal();
-              onGoToLogin();
-            }
-          )
-        );
+      if (userStatus === 'EXISTING_USER') {
+        verifiedTypeRef.current = 'oauth';
+        setIsVerified(true);
+        return;
       }
 
-      // U+ 기존 가입자 → 정보 사용 여부 물어보기
-      else if (uplusDataExists && uplusData) {
-        setModal(
-          modalPresets.uplusMember(
-            () => {
-              closeModal();
-              if (mode === 'signup') {
-                onVerified({ name: uplusData.name, phone: uplusData.phone });
-              } else {
-                onVerified();
-              }
-            },
-            () => {
-              closeModal();
-              if (mode === 'signup') {
-                onVerified({ name, phone });
-              } else {
-                onVerified();
-              }
-            }
-          )
-        );
+      if (uplusDataExists && uplusData) {
+        verifiedTypeRef.current = 'uplus';
+        uplusDataRef.current = uplusData;
+        setIsVerified(true);
+        return;
       }
 
-      // 신규 사용자
-      else {
-        if (mode === 'signup') {
-          onVerified({ name, phone });
-        } else {
-          onVerified();
-        }
-      }
+      verifiedTypeRef.current = 'new';
+      verifiedUserInfoRef.current = { name, phone };
+      setIsVerified(true);
     } catch (error: any) {
       const errorCode = error?.response?.data?.code;
       if (errorCode === 'SMS_CODE_MISMATCH') {
@@ -172,9 +180,8 @@ const VerificationCodeForm = ({
       } else if (errorCode === 'SMS_CODE_EXPIRED') {
         setCodeError('인증번호가 만료되었습니다. 다시 요청해주세요.');
       } else {
-        setCodeError('알 수 없는 오류가 발생했습니다.');
+        setCodeError('인증번호가 일치하지 않습니다.');
       }
-
       setIsVerified(false);
     }
   };
@@ -218,7 +225,7 @@ const VerificationCodeForm = ({
         <div className="text-body-3 text-grey03 mt-[20px] w-[320px] flex items-center gap-[4px]">
           <TbClock size={16} className="text-grey03" />
           <span>남은 시간</span>
-          <span className="text-danger font-medium">2:58</span>
+          <span className="text-danger font-medium">{formatTime(timeLeft)}</span>
         </div>
 
         {/* 재전송 */}
@@ -233,17 +240,79 @@ const VerificationCodeForm = ({
         <AuthButton
           label="다음"
           onClick={() => {
-            if (mode === 'signup') {
-              onVerified({ name, phone });
-            } else {
-              onVerified();
+            // U+ 회원이라면 uplusDataRef에서 이름, 번호 가져오기
+            const resolvedName = uplusDataRef.current?.name ?? name;
+            const resolvedPhone = uplusDataRef.current?.phone ?? phone;
+
+            const commonUserInfo = {
+              name: resolvedName,
+              phone: resolvedPhone,
+              registrationId,
+              isUplus: verifiedTypeRef.current === 'uplus',
+            };
+
+            switch (verifiedTypeRef.current) {
+              // 기존 로컬 회원 → 로그인 유도 모달
+              case 'local':
+                setModal(
+                  modalPresets.alreadyJoined(() => {
+                    closeModal();
+                    onGoToLogin();
+                  }, closeModal)
+                );
+                break;
+
+              // OAuth 회원 → 계정 통합 안내
+              case 'oauth':
+                setModal(
+                  modalPresets.mergeAccount(
+                    () => {
+                      closeModal();
+                      setModal(
+                        modalPresets.integrationSuccess(() => {
+                          closeModal();
+                          onGoToLogin();
+                        })
+                      );
+                    },
+                    () => {
+                      closeModal();
+                      onGoToLogin();
+                    }
+                  )
+                );
+                break;
+
+              // U+ 회원 → 정보 사용 여부 모달 후 데이터 포함 전달
+              case 'uplus':
+                setModal(
+                  modalPresets.uplusMember(
+                    () => {
+                      closeModal();
+                      onVerified(commonUserInfo);
+                    },
+                    () => {
+                      closeModal();
+                      onVerified(commonUserInfo);
+                    }
+                  )
+                );
+                break;
+
+              // 신규 회원 → 그대로 다음 단계로 진행
+              case 'new':
+                onVerified(commonUserInfo);
+                break;
+
+              default:
+                break;
             }
           }}
           variant={isVerified ? 'default' : 'disabled'}
           className="mt-[180px]"
         />
 
-        {/* 하단 로그인 링크 */}
+        {/* 로그인 링크 */}
         <AuthFooter
           leftText="이미 회원이신가요?"
           rightText="로그인 하러 가기"

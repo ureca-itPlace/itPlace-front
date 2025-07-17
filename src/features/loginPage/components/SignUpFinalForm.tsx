@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Modal from '../../../components/Modal';
 import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 import ErrorMessage from './ErrorMessage';
@@ -27,7 +28,7 @@ const SignUpFinalForm = ({
   gender,
   membershipId,
 }: SignUpFinalFormProps) => {
-  // 입력 데이터
+  // 사용자 입력값
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -35,63 +36,82 @@ const SignUpFinalForm = ({
     verificationCode: '',
   });
 
-  // 유효성 터치 여부
+  // 입력 필드 터치 여부
   const [touched, setTouched] = useState({
     email: false,
     password: false,
     passwordConfirm: false,
   });
 
-  // 이메일 인증 관련 상태
-  const [emailSent, setEmailSent] = useState(false); // 인증번호 요청 여부
-  const [emailVerified, setEmailVerified] = useState(false); // 인증 완료 여부
-  const [verificationCodeError, setVerificationCodeError] = useState(''); // 인증 실패 메시지
+  // 이메일 인증 상태
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [verificationCodeError, setVerificationCodeError] = useState('');
 
-  // 비밀번호 보기 상태
+  // 비밀번호 보기 토글
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  // 유효성 검사 훅
-  const { errors, emailChecked, checkEmail, validateAll, validateField } = useValidation();
+  // 로딩 모달 상태
+  const [modal, setModal] = useState({
+    open: false,
+    title: '',
+    loading: false,
+  });
 
-  // 입력 핸들러
+  // 유효성 검사 훅
+  const { errors, validateAll, validateField } = useValidation();
+
+  // 입력 필드 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updated = { ...formData, [name]: value };
     setFormData(updated);
-    if (name === 'email' || name === 'password' || name === 'passwordConfirm') {
-      setTouched((prev) => ({
-        ...prev,
-        [name]: true,
-      }));
 
-      // 타입 단언으로 오류 방지
+    if (name === 'email' || name === 'password' || name === 'passwordConfirm') {
+      setTouched((prev) => ({ ...prev, [name]: true }));
       validateField(name as 'email' | 'password' | 'passwordConfirm', value, updated);
     }
   };
 
   // 이메일 인증 요청
   const handleSendEmailCode = async () => {
+    // 유효하지 않은 이메일이면 요청하지 않음
+    if (!formData.email || errors.email) return;
+
+    // 로딩 모달 띄우기
+    setModal({
+      open: true,
+      title: '인증 메일을 전송 중입니다.',
+      loading: true,
+    });
+
     try {
-      await sendEmailVerificationCode({ registrationId: registrationId, email: formData.email });
+      const res = await sendEmailVerificationCode({
+        registrationId,
+        email: formData.email,
+      });
+
+      // 성공 시 모달 닫고 인증 입력 가능
+      setModal({ open: false, title: '', loading: false });
       setEmailSent(true);
       setVerificationCodeError('');
-      alert('이메일로 인증번호가 전송되었습니다.');
     } catch (err: any) {
-      console.error('이메일 인증 요청 실패:', err?.response?.data || err.message);
-      alert(err?.response?.data?.message || '이메일 인증 요청 실패');
+      // 실패 시 에러 메시지 표시
+      const msg = err?.response?.data?.message || '이메일 인증 요청 실패';
+      setModal({ open: false, title: '', loading: false });
+      setVerificationCodeError(msg);
+      setEmailSent(false);
     }
   };
 
-  // 인증번호 확인
+  // 이메일 인증번호 확인
   const handleVerifyCode = async () => {
     try {
       await checkEmailVerificationCode(formData.email, formData.verificationCode, registrationId);
       setEmailVerified(true);
       setVerificationCodeError('');
-      alert('이메일 인증이 완료되었습니다.');
     } catch (err: any) {
-      console.error('인증 실패:', err?.response?.data || err.message);
       const errorCode = err?.response?.data?.code;
       if (errorCode === 'EMAIL_CODE_MISMATCH') {
         setVerificationCodeError('인증번호가 일치하지 않습니다.');
@@ -104,7 +124,7 @@ const SignUpFinalForm = ({
     }
   };
 
-  // 최종 회원가입 요청
+  // 최종 회원가입 처리
   const handleNext = async () => {
     const valid = validateAll(formData);
     if (valid && emailVerified) {
@@ -121,7 +141,8 @@ const SignUpFinalForm = ({
           membershipId,
         };
 
-        await signUpFinal(payload);
+        const response = await signUpFinal(payload);
+        console.log('응답결과 ', response.data);
         onGoToLogin();
       } catch (error) {
         console.error('회원가입 실패', error);
@@ -129,7 +150,7 @@ const SignUpFinalForm = ({
     }
   };
 
-  // 버튼 활성화 조건
+  // 회원가입 버튼 활성화 조건
   const isValid =
     formData.email &&
     formData.password &&
@@ -161,7 +182,13 @@ const SignUpFinalForm = ({
             <button
               type="button"
               onClick={handleSendEmailCode}
-              className="absolute right-[12px] top-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px]"
+              disabled={!formData.email || !!errors.email}
+              className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition
+                ${
+                  !formData.email || !!errors.email
+                    ? 'bg-grey02 text-grey04 cursor-not-allowed'
+                    : 'bg-purple04 text-white'
+                }`}
             >
               인증하기
             </button>
@@ -215,7 +242,7 @@ const SignUpFinalForm = ({
         {touched.password && errors.password && <ErrorMessage message={errors.password} />}
       </div>
 
-      {/* 비밀번호 확인 */}
+      {/* 비밀번호 확인 입력 */}
       <div className="w-full max-w-[320px] mt-[15px]">
         <div className="relative">
           <AuthInput
@@ -252,6 +279,19 @@ const SignUpFinalForm = ({
         rightText="로그인 하러 가기"
         onRightClick={onGoToLogin}
       />
+
+      {/* 이메일 인증 로딩 모달 */}
+      <Modal
+        isOpen={modal.open}
+        title={modal.title}
+        onClose={() => setModal({ open: false, title: '', loading: false })}
+      >
+        {modal.loading && (
+          <div className="w-full flex justify-center mt-[16px]">
+            <div className="w-[32px] h-[32px] border-4 border-purple04 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
