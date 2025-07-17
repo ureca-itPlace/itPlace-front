@@ -9,6 +9,7 @@ import LoginForm from '../components/LoginForm';
 import PhoneAuthForm from '../components/PhoneAuthForm';
 import FindEmailForm from '../components/FindEmailForm';
 import FindPasswordForm from '../components/FindPasswordForm';
+import OAuthIntegrationForm from '../components/OAuthIntegrationForm'; // OAuth 통합 폼
 
 // 상태 전환 관련 훅
 import { AuthTransition } from '../hooks/AuthTransition';
@@ -24,6 +25,7 @@ const AuthLayout = () => {
     goToSignUp,
     goToSignUpFinal,
     goToFindEmail,
+    setFormStep,
   } = AuthTransition();
 
   // 사용자 인증 정보
@@ -31,6 +33,16 @@ const AuthLayout = () => {
     name: '',
     phone: '',
     registrationId: '',
+  });
+
+  // OAuth 통합 사용자 정보
+  const [oauthUserData, setOAuthUserData] = useState({
+    name: '',
+    phone: '',
+    registrationId: '',
+    birthday: '',
+    gender: '',
+    membershipId: '',
   });
 
   // 인증 목적 상태 ('signup' | 'find')
@@ -58,12 +70,12 @@ const AuthLayout = () => {
                 }}
                 onGoToFindEmail={() => {
                   setMode('find');
-                  goToPhoneAuth(); // 인증 후 이메일 찾기로 이동
+                  goToPhoneAuth();
                 }}
               />
             )}
 
-            {/* 인증 및 회원가입 흐름 */}
+            {/* 인증 및 회원가입 전체 흐름 */}
             {(formStep === 'phoneAuth' ||
               formStep === 'verification' ||
               formStep === 'signUp' ||
@@ -76,12 +88,27 @@ const AuthLayout = () => {
                   setUserData({ name, phone, registrationId });
                   goToVerification();
                 }}
-                onVerified={(verifiedType) => {
+                // 분기점 처리
+                onVerified={(verifiedType, user) => {
                   if (verifiedType === 'new' && mode === 'find') {
+                    // 전화번호는 없고 mode가 'find'인 경우 → 이메일 찾기
                     goToFindEmail();
                   } else if (verifiedType === 'new' || verifiedType === 'uplus') {
+                    // 신규 또는 U+ 멤버십 보유자 → 기본 정보 입력
                     goToSignUp();
+                  } else if (verifiedType === 'oauth') {
+                    // 기존 OAuth 유저 → OAuth 통합 폼으로
+                    setOAuthUserData({
+                      name: user.name,
+                      phone: user.phone,
+                      registrationId: user.registrationId,
+                      birthday: user.birthday,
+                      gender: user.gender,
+                      membershipId: user.membershipId,
+                    });
+                    setFormStep('oauthIntegration');
                   } else {
+                    // 기존 잇플(local) 가입자 → 로그인 유도
                     goToLogin();
                   }
                 }}
@@ -89,6 +116,19 @@ const AuthLayout = () => {
                 nameFromPhoneAuth={userData.name}
                 phoneFromPhoneAuth={userData.phone}
                 registrationIdFromPhoneAuth={userData.registrationId}
+              />
+            )}
+
+            {/* OAuth 통합 정보 확인 화면 */}
+            {formStep === 'oauthIntegration' && (
+              <OAuthIntegrationForm
+                name={oauthUserData.name}
+                phone={oauthUserData.phone}
+                birthday={oauthUserData.birthday}
+                gender={oauthUserData.gender}
+                membershipId={oauthUserData.membershipId}
+                onGoToLogin={goToLogin}
+                onNext={goToSignUpFinal}
               />
             )}
 

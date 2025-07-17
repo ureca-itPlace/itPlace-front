@@ -1,4 +1,3 @@
-// 주요 라이브러리 및 컴포넌트 임포트
 import { useState, useCallback, useMemo } from 'react';
 import Modal from '../../../components/Modal';
 import AuthInput from './AuthInput';
@@ -18,7 +17,17 @@ type Props = {
   currentStep: 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal';
   onGoToLogin: () => void;
   onAuthComplete: (data: { name: string; phone: string; registrationId: string }) => void;
-  onVerified: (verifiedType: 'new' | 'uplus' | 'local' | 'oauth') => void; // 인증 결과 타입을 상위로 전달
+  onVerified: (
+    verifiedType: 'new' | 'uplus' | 'local' | 'oauth',
+    user: {
+      name: string;
+      phone: string;
+      registrationId: string;
+      birthday: string;
+      gender: string;
+      membershipId: string;
+    }
+  ) => void;
   onSignUpComplete: () => void;
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
@@ -64,17 +73,13 @@ const PhoneAuthForm = ({
     setUserCaptchaInput('');
   };
 
-  /**
-   * 인증 성공 후 (확인 버튼 클릭 이후)
-   * U+ 회원일 경우 U+ 데이터 불러오고 상태에 저장,
-   * 그 외는 기존 값 그대로 유지
-   */
+  // 인증 성공 후 사용자 정보 처리 및 분기 전달
   const handleVerified = async ({
     name,
     phone,
     registrationId,
     isUplus,
-    verifiedType, // VerificationCodeForm에서 전달받은 유저 타입
+    verifiedType,
   }: {
     name: string;
     phone: string;
@@ -94,7 +99,6 @@ const PhoneAuthForm = ({
     if (isUplus) {
       try {
         const res = await loadUplusData(registrationId);
-
         birthday = res.data.birthday;
         gender = res.data.gender;
         membershipId = res.data.membershipId;
@@ -103,13 +107,20 @@ const PhoneAuthForm = ({
       }
     }
 
-    // 다음 폼에서 사용할 상태 저장
+    // 상태 업데이트
     setBirthday(birthday);
     setGender(gender);
     setMembershipId(membershipId);
 
-    // 인증 결과를 상위로 전달하여 흐름 분기
-    onVerified(verifiedType);
+    // 상위로 인증 결과와 사용자 정보 함께 전달
+    onVerified(verifiedType, {
+      name,
+      phone,
+      registrationId,
+      birthday,
+      gender,
+      membershipId,
+    });
   };
 
   // 보안문자 캡차 박스 메모이제이션
@@ -117,11 +128,7 @@ const PhoneAuthForm = ({
     return <CaptchaBox onRefresh={handleCaptchaRefresh} />;
   }, [handleCaptchaRefresh]);
 
-  /**
-   * '다음' 버튼 클릭 시:
-   * - 보안문자 유효성 확인
-   * - 유효하면 인증번호 전송 및 registrationId 저장
-   */
+  // 다음 버튼 클릭 시 처리
   const handleNext = async () => {
     if (!isReadyToValidate) return;
 
@@ -139,7 +146,6 @@ const PhoneAuthForm = ({
       onAuthComplete({ name, phone, registrationId });
     } catch (error: any) {
       const res = error?.response?.data;
-
       let message = '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
 
       if (res) {
@@ -161,17 +167,15 @@ const PhoneAuthForm = ({
     }
   };
 
-  /**
-   * 단계별 렌더링
-   */
+  // 단계별 렌더링 분기
 
-  // 1단계: 인증번호 입력
+  // 1단계: 인증번호 입력 화면
   if (currentStep === 'verification') {
     return (
       <VerificationCodeForm
         mode={mode}
         onGoToLogin={onGoToLogin}
-        onVerified={handleVerified} // 인증 결과를 포함해 전달받음
+        onVerified={handleVerified}
         name={nameFromPhoneAuth}
         phone={phoneFromPhoneAuth}
         registrationId={registrationIdFromPhoneAuth}
@@ -179,7 +183,7 @@ const PhoneAuthForm = ({
     );
   }
 
-  // 2단계: 기본 정보 입력
+  // 2단계: 기본 정보 입력 화면
   if (currentStep === 'signUp') {
     return (
       <SignUpForm
@@ -190,13 +194,13 @@ const PhoneAuthForm = ({
           setBirthday(birthday);
           setGender(gender);
           setMembershipId(membershipId);
-          onSignUpComplete(); // 다음 단계 (signUpFinal)로 전환
+          onSignUpComplete();
         }}
       />
     );
   }
 
-  // 3단계: 이메일, 비밀번호 입력
+  // 3단계: 이메일, 비밀번호 입력 화면
   if (currentStep === 'signUpFinal') {
     return (
       <SignUpFinalForm
@@ -211,9 +215,7 @@ const PhoneAuthForm = ({
     );
   }
 
-  /**
-   * 초기 단계: 이름 + 전화번호 + 보안문자 입력
-   */
+  // 초기 단계: 이름 + 전화번호 + 보안문자 입력 화면
   return (
     <div className="w-full flex flex-col items-center">
       <div className="w-[320px] text-left">

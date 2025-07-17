@@ -32,8 +32,11 @@ type Props = {
     name: string;
     phone: string;
     registrationId: string;
+    birthday: string;
+    gender: string;
+    membershipId: string;
     isUplus: boolean;
-    verifiedType: 'new' | 'uplus' | 'local' | 'oauth'; // 인증 결과 타입 전달
+    verifiedType: 'new' | 'uplus' | 'local' | 'oauth';
   }) => void;
   name: string;
   phone: string;
@@ -52,15 +55,21 @@ const VerificationCodeForm = ({
   const [codeError, setCodeError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
 
-  // 타이머 상태 (초 단위)
+  // 인증 성공 후 사용자 상태 저장
+  const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | null>(null);
+  const uplusDataRef = useRef<{
+    name: string;
+    phone: string;
+    birthday: string;
+    gender: string;
+    membershipId: string;
+  } | null>(null);
+
+  // 타이머 상태 및 제어
   const [timeLeft, setTimeLeft] = useState(180);
   const timerRef = useRef<number | null>(null);
 
-  // 인증 성공 후 사용자 정보 저장
-  const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | null>(null);
-  const verifiedUserInfoRef = useRef<{ name: string; phone: string } | null>(null);
-  const uplusDataRef = useRef<{ name: string; phone: string } | null>(null);
-
+  // 모달 상태
   const [modal, setModal] = useState<ModalState>({
     open: false,
     title: '',
@@ -72,6 +81,7 @@ const VerificationCodeForm = ({
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // 페이드인 애니메이션
   useEffect(() => {
     gsap.fromTo(
       wrapperRef.current,
@@ -80,21 +90,17 @@ const VerificationCodeForm = ({
     );
   }, []);
 
+  // 타이머 시작 및 정리
   useEffect(() => {
-    // 컴포넌트 마운트 시 타이머 시작
     startTimer();
-
-    // 언마운트 시 타이머 정리
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
 
-  // 타이머 시작 함수
   const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     setTimeLeft(180);
-
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -108,14 +114,12 @@ const VerificationCodeForm = ({
     }, 1000);
   };
 
-  // 타이머를 mm:ss 형식으로 포맷팅
   const formatTime = (seconds: number) => {
     const min = Math.floor(seconds / 60);
     const sec = seconds % 60;
     return `${min}:${sec.toString().padStart(2, '0')}`;
   };
 
-  // 모달 닫기
   const closeModal = () => {
     setModal({
       open: false,
@@ -127,18 +131,16 @@ const VerificationCodeForm = ({
     });
   };
 
-  // 인증번호 재전송 및 타이머 재시작
   const handleResend = async () => {
     try {
       await sendVerificationCode(name, phone);
       setCode('');
-      startTimer(); // 타이머 리셋
+      startTimer();
     } catch (error) {
       console.log('재전송 실패', error);
     }
   };
 
-  // 인증번호 확인
   const handleCheckCode = async () => {
     if (!code.trim()) {
       setCodeError('인증번호를 입력해주세요.');
@@ -153,7 +155,7 @@ const VerificationCodeForm = ({
       });
 
       setCodeError('');
-      showToast('인증에 성공하였습니다.', 'success'); //인증 성공 시 성공 토스트
+      showToast('인증에 성공하였습니다.', 'success');
 
       const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
 
@@ -171,13 +173,25 @@ const VerificationCodeForm = ({
 
       if (uplusDataExists && uplusData) {
         verifiedTypeRef.current = 'uplus';
-        uplusDataRef.current = uplusData;
+        uplusDataRef.current = {
+          name: uplusData.name ?? name,
+          phone: uplusData.phone ?? phone,
+          birthday: uplusData.birthday ?? '',
+          gender: uplusData.gender ?? '',
+          membershipId: uplusData.membershipId ?? '',
+        };
         setIsVerified(true);
         return;
       }
 
       verifiedTypeRef.current = 'new';
-      verifiedUserInfoRef.current = { name, phone };
+      uplusDataRef.current = {
+        name,
+        phone,
+        birthday: '',
+        gender: '',
+        membershipId: '',
+      };
       setIsVerified(true);
     } catch (error: any) {
       const errorCode = error?.response?.data?.code;
@@ -246,15 +260,16 @@ const VerificationCodeForm = ({
         <AuthButton
           label="다음"
           onClick={() => {
-            const resolvedName = uplusDataRef.current?.name ?? name;
-            const resolvedPhone = uplusDataRef.current?.phone ?? phone;
-
+            const user = uplusDataRef.current!;
             const commonUserInfo = {
-              name: resolvedName,
-              phone: resolvedPhone,
+              name: user.name,
+              phone: user.phone,
               registrationId,
+              birthday: user.birthday,
+              gender: user.gender,
+              membershipId: user.membershipId,
               isUplus: verifiedTypeRef.current === 'uplus',
-              verifiedType: verifiedTypeRef.current!, // 인증 결과 타입 함께 전달
+              verifiedType: verifiedTypeRef.current!,
             };
 
             switch (verifiedTypeRef.current) {
