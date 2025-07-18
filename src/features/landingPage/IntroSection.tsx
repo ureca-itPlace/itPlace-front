@@ -66,14 +66,14 @@ const IntroSection = ({ onComplete }: { onComplete: () => void }) => {
           gsap.to(logoRef.current, {
             y: 0,
             opacity: 0,
-            scale: 0.5,
+            scale: 0.7,
             duration: 1,
             ease: 'power3.out',
           });
           gsap.to(descRef.current, {
             y: 0,
             opacity: 0,
-            scale: 0.5,
+            scale: 0.7,
             duration: 1,
             ease: 'power3.out',
           });
