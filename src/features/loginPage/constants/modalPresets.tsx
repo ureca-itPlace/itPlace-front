@@ -55,7 +55,7 @@ export const modalPresets = {
     ({
       open: true,
       title: '통합에 성공하셨습니다.',
-      message: 'Itplacer계정와 카카오톡 계정/n모두 자유롭게 이용하실 수 있습니다.',
+      message: 'Itplace 계정과 카카오톡 계정/n모두 자유롭게 이용하실 수 있습니다.',
       subMessage: '',
       subMessageClass: '',
       buttons: [{ label: '확인', onClick: onClose, type: 'primary' }],
