@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // 공통 컴포넌트
 import AuthFormCard from '../components/common/AuthFormCard';
@@ -28,6 +29,8 @@ const AuthLayout = () => {
     setFormStep,
   } = AuthTransition();
 
+  const location = useLocation();
+
   // 사용자 인증 정보
   const [userData, setUserData] = useState({
     name: '',
@@ -50,6 +53,30 @@ const AuthLayout = () => {
 
   // 비밀번호 찾기 상태 여부
   const [showFindPasswordForm, setShowFindPasswordForm] = useState(false);
+
+  //OAuth 분기점
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const step = params.get('step');
+    const verifiedType = params.get('verifiedType');
+
+    if (step === 'phoneAuth' && verifiedType === 'oauth') {
+      setMode('signup');
+      goToPhoneAuth();
+    }
+
+    if (step === 'oauthIntegration' && verifiedType === 'oauth') {
+      setOAuthUserData({
+        name: params.get('name') || '',
+        phone: params.get('phone') || '',
+        birthday: params.get('birthday') || '',
+        gender: params.get('gender') || '',
+        membershipId: params.get('membershipId') || '',
+        registrationId: params.get('registrationId') || '',
+      });
+      setFormStep('oauthIntegration');
+    }
+  }, [location.search]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">

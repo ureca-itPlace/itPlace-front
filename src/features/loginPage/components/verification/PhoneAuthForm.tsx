@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo } from 'react';
-import Modal from '../../../../components/Modal';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import CaptchaBox from './CaptchaBox';
@@ -189,6 +188,9 @@ const PhoneAuthForm = ({
       <SignUpForm
         nameFromPhoneAuth={name}
         phoneFromPhoneAuth={phone}
+        birthdayFromPhoneAuth={birthday}
+        genderFromPhoneAuth={gender}
+        membershipIdFromPhoneAuth={membershipId}
         onGoToLogin={onGoToLogin}
         onNext={({ birthday, gender, membershipId }) => {
           setBirthday(birthday);
@@ -270,22 +272,6 @@ const PhoneAuthForm = ({
         leftText="이미 회원이신가요?"
         rightText="로그인 하러 가기"
         onRightClick={onGoToLogin}
-      />
-
-      {/* 보안문자 오류 모달 */}
-      <Modal
-        isOpen={isModalOpen}
-        title="보안문자 오류"
-        message="입력하신 보안문자가 이미지와 
-        일치하지 않습니다."
-        buttons={[
-          {
-            label: '확인',
-            type: 'primary',
-            onClick: handleCloseModal,
-          },
-        ]}
-        onClose={handleCloseModal}
       />
     </div>
   );

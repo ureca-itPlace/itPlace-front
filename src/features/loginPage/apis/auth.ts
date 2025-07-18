@@ -9,3 +9,7 @@ export const loadUplusData = (registrationId: string) => {
     registrationId,
   });
 };
+
+export const kakaoOAuthLogin = (code: string) => {
+  return api.post('api/v1/oauth2/authorization/kakao', { code });
+};

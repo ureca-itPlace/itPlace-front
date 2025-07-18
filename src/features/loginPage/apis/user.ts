@@ -1,10 +1,6 @@
 // features/loginPage/apis/user.ts
 import api from '../../../apis/axiosInstance';
 
-export const getUserInfo = async () => {
-  return api.get('/user/info');
-};
-
 export const signUpFinal = async (payload: {
   registrationId: string;
   name: string;

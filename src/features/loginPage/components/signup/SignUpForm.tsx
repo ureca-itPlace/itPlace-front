@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
-import { getUserInfo } from '../../apis/user';
 
 type SignUpFormProps = {
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
+  birthdayFromPhoneAuth: string;
+  genderFromPhoneAuth: string;
+  membershipIdFromPhoneAuth: string;
   onGoToLogin: () => void;
   onNext: (data: {
     name: string;
@@ -20,65 +22,27 @@ type SignUpFormProps = {
 const SignUpForm = ({
   nameFromPhoneAuth,
   phoneFromPhoneAuth,
+  birthdayFromPhoneAuth,
+  genderFromPhoneAuth,
+  membershipIdFromPhoneAuth,
   onGoToLogin,
   onNext,
 }: SignUpFormProps) => {
   const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    birth: '',
-    gender: '', // 'MALE' 또는 'FEMALE'
-    membershipNumber: '',
+    name: nameFromPhoneAuth,
+    phone: phoneFromPhoneAuth,
+    birth: birthdayFromPhoneAuth || '',
+    gender: genderFromPhoneAuth || '',
+    membershipNumber: membershipIdFromPhoneAuth || '',
   });
 
   const [disabledFields, setDisabledFields] = useState({
     name: true,
     phone: true,
-    birth: false,
-    gender: false,
+    birth: !!birthdayFromPhoneAuth,
+    gender: !!genderFromPhoneAuth,
     membershipNumber: true,
   });
-
-  // API 호출하여 기존 회원 정보 병합
-  useEffect(() => {
-    getUserInfo()
-      .then((res) => {
-        const data = res.data;
-
-        setFormData({
-          name: data.name || nameFromPhoneAuth,
-          phone: data.phone || phoneFromPhoneAuth,
-          birth: data.birth || '',
-          gender: data.gender || '',
-          membershipNumber: data.membershipNumber || '',
-        });
-
-        setDisabledFields({
-          name: true,
-          phone: true,
-          birth: !!data.birth,
-          gender: !!data.gender,
-          membershipNumber: true,
-        });
-      })
-      .catch(() => {
-        // 실패 시 인증값만 사용
-        setFormData({
-          name: nameFromPhoneAuth,
-          phone: phoneFromPhoneAuth,
-          birth: '',
-          gender: '',
-          membershipNumber: '',
-        });
-        setDisabledFields({
-          name: true,
-          phone: true,
-          birth: false,
-          gender: false,
-          membershipNumber: true,
-        });
-      });
-  }, [nameFromPhoneAuth, phoneFromPhoneAuth]);
 
   // 입력값 핸들링
   const handleChange = (field: keyof typeof formData, value: string) => {
@@ -126,7 +90,7 @@ const SignUpForm = ({
         />
       </div>
 
-      {/* 생년월일: 달력 선택 */}
+      {/* 생년월일 */}
       <div className="mb-[20px] w-full flex justify-center">
         <input
           type="date"
@@ -138,7 +102,7 @@ const SignUpForm = ({
         />
       </div>
 
-      {/* 성별: 토글 버튼 */}
+      {/* 성별 */}
       <div className="mb-[20px] w-full flex justify-center gap-[16px]">
         <button
           type="button"

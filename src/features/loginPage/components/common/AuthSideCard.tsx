@@ -1,4 +1,4 @@
-import astronautImage from '../../../assets/loginPage/loginPage.png';
+import astronautImage from '../../../../assets/loginPage/loginPage.png';
 
 const AuthSideCard = () => {
   return (

@@ -27,6 +27,11 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
     }
   };
 
+  const handleKakaoLogin = () => {
+    const kakaoLoginUrl = `http://3.34.79.67/oauth2/authorization/kakao`;
+    window.location.href = kakaoLoginUrl;
+  };
+
   return (
     <div>
       <h2 className="text-title-1 mb-[40px]">로그인</h2>
@@ -59,12 +64,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
         <AuthLinkRow onGoToPhoneAuth={onGoToPhoneAuth} onGoToFindEmail={onGoToFindEmail} />
         <AuthDivider />
 
-        <KakaoLoginButton
-          onClick={() => {
-            console.log('카카오 로그인 클릭됨');
-            // TODO: 카카오 로그인 연동 예정
-          }}
-        />
+        <KakaoLoginButton onClick={handleKakaoLogin} />
       </div>
     </div>
   );

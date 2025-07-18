@@ -1,60 +1,28 @@
 import { useState } from 'react';
-import Modal from '../../../../components/Modal';
 import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
 
 type Props = {
   email: string;
-  verificationCode: string;
   onChangeEmail: (val: string) => void;
-  onChangeCode: (val: string) => void;
-  onSendCode: () => Promise<void>;
-  onVerifyCode: () => Promise<void>;
-  emailSent: boolean;
-  emailVerified: boolean;
-  errorMessage?: string;
+  registrationId: string;
   onClickTabEmail: () => void;
   onGoNextStep: () => void;
 };
 
 const FindPasswordStep1 = ({
   email,
-  verificationCode,
   onChangeEmail,
-  onChangeCode,
-  onSendCode,
-  onVerifyCode,
-  emailSent,
-  emailVerified,
-  errorMessage,
+  registrationId,
   onClickTabEmail,
   onGoNextStep,
 }: Props) => {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  // 인증 요청 버튼 클릭 시 로딩 모달을 띄우고 이메일 전송 요청
-  const handleSendCodeClick = async () => {
-    setModalOpen(true);
-    try {
-      await onSendCode();
-    } finally {
-      setModalOpen(false);
-    }
-  };
-
-  // 인증번호 확인 버튼 클릭 시 인증 확인 요청
-  const handleVerifyCodeClick = async () => {
-    try {
-      await onVerifyCode();
-    } catch {
-      // 실패 시 errorMessage는 상위에서 처리
-    }
-  };
+  const [emailVerified, setEmailVerified] = useState(false);
 
   return (
     <div className="w-[320px] mx-auto flex flex-col items-center">
-      {/* 상단 탭 버튼 영역 */}
+      {/* 상단 탭 */}
       <div className="relative w-[320px] h-[50px] flex justify-between items-center bg-grey01 rounded-[18px] p-[4px]">
         <button
           className="w-[153px] h-[42px] text-grey05 rounded-[18px] text-title-6"
@@ -67,27 +35,21 @@ const FindPasswordStep1 = ({
         </button>
       </div>
 
-      {/* 설명 문구 */}
       <p className="text-title-6 text-grey05 mt-[40px]">
-        가입한 이메일로 <strong>전송 받은 링크</strong>를 통해 새 비밀번호를 등록해주세요.
+        가입한 이메일로 <strong>인증 번호를</strong>전송해드렸어요.
       </p>
 
-      {/* 이메일 인증 입력 영역 */}
+      {/* 이메일 인증 */}
       <div className="mt-[20px]">
         <EmailVerificationBox
           email={email}
           onChangeEmail={onChangeEmail}
-          verificationCode={verificationCode}
-          onChangeCode={onChangeCode}
-          onSendCode={handleSendCodeClick}
-          onVerifyCode={handleVerifyCodeClick}
-          emailSent={emailSent}
-          emailVerified={emailVerified}
-          errorMessage={errorMessage}
+          registrationId={registrationId}
+          onVerifiedChange={setEmailVerified}
         />
       </div>
 
-      {/* 하단 확인 버튼 (인증 완료 시 활성화) */}
+      {/* 확인 버튼 */}
       <AuthButton
         label="확인"
         onClick={onGoNextStep}
@@ -95,7 +57,7 @@ const FindPasswordStep1 = ({
         className="mt-[150px]"
       />
 
-      {/* 로그인 이동 링크 */}
+      {/* 로그인 링크 */}
       <div className="mt-[8px] w-full">
         <AuthFooter
           leftText="이미 회원이신가요?"
@@ -103,17 +65,6 @@ const FindPasswordStep1 = ({
           onRightClick={onClickTabEmail}
         />
       </div>
-
-      {/* 이메일 전송 로딩 모달 */}
-      <Modal
-        isOpen={modalOpen}
-        title="인증 메일을 전송 중입니다."
-        onClose={() => setModalOpen(false)}
-      >
-        <div className="w-full flex justify-center mt-[16px]">
-          <div className="w-[32px] h-[32px] border-4 border-purple04 border-t-transparent rounded-full animate-spin" />
-        </div>
-      </Modal>
     </div>
   );
 };
