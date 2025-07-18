@@ -14,13 +14,12 @@ type Props = {
   mode: 'signup' | 'find';
   currentStep: 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal';
   onGoToLogin: () => void;
-  onAuthComplete: (data: { name: string; phone: string; registrationId: string }) => void;
+  onAuthComplete: (data: { name: string; phone: string }) => void;
   onVerified: (
     verifiedType: 'new' | 'uplus' | 'local' | 'oauth',
     user: {
       name: string;
       phone: string;
-      registrationId: string;
       birthday: string;
       gender: string;
       membershipId: string;
@@ -29,7 +28,6 @@ type Props = {
   onSignUpComplete: () => void;
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
-  registrationIdFromPhoneAuth: string;
 };
 
 const PhoneAuthForm = ({
@@ -41,7 +39,6 @@ const PhoneAuthForm = ({
   onSignUpComplete,
   nameFromPhoneAuth,
   phoneFromPhoneAuth,
-  registrationIdFromPhoneAuth,
 }: Props) => {
   // 입력 필드 상태
   const [name, setName] = useState('');
@@ -66,14 +63,12 @@ const PhoneAuthForm = ({
   const handleVerified = ({
     name,
     phone,
-    registrationId,
     birthday,
     gender,
     membershipId,
   }: {
     name: string;
     phone: string;
-    registrationId: string;
     birthday: string;
     gender: string;
     membershipId: string;
@@ -84,7 +79,7 @@ const PhoneAuthForm = ({
     setGender(gender);
     setMembershipId(membershipId);
 
-    onVerified('uplus', { name, phone, registrationId, birthday, gender, membershipId });
+    onVerified('uplus', { name, phone, birthday, gender, membershipId });
   };
 
   // 보안문자 캡차 박스 메모이제이션
@@ -106,10 +101,11 @@ const PhoneAuthForm = ({
 
     try {
       const res = await sendVerificationCode(name, phone);
-      const registrationId = res.data.registrationId;
-      onAuthComplete({ name, phone, registrationId });
+      onAuthComplete({ name, phone });
+      console.log('인증번호 전송이 완료되었습니다.');
     } catch (error: any) {
       const res = error?.response?.data;
+      console.log('res : ', res);
       let message = '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
 
       if (res) {
@@ -142,7 +138,6 @@ const PhoneAuthForm = ({
         onVerified={handleVerified}
         name={nameFromPhoneAuth}
         phone={phoneFromPhoneAuth}
-        registrationId={registrationIdFromPhoneAuth}
       />
     );
   }
@@ -172,7 +167,6 @@ const PhoneAuthForm = ({
     return (
       <SignUpFinalForm
         onGoToLogin={onGoToLogin}
-        registrationId={registrationIdFromPhoneAuth}
         name={name}
         phoneNumber={phone}
         birthday={birthday}

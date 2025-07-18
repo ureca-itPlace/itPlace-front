@@ -12,7 +12,6 @@ import { signUpFinal } from '../../apis/user';
 
 type SignUpFinalFormProps = {
   onGoToLogin: () => void;
-  registrationId: string;
   name: string;
   phoneNumber: string;
   birthday: string;
@@ -22,7 +21,6 @@ type SignUpFinalFormProps = {
 
 const SignUpFinalForm = ({
   onGoToLogin,
-  registrationId,
   name,
   phoneNumber,
   birthday,
@@ -69,7 +67,6 @@ const SignUpFinalForm = ({
     if (valid && emailVerified) {
       try {
         const payload = {
-          registrationId,
           name,
           email: formData.email,
           phoneNumber,
@@ -152,7 +149,6 @@ const SignUpFinalForm = ({
               target: { name: 'email', value: val },
             } as React.ChangeEvent<HTMLInputElement>)
           }
-          registrationId={registrationId}
           onVerifiedChange={setEmailVerified}
         />
       </div>

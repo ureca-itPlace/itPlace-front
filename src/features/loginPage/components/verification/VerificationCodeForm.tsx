@@ -32,7 +32,6 @@ type Props = {
   onVerified: (userInfo: {
     name: string;
     phone: string;
-    registrationId: string;
     birthday: string;
     gender: string;
     membershipId: string;
@@ -41,17 +40,9 @@ type Props = {
   }) => void;
   name: string;
   phone: string;
-  registrationId: string;
 };
 
-const VerificationCodeForm = ({
-  mode,
-  onGoToLogin,
-  onVerified,
-  name,
-  phone,
-  registrationId,
-}: Props) => {
+const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Props) => {
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
@@ -150,7 +141,6 @@ const VerificationCodeForm = ({
 
     try {
       const res = await checkVerificationCode({
-        registrationId,
         phoneNumber: phone,
         verificationCode: code,
       });
@@ -266,7 +256,6 @@ const VerificationCodeForm = ({
             const commonUserInfo = {
               name: user.name,
               phone: user.phone,
-              registrationId,
               birthday: user.birthday,
               gender: user.gender,
               membershipId: user.membershipId,
@@ -310,7 +299,7 @@ const VerificationCodeForm = ({
                     async () => {
                       closeModal();
                       try {
-                        const res = await loadUplusData(registrationId);
+                        const res = await loadUplusData(phone);
                         const data = res.data;
 
                         onVerified({

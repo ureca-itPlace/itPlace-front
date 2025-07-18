@@ -2,7 +2,6 @@
 import api from '../../../apis/axiosInstance';
 
 export const signUpFinal = async (payload: {
-  registrationId: string;
   name: string;
   phoneNumber: string;
   email: string;

@@ -6,18 +6,11 @@ import AuthFooter from '../common/AuthFooter';
 type Props = {
   email: string;
   onChangeEmail: (val: string) => void;
-  registrationId: string;
   onClickTabEmail: () => void;
   onGoNextStep: () => void;
 };
 
-const FindPasswordStep1 = ({
-  email,
-  onChangeEmail,
-  registrationId,
-  onClickTabEmail,
-  onGoNextStep,
-}: Props) => {
+const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep }: Props) => {
   const [emailVerified, setEmailVerified] = useState(false);
 
   return (
@@ -44,7 +37,6 @@ const FindPasswordStep1 = ({
         <EmailVerificationBox
           email={email}
           onChangeEmail={onChangeEmail}
-          registrationId={registrationId}
           onVerifiedChange={setEmailVerified}
         />
       </div>

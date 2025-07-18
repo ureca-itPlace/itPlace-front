@@ -5,11 +5,10 @@ import { sendEmailVerificationCode, checkEmailVerificationCode } from '../../api
 
 type Props = {
   onGoToLogin: () => void;
-  registrationId: string;
   onClickTabEmail: () => void;
 };
 
-const FindPasswordForm = ({ onGoToLogin, registrationId, onClickTabEmail }: Props) => {
+const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
   // 현재 단계 상태 ('verify': 이메일 인증 단계, 'reset': 비밀번호 재설정 단계)
   const [step, setStep] = useState<'verify' | 'reset'>('verify');
 
@@ -27,7 +26,7 @@ const FindPasswordForm = ({ onGoToLogin, registrationId, onClickTabEmail }: Prop
   // 인증번호 요청
   const handleSendCode = async () => {
     try {
-      await sendEmailVerificationCode({ email, registrationId });
+      await sendEmailVerificationCode({ email });
       setEmailSent(true);
       setErrorMessage('');
     } catch (err: any) {
@@ -40,7 +39,7 @@ const FindPasswordForm = ({ onGoToLogin, registrationId, onClickTabEmail }: Prop
   // 인증번호 확인
   const handleVerifyCode = async () => {
     try {
-      await checkEmailVerificationCode(email, verificationCode, registrationId);
+      await checkEmailVerificationCode(email, verificationCode);
       setEmailVerified(true);
       setErrorMessage('');
     } catch (err: any) {
@@ -73,7 +72,6 @@ const FindPasswordForm = ({ onGoToLogin, registrationId, onClickTabEmail }: Prop
       {step === 'verify' ? (
         <FindPasswordStep1
           email={email}
-          registrationId={registrationId}
           onChangeEmail={setEmail}
           onClickTabEmail={onClickTabEmail}
           onGoNextStep={() => setStep('reset')}

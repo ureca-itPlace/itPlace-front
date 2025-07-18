@@ -7,21 +7,14 @@ import useEmailVerification from '../../hooks/useEmailVerification';
 type Props = {
   email: string;
   onChangeEmail: (val: string) => void;
-  registrationId: string;
   onVerifiedChange?: (verified: boolean) => void;
 };
 
-const EmailVerificationBox = ({
-  email,
-  onChangeEmail,
-  registrationId,
-  onVerifiedChange,
-}: Props) => {
+const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange }: Props) => {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const { emailSent, emailVerified, errorMessage, sendCode, verifyCode } = useEmailVerification({
     email,
-    registrationId,
     onVerifiedChange,
   });
 

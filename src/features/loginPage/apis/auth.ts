@@ -4,9 +4,9 @@ export const login = (email: string, password: string) => {
   return api.post('api/v1/auth/login', { email, password });
 };
 
-export const loadUplusData = (registrationId: string) => {
+export const loadUplusData = (phoneNumber: string) => {
   return api.post('api/v1/auth/loadUplusData', {
-    registrationId,
+    phoneNumber,
   });
 };
 

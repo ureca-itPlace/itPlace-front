@@ -4,15 +4,10 @@ import { showToast } from '../../../utils/toast';
 
 type UseEmailVerificationProps = {
   email: string;
-  registrationId: string;
   onVerifiedChange?: (verified: boolean) => void;
 };
 
-const useEmailVerification = ({
-  email,
-  registrationId,
-  onVerifiedChange,
-}: UseEmailVerificationProps) => {
+const useEmailVerification = ({ email, onVerifiedChange }: UseEmailVerificationProps) => {
   const [emailSent, setEmailSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -23,19 +18,19 @@ const useEmailVerification = ({
     if (!email) return;
 
     try {
-      setLoading(true); // ✅ 스피너용 상태 true
-      await sendEmailVerificationCode({ email, registrationId });
+      setLoading(true); // 스피너용 상태 true
+      await sendEmailVerificationCode({ email });
       setEmailSent(true);
       setErrorMessage('');
 
-      // ✅ 성공 시 토스트 추가
+      // 성공 시 토스트 추가
       showToast('입력하신 이메일로 인증 번호가 전송되었습니다!', 'success');
     } catch (err: any) {
       const msg = err?.response?.data?.message || '인증번호 요청에 실패했습니다.';
       setErrorMessage(msg);
       setEmailSent(false);
     } finally {
-      setLoading(false); // ✅ 로딩 종료
+      setLoading(false); // 로딩 종료
     }
   };
 
@@ -49,7 +44,7 @@ const useEmailVerification = ({
     }
 
     try {
-      await checkEmailVerificationCode(email, code, registrationId);
+      await checkEmailVerificationCode(email, code);
       setEmailVerified(true);
       setErrorMessage('');
       showToast('이메일 인증이 완료되었습니다.', 'success');

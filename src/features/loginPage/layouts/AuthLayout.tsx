@@ -34,13 +34,11 @@ const AuthLayout = () => {
   const [userData, setUserData] = useState({
     name: '',
     phone: '',
-    registrationId: '',
   });
 
   const [oauthUserData, setOAuthUserData] = useState({
     name: '',
     phone: '',
-    registrationId: '',
     birthday: '',
     gender: '',
     membershipId: '',
@@ -66,7 +64,6 @@ const AuthLayout = () => {
         birthday: params.get('birthday') || '',
         gender: params.get('gender') || '',
         membershipId: params.get('membershipId') || '',
-        registrationId: params.get('registrationId') || '',
       });
       setFormStep('oauthIntegration');
     }
@@ -102,8 +99,8 @@ const AuthLayout = () => {
                 mode={mode}
                 currentStep={formStep as 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal'}
                 onGoToLogin={goToLogin}
-                onAuthComplete={({ name, phone, registrationId }) => {
-                  setUserData({ name, phone, registrationId });
+                onAuthComplete={({ name, phone }) => {
+                  setUserData({ name, phone });
                   goToVerification();
                 }}
                 onVerified={(verifiedType, user) => {
@@ -115,7 +112,6 @@ const AuthLayout = () => {
                     setOAuthUserData({
                       name: user.name,
                       phone: user.phone,
-                      registrationId: user.registrationId,
                       birthday: user.birthday,
                       gender: user.gender,
                       membershipId: user.membershipId,
@@ -128,7 +124,6 @@ const AuthLayout = () => {
                 onSignUpComplete={goToSignUpFinal}
                 nameFromPhoneAuth={userData.name}
                 phoneFromPhoneAuth={userData.phone}
-                registrationIdFromPhoneAuth={userData.registrationId}
               />
             )}
 
@@ -168,7 +163,6 @@ const AuthLayout = () => {
                   setShowFindPasswordForm(false);
                   goToLogin();
                 }}
-                registrationId={userData.registrationId}
                 onClickTabEmail={() => {
                   setShowFindPasswordForm(false);
                   goToFindEmail();
