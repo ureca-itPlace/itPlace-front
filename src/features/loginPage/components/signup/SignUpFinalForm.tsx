@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import Modal from '../../../../components/Modal';
 import { showToast } from '../../../../utils/toast';
 import AuthInput from '../common/AuthInput';
@@ -27,6 +28,16 @@ const SignUpFinalForm = ({
   gender,
   membershipId,
 }: SignUpFinalFormProps) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' }
+    );
+  }, []);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -134,7 +145,7 @@ const SignUpFinalForm = ({
     emailVerified;
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div ref={wrapperRef} className="w-full flex flex-col items-center">
       {/* 제목 안내 */}
       <div className="w-[320px] text-left">
         <p className="text-title-4">개인정보를 입력해주세요</p>

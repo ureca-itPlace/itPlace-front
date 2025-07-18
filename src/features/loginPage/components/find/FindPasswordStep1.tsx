@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
@@ -13,8 +13,18 @@ type Props = {
 const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep }: Props) => {
   const [emailVerified, setEmailVerified] = useState(false);
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' }
+    );
+  }, []);
+
   return (
-    <div className="w-[320px] mx-auto flex flex-col items-center">
+    <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
       {/* 상단 탭 */}
       <div className="relative w-[320px] h-[50px] flex justify-between items-center bg-grey01 rounded-[18px] p-[4px]">
         <button

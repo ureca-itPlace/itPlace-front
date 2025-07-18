@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import ErrorMessage from '../common/ErrorMessage';
@@ -33,6 +33,17 @@ const FindPasswordStep2 = ({
     passwordConfirm: false,
   });
 
+  //애니메이션
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' }
+    );
+  }, []);
+
   // 비밀번호 입력 시 유효성 검사 수행
   useEffect(() => {
     validateField('password', password, {
@@ -60,7 +71,7 @@ const FindPasswordStep2 = ({
     !errors.passwordConfirm;
 
   return (
-    <div className="flex flex-col items-center">
+    <div ref={wrapperRef} className="flex flex-col items-center">
       {/* 안내 문구 */}
       <div className="text-title-4 text-left w-[320px]">
         <p>

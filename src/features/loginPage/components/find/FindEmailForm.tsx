@@ -1,4 +1,6 @@
 import React from 'react';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
 
@@ -18,8 +20,18 @@ const FindEmailForm: React.FC<FindEmailFormProps> = ({
   onClickLogin,
   onClickTabPassword,
 }) => {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' }
+    );
+  }, []);
+
   return (
-    <div className="w-[320px] mx-auto flex flex-col items-center">
+    <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
       {/* 상단 토글 탭 */}
       <div className="relative w-[320px] h-[50px] flex justify-between items-center bg-grey01 rounded-[18px] p-[4px]">
         <button className="w-[153px] h-[42px] bg-white text-purple04 rounded-[18px] text-title-6">
