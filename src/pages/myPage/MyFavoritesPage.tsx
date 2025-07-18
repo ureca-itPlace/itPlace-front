@@ -2,13 +2,12 @@ import { useFavorites } from '../../features/myPage/hooks/useFavorites';
 import { Pagination } from '../../components/common';
 import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
 import SearchBar from '../../components/common/SearchBar';
-import Modal from '../../components/Modal';
 import NoResult from '../../components/NoResult';
-import FadeWrapper from '../../features/myPage/components/FadeWrapper';
-import BenefitDetailTabs from '../../features/myPage/components/BenefitDetailTabs';
 import BenefitCardList from '../../features/myPage/components/BenefitCardList';
 import EditControls from '../../features/myPage/components/EditControls';
 import MyPageContentLayout from '../../features/myPage/layout/MyPageContentLayout';
+import FavoritesDeleteModal from '../../features/myPage/components/Favorites/FavoritesDeleteModal';
+import FavoritesAside from '../../features/myPage/components/Favorites/FavoritesAside';
 
 export default function MyFavoritesPage() {
   const {
@@ -64,7 +63,7 @@ export default function MyFavoritesPage() {
               />
             </div>
 
-            {/* ✨ 편집/전체선택 컨트롤을 컴포넌트로 분리 */}
+            {/* 편집/전체선택 컨트롤 */}
             {currentItems.length > 0 && (
               <EditControls
                 isEditing={isEditing}
@@ -76,37 +75,21 @@ export default function MyFavoritesPage() {
             )}
 
             {/* 모달 */}
-            <Modal
+            <FavoritesDeleteModal
               isOpen={isDeleteModalOpen}
               onClose={() => {
                 setIsDeleteModalOpen(false);
                 setPendingDeleteId(null);
               }}
-              title="선택한 혜택을 삭제하시겠습니까?"
-              message="삭제하신 혜택은 다시 복구할 수 없습니다."
-              buttons={[
-                {
-                  label: '아니오',
-                  type: 'secondary',
-                  onClick: () => {
-                    setIsDeleteModalOpen(false);
-                    setPendingDeleteId(null);
-                  },
-                },
-                {
-                  label: '삭제하기',
-                  type: 'primary',
-                  onClick: () => {
-                    if (pendingDeleteId !== null) {
-                      handleRemoveFavorite(pendingDeleteId);
-                    } else {
-                      handleDeleteSelected();
-                    }
-                    setIsDeleteModalOpen(false);
-                    setPendingDeleteId(null);
-                  },
-                },
-              ]}
+              onConfirm={() => {
+                if (pendingDeleteId !== null) {
+                  handleRemoveFavorite(pendingDeleteId);
+                } else {
+                  handleDeleteSelected();
+                }
+                setIsDeleteModalOpen(false);
+                setPendingDeleteId(null);
+              }}
             />
 
             {/* 카드 리스트 */}
@@ -178,59 +161,12 @@ export default function MyFavoritesPage() {
         }
         // ✨ RightAside 영역
         aside={
-          favorites.length === 0 ? (
-            <>
-              <h1 className="text-title-2 text-black mb-4 text-center">선택한 혜택</h1>
-              <div className="flex flex-col items-center justify-center mt-20">
-                <img
-                  src="/images/myPage/icon-nothing.webp"
-                  alt="텅빈 찜 보관함"
-                  className="w-[300px] h-auto"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = '/images/myPage/icon-nothing.png';
-                  }}
-                />
-                <p className="text-grey05 text-body-0 mt-5">찜 보관함이 텅 비었어요!</p>
-              </div>
-            </>
-          ) : isEditing ? (
-            <FadeWrapper changeKey={selectedItems.length}>
-              <h1 className="text-title-2 text-black mb-4 text-center">선택한 혜택</h1>
-              <div className="flex flex-col items-center justify-center mt-7">
-                <img
-                  src="/images/myPage/icon-file.webp"
-                  alt="폴더"
-                  className="w-[185px] h-auto"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.onerror = null;
-                    target.src = '/images/myPage/icon-file.png';
-                  }}
-                />
-                <div className="flex justify-center items-baseline">
-                  <p className="text-[96px] font-bold text-orange04 mt-3">{selectedItems.length}</p>
-                  <p className="text-title-1 text-grey05 ml-2">개</p>
-                </div>
-              </div>
-            </FadeWrapper>
-          ) : (
-            <FadeWrapper changeKey={selectedId}>
-              {selectedId ? (
-                <>
-                  <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
-                  <BenefitDetailTabs
-                    benefitId={selectedId}
-                    image={favorites.find((f) => f.benefitId === selectedId)?.image ?? ''}
-                    name={favorites.find((f) => f.benefitId === selectedId)?.benefitName ?? ''}
-                  />
-                </>
-              ) : (
-                <p className="text-grey05">카드를 선택하면 상세 혜택이 표시됩니다.</p>
-              )}
-            </FadeWrapper>
-          )
+          <FavoritesAside
+            favorites={favorites}
+            isEditing={isEditing}
+            selectedItems={selectedItems}
+            selectedId={selectedId}
+          />
         }
         bottomImage="/images/myPage/bunny-favorites.webp"
         bottomImageAlt="찜한 혜택 토끼"
