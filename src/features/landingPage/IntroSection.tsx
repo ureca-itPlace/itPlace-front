@@ -64,14 +64,14 @@ const IntroSection = ({ onComplete }: { onComplete: () => void }) => {
         // 3. 로고 & 멘트 fade out
         .add(() => {
           gsap.to(logoRef.current, {
-            y: 10,
+            y: 0,
             opacity: 0,
             scale: 0.5,
             duration: 1,
             ease: 'power3.out',
           });
           gsap.to(descRef.current, {
-            y: -50,
+            y: 0,
             opacity: 0,
             scale: 0.5,
             duration: 1,
