@@ -31,7 +31,6 @@ const LandingPage = () => {
     if (introEnded) {
       gsap.to(earthSectionRef.current, {
         opacity: 1,
-        zIndex: 20,
         duration: 2,
         onComplete: () => {
           console.log('지구 등장 완료');
@@ -54,7 +53,7 @@ const LandingPage = () => {
   return (
     <div className="relative">
       {introEnded ? (
-        <div ref={earthSectionRef} style={{ opacity: 0, zIndex: -1 }}>
+        <div ref={earthSectionRef} style={{ opacity: 0 }}>
           <EarthSection />
         </div>
       ) : (
