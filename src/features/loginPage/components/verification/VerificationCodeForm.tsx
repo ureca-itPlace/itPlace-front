@@ -8,6 +8,7 @@ import { checkVerificationCode, sendVerificationCode } from '../../apis/verifica
 import Modal from '../../../../components/Modal';
 import { modalPresets } from '../../constants/modalPresets';
 import { showToast } from '../../../../utils/toast';
+import { loadUplusData } from '../../apis/auth';
 
 export interface ModalButton {
   label: string;
@@ -106,7 +107,7 @@ const VerificationCodeForm = ({
         if (prev <= 1) {
           clearInterval(timerRef.current!);
           showToast('인증 시간이 만료되었습니다.', 'error', {
-            position: 'bottom-center',
+            position: 'top-center',
           });
         }
         return prev - 1;
@@ -157,9 +158,9 @@ const VerificationCodeForm = ({
       setCodeError('');
       showToast('인증에 성공하였습니다.', 'success');
 
-      const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
+      const { userStatus, isLocalUser, uplusDataFound } = res.data;
 
-      if (userStatus === 'EXISTING_USER' && isLocalUser) {
+      if (userStatus === 'EXISTING_USER' && isLocalUser === 'true') {
         verifiedTypeRef.current = 'local';
         setIsVerified(true);
         return;
@@ -171,19 +172,20 @@ const VerificationCodeForm = ({
         return;
       }
 
-      if (uplusDataExists && uplusData) {
+      if (userStatus === 'NEW_USER' && uplusDataFound === 'true') {
         verifiedTypeRef.current = 'uplus';
         uplusDataRef.current = {
-          name: uplusData.name ?? name,
-          phone: uplusData.phone ?? phone,
-          birthday: uplusData.birthday ?? '',
-          gender: uplusData.gender ?? '',
-          membershipId: uplusData.membershipId ?? '',
+          name,
+          phone,
+          birthday: '',
+          gender: '',
+          membershipId: '',
         };
         setIsVerified(true);
         return;
       }
 
+      // default: 신규 일반 사용자
       verifiedTypeRef.current = 'new';
       uplusDataRef.current = {
         name,
@@ -305,13 +307,26 @@ const VerificationCodeForm = ({
               case 'uplus':
                 setModal(
                   modalPresets.uplusMember(
-                    () => {
+                    async () => {
                       closeModal();
-                      onVerified(commonUserInfo);
+                      try {
+                        const res = await loadUplusData(registrationId);
+                        const data = res.data;
+
+                        onVerified({
+                          ...commonUserInfo,
+                          birthday: data.birthday ?? '',
+                          gender: data.gender ?? '',
+                          membershipId: data.membershipId ?? '',
+                        });
+                      } catch (error) {
+                        showToast('U+ 정보 불러오기에 실패했습니다.', 'error');
+                        onVerified(commonUserInfo); // fallback
+                      }
                     },
                     () => {
                       closeModal();
-                      onVerified(commonUserInfo);
+                      onVerified(commonUserInfo); // 사용자가 "아니요" 선택 시
                     }
                   )
                 );

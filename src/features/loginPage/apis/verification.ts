@@ -38,6 +38,7 @@ export const sendEmailVerificationCode = async ({
   });
 };
 
+//이메일 인증번호 확인인
 export const checkEmailVerificationCode = async (
   email: string,
   verificationCode: string,

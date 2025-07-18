@@ -18,14 +18,18 @@ const EmailVerificationBox = ({
   onVerifiedChange,
 }: Props) => {
   const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [loading, setLoading] = useState(false);
   const { emailSent, emailVerified, errorMessage, sendCode, verifyCode } = useEmailVerification({
     email,
     registrationId,
     onVerifiedChange,
   });
 
-  // 인증번호 전송 핸들러 (모달 제어 포함)
+  // 이메일이 변경되면 인증번호 입력 초기화
+  useEffect(() => {
+    setCode('');
+  }, [email]);
+
   const handleSendCode = async () => {
     setLoading(true);
     try {

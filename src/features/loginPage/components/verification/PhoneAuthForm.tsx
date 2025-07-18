@@ -9,7 +9,6 @@ import SignUpFinalForm from '../signup/SignUpFinalForm';
 import { showToast } from '../../../../utils/toast';
 import { loadCaptchaEnginge, validateCaptcha } from 'react-simple-captcha';
 import { sendVerificationCode } from '../../apis/verification';
-import { loadUplusData } from '../../apis/auth';
 
 type Props = {
   mode: 'signup' | 'find';
@@ -54,9 +53,6 @@ const PhoneAuthForm = ({
   const [gender, setGender] = useState('');
   const [membershipId, setMembershipId] = useState('');
 
-  // 보안문자 오류 모달 상태
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   // 입력 유효성 여부
   const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
 
@@ -66,60 +62,29 @@ const PhoneAuthForm = ({
     setUserCaptchaInput('');
   }, []);
 
-  // 보안문자 오류 모달 닫기
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setUserCaptchaInput('');
-  };
-
   // 인증 성공 후 사용자 정보 처리 및 분기 전달
-  const handleVerified = async ({
+  const handleVerified = ({
     name,
     phone,
     registrationId,
-    isUplus,
-    verifiedType,
+    birthday,
+    gender,
+    membershipId,
   }: {
     name: string;
     phone: string;
     registrationId: string;
-    isUplus: boolean;
-    verifiedType: 'new' | 'uplus' | 'local' | 'oauth';
+    birthday: string;
+    gender: string;
+    membershipId: string;
   }) => {
-    let birthday = '';
-    let gender = '';
-    let membershipId = '';
-
-    // 기본 정보 저장
     setName(name);
     setPhone(phone);
-
-    // U+ 회원이면 추가 정보 불러오기
-    if (isUplus) {
-      try {
-        const res = await loadUplusData(registrationId);
-        birthday = res.data.birthday;
-        gender = res.data.gender;
-        membershipId = res.data.membershipId;
-      } catch (error) {
-        console.error('U+ 데이터 로딩 실패:', error);
-      }
-    }
-
-    // 상태 업데이트
     setBirthday(birthday);
     setGender(gender);
     setMembershipId(membershipId);
 
-    // 상위로 인증 결과와 사용자 정보 함께 전달
-    onVerified(verifiedType, {
-      name,
-      phone,
-      registrationId,
-      birthday,
-      gender,
-      membershipId,
-    });
+    onVerified('uplus', { name, phone, registrationId, birthday, gender, membershipId });
   };
 
   // 보안문자 캡차 박스 메모이제이션
@@ -134,7 +99,7 @@ const PhoneAuthForm = ({
     const isCaptchaValid = validateCaptcha(userCaptchaInput.trim());
     if (!isCaptchaValid) {
       showToast('입력하신 보안문자가 이미지와 일치하지 않습니다.', 'error', {
-        position: 'bottom-center',
+        position: 'top-center',
       });
       return;
     }
@@ -161,7 +126,7 @@ const PhoneAuthForm = ({
       }
 
       showToast(message, 'error', {
-        position: 'bottom-center',
+        position: 'top-center',
       });
     }
   };

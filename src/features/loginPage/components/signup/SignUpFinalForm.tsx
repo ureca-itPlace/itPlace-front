@@ -29,38 +29,30 @@ const SignUpFinalForm = ({
   gender,
   membershipId,
 }: SignUpFinalFormProps) => {
-  // 사용자 입력 상태
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     passwordConfirm: '',
   });
 
-  // 입력 필드 터치 여부
   const [touched, setTouched] = useState({
     email: false,
     password: false,
     passwordConfirm: false,
   });
 
-  // 이메일 인증 성공 여부
   const [emailVerified, setEmailVerified] = useState(false);
-
-  // 비밀번호 보기 토글 상태
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  // 모달 상태
   const [modal, setModal] = useState({
     open: false,
     title: '',
     loading: false,
   });
 
-  // 유효성 검사 훅
   const { errors, validateAll, validateField } = useValidation();
 
-  // 입력 필드 변경 처리
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updated = { ...formData, [name]: value };
@@ -72,7 +64,6 @@ const SignUpFinalForm = ({
     }
   };
 
-  // 회원가입 요청
   const handleNext = async () => {
     const valid = validateAll(formData);
     if (valid && emailVerified) {
@@ -93,7 +84,7 @@ const SignUpFinalForm = ({
 
         if (response.status === 201 && response.data.code === 'SIGNUP_SUCCESS') {
           showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
-          onGoToLogin(); // 로그인 화면으로 이동
+          onGoToLogin();
         }
       } catch (error: any) {
         const res = error?.response?.data;
@@ -114,7 +105,7 @@ const SignUpFinalForm = ({
 
         showToast(message, 'error');
 
-        // ✅ 입력값 초기화
+        // 인증 상태 및 입력 초기화
         setFormData({
           email: '',
           password: '',
@@ -130,7 +121,6 @@ const SignUpFinalForm = ({
     }
   };
 
-  // 버튼 활성화 조건
   const isValid =
     formData.email &&
     formData.password &&
@@ -143,12 +133,12 @@ const SignUpFinalForm = ({
 
   return (
     <div className="w-full flex flex-col items-center">
-      {/* 제목 안내 문구 */}
+      {/* 제목 안내 */}
       <div className="w-[320px] text-left">
         <p className="text-title-4">개인정보를 입력해주세요</p>
       </div>
 
-      {/* 이메일 인증 영역 */}
+      {/* 이메일 인증 */}
       <div className="w-full max-w-[320px] mt-[51px]">
         <EmailVerificationBox
           email={formData.email}
@@ -162,7 +152,7 @@ const SignUpFinalForm = ({
         />
       </div>
 
-      {/* 비밀번호 입력 필드 */}
+      {/* 비밀번호 */}
       <div className="w-full max-w-[320px] mt-[15px]">
         <div className="relative">
           <AuthInput
@@ -183,7 +173,7 @@ const SignUpFinalForm = ({
         {touched.password && errors.password && <ErrorMessage message={errors.password} />}
       </div>
 
-      {/* 비밀번호 확인 필드 */}
+      {/* 비밀번호 확인 */}
       <div className="w-full max-w-[320px] mt-[15px]">
         <div className="relative">
           <AuthInput
@@ -221,7 +211,7 @@ const SignUpFinalForm = ({
         onRightClick={onGoToLogin}
       />
 
-      {/* 이메일 인증 로딩 모달 */}
+      {/* 모달 */}
       <Modal
         isOpen={modal.open}
         title={modal.title}
