@@ -272,16 +272,29 @@ const MemberManagement = () => {
 
   // 테이블 컬럼 정의
   const columns = [
-    { key: 'name', label: '회원 구분', width: '120px' },
-    { key: 'nickname', label: '회원명', width: '140px' },
+    {
+      key: 'userType',
+      label: '회원 구분',
+      width: '120px',
+      render: (value: unknown) => {
+        const userType = value as 'LINKED' | 'STANDARD';
+        return userType === 'LINKED' ? 'U+ 연동' : '일반';
+      },
+    },
+    { key: 'name', label: '회원명', width: '140px' },
     {
       key: 'grade',
       label: '등급',
       width: '100px',
+      render: (value: unknown) => {
+        const grade = value as 'VVIP' | 'VIP' | 'BASIC' | null;
+        if (grade === 'BASIC') return '우수';
+        return grade || '-';
+      },
     },
     { key: 'email', label: '이메일', width: '300px' },
-    { key: 'phone', label: '전화 번호', width: '160px' },
-    { key: 'joinDate', label: '생성일자', width: '140px' },
+    { key: 'phoneNumber', label: '전화 번호', width: '160px' },
+    { key: 'birthday', label: '생년월일', width: '140px' },
     {
       key: 'actions',
       label: '',
