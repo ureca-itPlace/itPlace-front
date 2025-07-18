@@ -30,8 +30,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full h-full pl-12 pr-10 rounded-[10px] text-black placeholder-grey03 placeholder:text-body-2 focus:outline-none focus:ring-0 focus:border-gray-300"
-        style={{ backgroundColor }}
+        className={`w-full h-full pl-12 pr-10 rounded-[10px] text-black placeholder-grey03 placeholder:text-body-2 focus:outline-none focus:ring-0 focus:border-gray-300 ${backgroundColor || ''}`}
       />
       {value && (
         <button
