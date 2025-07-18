@@ -54,9 +54,47 @@ export const confirmFindEmail = async ({
 };
 
 //비밀번호
+// 1. 인증번호 전송
 export const sendFindPasswordEmail = async (email: string) => {
   return await api.post('/api/v1/users/findPassword', { email });
 };
 
+// 2. 인증번호 확인
+export const checkResetEmailVerificationCode = async (email: string, verificationCode: string) => {
+  return await api.post<{ code: string; message: string; data: { resetPasswordToken: string } }>(
+    '/api/v1/users/findPassword/confirm',
+    { email, verificationCode }
+  );
+};
+
+// 3. 비밀번호 재설정 (추후 사용)
+export const resetPassword = async ({
+  email,
+  resetPasswordToken,
+  newPassword,
+  newPasswordConfirm,
+}: {
+  email: string;
+  resetPasswordToken: string;
+  newPassword: string;
+  newPasswordConfirm: string;
+}) => {
+  return await api.post('/api/v1/users/resetPassword', {
+    email,
+    resetPasswordToken,
+    newPassword,
+    newPasswordConfirm,
+  });
+};
+
 // /api/v1/users/findPassword
 // 이메일만 넘겨주면 됨
+
+// 이메일 인증확인
+// /api/v1/users/findPassword/confirm
+// email, verificationCode : request
+// resetPasswordToken : response
+
+// 비밀번호 변경
+// /api/v1/users/resetPassword
+// resetPasswordToken, email, newPassword, newPasswordConfirm

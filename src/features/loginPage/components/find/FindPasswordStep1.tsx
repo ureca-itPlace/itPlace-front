@@ -10,11 +10,12 @@ type Props = {
   email: string;
   onChangeEmail: (val: string) => void;
   onClickTabEmail: () => void;
-  onGoNextStep: () => void;
+  onGoNextStep: (resetToken: string) => void;
 };
 
 const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep }: Props) => {
   const [emailVerified, setEmailVerified] = useState(false);
+  const [resetToken, setResetToken] = useState('');
   const [loading, setLoading] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -34,7 +35,13 @@ const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep
     try {
       await sendFindPasswordEmail(email);
       showToast('비밀번호 재설정 이메일이 전송되었습니다.', 'success');
-      onGoNextStep();
+
+      // resetToken이 있을 때만 호출하도록 수정
+      if (resetToken) {
+        onGoNextStep(resetToken); // resetToken을 다음 단계로 넘김
+      } else {
+        console.error('resetToken이 비어있습니다.');
+      }
     } catch (err: any) {
       console.error(err);
       const msg = err?.response?.data?.message || '비밀번호 재설정 요청 중 오류가 발생했습니다.';
@@ -70,6 +77,7 @@ const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep
           onChangeEmail={onChangeEmail}
           onVerifiedChange={setEmailVerified}
           mode="reset"
+          onResetTokenChange={setResetToken}
         />
       </div>
 

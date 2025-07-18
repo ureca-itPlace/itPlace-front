@@ -5,6 +5,7 @@ import FindPasswordStep2 from './FindPasswordStep2';
 type Props = {
   onGoToLogin: () => void;
   onClickTabEmail: () => void;
+  onResetTokenChange: (token: string) => void;
 };
 
 const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
@@ -14,6 +15,7 @@ const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [serverError, setServerError] = useState('');
+  const [resetToken, setResetToken] = useState('');
 
   const handleSubmit = async () => {
     try {
@@ -31,7 +33,10 @@ const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
       email={email}
       onChangeEmail={setEmail}
       onClickTabEmail={onClickTabEmail}
-      onGoNextStep={() => setStep('reset')}
+      onGoNextStep={(token) => {
+        setResetToken(token);
+        setStep('reset');
+      }}
     />
   ) : (
     <FindPasswordStep2
@@ -41,6 +46,8 @@ const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
       onChangeConfirm={setPasswordConfirm}
       onSubmit={handleSubmit}
       errorMessage={serverError}
+      resetPasswordToken={resetToken}
+      email={email}
     />
   );
 };

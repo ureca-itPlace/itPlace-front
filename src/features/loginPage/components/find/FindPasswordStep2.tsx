@@ -6,6 +6,8 @@ import ErrorMessage from '../common/ErrorMessage';
 import AuthFooter from '../common/AuthFooter';
 import { TbEye, TbEyeOff } from 'react-icons/tb';
 import useValidation from '../../hooks/UseValidation';
+import { resetPassword } from '../../apis/user';
+import { showToast } from '../../../../utils/toast';
 
 type Props = {
   password: string;
@@ -14,6 +16,8 @@ type Props = {
   onChangeConfirm: (val: string) => void;
   onSubmit: () => void;
   errorMessage?: string;
+  email: string;
+  resetPasswordToken: string;
 };
 
 const FindPasswordStep2 = ({
@@ -23,6 +27,8 @@ const FindPasswordStep2 = ({
   onChangeConfirm,
   onSubmit,
   errorMessage,
+  email,
+  resetPasswordToken,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -36,6 +42,28 @@ const FindPasswordStep2 = ({
 
   //애니메이션
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const [serverError, setServerError] = useState('');
+
+  const handleSubmit = async () => {
+    if (!isValid) return;
+
+    try {
+      await resetPassword({
+        resetPasswordToken,
+        email,
+        newPassword: password,
+        newPasswordConfirm: passwordConfirm,
+      });
+
+      showToast('비밀번호가 성공적으로 변경되었습니다.', 'success');
+      onSubmit(); // 예: 로그인 페이지로 이동 등
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || '비밀번호 변경에 실패했습니다.';
+      setServerError(msg);
+      showToast(msg, 'error');
+    }
+  };
 
   useEffect(() => {
     gsap.fromTo(
@@ -137,7 +165,7 @@ const FindPasswordStep2 = ({
       <AuthButton
         className="w-[320px] mt-[100px] max-lg:w-full"
         label="비밀번호 변경"
-        onClick={onSubmit}
+        onClick={handleSubmit}
         variant={isValid ? 'default' : 'disabled'}
       />
 

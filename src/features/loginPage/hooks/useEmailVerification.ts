@@ -1,3 +1,4 @@
+import { checkResetEmailVerificationCode } from './../apis/user';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { sendEmailVerificationCode, checkEmailVerificationCode } from '../apis/verification';
@@ -10,17 +11,20 @@ type UseEmailVerificationProps = {
   email: string;
   onVerifiedChange?: (verified: boolean) => void;
   mode?: Mode;
+  onResetTokenChange?: (token: string) => void;
 };
 
 const useEmailVerification = ({
   email,
   onVerifiedChange,
   mode = 'signup',
+  onResetTokenChange, // ← 이 부분 추가!
 }: UseEmailVerificationProps) => {
   const [emailSent, setEmailSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetToken, setResetToken] = useState('');
 
   // 인증번호 전송 요청
   const sendCode = async () => {
@@ -30,8 +34,10 @@ const useEmailVerification = ({
       setLoading(true);
       if (mode === 'signup') {
         await sendEmailVerificationCode({ email });
+        console.log('signup모드');
       } else {
         await sendFindPasswordEmail(email);
+        console.log('FindPassword 모드');
       }
 
       setEmailSent(true);
@@ -52,8 +58,6 @@ const useEmailVerification = ({
 
   // 인증번호 확인 (signup만 해당)
   const verifyCode = async (code: string) => {
-    if (mode === 'reset') return; // reset 모드는 이메일 전송만 하고 인증번호 확인은 안 함
-
     if (!code.trim()) {
       const msg = '인증번호를 입력해주세요.';
       setErrorMessage(msg);
@@ -62,7 +66,20 @@ const useEmailVerification = ({
     }
 
     try {
-      await checkEmailVerificationCode(email, code);
+      if (mode === 'signup') {
+        await checkEmailVerificationCode(email, code);
+      } else {
+        const res = await checkResetEmailVerificationCode(email, code);
+        setResetToken(res.data.data.resetPasswordToken); // 비밀번호 재설정 토큰 설정
+
+        // 부모로 전달하는 부분
+        if (onResetTokenChange) {
+          onResetTokenChange(res.data.data.resetPasswordToken); // 부모에게 토큰 전달
+        } else {
+          console.error('onResetTokenChange 함수가 없습니다.');
+        }
+      }
+
       setEmailVerified(true);
       setErrorMessage('');
       showToast('이메일 인증이 완료되었습니다.', 'success');
@@ -96,6 +113,7 @@ const useEmailVerification = ({
     sendCode,
     verifyCode,
     loading,
+    resetToken,
   };
 };
 

@@ -9,9 +9,16 @@ type Props = {
   onChangeEmail: (val: string) => void;
   onVerifiedChange?: (verified: boolean) => void;
   mode?: 'signup' | 'reset';
+  onResetTokenChange?: (token: string) => void;
 };
 
-const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange, mode }: Props) => {
+const EmailVerificationBox = ({
+  email,
+  onChangeEmail,
+  onVerifiedChange,
+  mode,
+  onResetTokenChange,
+}: Props) => {
   const [code, setCode] = useState('');
   const [manualLoading, setManualLoading] = useState(false); // 버튼 로딩 전용
   const {
@@ -21,6 +28,7 @@ const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange, mode }: 
     sendCode,
     verifyCode,
     loading, // useEmailVerification 내부 로딩
+    resetToken,
   } = useEmailVerification({ email, onVerifiedChange, mode });
 
   // 이메일이 변경되면 인증번호 입력 초기화
@@ -36,6 +44,16 @@ const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange, mode }: 
       setManualLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (mode === 'reset' && resetToken) {
+      if (onResetTokenChange) {
+        onResetTokenChange(resetToken); // 정상적인 경우에만 호출
+      } else {
+        console.error('onResetTokenChange 함수가 없습니다.');
+      }
+    }
+  }, [resetToken, mode, onResetTokenChange]);
 
   return (
     <div className="w-full max-w-[320px]">
