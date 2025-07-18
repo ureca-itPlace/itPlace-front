@@ -1,10 +1,18 @@
-import api from '../../../../../apis/axiosInstance';
+import {
+  mockSearchRanking,
+  mockWishlistRanking,
+  mockClickStatistics,
+  mockUsageStatistics,
+} from '../data/mockData';
 
 // 제휴처 검색 순위 관련 타입
 export interface PartnerSearchRankingItem {
   partnerName: string;
   searchCount: number;
   rank: number;
+  previousRank: number | null;
+  rankChange: number | null;
+  changeDerection: 'UP' | 'DOWN' | 'SAME' | 'NEW';
 }
 
 export interface PartnerSearchRankingResponse {
@@ -58,40 +66,62 @@ export interface ApiResponse<T = unknown> {
 
 // 제휴처 검색 순위 조회 함수
 export const getPartnersSearchRanking = async (
-  period: '1d' | '7d' | '30d' = '7d'
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _period: '12h' | '1d' | '7d' = '1d',
+  limit: number = 5
 ): Promise<ApiResponse<PartnerSearchRankingResponse>> => {
-  const response = await api.get('/partners/search-ranking', {
-    params: { period },
-  });
-  return response.data;
+  // 더미 데이터 사용
+  const limitedData = mockSearchRanking.slice(0, limit);
+  return {
+    code: '200',
+    status: 'SUCCESS',
+    message: '성공',
+    data: { searchRanking: limitedData },
+    timestamp: new Date().toISOString(),
+  };
 };
 
 // 자주 클릭한 제휴처 조회 함수
 export const getMostClickedPartners = async (
   limit: number = 3
 ): Promise<ApiResponse<MostClickedPartnersResponse>> => {
-  const response = await api.get('/benefits/most-clicked', {
-    params: { limit },
-  });
-  return response.data;
+  // 더미 데이터 사용
+  const limitedData = mockClickStatistics.slice(0, limit);
+  return {
+    code: '200',
+    status: 'SUCCESS',
+    message: '성공',
+    data: { partners: limitedData },
+    timestamp: new Date().toISOString(),
+  };
 };
 
 // 즐겨찾기 통계 조회 함수
 export const getFavoritesStatistics = async (
   limit: number = 5
 ): Promise<ApiResponse<FavoritesStatisticsResponse>> => {
-  const response = await api.get('/benefits/favorites', {
-    params: { limit },
-  });
-  return response.data;
+  // 더미 데이터 사용
+  const limitedData = mockWishlistRanking.slice(0, limit);
+  return {
+    code: '200',
+    status: 'SUCCESS',
+    message: '성공',
+    data: { favoriteBenefits: limitedData },
+    timestamp: new Date().toISOString(),
+  };
 };
 
 // 제휴처별 이용 통계 조회 함수
 export const getPartnerUsageStats = async (
-  period: '7d' | '30d' | '90d' | '1y' = '30d'
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _period: '7d' | '30d' | '90d' | '1y' = '30d'
 ): Promise<ApiResponse<PartnerUsageStatsResponse>> => {
-  const response = await api.get('/partners/usage-stats', {
-    params: { period },
-  });
-  return response.data;
+  // 더미 데이터 사용
+  return {
+    code: '200',
+    status: 'SUCCESS',
+    message: '성공',
+    data: { usageStats: mockUsageStatistics },
+    timestamp: new Date().toISOString(),
+  };
 };

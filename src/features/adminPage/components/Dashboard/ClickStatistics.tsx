@@ -63,7 +63,7 @@ const ClickStatistics = ({
                 innerRadius={40}
                 outerRadius={100}
                 paddingAngle={5}
-                dataKey="value"
+                dataKey="clickCount"
                 labelLine={false}
                 label={renderCustomizedLabel}
               >
@@ -80,7 +80,7 @@ const ClickStatistics = ({
               <div key={index} className="flex items-center gap-3">
                 <div className="w-4 h-4" style={{ backgroundColor: item.color }}></div>
                 <div className="flex-1">
-                  <div className="text-body-1 text-grey04">{item.name}</div>
+                  <div className="text-body-1 text-grey04">{item.partnerName}</div>
                 </div>
               </div>
             ))}
