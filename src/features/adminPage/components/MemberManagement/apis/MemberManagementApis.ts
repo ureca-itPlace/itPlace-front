@@ -1,4 +1,5 @@
 import api from '../../../../../apis/axiosInstance';
+import { getMockMembersPage, searchMockMembers, mockMemberStatistics } from '../data/mockData';
 
 // API 응답 타입
 export interface ApiResponse<T = unknown> {
@@ -134,23 +135,8 @@ export const getMembersWithPagination = async (
   currentPage: number;
   itemsPerPage: number;
 }> => {
-  // 1-based page를 0-based로 변환
-  const zeroBasedPage = page - 1;
-
-  // 내부 타입을 API 타입으로 변환
-  const apiUserType =
-    userType === 'U+ 연동' ? 'LINKED' : userType === '일반' ? 'STANDARD' : undefined;
-  const apiGrade = grade === '우수' ? 'BASIC' : (grade as 'VVIP' | 'VIP' | 'BASIC' | undefined);
-
-  const response = await getAllUsers(apiUserType, apiGrade, zeroBasedPage, itemsPerPage);
-
-  return {
-    data: response.data.content,
-    totalItems: response.data.totalElements,
-    totalPages: response.data.totalPages,
-    currentPage: page, // 1-based로 다시 변환
-    itemsPerPage,
-  };
+  // 더미 데이터 사용
+  return getMockMembersPage(page, itemsPerPage, userType, grade);
 };
 
 export const searchMembersWithPagination = async (
@@ -164,39 +150,14 @@ export const searchMembersWithPagination = async (
   currentPage: number;
   itemsPerPage: number;
 }> => {
-  // 1-based page를 0-based로 변환
-  const zeroBasedPage = page - 1;
-
-  const response = await searchUsers(keyword, zeroBasedPage, itemsPerPage);
-
-  return {
-    data: response.data.content,
-    totalItems: response.data.totalElements,
-    totalPages: response.data.totalPages,
-    currentPage: page, // 1-based로 다시 변환
-    itemsPerPage,
-  };
+  // 더미 데이터 사용
+  return searchMockMembers(keyword, page, itemsPerPage);
 };
 
 export const getMemberStatistics = async (): Promise<{
   totalMembers: number;
   lastUpdated: string;
 }> => {
-  const response = await getTotalUserCount();
-
-  return {
-    totalMembers: response.data,
-    lastUpdated: new Date()
-      .toLocaleString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      })
-      .replace(/\./g, '.')
-      .replace(/,/g, ' UT'),
-  };
+  // 더미 데이터 사용
+  return mockMemberStatistics;
 };
