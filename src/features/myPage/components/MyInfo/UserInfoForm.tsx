@@ -7,9 +7,19 @@ type Props = {
   birthday: string;
   phoneNumber: string;
   email: string;
+  onChangePasswordClick?: () => void;
+  onDeleteClick?: () => void;
 };
 
-const UserInfoForm: React.FC<Props> = ({ name, gender, birthday, phoneNumber, email }) => {
+const UserInfoForm: React.FC<Props> = ({
+  name,
+  gender,
+  birthday,
+  phoneNumber,
+  email,
+  onChangePasswordClick,
+  onDeleteClick,
+}) => {
   return (
     <div className="flex justify-center mt-[100px]">
       <div className="flex flex-col gap-4 w-[690px]">
@@ -24,13 +34,18 @@ const UserInfoForm: React.FC<Props> = ({ name, gender, birthday, phoneNumber, em
           <div className="w-[140px] text-title-4 text-black font-bold">비밀번호</div>
           <div className="flex-1 flex items-center justify-between bg-grey01 rounded-[18px] px-6 py-4">
             <span className="tracking-widest select-none">●●●●●●●●</span>
-            <button className="text-purple04 text-body-0">변경하기</button>
+            <button className="text-purple04 text-body-0" onClick={onChangePasswordClick}>
+              변경하기
+            </button>
           </div>
         </div>
 
         {/* 회원탈퇴 버튼 */}
         <div className="flex justify-end mt-4">
-          <button className="bg-purple06 hover:bg-grey01 text-white rounded-[18px] px-6 py-3 text-title-5">
+          <button
+            className="bg-purple06 hover:bg-purple04 text-white rounded-[18px] px-6 py-3 text-title-5"
+            onClick={onDeleteClick}
+          >
             회원탈퇴
           </button>
         </div>
