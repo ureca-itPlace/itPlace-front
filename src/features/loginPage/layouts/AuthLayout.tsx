@@ -10,7 +10,7 @@ import LoginForm from '../components/login/LoginForm';
 import PhoneAuthForm from '../components/verification/PhoneAuthForm';
 import FindEmailForm from '../components/find/FindEmailForm';
 import FindPasswordForm from '../components/find/FindPasswordForm';
-import OAuthIntegrationForm from '../components/signup/OAuthIntegrationForm'; // OAuth 통합 폼
+import OAuthIntegrationForm from '../components/signup/OAuthIntegrationForm';
 
 // 상태 전환 관련 훅
 import { AuthTransition } from '../hooks/AuthTransition';
@@ -31,14 +31,12 @@ const AuthLayout = () => {
 
   const location = useLocation();
 
-  // 사용자 인증 정보
   const [userData, setUserData] = useState({
     name: '',
     phone: '',
     registrationId: '',
   });
 
-  // OAuth 통합 사용자 정보
   const [oauthUserData, setOAuthUserData] = useState({
     name: '',
     phone: '',
@@ -48,13 +46,9 @@ const AuthLayout = () => {
     membershipId: '',
   });
 
-  // 인증 목적 상태 ('signup' | 'find')
   const [mode, setMode] = useState<'signup' | 'find'>('signup');
-
-  // 비밀번호 찾기 상태 여부
   const [showFindPasswordForm, setShowFindPasswordForm] = useState(false);
 
-  //OAuth 분기점
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const step = params.get('step');
@@ -102,29 +96,22 @@ const AuthLayout = () => {
               />
             )}
 
-            {/* 인증 및 회원가입 전체 흐름 */}
-            {(formStep === 'phoneAuth' ||
-              formStep === 'verification' ||
-              formStep === 'signUp' ||
-              formStep === 'signUpFinal') && (
+            {/* 인증 및 회원가입 흐름 전체 */}
+            {['phoneAuth', 'verification', 'signUp', 'signUpFinal'].includes(formStep) && (
               <PhoneAuthForm
                 mode={mode}
-                currentStep={formStep}
+                currentStep={formStep as 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal'}
                 onGoToLogin={goToLogin}
                 onAuthComplete={({ name, phone, registrationId }) => {
                   setUserData({ name, phone, registrationId });
                   goToVerification();
                 }}
-                // 분기점 처리
                 onVerified={(verifiedType, user) => {
                   if (verifiedType === 'new' && mode === 'find') {
-                    // 전화번호는 없고 mode가 'find'인 경우 → 이메일 찾기
                     goToFindEmail();
                   } else if (verifiedType === 'new' || verifiedType === 'uplus') {
-                    // 신규 또는 U+ 멤버십 보유자 → 기본 정보 입력
                     goToSignUp();
                   } else if (verifiedType === 'oauth') {
-                    // 기존 OAuth 유저 → OAuth 통합 폼으로
                     setOAuthUserData({
                       name: user.name,
                       phone: user.phone,
@@ -135,7 +122,6 @@ const AuthLayout = () => {
                     });
                     setFormStep('oauthIntegration');
                   } else {
-                    // 기존 잇플(local) 가입자 → 로그인 유도
                     goToLogin();
                   }
                 }}

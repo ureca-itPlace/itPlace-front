@@ -16,20 +16,26 @@ const useEmailVerification = ({
   const [emailSent, setEmailSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // 인증번호 전송 요청
   const sendCode = async () => {
     if (!email) return;
 
     try {
+      setLoading(true); // ✅ 스피너용 상태 true
       await sendEmailVerificationCode({ email, registrationId });
       setEmailSent(true);
       setErrorMessage('');
+
+      // ✅ 성공 시 토스트 추가
+      showToast('입력하신 이메일로 인증 번호가 전송되었습니다!', 'success');
     } catch (err: any) {
       const msg = err?.response?.data?.message || '인증번호 요청에 실패했습니다.';
       setErrorMessage(msg);
       setEmailSent(false);
-      showToast(msg, 'error');
+    } finally {
+      setLoading(false); // ✅ 로딩 종료
     }
   };
 
@@ -75,6 +81,7 @@ const useEmailVerification = ({
     errorMessage,
     sendCode,
     verifyCode,
+    loading,
   };
 };
 

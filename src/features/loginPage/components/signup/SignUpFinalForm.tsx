@@ -82,9 +82,14 @@ const SignUpFinalForm = ({
 
         const response = await signUpFinal(payload);
 
-        if (response.status === 201 && response.data.code === 'SIGNUP_SUCCESS') {
+        if (response.status === 200 && response.data.code === 'SIGNUP_SUCCESS') {
+          // 회원가입 성공 처리
           showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
-          onGoToLogin();
+
+          // 0ms 지연으로 goToLogin 트리거 (애니메이션 렌더 충돌 방지)
+          setTimeout(() => {
+            onGoToLogin();
+          }, 0);
         }
       } catch (error: any) {
         const res = error?.response?.data;
