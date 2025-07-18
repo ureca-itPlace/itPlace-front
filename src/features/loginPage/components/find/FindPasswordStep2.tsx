@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import ErrorMessage from '../common/ErrorMessage';

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
 import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
@@ -39,7 +40,7 @@ const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep
       </div>
 
       <p className="text-title-6 text-grey05 mt-[40px]">
-        가입한 이메일로 <strong>인증 번호를</strong>전송해드렸어요.
+        인증을 위해 <strong>가입된 이메일을</strong> 입력해주세요.
       </p>
 
       {/* 이메일 인증 */}

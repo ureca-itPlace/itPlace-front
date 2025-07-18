@@ -82,7 +82,11 @@ const PhoneAuthForm = ({
     setGender(gender);
     setMembershipId(membershipId);
 
-    onVerified('uplus', { name, phone, birthday, gender, membershipId });
+    if (mode === 'find') {
+      onVerified('new', { name, phone, birthday, gender, membershipId });
+    } else {
+      onVerified('uplus', { name, phone, birthday, gender, membershipId });
+    }
   };
 
   // 보안문자 캡차 박스 메모이제이션

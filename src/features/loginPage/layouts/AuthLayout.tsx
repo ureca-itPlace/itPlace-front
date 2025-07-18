@@ -93,11 +93,15 @@ const AuthLayout = () => {
               <LoginForm
                 onGoToPhoneAuth={() => {
                   setMode('signup');
-                  goToPhoneAuth();
+                  setTimeout(() => {
+                    goToPhoneAuth();
+                  }, 0);
                 }}
                 onGoToFindEmail={() => {
                   setMode('find');
-                  goToPhoneAuth();
+                  setTimeout(() => {
+                    goToPhoneAuth();
+                  }, 0);
                 }}
               />
             )}
@@ -119,7 +123,8 @@ const AuthLayout = () => {
                   goToVerification();
                 }}
                 onVerified={(verifiedType, user) => {
-                  if (verifiedType === 'new' && mode === 'find') {
+                  if (mode === 'find') {
+                    // 찾기 모드일 경우 무조건 이메일 찾기 페이지로 이동
                     goToFindEmail();
                   } else if (verifiedType === 'new' || verifiedType === 'uplus') {
                     setUserData({
