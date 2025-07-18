@@ -152,7 +152,6 @@ export const mockDashboardStatistics = {
       second: '2-digit',
       hour12: false,
     })
-    .replace(/\./g, '.')
     .replace(/,/g, ' '),
 };
 
