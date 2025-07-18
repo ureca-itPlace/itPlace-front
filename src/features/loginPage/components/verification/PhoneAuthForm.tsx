@@ -28,6 +28,9 @@ type Props = {
   onSignUpComplete: () => void;
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
+  birthdayFromPhoneAuth: string;
+  genderFromPhoneAuth: string;
+  membershipIdFromPhoneAuth: string;
 };
 
 const PhoneAuthForm = ({

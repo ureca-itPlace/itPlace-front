@@ -1,7 +1,15 @@
 import api from '../../../apis/axiosInstance';
 
 export const login = (email: string, password: string) => {
-  return api.post('api/v1/auth/login', { email, password });
+  return api.post(
+    '/api/v1/auth/login',
+    { email, password },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }
+  );
 };
 
 export const loadUplusData = (phoneNumber: string) => {

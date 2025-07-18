@@ -31,9 +31,18 @@ const AuthLayout = () => {
 
   const location = useLocation();
 
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<{
+    name: string;
+    phone: string;
+    birthday: string;
+    gender: string;
+    membershipId: string;
+  }>({
     name: '',
     phone: '',
+    birthday: '',
+    gender: '',
+    membershipId: '',
   });
 
   const [oauthUserData, setOAuthUserData] = useState({
@@ -100,13 +109,26 @@ const AuthLayout = () => {
                 currentStep={formStep as 'phoneAuth' | 'verification' | 'signUp' | 'signUpFinal'}
                 onGoToLogin={goToLogin}
                 onAuthComplete={({ name, phone }) => {
-                  setUserData({ name, phone });
+                  setUserData({
+                    name,
+                    phone,
+                    birthday: '',
+                    gender: '',
+                    membershipId: '',
+                  });
                   goToVerification();
                 }}
                 onVerified={(verifiedType, user) => {
                   if (verifiedType === 'new' && mode === 'find') {
                     goToFindEmail();
                   } else if (verifiedType === 'new' || verifiedType === 'uplus') {
+                    setUserData({
+                      name: user.name,
+                      phone: user.phone,
+                      birthday: user.birthday,
+                      gender: user.gender,
+                      membershipId: user.membershipId,
+                    });
                     goToSignUp();
                   } else if (verifiedType === 'oauth') {
                     setOAuthUserData({
@@ -124,6 +146,9 @@ const AuthLayout = () => {
                 onSignUpComplete={goToSignUpFinal}
                 nameFromPhoneAuth={userData.name}
                 phoneFromPhoneAuth={userData.phone}
+                birthdayFromPhoneAuth={userData.birthday}
+                genderFromPhoneAuth={userData.gender}
+                membershipIdFromPhoneAuth={userData.membershipId}
               />
             )}
 

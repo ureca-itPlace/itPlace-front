@@ -49,7 +49,7 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Pr
 
   // 인증 성공 후 사용자 상태 저장
   const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | null>(null);
-  const uplusDataRef = useRef<{
+  const userInfoRef = useRef<{
     name: string;
     phone: string;
     birthday: string;
@@ -147,43 +147,35 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Pr
 
       setCodeError('');
       showToast('인증에 성공하였습니다.', 'success');
+      console.log('[checkVerificationCode 응답]', res.data);
 
-      const { userStatus, isLocalUser, uplusDataFound } = res.data;
+      const { userStatus, isLocalUser, uplusDataExists } = res.data.data;
+      console.log('[🧪 uplusDataExists]', uplusDataExists, typeof uplusDataExists);
 
-      if (userStatus === 'EXISTING_USER' && isLocalUser === 'true') {
+      // 분기 처리
+      if (userStatus === 'EXISTING_USER' && isLocalUser === true) {
         verifiedTypeRef.current = 'local';
-        setIsVerified(true);
-        return;
-      }
-
-      if (userStatus === 'EXISTING_USER') {
+      } else if (userStatus === 'EXISTING_USER') {
         verifiedTypeRef.current = 'oauth';
-        setIsVerified(true);
-        return;
-      }
-
-      if (userStatus === 'NEW_USER' && uplusDataFound === 'true') {
+      } else if (
+        userStatus === 'NEW_USER' &&
+        (uplusDataExists === true || uplusDataExists === 'true')
+      ) {
         verifiedTypeRef.current = 'uplus';
-        uplusDataRef.current = {
-          name,
-          phone,
-          birthday: '',
-          gender: '',
-          membershipId: '',
-        };
-        setIsVerified(true);
-        return;
+      } else {
+        verifiedTypeRef.current = 'new';
       }
 
-      // default: 신규 일반 사용자
-      verifiedTypeRef.current = 'new';
-      uplusDataRef.current = {
+      console.log('[분기 결과] verifiedType:', verifiedTypeRef.current);
+      // 사용자 정보 저장 (공통 구조로)
+      userInfoRef.current = {
         name,
         phone,
         birthday: '',
         gender: '',
         membershipId: '',
       };
+
       setIsVerified(true);
     } catch (error: any) {
       const errorCode = error?.response?.data?.code;
@@ -195,6 +187,7 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Pr
         setCodeError('인증번호가 일치하지 않습니다.');
       }
       setIsVerified(false);
+      console.error('[checkVerificationCode 실패]', error?.response?.data || error);
     }
   };
 
@@ -243,16 +236,22 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Pr
         {/* 재전송 */}
         <div className="text-body-3 text-grey03 mt-[13px] w-[320px]">
           인증 번호를 받지 못하셨나요?{' '}
-          <span onClick={handleResend} className="text-purple04 font-medium cursor-pointer">
+          <button
+            onClick={handleResend}
+            disabled={timeLeft > 0}
+            className={`font-medium ml-[4px] ${
+              timeLeft > 0 ? 'text-grey03 cursor-not-allowed' : 'text-purple04 cursor-pointer'
+            }`}
+          >
             다시 보내기
-          </span>
+          </button>
         </div>
 
         {/* 다음 버튼 */}
         <AuthButton
           label="다음"
           onClick={() => {
-            const user = uplusDataRef.current!;
+            const user = userInfoRef.current!;
             const commonUserInfo = {
               name: user.name,
               phone: user.phone,
@@ -300,13 +299,16 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Pr
                       closeModal();
                       try {
                         const res = await loadUplusData(phone);
-                        const data = res.data;
+                        const { name, phoneNumber, gender, birthday, membershipId } = res.data.data;
 
                         onVerified({
-                          ...commonUserInfo,
-                          birthday: data.birthday ?? '',
-                          gender: data.gender ?? '',
-                          membershipId: data.membershipId ?? '',
+                          name,
+                          phone: phoneNumber,
+                          birthday: birthday ?? '',
+                          gender: gender ?? '',
+                          membershipId: membershipId ?? '',
+                          isUplus: true,
+                          verifiedType: 'uplus',
                         });
                       } catch (error) {
                         showToast('U+ 정보 불러오기에 실패했습니다.', 'error');
