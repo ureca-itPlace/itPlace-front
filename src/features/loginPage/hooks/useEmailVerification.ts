@@ -47,7 +47,7 @@ const useEmailVerification = ({
       await checkEmailVerificationCode(email, code, registrationId);
       setEmailVerified(true);
       setErrorMessage('');
-      showToast('이메일 인증이 완료되었습니다.', 'success'); // ✅ 이 부분 추가
+      showToast('이메일 인증이 완료되었습니다.', 'success'); // 이 부분 추가
     } catch (err: any) {
       const errorCode = err?.response?.data?.code;
       if (errorCode === 'EMAIL_CODE_MISMATCH') {

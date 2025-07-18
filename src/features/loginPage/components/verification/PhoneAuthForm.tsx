@@ -188,6 +188,9 @@ const PhoneAuthForm = ({
       <SignUpForm
         nameFromPhoneAuth={name}
         phoneFromPhoneAuth={phone}
+        birthdayFromPhoneAuth={birthday}
+        genderFromPhoneAuth={gender}
+        membershipIdFromPhoneAuth={membershipId}
         onGoToLogin={onGoToLogin}
         onNext={({ birthday, gender, membershipId }) => {
           setBirthday(birthday);

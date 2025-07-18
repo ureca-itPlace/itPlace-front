@@ -90,11 +90,42 @@ const SignUpFinalForm = ({
         };
 
         const response = await signUpFinal(payload);
-        console.log('회원가입 완료:', response.data);
-        onGoToLogin();
-      } catch (error) {
-        console.error('회원가입 실패:', error);
-        showToast('회원가입에 실패했습니다.', 'error');
+
+        if (response.status === 201 && response.data.code === 'SIGNUP_SUCCESS') {
+          showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
+          onGoToLogin(); // 로그인 화면으로 이동
+        }
+      } catch (error: any) {
+        const res = error?.response?.data;
+        let message = '회원가입에 실패했습니다. 다시 시도해주세요.';
+
+        if (res) {
+          switch (res.code) {
+            case 'PASSWORD_MISMATCH':
+              message = '비밀번호가 일치하지 않습니다.';
+              break;
+            case 'DUPLICATE_EMAIL':
+              message = '이미 사용 중인 이메일입니다.';
+              break;
+            default:
+              message = res.message || message;
+          }
+        }
+
+        showToast(message, 'error');
+
+        // ✅ 입력값 초기화
+        setFormData({
+          email: '',
+          password: '',
+          passwordConfirm: '',
+        });
+        setTouched({
+          email: false,
+          password: false,
+          passwordConfirm: false,
+        });
+        setEmailVerified(false);
       }
     }
   };
