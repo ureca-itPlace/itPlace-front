@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { AxiosError } from 'axios';
 import gsap from 'gsap';
 import Modal from '../../../../components/Modal';
 import { showToast } from '../../../../utils/toast';
@@ -99,8 +100,9 @@ const SignUpFinalForm = ({
             onGoToLogin();
           }, 0);
         }
-      } catch (error: any) {
-        const res = error?.response?.data;
+      } catch (error) {
+        const axiosError = error as AxiosError<{ code: string; message: string }>;
+        const res = axiosError.response?.data;
         let message = '회원가입에 실패했습니다. 다시 시도해주세요.';
 
         if (res) {

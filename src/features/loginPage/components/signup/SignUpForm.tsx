@@ -47,7 +47,7 @@ const SignUpForm = ({
     );
   }, []);
 
-  const [disabledFields, setDisabledFields] = useState({
+  const [disabledFields] = useState({
     name: true,
     phone: true,
     birth: !!birthdayFromPhoneAuth,

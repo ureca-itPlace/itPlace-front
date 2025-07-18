@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import gsap from 'gsap';
 import AuthInput from '../common/AuthInput';
 import AuthFooter from '../common/AuthFooter';
@@ -42,7 +43,7 @@ type Props = {
   phone: string;
 };
 
-const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Props) => {
+const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) => {
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
@@ -177,17 +178,25 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Pr
       };
 
       setIsVerified(true);
-    } catch (error: any) {
-      const errorCode = error?.response?.data?.code;
-      if (errorCode === 'SMS_CODE_MISMATCH') {
-        setCodeError('인증번호가 일치하지 않습니다.');
-      } else if (errorCode === 'SMS_CODE_EXPIRED') {
-        setCodeError('인증번호가 만료되었습니다. 다시 요청해주세요.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorCode = error.response?.data?.code;
+
+        if (errorCode === 'SMS_CODE_MISMATCH') {
+          setCodeError('인증번호가 일치하지 않습니다.');
+        } else if (errorCode === 'SMS_CODE_EXPIRED') {
+          setCodeError('인증번호가 만료되었습니다. 다시 요청해주세요.');
+        } else {
+          setCodeError('인증번호가 일치하지 않습니다.');
+        }
+
+        console.error('[checkVerificationCode 실패]', error.response?.data);
       } else {
-        setCodeError('인증번호가 일치하지 않습니다.');
+        setCodeError('알 수 없는 오류가 발생했습니다.');
+        console.error('[checkVerificationCode 실패 - Unknown]', error);
       }
+
       setIsVerified(false);
-      console.error('[checkVerificationCode 실패]', error?.response?.data || error);
     }
   };
 
@@ -310,7 +319,7 @@ const VerificationCodeForm = ({ mode, onGoToLogin, onVerified, name, phone }: Pr
                           isUplus: true,
                           verifiedType: 'uplus',
                         });
-                      } catch (error) {
+                      } catch {
                         showToast('U+ 정보 불러오기에 실패했습니다.', 'error');
                         onVerified(commonUserInfo); // fallback
                       }

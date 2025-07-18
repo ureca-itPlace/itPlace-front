@@ -32,7 +32,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
       } else {
         showToast('로그인에 실패하셨습니다.', 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('로그인에 실패하셨습니다.', 'error');
     }
   };

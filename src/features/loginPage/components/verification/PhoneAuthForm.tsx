@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { AxiosError } from 'axios';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import CaptchaBox from './CaptchaBox';
@@ -107,11 +108,12 @@ const PhoneAuthForm = ({
     }
 
     try {
-      const res = await sendVerificationCode(name, phone);
+      await sendVerificationCode(name, phone);
       onAuthComplete({ name, phone });
       console.log('인증번호 전송이 완료되었습니다.');
-    } catch (error: any) {
-      const res = error?.response?.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<{ code?: string; message?: string }>;
+      const res = axiosError.response?.data;
       console.log('res : ', res);
       let message = '인증번호 전송에 실패했습니다. 다시 시도해주세요.';
 
@@ -128,9 +130,7 @@ const PhoneAuthForm = ({
         }
       }
 
-      showToast(message, 'error', {
-        position: 'top-center',
-      });
+      showToast(message, 'error', { position: 'top-center' });
     }
   };
 
