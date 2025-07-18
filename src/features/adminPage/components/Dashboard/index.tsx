@@ -136,7 +136,7 @@ const Dashboard = () => {
         setClickData(clickDataItems);
 
         // 즐겨찾기 통계 데이터 조회
-        const favoritesResponse = await getFavoritesStatistics(4);
+        const favoritesResponse = await getFavoritesStatistics(5);
         const wishlistItems = convertToWishlistItem(favoritesResponse.data.favoriteBenefits);
         setWishlistData(wishlistItems);
 
