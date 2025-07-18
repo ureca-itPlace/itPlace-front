@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
 import MainContentWrapper from '../../features/myPage/components/MainContentWrapper';
 import RightAside from '../../features/myPage/components/RightAside';
-import { mockFavorites, mockTierBenefits } from '../../features/myPage/mock/mockData';
 import { TbStarFilled } from 'react-icons/tb';
 //import api from '../../apis/axiosInstance';
 import BenefitDetailTabs from '../../features/myPage/components/BenefitDetailTabs';
@@ -11,83 +9,34 @@ import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
 import SearchBar from '../../components/common/SearchBar';
 import Modal from '../../components/Modal';
 import NoResult from '../../components/NoResult';
-
-interface FavoriteItem {
-  benefitId: number;
-  benefitName: string;
-  image: string;
-}
+import { useFavorites } from '../../features/myPage/hooks/useFavorites';
 
 export default function MyFavoritesPage() {
-  const [favorites, setFavorites] = useState<FavoriteItem[]>(mockFavorites);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [benefitFilter, setBenefitFilter] = useState<'default' | 'vipkok'>('default'); // 토글 필터링용 상태
-  const [keyword, setKeyword] = useState(''); // 검색용 상태
-  const [isEditing, setIsEditing] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]); // 찜 여러개 삭제용 상태
-  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null); // 찜 단일 삭제용 상태
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  // 검색어 기반 필터링
-  const searchFiltered = favorites.filter((fav) =>
-    fav.benefitName.toLowerCase().includes(keyword.toLowerCase())
-  );
-
-  // ✅ VIP콕 / 기본혜택 토글 필터링 리스트
-  const filteredFavorites = searchFiltered.filter((fav) => {
-    const isVipKok = mockTierBenefits.some(
-      (tier) => tier.benefitId === fav.benefitId && tier.grade === 'VIP콕'
-    );
-    if (benefitFilter === 'vipkok') {
-      return isVipKok;
-    } else {
-      return !isVipKok;
-    }
-  });
-
-  // ✅ 페이지네이션 상태
-  const itemsPerPage = 6;
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // ✅ 현재 페이지에 보여줄 데이터 slice
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredFavorites.slice(indexOfFirstItem, indexOfLastItem);
-
-  // ✅ 페이지 변경 이벤트
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    // 페이지 바뀌면 첫 번째 아이템 자동 선택
-    const startIndex = (pageNumber - 1) * itemsPerPage;
-    const newFirst = favorites[startIndex];
-    setSelectedId(newFirst ? newFirst.benefitId : null);
-  };
-
-  // ✅ 첫 로드시 기본 선택
-  useEffect(() => {
-    if (favorites.length > 0 && selectedId === null) {
-      setSelectedId(favorites[0].benefitId);
-    }
-  }, [favorites, selectedId]);
-
-  // ✅ 단일 즐겨찾기 해제
-  const handleRemoveFavorite = (benefitId: number) => {
-    const updated = favorites.filter((item) => item.benefitId !== benefitId);
-    setFavorites(updated);
-
-    // 현재 선택된 카드였으면 첫 번째로 변경 or 해제
-    if (selectedId === benefitId) {
-      if (updated.length > 0) {
-        setSelectedId(updated[0].benefitId);
-      } else {
-        setSelectedId(null);
-      }
-    }
-  };
-  // ✅ 목록 즐겨찾기 해제
-  const handleDeleteSelected = () => {
-    console.log('즐겨 찾기 목록 삭제');
-  };
+  // ✅ 커스텀 훅에서 모든 상태와 로직을 가져옴
+  const {
+    favorites,
+    filteredFavorites,
+    currentItems,
+    selectedId,
+    setSelectedId,
+    benefitFilter,
+    setBenefitFilter,
+    keyword,
+    setKeyword,
+    isEditing,
+    setIsEditing,
+    selectedItems,
+    setSelectedItems,
+    pendingDeleteId,
+    setPendingDeleteId,
+    isDeleteModalOpen,
+    setIsDeleteModalOpen,
+    handleRemoveFavorite,
+    handleDeleteSelected,
+    handlePageChange,
+    itemsPerPage,
+    currentPage,
+  } = useFavorites();
 
   return (
     <>
