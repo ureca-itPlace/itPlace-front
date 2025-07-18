@@ -148,10 +148,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
 
       setCodeError('');
       showToast('인증에 성공하였습니다.', 'success');
-      console.log('[checkVerificationCode 응답]', res.data);
 
       const { userStatus, isLocalUser, uplusDataExists } = res.data.data;
-      console.log('[🧪 uplusDataExists]', uplusDataExists, typeof uplusDataExists);
 
       // 분기 처리
       if (userStatus === 'EXISTING_USER' && isLocalUser === true) {
@@ -189,11 +187,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
         } else {
           setCodeError('인증번호가 일치하지 않습니다.');
         }
-
-        console.error('[checkVerificationCode 실패]', error.response?.data);
       } else {
         setCodeError('알 수 없는 오류가 발생했습니다.');
-        console.error('[checkVerificationCode 실패 - Unknown]', error);
       }
 
       setIsVerified(false);
