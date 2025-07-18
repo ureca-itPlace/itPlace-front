@@ -4,7 +4,7 @@ import { FavoriteItem } from '../hooks/useFavorites';
 interface EditControlsProps {
   isEditing: boolean;
   setIsEditing: (v: boolean) => void;
-  filteredFavorites: FavoriteItem[];
+  currentItems: FavoriteItem[]; // ✅ currentItems 추가
   selectedItems: number[];
   setSelectedItems: (v: number[]) => void;
 }
@@ -12,7 +12,7 @@ interface EditControlsProps {
 export default function EditControls({
   isEditing,
   setIsEditing,
-  filteredFavorites,
+  currentItems, // ✅ 추가
   selectedItems,
   setSelectedItems,
 }: EditControlsProps) {
@@ -23,14 +23,22 @@ export default function EditControls({
           <input
             type="checkbox"
             className="mr-1 w-4 h-4 accent-purple04 appearance-none rounded-[4px] border border-grey03 checked:bg-[url('/images/myPage/icon-check.png')] bg-no-repeat bg-center checked:border-purple04"
+            // ✅ 체크 조건: 현재 페이지의 아이템이 전부 선택된 경우
             checked={
-              selectedItems.length === filteredFavorites.length && filteredFavorites.length > 0
+              currentItems.length > 0 &&
+              currentItems.every((item) => selectedItems.includes(item.benefitId))
             }
             onChange={(e) => {
               if (e.target.checked) {
-                setSelectedItems(filteredFavorites.map((item) => item.benefitId));
+                // ✅ 현재 페이지의 아이템만 선택
+                setSelectedItems([
+                  ...new Set([...selectedItems, ...currentItems.map((item) => item.benefitId)]),
+                ]);
               } else {
-                setSelectedItems([]);
+                // ✅ 현재 페이지의 아이템만 선택 해제
+                setSelectedItems(
+                  selectedItems.filter((id) => !currentItems.some((item) => item.benefitId === id))
+                );
               }
             }}
           />
