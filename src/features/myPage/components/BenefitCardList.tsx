@@ -65,7 +65,13 @@ export default function BenefitCardList({
             <input
               type="checkbox"
               checked={selectedItems.includes(item.benefitId)}
-              onChange={() => {}}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedItems([...selectedItems, item.benefitId]);
+                } else {
+                  setSelectedItems(selectedItems.filter((id) => id !== item.benefitId));
+                }
+              }}
               className="absolute top-5 right-5 w-5 h-5 accent-purple04 appearance-none rounded-md border border-grey03 checked:bg-[url('/images/myPage/icon-check.png')] bg-no-repeat bg-center checked:border-purple04"
             />
           )}
