@@ -5,6 +5,9 @@ export interface PartnerSearchRankingItem {
   partnerName: string;
   searchCount: number;
   rank: number;
+  previousRank: number | null;
+  rankChange: number | null;
+  changeDerection: 'UP' | 'DOWN' | 'SAME' | 'NEW';
 }
 
 export interface PartnerSearchRankingResponse {
@@ -58,10 +61,11 @@ export interface ApiResponse<T = unknown> {
 
 // 제휴처 검색 순위 조회 함수
 export const getPartnersSearchRanking = async (
-  period: '1d' | '7d' | '30d' = '7d'
+  period: '12h' | '1d' | '7d' = '1d',
+  limit: number = 5
 ): Promise<ApiResponse<PartnerSearchRankingResponse>> => {
   const response = await api.get('/partners/search-ranking', {
-    params: { period },
+    params: { period, limit },
   });
   return response.data;
 };

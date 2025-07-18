@@ -47,16 +47,11 @@ const UsageStatistics = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 10, right: 0, left: -10, bottom: 5 }}>
             <CartesianGrid vertical={false} />
-            <XAxis dataKey="name" tick={CustomTick} />
+            <XAxis dataKey="partnerName" tick={CustomTick} />
             <YAxis />
-            {legends.map((legend) => (
-              <Bar
-                key={legend.key}
-                dataKey={legend.key}
-                fill={legend.fillColor}
-                radius={[10, 10, 0, 0]}
-              />
-            ))}
+            <Bar dataKey="vvipUsageCount" fill="#7638FA" radius={[10, 10, 0, 0]} />
+            <Bar dataKey="vipUsageCount" fill="#A175FF" radius={[10, 10, 0, 0]} />
+            <Bar dataKey="basicUsageCount" fill="#CDB5FF" radius={[10, 10, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
