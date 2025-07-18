@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { sendEmailVerificationCode, checkEmailVerificationCode } from '../apis/verification';
+import { sendFindPasswordEmail } from '../apis/user';
 import { showToast } from '../../../utils/toast';
+
+type Mode = 'signup' | 'reset';
 
 type UseEmailVerificationProps = {
   email: string;
   onVerifiedChange?: (verified: boolean) => void;
+  mode?: Mode;
 };
 
-const useEmailVerification = ({ email, onVerifiedChange }: UseEmailVerificationProps) => {
+const useEmailVerification = ({
+  email,
+  onVerifiedChange,
+  mode = 'signup',
+}: UseEmailVerificationProps) => {
   const [emailSent, setEmailSent] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -19,27 +27,33 @@ const useEmailVerification = ({ email, onVerifiedChange }: UseEmailVerificationP
     if (!email) return;
 
     try {
-      setLoading(true); // 스피너용 상태 true
-      await sendEmailVerificationCode({ email });
+      setLoading(true);
+      if (mode === 'signup') {
+        await sendEmailVerificationCode({ email });
+      } else {
+        await sendFindPasswordEmail(email);
+      }
+
       setEmailSent(true);
       setErrorMessage('');
-
-      // 성공 시 토스트 추가
       showToast('입력하신 이메일로 인증 번호가 전송되었습니다!', 'success');
     } catch (err: unknown) {
       let msg = '인증번호 요청에 실패했습니다.';
-
       if (axios.isAxiosError(err)) {
         msg = err.response?.data?.message || msg;
       }
-
       setErrorMessage(msg);
+      showToast(msg, 'error');
       setEmailSent(false);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // 인증번호 확인 요청
+  // 인증번호 확인 (signup만 해당)
   const verifyCode = async (code: string) => {
+    if (mode === 'reset') return; // reset 모드는 이메일 전송만 하고 인증번호 확인은 안 함
+
     if (!code.trim()) {
       const msg = '인증번호를 입력해주세요.';
       setErrorMessage(msg);
@@ -54,10 +68,8 @@ const useEmailVerification = ({ email, onVerifiedChange }: UseEmailVerificationP
       showToast('이메일 인증이 완료되었습니다.', 'success');
     } catch (err: unknown) {
       let msg = '인증에 실패했습니다.';
-
       if (axios.isAxiosError(err)) {
         const errorCode = err.response?.data?.code;
-
         if (errorCode === 'EMAIL_CODE_MISMATCH') {
           msg = '인증번호가 일치하지 않습니다.';
         } else if (errorCode === 'EMAIL_CODE_EXPIRED') {
@@ -74,9 +86,7 @@ const useEmailVerification = ({ email, onVerifiedChange }: UseEmailVerificationP
   };
 
   useEffect(() => {
-    if (onVerifiedChange) {
-      onVerifiedChange(emailVerified);
-    }
+    onVerifiedChange?.(emailVerified);
   }, [emailVerified, onVerifiedChange]);
 
   return {

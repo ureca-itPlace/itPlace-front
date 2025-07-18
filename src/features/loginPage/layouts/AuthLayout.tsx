@@ -91,7 +91,7 @@ const AuthLayout = () => {
                 onGoToFindEmail={() => {
                   setMode('find');
                   setShowTab(true);
-                  goToPhoneAuth();
+                  setFormStep('findEmail');
                 }}
               />
             )}

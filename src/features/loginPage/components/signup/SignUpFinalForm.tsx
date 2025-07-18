@@ -156,13 +156,15 @@ const SignUpFinalForm = ({
       {/* 이메일 인증 */}
       <div className="w-full max-w-[320px] mt-[51px]">
         <EmailVerificationBox
-          email={formData.email}
-          onChangeEmail={(val) =>
-            handleChange({
-              target: { name: 'email', value: val },
-            } as React.ChangeEvent<HTMLInputElement>)
-          }
+          email={formData.email} // email 값을 formData에서 가져옴
+          onChangeEmail={(val) => {
+            setFormData((prev) => ({
+              ...prev,
+              email: val,
+            }));
+          }} // 직접 email만 업데이트
           onVerifiedChange={setEmailVerified}
+          mode="signup"
         />
       </div>
 

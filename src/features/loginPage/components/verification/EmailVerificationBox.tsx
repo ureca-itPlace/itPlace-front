@@ -8,15 +8,20 @@ type Props = {
   email: string;
   onChangeEmail: (val: string) => void;
   onVerifiedChange?: (verified: boolean) => void;
+  mode?: 'signup' | 'reset';
 };
 
-const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange }: Props) => {
+const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange, mode }: Props) => {
   const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { emailSent, emailVerified, errorMessage, sendCode, verifyCode } = useEmailVerification({
-    email,
-    onVerifiedChange,
-  });
+  const [manualLoading, setManualLoading] = useState(false); // 버튼 로딩 전용
+  const {
+    emailSent,
+    emailVerified,
+    errorMessage,
+    sendCode,
+    verifyCode,
+    loading, // useEmailVerification 내부 로딩
+  } = useEmailVerification({ email, onVerifiedChange, mode });
 
   // 이메일이 변경되면 인증번호 입력 초기화
   useEffect(() => {
@@ -24,11 +29,11 @@ const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange }: Props)
   }, [email]);
 
   const handleSendCode = async () => {
-    setLoading(true);
+    setManualLoading(true);
     try {
       await sendCode();
     } finally {
-      setLoading(false);
+      setManualLoading(false);
     }
   };
 
@@ -47,11 +52,11 @@ const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange }: Props)
           <button
             type="button"
             onClick={handleSendCode}
-            disabled={!email}
+            disabled={!email || manualLoading}
             className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition
               ${!email ? 'bg-grey02 text-grey04' : 'bg-purple04 text-white'}`}
           >
-            인증
+            {manualLoading ? '전송중' : '인증'}
           </button>
         )}
       </div>
@@ -60,7 +65,7 @@ const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange }: Props)
       {errorMessage && <ErrorMessage message={errorMessage} />}
 
       {/* 인증번호 입력 */}
-      {emailSent && !emailVerified && (
+      {emailSent && !emailVerified && mode === 'signup' && (
         <div className="relative mt-[15px]">
           <AuthInput
             name="verificationCode"
@@ -80,11 +85,7 @@ const EmailVerificationBox = ({ email, onChangeEmail, onVerifiedChange }: Props)
 
       {/* 로딩 모달 */}
       {loading && (
-        <Modal
-          isOpen={loading}
-          title="인증 메일을 전송 중입니다."
-          onClose={() => setLoading(false)}
-        >
+        <Modal isOpen={loading} title="인증 메일을 전송 중입니다." onClose={() => {}}>
           <div className="w-full flex justify-center mt-[16px]">
             <div className="w-[32px] h-[32px] border-4 border-purple04 border-t-transparent rounded-full animate-spin" />
           </div>

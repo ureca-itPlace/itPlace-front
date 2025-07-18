@@ -3,6 +3,8 @@ import gsap from 'gsap';
 import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
+import { sendFindPasswordEmail } from '../../apis/user';
+import { showToast } from '../../../../utils/toast'; // 토스트가 이미 있다면 사용
 
 type Props = {
   email: string;
@@ -13,6 +15,7 @@ type Props = {
 
 const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep }: Props) => {
   const [emailVerified, setEmailVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -23,6 +26,23 @@ const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep
       { opacity: 1, duration: 0.5, ease: 'power2.out' }
     );
   }, []);
+
+  const handleSubmit = async () => {
+    if (!emailVerified) return;
+
+    setLoading(true);
+    try {
+      await sendFindPasswordEmail(email);
+      showToast('비밀번호 재설정 이메일이 전송되었습니다.', 'success');
+      onGoNextStep();
+    } catch (err: any) {
+      console.error(err);
+      const msg = err?.response?.data?.message || '비밀번호 재설정 요청 중 오류가 발생했습니다.';
+      showToast(msg, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
@@ -49,13 +69,14 @@ const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoNextStep
           email={email}
           onChangeEmail={onChangeEmail}
           onVerifiedChange={setEmailVerified}
+          mode="reset"
         />
       </div>
 
       {/* 확인 버튼 */}
       <AuthButton
-        label="확인"
-        onClick={onGoNextStep}
+        label={loading ? '처리 중...' : '확인'}
+        onClick={handleSubmit}
         variant={emailVerified ? 'default' : 'disabled'}
         className="mt-[150px]"
       />

@@ -28,7 +28,7 @@ export const sendEmailVerificationCode = async ({ email }: { email: string }) =>
   });
 };
 
-//이메일 인증번호 확인인
+//이메일 인증번호 확인
 export const checkEmailVerificationCode = async (email: string, verificationCode: string) => {
   return await api.post('api/v1/verification/email/confirm', {
     email,

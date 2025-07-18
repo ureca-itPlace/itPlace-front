@@ -38,7 +38,7 @@ const FindEmailStep2 = ({
         <p className="text-body-2 text-black">
           아이디 : <span className="text-purple04 break-all">{email}</span>
         </p>
-        <p className="text-body-2 text-grey04 mt-[4px]">가입일 : {createdAt}</p>
+        <p className="text-body-2 text-grey04 mt-[4px]">가입일 : {createdAt ? createdAt : '-'}</p>
       </div>
 
       {/* 비밀번호 재설정 버튼 */}
