@@ -1,4 +1,4 @@
-import kakaoLoginImg from '../../../assets/loginPage/kakao_login.png';
+import kakaoLoginImg from '../../../../assets/loginPage/kakao_login.png';
 
 type Props = {
   onClick: () => void;
