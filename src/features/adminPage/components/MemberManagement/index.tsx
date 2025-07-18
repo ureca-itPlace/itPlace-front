@@ -15,67 +15,6 @@ import {
   getMemberStatistics,
 } from './apis/MemberManagementApis';
 
-// 제휴처 이용 내역 타입
-interface PartnerUsage {
-  brand: string;
-  amount: string;
-  date: string;
-}
-
-// 제휴처 이용 내역 샘플 데이터
-const partnerUsageData: PartnerUsage[] = [
-  {
-    brand: 'GS25',
-    amount: '3,000원',
-    date: '25.07.01',
-  },
-  {
-    brand: '세븐일레븐',
-    amount: '13,000원',
-    date: '25.07.05',
-  },
-  {
-    brand: '파리바게트',
-    amount: '73,000원',
-    date: '25.07.10',
-  },
-  {
-    brand: '롯데월드',
-    amount: '53,000원',
-    date: '25.07.11',
-  },
-  {
-    brand: '야놀자 글리우드캠프앤글램핑코아...',
-    amount: '23,000원',
-    date: '25.07.11',
-  },
-  {
-    brand: 'GS25',
-    amount: '3,000원',
-    date: '25.07.01',
-  },
-  {
-    brand: '세븐일레븐',
-    amount: '13,000원',
-    date: '25.07.05',
-  },
-  {
-    brand: '파리바게트',
-    amount: '73,000원',
-    date: '25.07.10',
-  },
-  {
-    brand: '롯데월드',
-    amount: '53,000원',
-    date: '25.07.11',
-  },
-  {
-    brand: '야놀자 글리우드캠프앤글램핑코아...',
-    amount: '23,000원',
-    date: '25.07.11',
-  },
-];
-
 const MemberManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -430,7 +369,7 @@ const MemberManagement = () => {
         isOpen={showPartnerModal}
         member={selectedMember}
         onClose={handleCloseModal}
-        partnerUsageData={partnerUsageData}
+        partnerUsageData={[]}
       />
     </div>
   );

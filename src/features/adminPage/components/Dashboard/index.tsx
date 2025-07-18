@@ -75,40 +75,6 @@ const convertToUsageDataItem = (apiData: PartnerUsageStatsItem[]): UsageDataItem
   }));
 };
 
-// 기본 데이터 (API 호출 실패 시 사용)
-const defaultSearchRankingData = [
-  { partnerName: 'CGV', searchCount: 200, trend: 'up' as const },
-  { partnerName: '야놀자 클라우드프로그램코리아', searchCount: 400, trend: 'keep' as const },
-  { partnerName: '롯데시네마', searchCount: 50, trend: 'down' as const },
-  { partnerName: 'CU', searchCount: 80, trend: 'up' as const },
-  { partnerName: '뽀로로랜드', searchCount: 50, trend: 'keep' as const },
-];
-
-// 제휴처별 찜 통계 기본 데이터
-const defaultWishlistData = [
-  { partnerName: '올리브영', favoriteCount: 1200, color: '#250961' },
-  { partnerName: '롯데월드', favoriteCount: 997, color: '#530CC2' },
-  { partnerName: '야놀자 클라우드...', favoriteCount: 754, color: '#7638FA' },
-  { partnerName: 'CGV', favoriteCount: 509, color: '#A175FF' },
-  { partnerName: '뽀로로파크', favoriteCount: 309, color: '#CDB5FF' },
-];
-
-// 자주 클릭한 제휴처 기본 데이터
-const defaultClickData = [
-  { partnerName: '야놀자 클라우드프로그램코리아', clickCount: 50000, color: '#250961' },
-  { partnerName: '야놀자 클라우드프로그램코리아 (여행)', clickCount: 32000, color: '#A175FF' },
-  { partnerName: '야놀자 클라우드프로그램코리아 (숙박)', clickCount: 62000, color: '#CDB5FF' },
-];
-
-// 제휴처별 이용 통계 기본 데이터
-const defaultUsageData = [
-  { partnerName: 'CGV', vvipUsageCount: 40, vipUsageCount: 20, basicUsageCount: 25 },
-  { partnerName: '야놀자글로벌...', vvipUsageCount: 45, vipUsageCount: 25, basicUsageCount: 30 },
-  { partnerName: 'GS25', vvipUsageCount: 45, vipUsageCount: 8, basicUsageCount: 15 },
-  { partnerName: '세븐일레븐', vvipUsageCount: 35, vipUsageCount: 30, basicUsageCount: 50 },
-  { partnerName: '뽀로로파크', vvipUsageCount: 50, vipUsageCount: 10, basicUsageCount: 50 },
-];
-
 // 이용 통계 범례 데이터
 const usageStatisticsLegends = [
   { key: 'vvip', label: 'VVIP', color: 'bg-purple04', fillColor: '#7638FA' },
@@ -118,9 +84,9 @@ const usageStatisticsLegends = [
 
 const Dashboard = () => {
   const [searchRankingData, setSearchRankingData] = useState<RankingItem[]>([]);
-  const [clickData, setClickData] = useState<ClickDataItem[]>(defaultClickData);
-  const [wishlistData, setWishlistData] = useState<WishlistItem[]>(defaultWishlistData);
-  const [usageData, setUsageData] = useState<UsageDataItem[]>(defaultUsageData);
+  const [clickData, setClickData] = useState<ClickDataItem[]>([]);
+  const [wishlistData, setWishlistData] = useState<WishlistItem[]>([]);
+  const [usageData, setUsageData] = useState<UsageDataItem[]>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -146,11 +112,11 @@ const Dashboard = () => {
         setUsageData(usageDataItems);
       } catch (err) {
         console.error('대시보드 데이터 조회 실패:', err);
-        // 에러 발생 시 기본 데이터 사용
-        setSearchRankingData(defaultSearchRankingData);
-        setClickData(defaultClickData);
-        setWishlistData(defaultWishlistData);
-        setUsageData(defaultUsageData);
+        // 에러 발생 시 빈 배열로 초기화
+        setSearchRankingData([]);
+        setClickData([]);
+        setWishlistData([]);
+        setUsageData([]);
       }
     };
 
