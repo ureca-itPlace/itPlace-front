@@ -1,26 +1,26 @@
 export interface RankingItem {
-  name: string;
-  value: number;
+  partnerName: string;
+  searchCount: number;
   trend: 'up' | 'down' | 'keep';
 }
 
 export interface WishlistItem {
-  name: string;
-  value: number;
+  partnerName: string;
+  favoriteCount: number;
   color: string;
 }
 
 export interface ClickDataItem {
-  name: string;
-  value: number;
+  partnerName: string;
+  clickCount: number;
   color: string;
 }
 
 export interface UsageDataItem {
-  name: string;
-  vvip: number;
-  vip: number;
-  regular: number;
+  partnerName: string;
+  vvipUsageCount: number;
+  vipUsageCount: number;
+  basicUsageCount: number;
 }
 
 export interface LegendItem {

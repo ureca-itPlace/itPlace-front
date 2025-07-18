@@ -1,15 +1,6 @@
 import React from 'react';
 import Modal from '../../../../components/common/AdminModal';
-
-interface Member {
-  id: string;
-  name: string;
-  nickname: string;
-  email: string;
-  phone: string;
-  grade: 'VIP' | 'VVIP' | '우수';
-  joinDate: string;
-}
+import { Member } from './apis/MemberManagementApis';
 
 interface PartnerUsage {
   brand: string;
@@ -32,15 +23,26 @@ const MemberDetailModal: React.FC<MemberDetailModalProps> = ({
 }) => {
   if (!member) return null;
 
+  // 등급 변환 함수
+  const getGradeDisplay = (grade: 'VVIP' | 'VIP' | 'BASIC' | null) => {
+    if (grade === 'BASIC') return '우수';
+    return grade || '-';
+  };
+
+  // 회원 구분 변환 함수
+  const getUserTypeDisplay = (userType: 'LINKED' | 'STANDARD') => {
+    return userType === 'LINKED' ? 'U+ 연동' : '일반';
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="회원 상세정보">
       <div className="pt-[38px]">
         {/* 회원 정보 */}
         <div className="mb-6 ml-[40px]">
-          <h4 className="text-title-2  mb-2">{member.nickname}</h4>
+          <h4 className="text-title-2  mb-2">{member.name}</h4>
           <p className="text-body-0 text-grey05">
-            {member.grade} | 멤버십 번호:{' '}
-            <span className="text-body-0-bold">123875793487594857</span>
+            {getGradeDisplay(member.grade)} | {getUserTypeDisplay(member.userType)} | 멤버십 번호:{' '}
+            <span className="text-body-0-bold">{member.id}</span>
           </p>
         </div>
 

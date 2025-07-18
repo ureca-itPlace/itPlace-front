@@ -28,7 +28,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
               <span className="text-body-1 text-title-6 text-grey05 w-4 mr-[37px]">
                 {index + 1}
               </span>
-              <span className="text-body-1">{item.name}</span>
+              <span className="text-body-1">{item.partnerName}</span>
             </div>
             <div className="flex items-center gap-2">
               <span
@@ -51,7 +51,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
                       : 'text-grey03'
                 }`}
               >
-                {item.value}
+                {item.searchCount}
               </span>
             </div>
           </div>
