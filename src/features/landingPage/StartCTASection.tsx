@@ -6,7 +6,7 @@ const StartCTASection = () => {
   return (
     <div className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
       <div className="absolute left-[-20px] top-5 max-xl:hidden">
-        <img src="/images/landing/CTARabbit.svg" alt="CTA토끼" />
+        <img src="/images/landing/CTARabbit.svg" alt="CTA토끼" loading="lazy" />
       </div>
 
       <div className="text-center z-10">
