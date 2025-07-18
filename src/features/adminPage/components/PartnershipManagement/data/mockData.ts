@@ -310,6 +310,5 @@ export const mockPartnerStatistics = {
       second: '2-digit',
       hour12: false,
     })
-    .replace(/\./g, '.')
     .replace(/,/g, ' '),
 };
