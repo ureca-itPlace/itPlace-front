@@ -94,7 +94,7 @@ const IntroSection = ({ onComplete }: { onComplete: () => void }) => {
         IT:PLACE
       </h1>
       <p ref={descRef} className="text-5xl text-center max-sm:text-body-1">
-        혜택을 지도에서, 빠르고 간편하게, 효율적으로
+        혜택을 지도에서, 빠르고 간편하게
       </p>
     </div>
   );
