@@ -70,6 +70,11 @@ const LandingPage = () => {
       >
         <FeatureSection />
       </div>
+
+      {/* CTA 섹션 */}
+      <div ref={ctaRef}>
+        <StartCTASection />
+      </div>
     </div>
   );
 };
