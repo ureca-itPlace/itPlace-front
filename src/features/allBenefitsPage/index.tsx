@@ -291,7 +291,7 @@ const AllBenefitsLayout: React.FC = () => {
         {/* 추후 다른 컴포넌트 추가 시 여기에 배치 */}
       </div>
       <div className="pt-7 px-7">
-        <div className="w-[1783px] flex items-center justify-between">
+        <div className="w-[1783px] flex items-start justify-between">
           <BenefitFilterToggle value={filter} onChange={setFilter} />
           <div className="flex gap-2">
             <SearchBar
