@@ -112,20 +112,20 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
               />
             </div>
           </div>
-          {/*혜택 내용 섹션*/}
-          <EditingSection
-            label="혜택 내용"
-            value={editData.benefitContent}
-            onChange={(v) => handleInputChange('benefitContent', v)}
-            placeholder="혜택 내용을 입력하세요"
-            isEditing={isEditing}
-          />
           {/*제공 혜택 섹션*/}
           <EditingSection
             label="제공 횟수"
             value={editData.benefitInfo}
             onChange={(v) => handleInputChange('benefitInfo', v)}
             placeholder="제공 횟수 정보를 입력하세요"
+            isEditing={isEditing}
+          />
+          {/*혜택 내용 섹션*/}
+          <EditingSection
+            label="혜택 내용"
+            value={editData.benefitContent}
+            onChange={(v) => handleInputChange('benefitContent', v)}
+            placeholder="혜택 내용을 입력하세요"
             isEditing={isEditing}
           />
           {/*이용방법 섹션*/}
