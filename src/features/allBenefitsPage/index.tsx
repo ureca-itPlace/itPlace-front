@@ -1,6 +1,6 @@
 import React from 'react';
-import EventBanner from './EventBanner';
-import SimpleRanking from './SimpleRanking';
+import EventBanner from './components/EventBanner';
+import SimpleRanking from './components/SimpleRanking';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { debounce } from 'lodash';
 import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
@@ -21,7 +21,7 @@ import BenefitDetailModal from './components/BenefitDetailModal';
 
 const AllBenefitsLayout: React.FC = () => {
   // 중요 !!!!!! 개발 모드 설정 (true: Mock 데이터 사용, false: 실제 API 사용)
-  const USE_MOCK_DATA = true;
+  const USE_MOCK_DATA = false;
 
   // 임시 사용자 ID (실제로는 인증 상태에서 가져와야 함)
   const userId = 1;
@@ -365,7 +365,7 @@ const AllBenefitsLayout: React.FC = () => {
               <div className="text-grey03">검색 중...</div>
             </div>
           )}
-          <div className="w-[1783px] grid grid-cols-3 gap-[17px] min-h-[683px]">
+          <div className="w-[1783px] grid grid-cols-3 gap-[17px]">
             {benefits.length > 0 ? (
               benefits.map((benefit) => (
                 <div

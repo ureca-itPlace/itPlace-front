@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
-import { UsageDataItem, LegendItem } from './types';
+import { UsageDataItem, LegendItem } from '../../../types/types';
 
 interface UsageStatisticsProps {
   title: string;

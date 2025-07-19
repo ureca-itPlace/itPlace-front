@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import RankingList from '../../../../components/common/RankingList';
-import WishlistChart from './WishlistChart';
-import ClickStatistics from './ClickStatistics';
-import UsageStatistics from './UsageStatistics';
+import WishlistChart from './components/WishlistChart';
+import ClickStatistics from './components/ClickStatistics';
+import UsageStatistics from './components/UsageStatistics';
 import {
   getPartnersSearchRanking,
   PartnerSearchRankingItem,
@@ -13,7 +13,7 @@ import {
   getPartnerUsageStats,
   PartnerUsageStatsItem,
 } from './apis/DashboardApis';
-import { RankingItem, ClickDataItem, WishlistItem, UsageDataItem } from './types';
+import { RankingItem, ClickDataItem, WishlistItem, UsageDataItem } from '../../types/types';
 
 // API 응답을 RankingItem으로 변환하는 함수
 const convertToRankingItem = (apiData: PartnerSearchRankingItem[]): RankingItem[] => {

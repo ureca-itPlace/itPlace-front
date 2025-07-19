@@ -1,4 +1,4 @@
-import { WishlistItem } from './types';
+import { WishlistItem } from '../../../types/types';
 
 interface WishlistChartProps {
   title: string;

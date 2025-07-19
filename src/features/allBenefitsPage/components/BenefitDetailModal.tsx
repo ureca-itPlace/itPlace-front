@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../../../components/common/AdminModal';
-import { BenefitItem, BenefitDetailResponse, getBenefitDetail } from '../apis/allBenefitsApi';
+import {
+  BenefitItem,
+  BenefitDetailResponse,
+  getBenefitDetail,
+  TierBenefit,
+} from '../apis/allBenefitsApi';
 import { showToast } from '../../../utils/toast';
 
 interface InfoSectionProps {
@@ -68,7 +73,28 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
 
   if (!benefit) return null;
 
-  // 혜택 정보 표시 (API 데이터 우선, 없으면 기본 데이터)
+  // 혜택 설명 표시를 위한 헬퍼 함수
+  const getBenefitDescription = (tierBenefits: TierBenefit[]) => {
+    if (!tierBenefits || tierBenefits.length === 0) {
+      return '혜택 정보가 없습니다.';
+    }
+
+    // 등급별로 모든 혜택을 표시
+    return tierBenefits
+      .map((benefit) => {
+        const gradeText =
+          benefit.grade === 'BASIC'
+            ? 'BASIC'
+            : benefit.grade === 'VIP'
+              ? 'VIP'
+              : benefit.grade === 'VVIP'
+                ? 'VVIP'
+                : benefit.grade;
+
+        return `[${gradeText}]\n${benefit.context}`;
+      })
+      .join('\n\n');
+  }; // 혜택 정보 표시 (API 데이터 우선, 없으면 기본 데이터)
   const displayName = benefitDetail?.benefitName || benefit.benefitName;
   const displayDescription =
     benefitDetail?.description ||
@@ -126,6 +152,16 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
 
               {/* 제공 횟수 섹션 */}
               <InfoSection label="제공 횟수" value={getBenefitInfo()} />
+
+              {/* 혜택 내용 섹션 */}
+              <InfoSection
+                label="혜택 내용"
+                value={
+                  benefitDetail?.tierBenefits
+                    ? getBenefitDescription(benefitDetail.tierBenefits)
+                    : getBenefitDescription(benefit.tierBenefits)
+                }
+              />
 
               {/* 이용방법 섹션 */}
               <InfoSection label="이용 방법" value={getUsageMethod()} />

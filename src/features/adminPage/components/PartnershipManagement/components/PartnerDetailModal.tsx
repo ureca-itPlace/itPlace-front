@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Modal from '../../../../components/common/AdminModal';
-import { Partner } from './apis/PartnershipManagementApis';
+import Modal from '../../../../../components/common/AdminModal';
+import { Partner } from '../apis/PartnershipManagementApis';
 
 interface EditingSectionProps {
   label: string;

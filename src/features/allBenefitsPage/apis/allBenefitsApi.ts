@@ -53,6 +53,7 @@ export interface BenefitDetailResponse {
   url: string;
   partnerName: string;
   image: string;
+  tierBenefits: TierBenefit[];
 }
 
 // API 응답 타입
