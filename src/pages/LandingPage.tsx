@@ -48,6 +48,10 @@ const LandingPage = () => {
       document.documentElement.style.overflow = 'auto';
       document.body.style.overflow = 'auto';
     }
+    return () => {
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
+    };
   }, [introEnded]);
 
   if (isLoading) {
