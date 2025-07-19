@@ -159,7 +159,7 @@ const AuthLayout = () => {
             {/* 비밀번호 찾기 */}
             {formStep === 'findPassword' && (
               <FindPasswordForm
-                onGoToLogin={() => setFormStep('login')}
+                onGoToLogin={goToLogin}
                 onClickTabEmail={() => setFormStep('findEmail')}
               />
             )}

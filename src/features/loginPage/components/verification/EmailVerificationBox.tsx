@@ -29,7 +29,7 @@ const EmailVerificationBox = ({
     verifyCode,
     loading, // useEmailVerification 내부 로딩
     resetToken,
-  } = useEmailVerification({ email, onVerifiedChange, mode });
+  } = useEmailVerification({ email, onVerifiedChange, mode, onResetTokenChange });
 
   // 이메일이 변경되면 인증번호 입력 초기화
   useEffect(() => {
@@ -44,16 +44,6 @@ const EmailVerificationBox = ({
       setManualLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (mode === 'reset' && resetToken) {
-      if (onResetTokenChange) {
-        onResetTokenChange(resetToken); // 정상적인 경우에만 호출
-      } else {
-        console.error('onResetTokenChange 함수가 없습니다.');
-      }
-    }
-  }, [resetToken, mode, onResetTokenChange]);
 
   return (
     <div className="w-full max-w-[320px]">
@@ -82,8 +72,8 @@ const EmailVerificationBox = ({
       {/* 에러 메시지 */}
       {errorMessage && <ErrorMessage message={errorMessage} />}
 
-      {/* 인증번호 입력 */}
-      {emailSent && !emailVerified && mode === 'signup' && (
+      {/* 인증번호 입력 (모드와 상관없이 emailSent가 true이면 렌더링) */}
+      {emailSent && !emailVerified && (
         <div className="relative mt-[15px]">
           <AuthInput
             name="verificationCode"

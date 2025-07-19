@@ -22,7 +22,7 @@ export const sendFindEmailCode = async ({
   name: string;
   phoneNumber: string;
 }) => {
-  return await api.post('/api/v1/auth/findEmail', {
+  return await api.post('/api/v1/users/findEmail', {
     name,
     phoneNumber,
   });

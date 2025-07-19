@@ -21,7 +21,6 @@ const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
     try {
       // 실제 API 연동 필요
       // await resetPassword({ email, password });
-      alert('비밀번호가 변경되었습니다.');
       onGoToLogin();
     } catch {
       setServerError('비밀번호 변경에 실패했습니다.');
@@ -33,6 +32,7 @@ const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
       email={email}
       onChangeEmail={setEmail}
       onClickTabEmail={onClickTabEmail}
+      onGoToLogin={onGoToLogin}
       onGoNextStep={(token) => {
         setResetToken(token);
         setStep('reset');
@@ -45,6 +45,7 @@ const FindPasswordForm = ({ onGoToLogin, onClickTabEmail }: Props) => {
       onChangePassword={setPassword}
       onChangeConfirm={setPasswordConfirm}
       onSubmit={handleSubmit}
+      onGoToLogin={onGoToLogin}
       errorMessage={serverError}
       resetPasswordToken={resetToken}
       email={email}

@@ -82,7 +82,7 @@ const useEmailVerification = ({
 
       setEmailVerified(true);
       setErrorMessage('');
-      showToast('이메일 인증이 완료되었습니다.', 'success');
+      onVerifiedChange?.(true);
     } catch (err: unknown) {
       let msg = '인증에 실패했습니다.';
       if (axios.isAxiosError(err)) {
@@ -99,12 +99,11 @@ const useEmailVerification = ({
       setErrorMessage(msg);
       showToast(msg, 'error');
       setEmailVerified(false);
+      onVerifiedChange?.(false);
     }
   };
 
-  useEffect(() => {
-    onVerifiedChange?.(emailVerified);
-  }, [emailVerified, onVerifiedChange]);
+  
 
   return {
     emailSent,

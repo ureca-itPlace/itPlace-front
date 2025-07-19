@@ -1,10 +1,10 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { AxiosError } from 'axios';
 import VerificationCodeForm from './VerificationCodeForm';
 import SignUpForm from '../signup/SignUpForm';
 import SignUpFinalForm from '../signup/SignUpFinalForm';
 import { showToast } from '../../../../utils/toast';
-import { loadCaptchaEnginge, validateCaptcha } from 'react-simple-captcha';
+import { validateCaptcha } from 'react-simple-captcha';
 import { sendVerificationCode } from '../../apis/verification';
 import PhoneAuth from '../common/PhoneAuth';
 
@@ -40,7 +40,6 @@ const PhoneAuthForm = ({
   onSignUpComplete,
   nameFromPhoneAuth,
   phoneFromPhoneAuth,
-  showTab,
   title,
 }: Props) => {
   const [name, setName] = useState('');
@@ -49,6 +48,7 @@ const PhoneAuthForm = ({
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
   const [membershipId, setMembershipId] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
 
@@ -75,6 +75,7 @@ const PhoneAuthForm = ({
       return;
     }
 
+    setLoading(true);
     try {
       await sendVerificationCode(name, phone);
       onAuthComplete({ name, phone });
@@ -98,6 +99,8 @@ const PhoneAuthForm = ({
       }
 
       showToast(message, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -147,6 +150,13 @@ const PhoneAuthForm = ({
 
   return (
     <PhoneAuth
+      headerSlot={
+        title ? (
+          <div className="w-[320px] text-left mt-[20px]">
+            <p className="text-title-4 whitespace-pre-line">{title}</p>
+          </div>
+        ) : null
+      }
       name={name}
       phone={phone}
       captcha={userCaptchaInput}
@@ -155,10 +165,9 @@ const PhoneAuthForm = ({
       onChangeCaptcha={setUserCaptchaInput}
       onSubmit={handleNext}
       showCaptcha={true}
-      showTab={showTab}
-      title={title}
       showFooter={true}
       onClickLogin={onGoToLogin}
+      loading={loading}
     />
   );
 };
