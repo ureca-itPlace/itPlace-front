@@ -8,7 +8,7 @@ interface SearchBarProps {
   onClear: () => void;
   width?: number;
   height?: number;
-  backgroundColor?: string;
+  backgroundColor?: string; // Tailwind 클래스명 또는 hex 값
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -20,6 +20,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   height = 50,
   backgroundColor,
 }) => {
+  // hex 값인지 Tailwind 클래스명인지 확인
+  const isHexColor = backgroundColor?.startsWith('#');
+
   return (
     <div className="relative" style={{ width, height }}>
       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
@@ -30,7 +33,10 @@ const SearchBar: React.FC<SearchBarProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`w-full h-full pl-12 pr-10 rounded-[10px] text-black placeholder-grey03 placeholder:text-body-2 focus:outline-none focus:ring-0 focus:border-gray-300 ${backgroundColor || ''}`}
+        className={`w-full h-full pl-12 pr-10 rounded-[10px] text-black placeholder-grey03 placeholder:text-body-2 focus:outline-none focus:ring-0 focus:border-gray-300 ${
+          !isHexColor && backgroundColor ? `bg-${backgroundColor}` : ''
+        }`}
+        style={isHexColor ? { backgroundColor } : {}}
       />
       {value && (
         <button

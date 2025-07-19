@@ -1,5 +1,7 @@
+import MainPageLayout from '../features/mainPage/components/Layout';
+
 const MainPage = () => {
-  return <div>메인 페이지입니다.</div>;
+  return <MainPageLayout />;
 };
 
 export default MainPage;
