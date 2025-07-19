@@ -307,9 +307,13 @@ const AllBenefitsLayout: React.FC = () => {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 px-4 py-3 bg-white border border-grey02 rounded-[10px] hover:bg-grey01 transition-colors min-w-[120px] justify-between"
+                className={`flex items-center gap-2 px-4 py-3 border border-grey02 rounded-[10px] hover:bg-grey01 transition-colors min-w-[120px] justify-between ${
+                  sortFilter !== '전체' ? 'bg-purple01' : 'bg-white'
+                }`}
               >
-                <span className="text-black">{sortFilter}</span>
+                <span className={`${sortFilter !== '전체' ? 'text-purple04' : 'text-black'}`}>
+                  {sortFilter}
+                </span>
                 <TbChevronDown
                   className={`w-4 h-4 text-grey03 transition-transform ${
                     isDropdownOpen ? 'rotate-180' : ''
@@ -322,11 +326,9 @@ const AllBenefitsLayout: React.FC = () => {
                     <button
                       key={option}
                       onClick={() => handleSortFilterChange(option)}
-                      className={`w-full px-4 py-2 text-left hover:bg-grey01 transition-colors ${
-                        sortFilter === option ? 'bg-purple01 text-purple04' : 'text-black'
-                      } ${option === sortOptions[0] ? 'rounded-t-[10px]' : ''} ${
-                        option === sortOptions[sortOptions.length - 1] ? 'rounded-b-[10px]' : ''
-                      }`}
+                      className={`w-full px-4 py-2 text-left hover:bg-grey01 transition-colors text-black ${
+                        option === sortOptions[0] ? 'rounded-t-[10px]' : ''
+                      } ${option === sortOptions[sortOptions.length - 1] ? 'rounded-b-[10px]' : ''}`}
                     >
                       {option}
                     </button>
