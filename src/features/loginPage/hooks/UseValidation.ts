@@ -29,7 +29,7 @@ const useValidation = () => {
 
       if (field === 'password') {
         if (!value) message = '비밀번호를 입력해주세요.';
-        else if (!/^(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~/-]).{6,30}$/.test(value)) {
+        else if (!/^(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~/-]).{6,30}$/.test(value)) {
           message = '특수문자를 포함한 6~30자로 입력해주세요.';
         }
       }

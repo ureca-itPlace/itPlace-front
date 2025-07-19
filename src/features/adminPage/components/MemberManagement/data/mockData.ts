@@ -271,6 +271,6 @@ export const mockMemberStatistics = {
       second: '2-digit',
       hour12: false,
     })
-    
+
     .replace(/,/g, ' '),
 };

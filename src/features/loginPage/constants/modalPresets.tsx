@@ -1,7 +1,7 @@
 import type { ModalState } from '../components/verification/VerificationCodeForm';
 
 export const modalPresets = {
-  alreadyJoined: (goLogin: () => void, close: () => void) =>
+  alreadyJoined: (goLogin: () => void, _close: () => void) =>
     ({
       open: true,
       title: '이미 가입된 계정이에요',
@@ -9,6 +9,7 @@ export const modalPresets = {
       subMessage: '',
       subMessageClass: '',
       buttons: [{ label: '로그인', onClick: goLogin, type: 'primary' }],
+      onClose: _close, // _close 함수를 onClose prop에 연결
     }) as ModalState,
 
   mergeAccount: (onMerge: () => void, onCancel: () => void) =>
@@ -55,7 +56,7 @@ export const modalPresets = {
     ({
       open: true,
       title: '통합에 성공하셨습니다.',
-      message: 'Itplacer계정와 카카오톡 계정/n모두 자유롭게 이용하실 수 있습니다.',
+      message: 'Itplace 계정과 카카오톡 계정/n모두 자유롭게 이용하실 수 있습니다.',
       subMessage: '',
       subMessageClass: '',
       buttons: [{ label: '확인', onClick: onClose, type: 'primary' }],

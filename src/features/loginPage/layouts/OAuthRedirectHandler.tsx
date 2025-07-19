@@ -33,7 +33,7 @@ const OAuthRedirectHandler = () => {
     }
 
     if (isNewUser && hasLocalAccount) {
-      console.log('🟡 신규 OAuth 유저 + itPlace 계정 있음 → 통합 폼 이동');
+      console.log('신규 OAuth 유저 + itPlace 계정 있음 → 통합 폼 이동');
       const query = new URLSearchParams({
         step: 'oauthIntegration',
         verifiedType: 'oauth',

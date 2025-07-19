@@ -12,6 +12,7 @@ const ToastProvider: React.FC = () => {
       closeOnClick
       pauseOnHover
       draggable
+      limit={1}
     />
   );
 };
