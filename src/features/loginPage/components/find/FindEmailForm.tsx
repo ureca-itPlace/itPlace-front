@@ -20,7 +20,11 @@ const FindEmailForm = ({ onGoToLogin, onClickTabPassword }: Props) => {
   };
 
   return step === 'step1' ? (
-    <FindEmailStep1 onSuccess={handleNext} onClickTabPassword={onClickTabPassword} />
+    <FindEmailStep1
+      onSuccess={handleNext}
+      onClickTabPassword={onClickTabPassword}
+      onGoToLogin={onGoToLogin}
+    />
   ) : (
     <FindEmailStep2
       email={foundEmail}

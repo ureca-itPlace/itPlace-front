@@ -68,7 +68,7 @@ const AuthLayout = () => {
       });
       setFormStep('oauthIntegration');
     }
-  }, [location.search]);
+  }, [location.search, location, goToPhoneAuth, setFormStep]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
@@ -91,7 +91,7 @@ const AuthLayout = () => {
                 onGoToFindEmail={() => {
                   setMode('find');
                   setShowTab(true);
-                  setFormStep('findEmail');
+                  goToFindEmail();
                 }}
               />
             )}

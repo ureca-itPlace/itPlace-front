@@ -4,7 +4,6 @@ import gsap from 'gsap';
 import Modal from '../../../../components/Modal';
 import { showToast } from '../../../../utils/toast';
 import AuthButton from '../common/AuthButton';
-import ErrorMessage from '../common/ErrorMessage';
 import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthFooter from '../common/AuthFooter';
 import useValidation from '../../hooks/UseValidation';

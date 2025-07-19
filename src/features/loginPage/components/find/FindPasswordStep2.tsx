@@ -9,13 +9,12 @@ import { showToast } from '../../../../utils/toast';
 import PasswordInputForm from '../common/PasswordInputForm';
 
 type Props = {
-  onSubmit: () => void;
   onGoToLogin: () => void;
   email: string;
   resetPasswordToken: string;
 };
 
-const FindPasswordStep2 = ({ onSubmit, onGoToLogin, email, resetPasswordToken }: Props) => {
+const FindPasswordStep2 = ({ onGoToLogin, email, resetPasswordToken }: Props) => {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const { errors, validateField } = useValidation();
@@ -43,24 +42,37 @@ const FindPasswordStep2 = ({ onSubmit, onGoToLogin, email, resetPasswordToken }:
 
       showToast('비밀번호가 성공적으로 변경되었습니다.', 'success');
       onGoToLogin(); // 예: 로그인 페이지로 이동 등
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || '비밀번호 변경에 실패했습니다.';
+    } catch (err: unknown) {
+      let msg = '비밀번호 변경에 실패했습니다.';
+      if (
+        err &&
+        typeof err === 'object' &&
+        'response' in err &&
+        err.response &&
+        typeof err.response === 'object' &&
+        'data' in err.response &&
+        err.response.data &&
+        typeof err.response.data === 'object' &&
+        'message' in err.response.data
+      ) {
+        msg = (err.response.data as { message: string }).message;
+      }
       setServerError(msg);
       showToast(msg, 'error');
     }
   };
 
   useEffect(() => {
-    validateField('password', password, { password, passwordConfirm });
-    validateField('passwordConfirm', passwordConfirm, { password, passwordConfirm });
-  }, [password, passwordConfirm, validateField]);
+    validateField('password', password, { email, password, passwordConfirm });
+    validateField('passwordConfirm', passwordConfirm, { email, password, passwordConfirm });
+  }, [password, passwordConfirm, validateField, email]);
 
   const isValid =
     password &&
     passwordConfirm &&
     password === passwordConfirm &&
-    !errors.password &&
-    !errors.passwordConfirm;
+    !errors?.password &&
+    !errors?.passwordConfirm;
 
   return (
     <div ref={wrapperRef} className="flex flex-col items-center">

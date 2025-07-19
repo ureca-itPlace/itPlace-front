@@ -14,7 +14,13 @@ type Props = {
   onGoNextStep: (resetToken: string) => void;
 };
 
-const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoToLogin, onGoNextStep }: Props) => {
+const FindPasswordStep1 = ({
+  email,
+  onChangeEmail,
+  onClickTabEmail,
+  onGoToLogin,
+  onGoNextStep,
+}: Props) => {
   const [emailVerified, setEmailVerified] = useState(false);
   const [resetToken, setResetToken] = useState('');
 
@@ -43,7 +49,7 @@ const FindPasswordStep1 = ({ email, onChangeEmail, onClickTabEmail, onGoToLogin,
 
   return (
     <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
-      <ToggleTab active="password" onClickEmail={onClickTabEmail} />
+      <ToggleTab active="password" onClickEmail={onClickTabEmail} onClickPassword={() => {}} />
 
       <p className="text-title-6 text-grey05 mt-[40px]">
         인증을 위해 <strong>가입된 이메일을</strong> 입력해주세요.

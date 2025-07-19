@@ -1,5 +1,5 @@
 import { checkResetEmailVerificationCode } from './../apis/user';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { sendEmailVerificationCode, checkEmailVerificationCode } from '../apis/verification';
 import { sendFindPasswordEmail } from '../apis/user';
@@ -82,6 +82,7 @@ const useEmailVerification = ({
 
       setEmailVerified(true);
       setErrorMessage('');
+      showToast('이메일 인증 성공!', 'success');
       onVerifiedChange?.(true);
     } catch (err: unknown) {
       let msg = '인증에 실패했습니다.';
@@ -102,8 +103,6 @@ const useEmailVerification = ({
       onVerifiedChange?.(false);
     }
   };
-
-  
 
   return {
     emailSent,

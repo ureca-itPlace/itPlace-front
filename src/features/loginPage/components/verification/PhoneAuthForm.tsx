@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { AxiosError } from 'axios';
 import VerificationCodeForm from './VerificationCodeForm';
 import SignUpForm from '../signup/SignUpForm';
@@ -31,6 +31,15 @@ type Props = {
   title?: string;
 };
 
+type VerifiedUserData = {
+  name: string;
+  phone: string;
+  birthday: string;
+  gender: string;
+  membershipId: string;
+  title?: string;
+};
+
 const PhoneAuthForm = ({
   mode,
   currentStep,
@@ -52,7 +61,7 @@ const PhoneAuthForm = ({
 
   const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
 
-  const handleVerified = ({ name, phone, birthday, gender, membershipId }: any) => {
+  const handleVerified = ({ name, phone, birthday, gender, membershipId }: VerifiedUserData) => {
     setName(name);
     setPhone(phone);
     setBirthday(birthday);
@@ -160,9 +169,9 @@ const PhoneAuthForm = ({
       name={name}
       phone={phone}
       captcha={userCaptchaInput}
-      onChangeName={setName}
-      onChangePhone={setPhone}
-      onChangeCaptcha={setUserCaptchaInput}
+      onChangeName={(e) => setName(e.target.value)}
+      onChangePhone={(e) => setPhone(e.target.value)}
+      onChangeCaptcha={(e) => setUserCaptchaInput(e.target.value)}
       onSubmit={handleNext}
       showCaptcha={true}
       showFooter={true}

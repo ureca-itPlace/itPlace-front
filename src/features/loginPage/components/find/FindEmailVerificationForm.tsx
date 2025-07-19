@@ -68,7 +68,7 @@ const FindEmailVerificationForm = ({ name, phone, onSuccess }: Props) => {
       setCode('');
       startTimer();
       showToast('인증번호를 재전송했습니다.', 'success');
-    } catch (error) {
+    } catch {
       showToast('재전송에 실패했습니다.', 'error');
     }
   };

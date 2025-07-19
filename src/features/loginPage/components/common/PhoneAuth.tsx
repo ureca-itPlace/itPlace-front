@@ -11,9 +11,9 @@ type Props = {
   name: string;
   phone: string;
   captcha?: string;
-  onChangeName: (val: string) => void;
-  onChangePhone: (val: string) => void;
-  onChangeCaptcha?: (val: string) => void;
+  onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangePhone: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeCaptcha?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
   showCaptcha?: boolean;
   submitLabel?: string;
@@ -45,12 +45,7 @@ const PhoneAuth = ({
       {headerSlot}
 
       <div className="mt-[20px] w-[320px]">
-        <AuthInput
-          name="name"
-          placeholder="이름"
-          value={name}
-          onChange={(e) => onChangeName(e.target.value)}
-        />
+        <AuthInput name="name" placeholder="이름" value={name} onChange={onChangeName} />
       </div>
 
       <div className="mt-[20px] w-[320px]">
@@ -58,7 +53,7 @@ const PhoneAuth = ({
           name="phone"
           placeholder="휴대폰 번호 (Ex: 01012345678)"
           value={phone}
-          onChange={(e) => onChangePhone(e.target.value)}
+          onChange={onChangePhone}
         />
       </div>
 
@@ -72,14 +67,18 @@ const PhoneAuth = ({
               name="captcha"
               placeholder="보안문자 입력"
               value={captcha}
-              onChange={(e) => onChangeCaptcha?.(e.target.value)}
+              onChange={onChangeCaptcha}
             />
           </div>
         </>
       )}
 
       <div className="mt-[40px] w-[320px]">
-        <AuthButton label={submitLabel} onClick={onSubmit} />
+        <AuthButton
+          label={submitLabel}
+          onClick={onSubmit}
+          variant={loading ? 'disabled' : 'default'}
+        />
       </div>
 
       {showFooter && onClickLogin && (

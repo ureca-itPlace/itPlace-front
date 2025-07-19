@@ -28,7 +28,6 @@ const EmailVerificationBox = ({
     sendCode,
     verifyCode,
     loading, // useEmailVerification 내부 로딩
-    resetToken,
   } = useEmailVerification({ email, onVerifiedChange, mode, onResetTokenChange });
 
   // 이메일이 변경되면 인증번호 입력 초기화

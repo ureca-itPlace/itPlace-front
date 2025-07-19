@@ -1,7 +1,7 @@
 import type { ModalState } from '../components/verification/VerificationCodeForm';
 
 export const modalPresets = {
-  alreadyJoined: (goLogin: () => void, close: () => void) =>
+  alreadyJoined: (goLogin: () => void, _close: () => void) =>
     ({
       open: true,
       title: '이미 가입된 계정이에요',
@@ -9,6 +9,7 @@ export const modalPresets = {
       subMessage: '',
       subMessageClass: '',
       buttons: [{ label: '로그인', onClick: goLogin, type: 'primary' }],
+      onClose: _close, // _close 함수를 onClose prop에 연결
     }) as ModalState,
 
   mergeAccount: (onMerge: () => void, onCancel: () => void) =>
