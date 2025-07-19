@@ -39,6 +39,7 @@ const convertToRankingItem = (apiData: PartnerSearchRankingItem[]): RankingItem[
       partnerName: item.partnerName,
       searchCount: item.searchCount,
       trend: trend,
+      rankChange: item.rankChange,
     };
   });
 };
