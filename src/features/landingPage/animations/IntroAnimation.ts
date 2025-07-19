@@ -5,6 +5,7 @@ export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAni
   const tl = gsap.timeline();
 
   if (logoRef.current && descRef.current && bgRef.current) {
+    // 1. 로고 & 멘트 위로 이동하며 등장
     tl.to(
       logoRef.current,
       {
