@@ -7,31 +7,40 @@ import useEmailVerification from '../../hooks/useEmailVerification';
 type Props = {
   email: string;
   onChangeEmail: (val: string) => void;
-  registrationId: string;
   onVerifiedChange?: (verified: boolean) => void;
+  mode?: 'signup' | 'reset';
+  onResetTokenChange?: (token: string) => void;
 };
 
 const EmailVerificationBox = ({
   email,
   onChangeEmail,
-  registrationId,
   onVerifiedChange,
+  mode,
+  onResetTokenChange,
 }: Props) => {
   const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false); // 로딩 상태
-  const { emailSent, emailVerified, errorMessage, sendCode, verifyCode } = useEmailVerification({
-    email,
-    registrationId,
-    onVerifiedChange,
-  });
+  const [manualLoading, setManualLoading] = useState(false); // 버튼 로딩 전용
+  const {
+    emailSent,
+    emailVerified,
+    errorMessage,
+    sendCode,
+    verifyCode,
+    loading, // useEmailVerification 내부 로딩
+  } = useEmailVerification({ email, onVerifiedChange, mode, onResetTokenChange });
 
-  // 인증번호 전송 핸들러 (모달 제어 포함)
+  // 이메일이 변경되면 인증번호 입력 초기화
+  useEffect(() => {
+    setCode('');
+  }, [email]);
+
   const handleSendCode = async () => {
-    setLoading(true);
+    setManualLoading(true);
     try {
       await sendCode();
     } finally {
-      setLoading(false);
+      setManualLoading(false);
     }
   };
 
@@ -50,11 +59,11 @@ const EmailVerificationBox = ({
           <button
             type="button"
             onClick={handleSendCode}
-            disabled={!email}
+            disabled={!email || manualLoading}
             className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition
               ${!email ? 'bg-grey02 text-grey04' : 'bg-purple04 text-white'}`}
           >
-            인증
+            {manualLoading ? '전송중' : '인증'}
           </button>
         )}
       </div>
@@ -62,7 +71,7 @@ const EmailVerificationBox = ({
       {/* 에러 메시지 */}
       {errorMessage && <ErrorMessage message={errorMessage} />}
 
-      {/* 인증번호 입력 */}
+      {/* 인증번호 입력 (모드와 상관없이 emailSent가 true이면 렌더링) */}
       {emailSent && !emailVerified && (
         <div className="relative mt-[15px]">
           <AuthInput
@@ -83,11 +92,7 @@ const EmailVerificationBox = ({
 
       {/* 로딩 모달 */}
       {loading && (
-        <Modal
-          isOpen={loading}
-          title="인증 메일을 전송 중입니다."
-          onClose={() => setLoading(false)}
-        >
+        <Modal isOpen={loading} title="인증 메일을 전송 중입니다." onClose={() => {}}>
           <div className="w-full flex justify-center mt-[16px]">
             <div className="w-[32px] h-[32px] border-4 border-purple04 border-t-transparent rounded-full animate-spin" />
           </div>

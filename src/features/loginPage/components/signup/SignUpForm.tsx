@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
@@ -36,7 +37,17 @@ const SignUpForm = ({
     membershipNumber: membershipIdFromPhoneAuth || '',
   });
 
-  const [disabledFields, setDisabledFields] = useState({
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' }
+    );
+  }, []);
+
+  const [disabledFields] = useState({
     name: true,
     phone: true,
     birth: !!birthdayFromPhoneAuth,
@@ -62,7 +73,7 @@ const SignUpForm = ({
     (formData.gender === 'MALE' || formData.gender === 'FEMALE');
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div ref={wrapperRef} className="w-full flex flex-col items-center">
       {/* 제목 */}
       <div className="w-[320px] text-left mb-[51px]">
         <p className="text-title-4">

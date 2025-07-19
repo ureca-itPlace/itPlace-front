@@ -2,6 +2,7 @@ export interface RankingItem {
   partnerName: string;
   searchCount: number;
   trend: 'up' | 'down' | 'keep';
+  rankChange: number | null;
 }
 
 export interface WishlistItem {

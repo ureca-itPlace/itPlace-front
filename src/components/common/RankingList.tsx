@@ -6,11 +6,19 @@ interface RankingListProps {
   data: RankingItem[];
   width?: number;
   height?: number;
+  backgroundColor?: string;
 }
 
-const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: RankingListProps) => {
+const RankingList = ({
+  title,
+  subtitle,
+  data,
+  width = 546,
+  height = 345,
+  backgroundColor = 'bg-white',
+}: RankingListProps) => {
   return (
-    <div className="bg-white p-6 rounded-[18px]" style={{ width, height }}>
+    <div className={`${backgroundColor} p-6 rounded-[18px]`} style={{ width, height }}>
       <h3 className="text-title-4  mb-4">
         {title}
         <span className="text-body-1  text-grey04 ml-3">{subtitle}</span>
@@ -51,7 +59,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
                       : 'text-grey03'
                 }`}
               >
-                {item.searchCount}
+                {item.rankChange ? Math.abs(item.rankChange) : '-'}
               </span>
             </div>
           </div>

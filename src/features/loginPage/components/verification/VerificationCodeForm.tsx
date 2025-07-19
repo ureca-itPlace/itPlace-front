@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import gsap from 'gsap';
 import AuthInput from '../common/AuthInput';
 import AuthFooter from '../common/AuthFooter';
@@ -8,6 +9,7 @@ import { checkVerificationCode, sendVerificationCode } from '../../apis/verifica
 import Modal from '../../../../components/Modal';
 import { modalPresets } from '../../constants/modalPresets';
 import { showToast } from '../../../../utils/toast';
+import { loadUplusData } from '../../apis/auth';
 
 export interface ModalButton {
   label: string;
@@ -31,7 +33,6 @@ type Props = {
   onVerified: (userInfo: {
     name: string;
     phone: string;
-    registrationId: string;
     birthday: string;
     gender: string;
     membershipId: string;
@@ -40,24 +41,16 @@ type Props = {
   }) => void;
   name: string;
   phone: string;
-  registrationId: string;
 };
 
-const VerificationCodeForm = ({
-  mode,
-  onGoToLogin,
-  onVerified,
-  name,
-  phone,
-  registrationId,
-}: Props) => {
+const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) => {
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
 
   // 인증 성공 후 사용자 상태 저장
   const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | null>(null);
-  const uplusDataRef = useRef<{
+  const userInfoRef = useRef<{
     name: string;
     phone: string;
     birthday: string;
@@ -106,7 +99,7 @@ const VerificationCodeForm = ({
         if (prev <= 1) {
           clearInterval(timerRef.current!);
           showToast('인증 시간이 만료되었습니다.', 'error', {
-            position: 'bottom-center',
+            position: 'top-center',
           });
         }
         return prev - 1;
@@ -149,7 +142,6 @@ const VerificationCodeForm = ({
 
     try {
       const res = await checkVerificationCode({
-        registrationId,
         phoneNumber: phone,
         verificationCode: code,
       });
@@ -157,51 +149,48 @@ const VerificationCodeForm = ({
       setCodeError('');
       showToast('인증에 성공하였습니다.', 'success');
 
-      const { userStatus, isLocalUser, uplusDataExists, uplusData } = res.data;
+      const { userStatus, isLocalUser, uplusDataExists } = res.data.data;
 
-      if (userStatus === 'EXISTING_USER' && isLocalUser) {
+      // 분기 처리
+      if (userStatus === 'EXISTING_USER' && isLocalUser === true) {
         verifiedTypeRef.current = 'local';
-        setIsVerified(true);
-        return;
-      }
-
-      if (userStatus === 'EXISTING_USER') {
+      } else if (userStatus === 'EXISTING_USER') {
         verifiedTypeRef.current = 'oauth';
-        setIsVerified(true);
-        return;
-      }
-
-      if (uplusDataExists && uplusData) {
+      } else if (
+        userStatus === 'NEW_USER' &&
+        (uplusDataExists === true || uplusDataExists === 'true')
+      ) {
         verifiedTypeRef.current = 'uplus';
-        uplusDataRef.current = {
-          name: uplusData.name ?? name,
-          phone: uplusData.phone ?? phone,
-          birthday: uplusData.birthday ?? '',
-          gender: uplusData.gender ?? '',
-          membershipId: uplusData.membershipId ?? '',
-        };
-        setIsVerified(true);
-        return;
+      } else {
+        verifiedTypeRef.current = 'new';
       }
 
-      verifiedTypeRef.current = 'new';
-      uplusDataRef.current = {
+      console.log('[분기 결과] verifiedType:', verifiedTypeRef.current);
+      // 사용자 정보 저장 (공통 구조로)
+      userInfoRef.current = {
         name,
         phone,
         birthday: '',
         gender: '',
         membershipId: '',
       };
+
       setIsVerified(true);
-    } catch (error: any) {
-      const errorCode = error?.response?.data?.code;
-      if (errorCode === 'SMS_CODE_MISMATCH') {
-        setCodeError('인증번호가 일치하지 않습니다.');
-      } else if (errorCode === 'SMS_CODE_EXPIRED') {
-        setCodeError('인증번호가 만료되었습니다. 다시 요청해주세요.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorCode = error.response?.data?.code;
+
+        if (errorCode === 'SMS_CODE_MISMATCH') {
+          setCodeError('인증번호가 일치하지 않습니다.');
+        } else if (errorCode === 'SMS_CODE_EXPIRED') {
+          setCodeError('인증번호가 만료되었습니다. 다시 요청해주세요.');
+        } else {
+          setCodeError('인증번호가 일치하지 않습니다.');
+        }
       } else {
-        setCodeError('인증번호가 일치하지 않습니다.');
+        setCodeError('알 수 없는 오류가 발생했습니다.');
       }
+
       setIsVerified(false);
     }
   };
@@ -251,20 +240,25 @@ const VerificationCodeForm = ({
         {/* 재전송 */}
         <div className="text-body-3 text-grey03 mt-[13px] w-[320px]">
           인증 번호를 받지 못하셨나요?{' '}
-          <span onClick={handleResend} className="text-purple04 font-medium cursor-pointer">
+          <button
+            onClick={handleResend}
+            disabled={timeLeft > 0}
+            className={`font-medium ml-[4px] ${
+              timeLeft > 0 ? 'text-grey03 cursor-not-allowed' : 'text-purple04 cursor-pointer'
+            }`}
+          >
             다시 보내기
-          </span>
+          </button>
         </div>
 
         {/* 다음 버튼 */}
         <AuthButton
           label="다음"
           onClick={() => {
-            const user = uplusDataRef.current!;
+            const user = userInfoRef.current!;
             const commonUserInfo = {
               name: user.name,
               phone: user.phone,
-              registrationId,
               birthday: user.birthday,
               gender: user.gender,
               membershipId: user.membershipId,
@@ -305,13 +299,29 @@ const VerificationCodeForm = ({
               case 'uplus':
                 setModal(
                   modalPresets.uplusMember(
-                    () => {
+                    async () => {
                       closeModal();
-                      onVerified(commonUserInfo);
+                      try {
+                        const res = await loadUplusData(phone);
+                        const { name, phoneNumber, gender, birthday, membershipId } = res.data.data;
+
+                        onVerified({
+                          name,
+                          phone: phoneNumber,
+                          birthday: birthday ?? '',
+                          gender: gender ?? '',
+                          membershipId: membershipId ?? '',
+                          isUplus: true,
+                          verifiedType: 'uplus',
+                        });
+                      } catch {
+                        showToast('U+ 정보 불러오기에 실패했습니다.', 'error');
+                        onVerified(commonUserInfo); // fallback
+                      }
                     },
                     () => {
                       closeModal();
-                      onVerified(commonUserInfo);
+                      onVerified(commonUserInfo); // 사용자가 "아니요" 선택 시
                     }
                   )
                 );

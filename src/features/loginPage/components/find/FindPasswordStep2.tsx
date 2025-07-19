@@ -1,139 +1,111 @@
-import { useState, useEffect } from 'react';
-import AuthInput from '../common/AuthInput';
+import { useState, useEffect, useRef } from 'react';
+import gsap from 'gsap';
 import AuthButton from '../common/AuthButton';
 import ErrorMessage from '../common/ErrorMessage';
 import AuthFooter from '../common/AuthFooter';
-import { TbEye, TbEyeOff } from 'react-icons/tb';
 import useValidation from '../../hooks/UseValidation';
+import { resetPassword } from '../../apis/user';
+import { showToast } from '../../../../utils/toast';
+import PasswordInputForm from '../common/PasswordInputForm';
 
 type Props = {
-  password: string;
-  passwordConfirm: string;
-  onChangePassword: (val: string) => void;
-  onChangeConfirm: (val: string) => void;
-  onSubmit: () => void;
-  errorMessage?: string;
+  onGoToLogin: () => void;
+  email: string;
+  resetPasswordToken: string;
 };
 
-const FindPasswordStep2 = ({
-  password,
-  passwordConfirm,
-  onChangePassword,
-  onChangeConfirm,
-  onSubmit,
-  errorMessage,
-}: Props) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-
+const FindPasswordStep2 = ({ onGoToLogin, email, resetPasswordToken }: Props) => {
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const { errors, validateField } = useValidation();
+  const [serverError, setServerError] = useState('');
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const [touched, setTouched] = useState({
-    password: false,
-    passwordConfirm: false,
-  });
-
-  // 비밀번호 입력 시 유효성 검사 수행
   useEffect(() => {
-    validateField('password', password, {
-      email: '',
-      password,
-      passwordConfirm,
-    });
-  }, [password, passwordConfirm, validateField]);
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' }
+    );
+  }, []);
 
-  // 비밀번호 확인 입력 시 유효성 검사 수행
+  const handleSubmit = async () => {
+    if (!isValid) return;
+
+    try {
+      await resetPassword({
+        resetPasswordToken,
+        email,
+        newPassword: password,
+        newPasswordConfirm: passwordConfirm,
+      });
+
+      showToast('비밀번호가 성공적으로 변경되었습니다.', 'success');
+      onGoToLogin(); // 예: 로그인 페이지로 이동 등
+    } catch (err: unknown) {
+      let msg = '비밀번호 변경에 실패했습니다.';
+      if (
+        err &&
+        typeof err === 'object' &&
+        'response' in err &&
+        err.response &&
+        typeof err.response === 'object' &&
+        'data' in err.response &&
+        err.response.data &&
+        typeof err.response.data === 'object' &&
+        'message' in err.response.data
+      ) {
+        msg = (err.response.data as { message: string }).message;
+      }
+      setServerError(msg);
+      showToast(msg, 'error');
+    }
+  };
+
   useEffect(() => {
-    validateField('passwordConfirm', passwordConfirm, {
-      email: '',
-      password,
-      passwordConfirm,
-    });
-  }, [passwordConfirm, password, validateField]);
+    validateField('password', password, { email, password, passwordConfirm });
+    validateField('passwordConfirm', passwordConfirm, { email, password, passwordConfirm });
+  }, [password, passwordConfirm, validateField, email]);
 
-  // 버튼 활성화 조건
   const isValid =
     password &&
     passwordConfirm &&
     password === passwordConfirm &&
-    !errors.password &&
-    !errors.passwordConfirm;
+    !errors?.password &&
+    !errors?.passwordConfirm;
 
   return (
-    <div className="flex flex-col items-center">
-      {/* 안내 문구 */}
+    <div ref={wrapperRef} className="flex flex-col items-center">
       <div className="text-title-4 text-left w-[320px]">
         <p>
           <span className="font-bold">새 비밀번호</span>를 입력해주세요
         </p>
       </div>
 
-      {/* 비밀번호 입력 필드 */}
-      <div className="mt-[50px] w-full max-w-[320px]">
-        <div className="relative">
-          <AuthInput
-            name="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="비밀번호"
-            value={password}
-            onChange={(e) => {
-              onChangePassword(e.target.value);
-              setTouched((prev) => ({ ...prev, password: true }));
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-[12px] top-[12px] text-grey04"
-          >
-            {showPassword ? <TbEyeOff size={20} /> : <TbEye size={20} />}
-          </button>
-        </div>
-        {touched.password && errors.password && <ErrorMessage message={errors.password} />}
+      <div className="mt-[50px]">
+        <PasswordInputForm
+          password={password}
+          passwordConfirm={passwordConfirm}
+          onChangePassword={setPassword}
+          onChangeConfirm={setPasswordConfirm}
+          passwordError={errors.password}
+          passwordConfirmError={errors.passwordConfirm}
+        />
       </div>
 
-      {/* 비밀번호 확인 입력 필드 */}
-      <div className="mt-[20px] w-full max-w-[320px]">
-        <div className="relative">
-          <AuthInput
-            name="passwordConfirm"
-            type={showPasswordConfirm ? 'text' : 'password'}
-            placeholder="비밀번호 확인"
-            value={passwordConfirm}
-            onChange={(e) => {
-              onChangeConfirm(e.target.value);
-              setTouched((prev) => ({ ...prev, passwordConfirm: true }));
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPasswordConfirm((prev) => !prev)}
-            className="absolute right-[12px] top-[12px] text-grey04"
-          >
-            {showPasswordConfirm ? <TbEyeOff size={20} /> : <TbEye size={20} />}
-          </button>
-        </div>
-        {touched.passwordConfirm && errors.passwordConfirm && (
-          <ErrorMessage message={errors.passwordConfirm} />
-        )}
-      </div>
+      {serverError && <ErrorMessage message={serverError} />}
 
-      {/* 서버 응답 에러 메시지 */}
-      {errorMessage && <ErrorMessage message={errorMessage} />}
-
-      {/* 비밀번호 변경 버튼 */}
       <AuthButton
         className="w-[320px] mt-[100px] max-lg:w-full"
         label="비밀번호 변경"
-        onClick={onSubmit}
+        onClick={handleSubmit}
         variant={isValid ? 'default' : 'disabled'}
       />
 
-      {/* 로그인 링크 */}
       <AuthFooter
         leftText="비밀번호가 기억나셨다면?"
         rightText="로그인 하러 가기"
-        onRightClick={onSubmit}
+        onRightClick={onGoToLogin}
       />
     </div>
   );

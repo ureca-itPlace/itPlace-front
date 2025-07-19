@@ -1,5 +1,7 @@
+import AllBenefitsLayout from '../features/allBenefitsPage';
+
 const AllBenefitsPage = () => {
-  return <div>전체 혜택 페이지입니다.</div>;
+  return <AllBenefitsLayout />;
 };
 
 export default AllBenefitsPage;

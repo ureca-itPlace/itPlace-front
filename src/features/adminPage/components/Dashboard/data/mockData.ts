@@ -9,7 +9,7 @@ import {
 export const mockSearchRanking: PartnerSearchRankingItem[] = [
   {
     partnerName: 'CGV',
-    searchCount: 1250,
+    searchCount: 1210,
     rank: 1,
     previousRank: 2,
     rankChange: 1,
