@@ -54,7 +54,12 @@ const AllBenefitsLayout: React.FC = () => {
         };
 
         if (keyword) params.keyword = keyword;
-        if (category && category !== '전체') params.category = category;
+        if (category && category !== '전체') {
+          // 카테고리명 매핑
+          let apiCategory = category;
+          if (category === '액티비티') apiCategory = '엑티비티';
+          params.category = apiCategory;
+        }
         if (filterType && filterType !== '전체') {
           params.filter = filterType === '온라인' ? 'ONLINE' : 'OFFLINE';
         }
@@ -374,11 +379,21 @@ const AllBenefitsLayout: React.FC = () => {
                   onClick={() => handleCardClick(benefit)}
                 >
                   {/* 왼쪽 콘텐츠 */}
-                  <div className="flex flex-col ">
-                    <h3 className="text-title-4 text-black mb-2">{benefit.benefitName}</h3>
-                    <p className="text-body-0 text-grey05 whitespace-pre-line">
-                      {getBenefitDescription(benefit.tierBenefits)}
-                    </p>
+                  <div className="flex flex-col flex-1 mr-4 overflow-hidden">
+                    <h3 className="text-title-4 text-black mb-2 truncate">{benefit.benefitName}</h3>
+                    <div className="text-body-0 text-grey05 overflow-hidden">
+                      <div
+                        className="line-clamp-4"
+                        style={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 4,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {getBenefitDescription(benefit.tierBenefits)}
+                      </div>
+                    </div>
                   </div>
 
                   {/* 오른쪽 로고 및 즐겨찾기 */}
