@@ -1,4 +1,4 @@
-export type IntroProps = {
+export type IntroSectionProps = {
   onComplete: () => void;
 };
 
@@ -7,4 +7,8 @@ export type IntroAnimationProps = {
   descRef: React.RefObject<HTMLElement | null>;
   bgRef: React.RefObject<HTMLElement | null>;
   onComplete: () => void;
+};
+
+export type VideoSectionProps = {
+  onVideoEnd: () => void;
 };

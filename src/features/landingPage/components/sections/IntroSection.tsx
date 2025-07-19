@@ -1,14 +1,16 @@
 import { useGSAP } from '@gsap/react';
 import { useRef } from 'react';
 import { introAnimation } from '../../animations/IntroAnimation';
-import { IntroProps } from '../../types/animation';
+import { IntroSectionProps } from '../../types/landing.types.ts';
 
-const IntroSection = ({ onComplete }: IntroProps) => {
+const IntroSection = ({ onComplete }: IntroSectionProps) => {
   const logoRef = useRef<HTMLDivElement | null>(null);
   const descRef = useRef<HTMLDivElement | null>(null);
   const bgRef = useRef<HTMLDivElement | null>(null);
 
   useGSAP(() => {
+    if (!logoRef.current || !descRef.current || !bgRef.current) return;
+
     introAnimation({ logoRef, descRef, bgRef, onComplete });
   }, [onComplete]);
 

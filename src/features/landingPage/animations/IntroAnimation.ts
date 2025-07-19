@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { IntroAnimationProps } from '../types/animation';
+import { IntroAnimationProps } from '../types/landing.types';
 
 export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAnimationProps) => {
   const tl = gsap.timeline();
