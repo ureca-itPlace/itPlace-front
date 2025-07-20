@@ -17,9 +17,11 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [introEnded, setIntroEnded] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
 
   const earthSectionRef = useRef<HTMLDivElement>(null);
   const mapSectionRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
@@ -33,6 +35,18 @@ const LandingPage = () => {
     };
   }, []);
 
+  // useEffect(() => {
+  //   if (videoEnded) {
+  //     if (ctaRef.current) {
+  //       console.log('CTA 섹션 나타남'); // CTA 등장 확인
+  //       gsap.to(ctaRef.current, {
+  //         opacity: 1,
+  //         pointerEvents: 'auto',
+  //       });
+  //     }
+  //   }
+  // }, [videoEnded]);
+
   if (isLoading) {
     return <LoadLanding />;
   }
@@ -44,10 +58,8 @@ const LandingPage = () => {
           <EarthSection ref={earthSectionRef} />
           <MapSection ref={mapSectionRef} />
 
-          {/* 기능 섹션 */}
-          <FeatureSection />
-
-          {/* CTA 섹션 */}
+          {/* 기능 설명 섹션 */}
+          <FeatureSection videoEnded={videoEnded} setVideoEnded={setVideoEnded} />
           <StartCTASection />
         </>
       ) : (
