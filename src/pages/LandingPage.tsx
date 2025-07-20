@@ -4,76 +4,67 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 
 import { useGSAP } from '@gsap/react';
-import StartCTASection from '../features/landingPage/StartCTASection';
-import VideoSection from '../features/landingPage/VideoSection';
-import FeatureSection from '../features/landingPage/FeatureSection';
-import PurpleCircle from '../features/landingPage/components/PurpleCircle';
-import EarthSection from '../features/landingPage/EarthSection';
-import IntroSection from '../features/landingPage/IntroSection';
+import IntroSection from '../features/landingPage/components/sections/IntroSection';
+import EarthSection from '../features/landingPage/components/sections/EarthSection';
+import MapSection from '../features/landingPage/components/sections/MapSection';
+import FeatureSection from '../features/landingPage/components/sections/FeatureSection';
+import StartCTASection from '../features/landingPage/components/sections/StartCTASection';
+
+import LoadLanding from '../features/landingPage/components/common/LoadLanding';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
 const LandingPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [introEnded, setIntroEnded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
-  const circleRef = useRef<HTMLDivElement>(null);
-  const featureSectionRef = useRef<HTMLDivElement>(null);
-  const videoMaskRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
   const earthSectionRef = useRef<HTMLDivElement>(null);
-  const introSectionRef = useRef<HTMLDivElement>(null);
+  const mapSectionRef = useRef<HTMLDivElement>(null);
+  // const ctaRef = useRef<HTMLDivElement>(null);
 
-  // 지구 섹션 등장 애니메이션
+  // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
-    if (introEnded) {
-      gsap.to(earthSectionRef.current, {
-        opacity: 1,
-        duration: 2,
-        onComplete: () => {
-          console.log('지구 등장 완료');
-        },
-      });
-    }
-  }, [introEnded]);
+    setIsLoading(false);
+  }, []);
 
-  // EarthSection에서 스크롤 활성화
+  // 새로 고침 시 최상단으로 이동
   useEffect(() => {
-    if (!introEnded) {
-      // IntroSection에서 스크롤 비활성화
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      // EarthSection에서 스크롤 활성화
-      document.documentElement.style.overflow = 'auto';
-    }
-  }, [introEnded]);
+    window.onbeforeunload = function pushRefresh() {
+      window.scrollTo(0, 0);
+    };
+  }, []);
+
+  // useEffect(() => {
+  //   if (videoEnded) {
+  //     if (ctaRef.current) {
+  //       console.log('CTA 섹션 나타남'); // CTA 등장 확인
+  //       gsap.to(ctaRef.current, {
+  //         opacity: 1,
+  //         pointerEvents: 'auto',
+  //       });
+  //     }
+  //   }
+  // }, [videoEnded]);
+
+  if (isLoading) {
+    return <LoadLanding />;
+  }
 
   return (
-    <div className="relative">
+    <div className="relative overflow-x-hidden">
       {introEnded ? (
-        <div ref={earthSectionRef} style={{ opacity: 0 }}>
-          <EarthSection />
-        </div>
+        <>
+          <EarthSection ref={earthSectionRef} />
+          <MapSection ref={mapSectionRef} />
+
+          {/* 기능 설명 섹션 */}
+          <FeatureSection videoEnded={videoEnded} setVideoEnded={setVideoEnded} />
+          <StartCTASection />
+        </>
       ) : (
-        <div ref={introSectionRef}>
-          <IntroSection onComplete={() => setIntroEnded(true)} />
-        </div>
+        <IntroSection onComplete={() => setIntroEnded(true)} />
       )}
-
-      {/* 기능 섹션 */}
-      <div
-        ref={featureSectionRef}
-        className="relative h-screen w-full flex items-center justify-center"
-      >
-        <FeatureSection />
-      </div>
-
-      {/* CTA 섹션 */}
-      <div ref={ctaRef}>
-        <StartCTASection />
-      </div>
     </div>
   );
 };
