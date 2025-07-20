@@ -15,7 +15,7 @@ const IntroSection = ({ onComplete }: IntroSectionProps) => {
   }, [onComplete]);
 
   return (
-    <div
+    <section
       ref={bgRef}
       className="w-full h-screen flex justify-center items-center bg-white flex-col overflow-hidden relative z-30"
     >
@@ -25,7 +25,7 @@ const IntroSection = ({ onComplete }: IntroSectionProps) => {
       <p ref={descRef} className="text-5xl text-center max-sm:text-body-1">
         혜택을 지도에서, 빠르고 간편하게
       </p>
-    </div>
+    </section>
   );
 };
 
