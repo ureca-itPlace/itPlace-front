@@ -12,6 +12,7 @@ interface KakaoMapProps {
   selectedPlatform?: Platform | null;
   onPlatformSelect: (platform: Platform) => void;
   onLocationChange?: (location: MapLocation) => void;
+  onMapCenterChange?: (location: MapLocation) => void;
 }
 
 const KakaoMap: React.FC<KakaoMapProps> = ({
@@ -19,10 +20,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   selectedPlatform,
   onPlatformSelect,
   onLocationChange,
+  onMapCenterChange,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [userLocation, setUserLocation] = useState<MapLocation | null>(null);
 
   // 사용자 현재 위치 가져오기
@@ -65,6 +68,26 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       const map = new window.kakao.maps.Map(mapContainer.current, options);
       mapRef.current = map;
+
+      // 지도 드래그 종료 이벤트 리스너 추가 (디바운싱 적용)
+      window.kakao.maps.event.addListener(map, 'dragend', () => {
+        if (onMapCenterChange) {
+          // 기존 타이머가 있으면 취소
+          if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+          }
+
+          // 500ms 후에 실행 (디바운싱)
+          debounceTimerRef.current = setTimeout(() => {
+            const center = map.getCenter();
+            const centerLocation: MapLocation = {
+              latitude: center.getLat(),
+              longitude: center.getLng(),
+            };
+            onMapCenterChange(centerLocation);
+          }, 500);
+        }
+      });
 
       // 사용자 위치 마커
       const userMarkerPosition = new window.kakao.maps.LatLng(
@@ -150,13 +173,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   return (
     <div
       ref={mapContainer}
-      className="overflow-hidden"
-      style={{
-        width: '1385px',
-        height: '891px',
-        borderRadius: '18px',
-        minHeight: '891px',
-      }}
+      className="overflow-hidden w-[1385px] h-[891px] rounded-[18px] min-h-[891px]"
     />
   );
 };

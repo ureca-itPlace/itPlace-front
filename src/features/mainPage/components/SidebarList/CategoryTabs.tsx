@@ -11,27 +11,18 @@ interface CategoryTabsProps {
   onTabChange: (tabId: string) => void;
 }
 
-const CategoryTabs: React.FC<CategoryTabsProps> = ({
-  tabs,
-  activeTab,
-  onTabChange,
-}) => {
+const CategoryTabs: React.FC<CategoryTabsProps> = ({ tabs, activeTab, onTabChange }) => {
   return (
     <div className="flex gap-2">
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`text-sm font-medium text-center ${
+          className={`text-title-7 text-center h-9 w-[105px] rounded-[10px] mt-5 ${
             activeTab === tab.id
               ? 'bg-purple04 text-white'
               : 'bg-grey01 text-grey05 hover:bg-grey02'
           }`}
-          style={{
-            width: '105px',
-            height: '36px',
-            borderRadius: '10px',
-          }}
         >
           {tab.label}
         </button>

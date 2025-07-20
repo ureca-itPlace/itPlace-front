@@ -10,8 +10,8 @@ const InfoBanner: React.FC<InfoBannerProps> = ({ message, variant = 'primary' })
   const textColor = variant === 'primary' ? 'text-purple04' : 'text-grey05';
 
   return (
-    <div className={`border ${borderColor} rounded-lg p-3`}>
-      <div className={`${textColor} text-center font-medium text-sm`}>{message}</div>
+    <div className={`border ${borderColor} rounded-[10px] mt-5`}>
+      <div className={`${textColor} py-3 text-center text-body-2`}>{message}</div>
     </div>
   );
 };

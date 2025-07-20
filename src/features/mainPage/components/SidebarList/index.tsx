@@ -3,8 +3,8 @@ import { Platform } from '../../types';
 import SearchSection from './SearchSection';
 import InfoBanner from './InfoBanner';
 import CategoryTabs from './CategoryTabs';
-import FavoriteStoreList from './FavoriteStoreList';
-import AllStoreList from './AllStoreList';
+import FavoriteStoreList from './List/FavoriteStoreList';
+import AllStoreList from './List/AllStoreList';
 import { Tab, Store } from './types';
 
 interface SidebarListProps {
@@ -12,6 +12,8 @@ interface SidebarListProps {
   selectedPlatform?: Platform | null;
   onPlatformSelect: (platform: Platform) => void;
   isLoading?: boolean;
+  currentLocation?: string;
+  error?: string | null;
 }
 
 const SidebarList: React.FC<SidebarListProps> = ({
@@ -19,13 +21,15 @@ const SidebarList: React.FC<SidebarListProps> = ({
   selectedPlatform,
   onPlatformSelect,
   isLoading = false,
+  currentLocation = '위치 정보 없음',
+  error = null,
 }) => {
   const [activeTab, setActiveTab] = useState('nearby');
 
   const mainTabs: Tab[] = [
     { id: 'nearby', label: '주변 혜택' },
     { id: 'favorites', label: '찜한 혜택' },
-    { id: 'ai', label: '잇을AI 추천' },
+    { id: 'ai', label: '잇플AI 추천' },
   ];
 
   const mockStores: Store[] = [
@@ -53,25 +57,18 @@ const SidebarList: React.FC<SidebarListProps> = ({
   }
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-[370px] h-full bg-white flex flex-col">
       {/* Content Wrapper - 330x860 with 15px top/bottom, 20px left/right margins */}
-      <div
-        className="flex flex-col"
-        style={{
-          margin: '15px 20px',
-          width: '330px',
-          height: '860px',
-        }}
-      >
+      <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
         {/* 검색 영역 */}
-        <div className="border-b border-grey02 pb-4">
+        <div className="pb-8 flex-shrink-0">
           <SearchSection onSearchChange={handleSearchChange} />
 
           <div className="mb-4">
             <CategoryTabs tabs={mainTabs} activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
 
-          {activeTab === 'nearby' && <InfoBanner message="근처 제휴점은 안내해드릴게요 !" />}
+          {activeTab === 'nearby' && <InfoBanner message="근처 제휴처만만 안내해드릴게요 !" />}
 
           {activeTab === 'favorites' && <InfoBanner message="잇플픽이 찜한 혜택을 보여드릴게요!" />}
         </div>
@@ -82,6 +79,9 @@ const SidebarList: React.FC<SidebarListProps> = ({
             platforms={platforms}
             selectedPlatform={selectedPlatform}
             onPlatformSelect={onPlatformSelect}
+            currentLocation={currentLocation}
+            isLoading={isLoading}
+            error={error}
           />
         )}
 
