@@ -245,5 +245,5 @@ export const mockUser = {
   gender: 'MALE',
   birthday: '1990-01-01',
   membershipId: 'M001',
-  grade: 'VIP', // VVIP, VIP, BASIC
+  membershipGrade: 'VIP', // VVIP, VIP, BASIC
 };
