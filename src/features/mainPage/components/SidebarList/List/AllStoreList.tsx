@@ -98,22 +98,27 @@ const AllStoreList: React.FC<AllStoreListProps> = ({
 
                   {/* 하단부: 혜택 내용 박스 */}
                   <div
-                    className={`rounded-[10px] p-3 w-[330px] h-[131px] ${isSelected ? 'bg-white' : 'bg-grey01'}`}
+                    className={`rounded-[10px] p-3 w-[330px] ${isSelected ? 'bg-white' : 'bg-grey01'}`}
                   >
                     <div className="text-body-3-bold text-grey05 mb-2">혜택 내용</div>
 
                     <div className="space-y-1">
                       {platform.benefits.length > 0 ? (
-                        platform.benefits.map((benefit, benefitIndex) => (
-                          <div key={benefitIndex} className="flex items-center gap-2">
-                            <TbCheck size={20} className="text-grey04" />
-                            <span className="text-body-4 text-grey05 truncate">{benefit}</span>
-                          </div>
-                        ))
+                        platform.benefits.map((benefit, benefitIndex) => {
+                          const [grade, content] = benefit.split(': ');
+                          return (
+                            <div key={benefitIndex} className="grid grid-cols-[20px_60px_1fr] gap-2 items-center">
+                              <TbCheck size={16} className="text-grey04" />
+                              <span className="text-body-4 text-grey05">{grade}:</span>
+                              <span className="text-body-4 text-grey05 truncate">{content}</span>
+                            </div>
+                          );
+                        })
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <TbCheck size={20} className="text-grey04" />
-                          <span className="text-body-4 text-grey05">혜택 정보가 없습니다</span>
+                        <div className="grid grid-cols-[20px_60px_1fr] gap-2 items-center">
+                          <TbCheck size={16} className="text-grey04" />
+                          <span className="text-body-4 text-grey05">혜택 정보가</span>
+                          <span className="text-body-4 text-grey05">없습니다</span>
                         </div>
                       )}
                     </div>

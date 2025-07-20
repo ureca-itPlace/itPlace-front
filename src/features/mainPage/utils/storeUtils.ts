@@ -3,27 +3,38 @@ import { Platform } from '../types';
 
 /**
  * API 응답 데이터를 Platform 타입으로 변환
+ * 좌표가 없는 경우 null 반환 (필터링됨)
  */
 export const convertStoreDataToPlatform = (
   storeData: StoreData,
   userLat: number,
   userLng: number
-): Platform => {
+): Platform | null => {
   const { store, partner, tierBenefit } = storeData;
 
-  // 거리 계산 (단순 계산 - 실제로는 더 정확한 계산 필요)
-  const distance = calculateDistance(userLat, userLng, 37.5665, 126.978); // 임시 좌표
+  // 좌표가 없으면 null 반환 (마커 표시 안함)
+  if (!store.latitude || !store.longitude) {
+    console.warn(`좌표 정보 없음 - ${store.storeName} 제외`);
+    return null;
+  }
 
-  // 혜택 정보를 문자열 배열로 변환
-  const benefits = tierBenefit.map((benefit) => `${benefit.grade}: ${benefit.context}`);
+  // 거리 계산 (실제 가맹점 좌표 사용)
+  const distance = calculateDistance(userLat, userLng, store.latitude, store.longitude);
+
+  // 모든 등급에 대해 혜택 정보 생성 (없으면 '-')
+  const gradeOrder = ['VIP콕', 'BASIC', 'VIP', 'VVIP'];
+  const benefits = gradeOrder.map(grade => {
+    const benefit = tierBenefit.find(b => b.grade === grade);
+    return benefit ? `${grade}: ${benefit.context}` : `${grade}: -`;
+  });
 
   return {
     id: store.storeId.toString(),
     name: store.storeName,
     category: partner.category,
     address: store.roadAddress || store.address,
-    latitude: 37.5665, // 실제로는 API에서 좌표 정보를 받아와야 함
-    longitude: 126.978, // 실제로는 API에서 좌표 정보를 받아와야 함
+    latitude: store.latitude,
+    longitude: store.longitude,
     benefits: benefits,
     rating: 4.5, // 기본값 (API에 평점 정보가 있다면 사용)
     distance: Math.round(distance * 10) / 10, // 소수점 첫째 자리까지

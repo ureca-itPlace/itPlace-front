@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Platform, MapLocation } from '../../types';
+import { createCustomMarkerHTML } from './markerUtils';
 
 declare global {
   interface Window {
@@ -25,8 +26,10 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const clustererRef = useRef<any>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [userLocation, setUserLocation] = useState<MapLocation | null>(null);
+  const [currentZoomLevel, setCurrentZoomLevel] = useState<number>(5);
 
   // 사용자 현재 위치 가져오기
   useEffect(() => {
@@ -68,6 +71,36 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       const map = new window.kakao.maps.Map(mapContainer.current, options);
       mapRef.current = map;
+
+      // 클러스터러 초기화
+      if (window.kakao.maps.MarkerClusterer) {
+        const clusterer = new window.kakao.maps.MarkerClusterer({
+          map: map,
+          averageCenter: true,
+          minLevel: 8, // 줌 레벨 8 이상에서 클러스터링 해제
+          disableClickZoom: false,
+          styles: [
+            {
+              width: '50px',
+              height: '50px',
+              background: 'rgba(118, 56, 250, 0.8)',
+              borderRadius: '25px',
+              color: '#fff',
+              textAlign: 'center',
+              lineHeight: '50px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+            },
+          ],
+        });
+        clustererRef.current = clusterer;
+      }
+
+      // 줌 변경 이벤트 리스너
+      window.kakao.maps.event.addListener(map, 'zoom_changed', () => {
+        const level = map.getLevel();
+        setCurrentZoomLevel(level);
+      });
 
       // 지도 드래그 종료 이벤트 리스너 추가 (디바운싱 적용)
       window.kakao.maps.event.addListener(map, 'dragend', () => {
@@ -128,36 +161,76 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     if (!mapRef.current || !platforms.length) return;
 
     // 기존 마커 제거
+    if (clustererRef.current) {
+      clustererRef.current.clear();
+    }
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
+    const newMarkers: any[] = [];
+
     platforms.forEach((platform) => {
+      // 좌표가 없는 가맹점은 마커 표시 안함
+      if (
+        !platform.latitude ||
+        !platform.longitude ||
+        platform.latitude === 0 ||
+        platform.longitude === 0
+      ) {
+        console.log(`마커 제외 (좌표 없음): ${platform.name}`);
+        return;
+      }
+
+      console.log(
+        `마커 생성: ${platform.name} - 위도: ${platform.latitude}, 경도: ${platform.longitude}`
+      );
       const markerPosition = new window.kakao.maps.LatLng(platform.latitude, platform.longitude);
+      const isSelected = selectedPlatform?.id === platform.id;
 
-      const marker = new window.kakao.maps.Marker({
+      // 커스텀 마커 HTML 생성
+      const markerHTML = createCustomMarkerHTML(platform.imageUrl, platform.name, isSelected);
+
+      // 커스텀 오버레이로 마커 생성
+      const customOverlay = new window.kakao.maps.CustomOverlay({
         position: markerPosition,
-        map: mapRef.current,
+        content: markerHTML,
+        yAnchor: 1, // 삼각형 끝부분이 좌표 위치가 되도록
       });
 
-      const infoWindow = new window.kakao.maps.InfoWindow({
-        content: `
-          <div style="padding:10px; min-width:200px;">
-            <h4 style="margin:0 0 5px 0; font-weight:bold;">${platform.name}</h4>
-            <p style="margin:0; color:#666; font-size:12px;">${platform.category}</p>
-            <p style="margin:5px 0 0 0; color:#333; font-size:11px;">${platform.address}</p>
-          </div>
-        `,
-      });
-
-      // 마커 클릭 이벤트
-      window.kakao.maps.event.addListener(marker, 'click', () => {
-        infoWindow.open(mapRef.current, marker);
+      // 마커 클릭 이벤트 (HTML 요소에 직접 이벤트 추가)
+      const markerElement = document.createElement('div');
+      markerElement.innerHTML = markerHTML;
+      markerElement.addEventListener('click', () => {
         onPlatformSelect(platform);
       });
 
-      markersRef.current.push(marker);
+      customOverlay.setContent(markerElement);
+
+      // 줌 레벨에 따라 클러스터링 또는 개별 표시
+      if (currentZoomLevel <= 7 && clustererRef.current) {
+        // 클러스터링용 일반 마커 생성
+        const clusterMarker = new window.kakao.maps.Marker({
+          position: markerPosition,
+        });
+
+        // 클러스터 마커 클릭 이벤트
+        window.kakao.maps.event.addListener(clusterMarker, 'click', () => {
+          onPlatformSelect(platform);
+        });
+
+        newMarkers.push(clusterMarker);
+      } else {
+        // 개별 커스텀 마커 표시
+        customOverlay.setMap(mapRef.current);
+        markersRef.current.push(customOverlay);
+      }
     });
-  }, [platforms, onPlatformSelect]);
+
+    // 클러스터링 적용
+    if (currentZoomLevel <= 7 && clustererRef.current && newMarkers.length > 0) {
+      clustererRef.current.addMarkers(newMarkers);
+    }
+  }, [platforms, onPlatformSelect, selectedPlatform, currentZoomLevel]);
 
   // 선택된 플랫폼으로 지도 중심 이동
   useEffect(() => {

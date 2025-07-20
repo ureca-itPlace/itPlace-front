@@ -19,6 +19,24 @@ export const getStoreList = async (params: StoreListParams): Promise<StoreApiRes
 };
 
 /**
+ * 사용자 위치 기반 카테고리별 지점 목록 조회
+ */
+export const getStoreListByCategory = async (
+  params: StoreListParams & { category?: string }
+): Promise<StoreApiResponse> => {
+  const response = await api.get('/api/v1/maps/nearby/category', {
+    params: {
+      lat: params.lat,
+      lng: params.lng,
+      radiusMeters: params.radiusMeters,
+      category: params.category,
+    },
+  });
+
+  return response.data;
+};
+
+/**
  * 카카오 API를 사용한 좌표→주소 변환
  */
 export const getAddressFromCoordinates = async (lat: number, lng: number): Promise<string> => {

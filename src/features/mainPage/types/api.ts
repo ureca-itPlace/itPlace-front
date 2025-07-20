@@ -24,6 +24,8 @@ export interface Store {
   roadName: string;
   roadAddress: string;
   postCode: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Partner {

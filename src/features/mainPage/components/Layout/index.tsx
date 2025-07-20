@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { SearchBar } from '../../../../components/common';
 import CategoryTags from '../CategoryTags';
 import KakaoMap from '../KakaoMap';
 import SidebarList from '../SidebarList';
@@ -16,14 +15,14 @@ const MainPageLayout: React.FC = () => {
   // 실제 카테고리 정의
   const categories: Category[] = [
     { id: 'all', name: '전체' },
-    { id: 'entertainment', name: '🎬 엔터테인먼트' },
-    { id: 'beauty', name: '💄 뷰티/건강' },
-    { id: 'shopping', name: '🛍️ 쇼핑' },
-    { id: 'convenience', name: '🏪 편의점' },
-    { id: 'food', name: '🍽️ 음식점' },
-    { id: 'culture', name: '🎨 문화/여가' },
-    { id: 'education', name: '📚 교육' },
-    { id: 'travel', name: '✈️ 여행/숙박' },
+    { id: '액티비티', name: '🎯 액티비티' },
+    { id: '뷰티/건강', name: '💄 뷰티/건강' },
+    { id: '쇼핑', name: '🛍️ 쇼핑' },
+    { id: '생활/편의', name: '🏪 생활/편의' },
+    { id: '푸드', name: '🍽️ 푸드' },
+    { id: '문화/여가', name: '🎨 문화/여가' },
+    { id: '교육', name: '📚 교육' },
+    { id: '여행/교통', name: '✈️ 여행/교통' },
   ];
 
   // API에서 실제 가맹점 데이터 가져오기
@@ -33,7 +32,9 @@ const MainPageLayout: React.FC = () => {
     userCoords,
     isLoading,
     error,
+    selectedCategory: apiSelectedCategory,
     updateLocationFromMap,
+    filterByCategory,
   } = useStoreData();
 
   // 카테고리 선택 핸들러
@@ -42,30 +43,14 @@ const MainPageLayout: React.FC = () => {
       setSelectedCategory(categoryId);
       setSelectedPlatform(null);
 
-      // API 데이터만 사용
-      const sourcePlatforms = apiPlatforms;
+      // API 기반 카테고리 필터링
+      const categoryValue = categoryId === 'all' ? null : categoryId;
+      filterByCategory(categoryValue);
 
-      let platforms: Platform[];
-      if (searchQuery.trim()) {
-        platforms = sourcePlatforms.filter(
-          (platform) =>
-            platform.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            platform.category.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        if (categoryId !== 'all') {
-          platforms = platforms.filter((platform) => platform.category === categoryId);
-        }
-      } else {
-        if (categoryId === 'all') {
-          platforms = sourcePlatforms;
-        } else {
-          platforms = sourcePlatforms.filter((platform) => platform.category === categoryId);
-        }
-      }
-
-      setFilteredPlatforms(platforms);
+      // 검색 결과 초기화
+      setFilteredPlatforms([]);
     },
-    [searchQuery, apiPlatforms]
+    [filterByCategory]
   );
 
   // 검색 핸들러
