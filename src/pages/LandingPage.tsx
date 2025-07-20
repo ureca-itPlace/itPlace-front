@@ -21,7 +21,7 @@ const LandingPage = () => {
 
   const earthSectionRef = useRef<HTMLDivElement>(null);
   const mapSectionRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
+  // const ctaRef = useRef<HTMLDivElement>(null);
 
   // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
