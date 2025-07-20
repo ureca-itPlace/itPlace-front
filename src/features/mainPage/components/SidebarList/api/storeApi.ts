@@ -40,15 +40,7 @@ export const getStoreListByCategory = async (
  * 카카오 API를 사용한 좌표→주소 변환
  */
 export const getAddressFromCoordinates = async (lat: number, lng: number): Promise<string> => {
-  console.log('카카오 API 키:', KAKAO_API_KEY ? '설정됨' : '설정되지 않음');
-  console.log('API 키 앞 4자리:', KAKAO_API_KEY ? KAKAO_API_KEY.substring(0, 4) : 'undefined');
-  console.log(
-    '요청 URL:',
-    `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`
-  );
-
   if (!KAKAO_API_KEY) {
-    console.warn('카카오 API 키가 설정되지 않았습니다.');
     return '현재 위치';
   }
 
@@ -63,7 +55,6 @@ export const getAddressFromCoordinates = async (lat: number, lng: number): Promi
     );
 
     if (!response.ok) {
-      console.warn(`카카오 API 요청 실패: ${response.status} - 임시로 기본 위치 사용`);
       return '현재 위치'; // 401 오류 시 기본값 반환
     }
 
@@ -77,12 +68,6 @@ export const getAddressFromCoordinates = async (lat: number, lng: number): Promi
       // 도로명 주소가 있으면 도로명 주소 사용, 없으면 지번 주소 사용
       const targetAddress = roadAddress || jibunAddress;
 
-      // 디버깅용 로그
-      console.log('카카오 API 응답:', targetAddress);
-      console.log('region_1depth_name:', targetAddress.region_1depth_name);
-      console.log('region_2depth_name:', targetAddress.region_2depth_name);
-      console.log('region_3depth_name:', targetAddress.region_3depth_name);
-
       // 시/구/동까지 표시
       const region1 = targetAddress.region_1depth_name; // 부산, 서울 등
       const region2 = targetAddress.region_2depth_name; // 남구, 강남구 등
@@ -92,8 +77,7 @@ export const getAddressFromCoordinates = async (lat: number, lng: number): Promi
     }
 
     return '현재 위치';
-  } catch (error) {
-    console.warn('주소 변환 실패 - 임시로 기본 위치 사용:', error);
+  } catch {
     return '현재 위치'; // 에러 시에도 기본값 반환
   }
 };

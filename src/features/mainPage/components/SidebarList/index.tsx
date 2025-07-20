@@ -68,7 +68,7 @@ const SidebarList: React.FC<SidebarListProps> = ({
             <CategoryTabs tabs={mainTabs} activeTab={activeTab} onTabChange={setActiveTab} />
           </div>
 
-          {activeTab === 'nearby' && <InfoBanner message="근처 제휴처만만 안내해드릴게요 !" />}
+          {activeTab === 'nearby' && <InfoBanner message="근처 제휴처만 안내해드릴게요 !" />}
 
           {activeTab === 'favorites' && <InfoBanner message="잇플픽이 찜한 혜택을 보여드릴게요!" />}
         </div>

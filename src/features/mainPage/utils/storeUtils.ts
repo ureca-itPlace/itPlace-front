@@ -23,8 +23,8 @@ export const convertStoreDataToPlatform = (
 
   // 모든 등급에 대해 혜택 정보 생성 (없으면 '-')
   const gradeOrder = ['VIP콕', 'BASIC', 'VIP', 'VVIP'];
-  const benefits = gradeOrder.map(grade => {
-    const benefit = tierBenefit.find(b => b.grade === grade);
+  const benefits = gradeOrder.map((grade) => {
+    const benefit = tierBenefit.find((b) => b.grade === grade);
     return benefit ? `${grade}: ${benefit.context}` : `${grade}: -`;
   });
 

@@ -8,31 +8,27 @@ import { useStoreData } from '../../hooks/useStoreData';
 const MainPageLayout: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [userLocation, setUserLocation] = useState<MapLocation | null>(null);
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]);
 
   // 실제 카테고리 정의
   const categories: Category[] = [
-    { id: 'all', name: '전체' },
-    { id: '액티비티', name: '🎯 액티비티' },
-    { id: '뷰티/건강', name: '💄 뷰티/건강' },
-    { id: '쇼핑', name: '🛍️ 쇼핑' },
-    { id: '생활/편의', name: '🏪 생활/편의' },
-    { id: '푸드', name: '🍽️ 푸드' },
-    { id: '문화/여가', name: '🎨 문화/여가' },
-    { id: '교육', name: '📚 교육' },
-    { id: '여행/교통', name: '✈️ 여행/교통' },
+    { id: '전체', name: '전체' },
+    { id: '엔터테인먼트', name: '엔터테인먼트' },
+    { id: '뷰티/건강', name: '뷰티/건강' },
+    { id: '쇼핑', name: '쇼핑' },
+    { id: '생활/편의', name: '생활/편의' },
+    { id: '푸드', name: '푸드' },
+    { id: '문화/여가', name: '문화/여가' },
+    { id: '교육', name: '교육' },
+    { id: '여행/교통', name: '여행/교통' },
   ];
 
   // API에서 실제 가맹점 데이터 가져오기
   const {
     platforms: apiPlatforms,
     currentLocation,
-    userCoords,
     isLoading,
     error,
-    selectedCategory: apiSelectedCategory,
     updateLocationFromMap,
     filterByCategory,
   } = useStoreData();
@@ -40,11 +36,13 @@ const MainPageLayout: React.FC = () => {
   // 카테고리 선택 핸들러
   const handleCategorySelect = useCallback(
     (categoryId: string) => {
+      console.log('🔍 카테고리 선택됨:', categoryId);
       setSelectedCategory(categoryId);
       setSelectedPlatform(null);
 
       // API 기반 카테고리 필터링
       const categoryValue = categoryId === 'all' ? null : categoryId;
+      console.log('📡 API로 전달될 카테고리 값:', categoryValue);
       filterByCategory(categoryValue);
 
       // 검색 결과 초기화
@@ -53,54 +51,13 @@ const MainPageLayout: React.FC = () => {
     [filterByCategory]
   );
 
-  // 검색 핸들러
-  const handleSearchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const query = e.target.value;
-      setSearchQuery(query);
-      setSelectedPlatform(null);
-
-      // API 데이터만 사용
-      const sourcePlatforms = apiPlatforms;
-
-      let platforms: Platform[];
-      if (query.trim()) {
-        platforms = sourcePlatforms.filter(
-          (platform) =>
-            platform.name.toLowerCase().includes(query.toLowerCase()) ||
-            platform.category.toLowerCase().includes(query.toLowerCase())
-        );
-        if (selectedCategory !== 'all') {
-          platforms = platforms.filter((platform) => platform.category === selectedCategory);
-        }
-      } else {
-        if (selectedCategory === 'all') {
-          platforms = sourcePlatforms;
-        } else {
-          platforms = sourcePlatforms.filter((platform) => platform.category === selectedCategory);
-        }
-      }
-
-      setFilteredPlatforms(platforms);
-    },
-    [selectedCategory, apiPlatforms]
-  );
-
-  // 검색어 초기화 핸들러
-  const handleSearchClear = useCallback(() => {
-    setSearchQuery('');
-    setSelectedPlatform(null);
-    setFilteredPlatforms([]);
-  }, []);
-
   // 플랫폼 선택 핸들러
   const handlePlatformSelect = useCallback((platform: Platform) => {
     setSelectedPlatform(platform);
   }, []);
 
   // 사용자 위치 변경 핸들러 (초기 위치)
-  const handleLocationChange = useCallback((location: MapLocation) => {
-    setUserLocation(location);
+  const handleLocationChange = useCallback(() => {
     // 초기 플랫폼 목록은 API에서 로드됨
     setFilteredPlatforms([]);
   }, []);

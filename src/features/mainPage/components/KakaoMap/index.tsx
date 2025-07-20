@@ -2,9 +2,72 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Platform, MapLocation } from '../../types';
 import { createCustomMarkerHTML } from './markerUtils';
 
+interface KakaoLatLng {
+  getLat(): number;
+  getLng(): number;
+}
+
+interface KakaoMap {
+  getLevel(): number;
+  setCenter(latlng: KakaoLatLng): void;
+  getCenter(): KakaoLatLng;
+}
+
+interface KakaoMarker {
+  setMap(map: KakaoMap | null): void;
+}
+
+interface KakaoMarkerClusterer {
+  clear(): void;
+  addMarkers(markers: KakaoMarker[]): void;
+}
+
+interface KakaoCustomOverlay {
+  setContent(content: HTMLElement): void;
+  setMap(map: KakaoMap | null): void;
+}
+
+interface KakaoInfoWindow {
+  open(map: KakaoMap, marker: KakaoMarker): void;
+}
+
+interface KakaoMaps {
+  maps: {
+    LatLng: new (lat: number, lng: number) => KakaoLatLng;
+    Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => KakaoMap;
+    Marker: new (options: { position: KakaoLatLng; map?: KakaoMap }) => KakaoMarker;
+    MarkerClusterer?: new (options: {
+      map: KakaoMap;
+      averageCenter: boolean;
+      minLevel: number;
+      disableClickZoom: boolean;
+      styles: Array<{
+        width: string;
+        height: string;
+        background: string;
+        borderRadius: string;
+        color: string;
+        textAlign: string;
+        lineHeight: string;
+        fontSize: string;
+        fontWeight: string;
+      }>;
+    }) => KakaoMarkerClusterer;
+    CustomOverlay: new (options: {
+      position: KakaoLatLng;
+      content: string;
+      yAnchor: number;
+    }) => KakaoCustomOverlay;
+    InfoWindow: new (options: { content: string }) => KakaoInfoWindow;
+    event: {
+      addListener(target: KakaoMap | KakaoMarker, type: string, handler: () => void): void;
+    };
+  };
+}
+
 declare global {
   interface Window {
-    kakao: any;
+    kakao: KakaoMaps;
   }
 }
 
@@ -24,10 +87,10 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   onMapCenterChange,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const clustererRef = useRef<any>(null);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const mapRef = useRef<KakaoMap | null>(null);
+  const markersRef = useRef<KakaoCustomOverlay[]>([]);
+  const clustererRef = useRef<KakaoMarkerClusterer | null>(null);
+  const debounceTimerRef = useRef<number | null>(null);
   const [userLocation, setUserLocation] = useState<MapLocation | null>(null);
   const [currentZoomLevel, setCurrentZoomLevel] = useState<number>(5);
 
@@ -43,8 +106,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           setUserLocation(location);
           onLocationChange?.(location);
         },
-        (error) => {
-          console.error('위치 정보를 가져올 수 없습니다:', error);
+        () => {
           // 기본 위치 (서울시청)
           const defaultLocation = { latitude: 37.5665, longitude: 126.978 };
           setUserLocation(defaultLocation);
@@ -69,7 +131,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         level: 5,
       };
 
-      const map = new window.kakao.maps.Map(mapContainer.current, options);
+      const map = new window.kakao.maps.Map(mapContainer.current!, options);
       mapRef.current = map;
 
       // 클러스터러 초기화
@@ -154,7 +216,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       return () => clearInterval(checkKakaoMaps);
     }
-  }, [userLocation]);
+  }, [userLocation, onMapCenterChange]);
 
   // 플랫폼 마커 표시
   useEffect(() => {
@@ -167,7 +229,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
-    const newMarkers: any[] = [];
+    const newMarkers: KakaoMarker[] = [];
 
     platforms.forEach((platform) => {
       // 좌표가 없는 가맹점은 마커 표시 안함
@@ -177,13 +239,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         platform.latitude === 0 ||
         platform.longitude === 0
       ) {
-        console.log(`마커 제외 (좌표 없음): ${platform.name}`);
         return;
       }
 
-      console.log(
-        `마커 생성: ${platform.name} - 위도: ${platform.latitude}, 경도: ${platform.longitude}`
-      );
       const markerPosition = new window.kakao.maps.LatLng(platform.latitude, platform.longitude);
       const isSelected = selectedPlatform?.id === platform.id;
 

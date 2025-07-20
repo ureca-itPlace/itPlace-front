@@ -107,7 +107,10 @@ const AllStoreList: React.FC<AllStoreListProps> = ({
                         platform.benefits.map((benefit, benefitIndex) => {
                           const [grade, content] = benefit.split(': ');
                           return (
-                            <div key={benefitIndex} className="grid grid-cols-[20px_60px_1fr] gap-2 items-center">
+                            <div
+                              key={benefitIndex}
+                              className="grid grid-cols-[20px_60px_1fr] gap-2 items-center"
+                            >
                               <TbCheck size={16} className="text-grey04" />
                               <span className="text-body-4 text-grey05">{grade}:</span>
                               <span className="text-body-4 text-grey05 truncate">{content}</span>

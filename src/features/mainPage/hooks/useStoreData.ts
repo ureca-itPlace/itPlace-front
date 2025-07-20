@@ -45,12 +45,6 @@ export const useStoreData = () => {
             });
 
         // 4. API 데이터를 Platform 타입으로 변환
-        console.log('API 응답 데이터 개수:', storeResponse.data.length);
-        console.log('API 응답 데이터:', storeResponse.data);
-
-        const convertedPlatforms = storeResponse.data
-          .map((storeData) => convertStoreDataToPlatform(storeData, coords.lat, coords.lng))
-          .filter((platform): platform is Platform => platform !== null);
 
         // 모든 가맹점 (좌표 없는 것도 포함) - 리스트용
         const allPlatforms = storeResponse.data.map((storeData) => {
@@ -79,8 +73,6 @@ export const useStoreData = () => {
           return platform;
         });
 
-        console.log('마커용 플랫폼 개수:', convertedPlatforms.length);
-        console.log('전체 플랫폼 개수:', allPlatforms.length);
         setPlatforms(allPlatforms);
       } catch (error) {
         console.error('데이터 초기화 실패:', error);
@@ -114,12 +106,6 @@ export const useStoreData = () => {
             radiusMeters: 5000,
           });
 
-      console.log('지도 드래그 - API 응답 데이터 개수:', storeResponse.data.length);
-
-      const convertedPlatforms = storeResponse.data
-        .map((storeData) => convertStoreDataToPlatform(storeData, lat, lng))
-        .filter((platform): platform is Platform => platform !== null);
-
       // 모든 가맹점 (좌표 없는 것도 포함) - 리스트용
       const allPlatforms = storeResponse.data.map((storeData) => {
         const platform = convertStoreDataToPlatform(storeData, lat, lng);
@@ -147,8 +133,6 @@ export const useStoreData = () => {
         return platform;
       });
 
-      console.log('지도 드래그 - 마커용 플랫폼 개수:', convertedPlatforms.length);
-      console.log('지도 드래그 - 전체 플랫폼 개수:', allPlatforms.length);
       setPlatforms(allPlatforms);
     } catch (error) {
       console.error('지도 위치 업데이트 실패:', error);
@@ -157,6 +141,7 @@ export const useStoreData = () => {
 
   // 카테고리 필터링 함수
   const filterByCategory = (category: string | null) => {
+    console.log('🎯 useStoreData에서 카테고리 설정:', category);
     setSelectedCategory(category);
   };
 
