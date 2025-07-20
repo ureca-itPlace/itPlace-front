@@ -18,8 +18,9 @@ const VideoSection = forwardRef<HTMLVideoElement, VideoSectionProps>(
             autoPlay={false}
             playsInline
             preload="metadata"
+            poster="/images/landing/landing-video-thumbnail.png"
             onEnded={onVideoEnd}
-            className="w-full h-screen inset-0 object-cover"
+            className="w-full h-screen object-cover"
           />
         </div>
       </section>
