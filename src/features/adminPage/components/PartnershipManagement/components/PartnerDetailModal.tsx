@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Modal from '../../../../../components/common/AdminModal';
+import { Partner } from '../apis/PartnershipManagementApis';
+
 interface EditingSectionProps {
   label: string;
   value: string;
@@ -36,18 +39,6 @@ const EditingSection: React.FC<EditingSectionProps> = ({
     </div>
   </div>
 );
-import Modal from '../../../../components/common/AdminModal';
-
-interface Partner {
-  id: string;
-  logo: string;
-  brand: string;
-  category: string;
-  benefitType: string;
-  searchRank: number;
-  favoriteRank: number;
-  usageRank: number;
-}
 
 interface PartnerDetailModalProps {
   isOpen: boolean;
@@ -107,7 +98,7 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
           <div className="flex items-center justify-between mb-[28px]">
             <div className="flex items-center ml-[16px]">
               <div>
-                <h4 className="text-title-2 text-black mb-1">{partner.brand}</h4>
+                <h4 className="text-title-2 text-black mb-1">{partner.partnerName}</h4>
                 <p className="text-body-0 text-grey05 mt-1">
                   영화보다 멋진 당신의 일상을 위하여, 라이프스타일 매거진스!
                 </p>
@@ -115,26 +106,26 @@ const PartnerDetailModal: React.FC<PartnerDetailModalProps> = ({ isOpen, partner
             </div>
             <div className="w-[120px] h-[120px]  bg-white  flex items-center justify-center">
               <img
-                src={partner.logo}
-                alt={`${partner.brand} 로고`}
+                src={partner.image}
+                alt={`${partner.partnerName} 로고`}
                 className="w-[120px] h-[120px] object-contain"
               />
             </div>
           </div>
-          {/*혜택 내용 섹션*/}
-          <EditingSection
-            label="혜택 내용"
-            value={editData.benefitContent}
-            onChange={(v) => handleInputChange('benefitContent', v)}
-            placeholder="혜택 내용을 입력하세요"
-            isEditing={isEditing}
-          />
           {/*제공 혜택 섹션*/}
           <EditingSection
             label="제공 횟수"
             value={editData.benefitInfo}
             onChange={(v) => handleInputChange('benefitInfo', v)}
             placeholder="제공 횟수 정보를 입력하세요"
+            isEditing={isEditing}
+          />
+          {/*혜택 내용 섹션*/}
+          <EditingSection
+            label="혜택 내용"
+            value={editData.benefitContent}
+            onChange={(v) => handleInputChange('benefitContent', v)}
+            placeholder="혜택 내용을 입력하세요"
             isEditing={isEditing}
           />
           {/*이용방법 섹션*/}

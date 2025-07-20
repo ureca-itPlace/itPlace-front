@@ -1,4 +1,4 @@
-import { RankingItem } from '../../features/adminPage/components/Dashboard/types';
+import { RankingItem } from '../../features/adminPage/types/types';
 
 interface RankingListProps {
   title: string;
@@ -6,11 +6,19 @@ interface RankingListProps {
   data: RankingItem[];
   width?: number;
   height?: number;
+  backgroundColor?: string;
 }
 
-const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: RankingListProps) => {
+const RankingList = ({
+  title,
+  subtitle,
+  data,
+  width = 546,
+  height = 345,
+  backgroundColor = 'bg-white',
+}: RankingListProps) => {
   return (
-    <div className="bg-white p-6 rounded-[18px]" style={{ width, height }}>
+    <div className={`${backgroundColor} p-6 rounded-[18px]`} style={{ width, height }}>
       <h3 className="text-title-4  mb-4">
         {title}
         <span className="text-body-1  text-grey04 ml-3">{subtitle}</span>
@@ -28,7 +36,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
               <span className="text-body-1 text-title-6 text-grey05 w-4 mr-[37px]">
                 {index + 1}
               </span>
-              <span className="text-body-1">{item.name}</span>
+              <span className="text-body-1">{item.partnerName}</span>
             </div>
             <div className="flex items-center gap-2">
               <span
@@ -51,7 +59,7 @@ const RankingList = ({ title, subtitle, data, width = 546, height = 345 }: Ranki
                       : 'text-grey03'
                 }`}
               >
-                {item.value}
+                {item.rankChange ? Math.abs(item.rankChange) : '-'}
               </span>
             </div>
           </div>

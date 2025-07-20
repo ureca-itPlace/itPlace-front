@@ -7,74 +7,13 @@ import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
 import Pagination from '../../../../components/common/Pagination';
-import MemberDetailModal from './MemberDetailModal';
+import MemberDetailModal from './components/MemberDetailModal';
 import {
   Member,
   searchMembersWithPagination,
   getMembersWithPagination,
   getMemberStatistics,
 } from './apis/MemberManagementApis';
-
-// 제휴처 이용 내역 타입
-interface PartnerUsage {
-  brand: string;
-  amount: string;
-  date: string;
-}
-
-// 제휴처 이용 내역 샘플 데이터
-const partnerUsageData: PartnerUsage[] = [
-  {
-    brand: 'GS25',
-    amount: '3,000원',
-    date: '25.07.01',
-  },
-  {
-    brand: '세븐일레븐',
-    amount: '13,000원',
-    date: '25.07.05',
-  },
-  {
-    brand: '파리바게트',
-    amount: '73,000원',
-    date: '25.07.10',
-  },
-  {
-    brand: '롯데월드',
-    amount: '53,000원',
-    date: '25.07.11',
-  },
-  {
-    brand: '야놀자 글리우드캠프앤글램핑코아...',
-    amount: '23,000원',
-    date: '25.07.11',
-  },
-  {
-    brand: 'GS25',
-    amount: '3,000원',
-    date: '25.07.01',
-  },
-  {
-    brand: '세븐일레븐',
-    amount: '13,000원',
-    date: '25.07.05',
-  },
-  {
-    brand: '파리바게트',
-    amount: '73,000원',
-    date: '25.07.10',
-  },
-  {
-    brand: '롯데월드',
-    amount: '53,000원',
-    date: '25.07.11',
-  },
-  {
-    brand: '야놀자 글리우드캠프앤글램핑코아...',
-    amount: '23,000원',
-    date: '25.07.11',
-  },
-];
 
 const MemberManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -272,16 +211,29 @@ const MemberManagement = () => {
 
   // 테이블 컬럼 정의
   const columns = [
-    { key: 'name', label: '회원 구분', width: '120px' },
-    { key: 'nickname', label: '회원명', width: '140px' },
+    {
+      key: 'userType',
+      label: '회원 구분',
+      width: '120px',
+      render: (value: unknown) => {
+        const userType = value as 'LINKED' | 'STANDARD';
+        return userType === 'LINKED' ? 'U+ 연동' : '일반';
+      },
+    },
+    { key: 'name', label: '회원명', width: '140px' },
     {
       key: 'grade',
       label: '등급',
       width: '100px',
+      render: (value: unknown) => {
+        const grade = value as 'VVIP' | 'VIP' | 'BASIC' | null;
+        if (grade === 'BASIC') return '우수';
+        return grade || '-';
+      },
     },
     { key: 'email', label: '이메일', width: '300px' },
-    { key: 'phone', label: '전화 번호', width: '160px' },
-    { key: 'joinDate', label: '생성일자', width: '140px' },
+    { key: 'phoneNumber', label: '전화 번호', width: '160px' },
+    { key: 'birthday', label: '생년월일', width: '140px' },
     {
       key: 'actions',
       label: '',
@@ -417,7 +369,7 @@ const MemberManagement = () => {
         isOpen={showPartnerModal}
         member={selectedMember}
         onClose={handleCloseModal}
-        partnerUsageData={partnerUsageData}
+        partnerUsageData={[]}
       />
     </div>
   );

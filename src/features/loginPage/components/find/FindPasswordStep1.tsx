@@ -1,68 +1,82 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from 'gsap';
 import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
+import ToggleTab from '../common/FindToggleTab';
+import { showToast } from '../../../../utils/toast';
 
 type Props = {
   email: string;
   onChangeEmail: (val: string) => void;
-  registrationId: string;
   onClickTabEmail: () => void;
-  onGoNextStep: () => void;
+  onGoToLogin: () => void;
+  onGoNextStep: (resetToken: string) => void;
 };
 
 const FindPasswordStep1 = ({
   email,
   onChangeEmail,
-  registrationId,
   onClickTabEmail,
+  onGoToLogin,
   onGoNextStep,
 }: Props) => {
   const [emailVerified, setEmailVerified] = useState(false);
+  const [resetToken, setResetToken] = useState('');
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      wrapperRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' }
+    );
+  }, []);
+
+  const handleVerificationComplete = (verified: boolean) => {
+    setEmailVerified(verified);
+    if (verified) {
+      showToast('이메일 인증이 완료되었습니다.', 'success');
+    }
+  };
+
+  const handleNextClick = () => {
+    if (emailVerified && resetToken) {
+      onGoNextStep(resetToken);
+    }
+  };
 
   return (
-    <div className="w-[320px] mx-auto flex flex-col items-center">
-      {/* 상단 탭 */}
-      <div className="relative w-[320px] h-[50px] flex justify-between items-center bg-grey01 rounded-[18px] p-[4px]">
-        <button
-          className="w-[153px] h-[42px] text-grey05 rounded-[18px] text-title-6"
-          onClick={onClickTabEmail}
-        >
-          아이디 찾기
-        </button>
-        <button className="w-[153px] h-[42px] bg-white text-purple04 rounded-[18px] text-title-6">
-          비밀번호 찾기
-        </button>
-      </div>
+    <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
+      <ToggleTab active="password" onClickEmail={onClickTabEmail} onClickPassword={() => {}} />
 
       <p className="text-title-6 text-grey05 mt-[40px]">
-        가입한 이메일로 <strong>인증 번호를</strong>전송해드렸어요.
+        인증을 위해 <strong>가입된 이메일을</strong> 입력해주세요.
       </p>
 
-      {/* 이메일 인증 */}
       <div className="mt-[20px]">
         <EmailVerificationBox
           email={email}
           onChangeEmail={onChangeEmail}
-          registrationId={registrationId}
-          onVerifiedChange={setEmailVerified}
+          onVerifiedChange={handleVerificationComplete}
+          mode="reset"
+          onResetTokenChange={setResetToken}
         />
       </div>
 
-      {/* 확인 버튼 */}
       <AuthButton
-        label="확인"
-        onClick={onGoNextStep}
-        variant={emailVerified ? 'default' : 'disabled'}
+        label="다음"
+        onClick={handleNextClick}
+        variant={emailVerified && resetToken ? 'default' : 'disabled'}
         className="mt-[150px]"
       />
 
-      {/* 로그인 링크 */}
       <div className="mt-[8px] w-full">
         <AuthFooter
           leftText="이미 회원이신가요?"
           rightText="로그인 하러 가기"
-          onRightClick={onClickTabEmail}
+          onRightClick={onGoToLogin} // 로그인 페이지로 이동하도록 수정
         />
       </div>
     </div>

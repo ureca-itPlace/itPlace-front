@@ -11,7 +11,7 @@ export default function BenefitFilterToggle({
   value,
   onChange,
   width = 'w-[300px]',
-  fontSize = 'text-sm',
+  fontSize = 'text-title-7',
 }: BenefitFilterToggleProps) {
   return (
     <div className={`flex ${width} h-[50px] mb-6 bg-grey01 rounded-[10px] p-[4px]`}>

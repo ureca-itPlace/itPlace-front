@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { TbRefresh, TbExternalLink, TbChevronUp, TbChevronDown } from 'react-icons/tb';
+import { TbRefresh, TbExternalLink } from 'react-icons/tb';
 import { debounce } from 'lodash';
 import StatisticsCard from '../../../../components/common/StatisticsCard';
 import SearchBar from '../../../../components/common/SearchBar';
@@ -7,7 +7,7 @@ import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
 import Pagination from '../../../../components/common/Pagination';
-import PartnerDetailModal from './PartnerDetailModal';
+import PartnerDetailModal from './components/PartnerDetailModal';
 import {
   Partner,
   searchPartnersWithPagination,
@@ -26,10 +26,6 @@ const PartnershipManagement = () => {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [sortField, setSortField] = useState<'searchRank' | 'favoriteRank' | 'usageRank' | null>(
-    null
-  );
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const itemsPerPage = 8;
 
   // 페이지네이션 정보 상태
@@ -48,9 +44,7 @@ const PartnershipManagement = () => {
           page,
           itemsPerPage,
           selectedCategory || undefined,
-          selectedBenefitType || undefined,
-          sortField || undefined,
-          sortDirection
+          selectedBenefitType || undefined
         );
         setPartners(response.data);
         setTotalItems(response.totalItems);
@@ -61,7 +55,7 @@ const PartnershipManagement = () => {
         setIsLoading(false);
       }
     },
-    [selectedCategory, selectedBenefitType, sortField, sortDirection]
+    [selectedCategory, selectedBenefitType]
   );
 
   // 초기 데이터 로드
@@ -86,28 +80,19 @@ const PartnershipManagement = () => {
   }, [loadPartners]);
 
   // 검색 API 호출 함수
-  const searchPartners = useCallback(
-    async (searchQuery: string) => {
-      setIsLoading(true);
-      try {
-        const response = await searchPartnersWithPagination(
-          searchQuery,
-          1,
-          itemsPerPage,
-          sortField || undefined,
-          sortDirection
-        );
-        setPartners(response.data);
-        setTotalItems(response.totalItems);
-        setCurrentPage(1);
-      } catch (error) {
-        console.error('검색 API 호출 실패:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [sortField, sortDirection]
-  );
+  const searchPartners = useCallback(async (searchQuery: string) => {
+    setIsLoading(true);
+    try {
+      const response = await searchPartnersWithPagination(searchQuery, 1, itemsPerPage);
+      setPartners(response.data);
+      setTotalItems(response.totalItems);
+      setCurrentPage(1);
+    } catch (error) {
+      console.error('검색 API 호출 실패:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   // 디바운스된 검색 함수
   const debouncedSearch = useMemo(
@@ -161,31 +146,6 @@ const PartnershipManagement = () => {
     }
   }, [selectedCategory, selectedBenefitType, debouncedSearchTerm, loadPartners]);
 
-  // 정렬 핸들러
-  const handleSort = (field: 'searchRank' | 'favoriteRank' | 'usageRank') => {
-    if (sortField === field) {
-      if (sortDirection === 'asc') {
-        setSortDirection('desc');
-      } else {
-        setSortField(null);
-        setSortDirection('asc');
-      }
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-    setCurrentPage(1);
-  };
-
-  // 정렬 변경 시 데이터 다시 로드
-  useEffect(() => {
-    if (!debouncedSearchTerm) {
-      loadPartners(1);
-    } else {
-      searchPartners(debouncedSearchTerm);
-    }
-  }, [sortField, sortDirection, debouncedSearchTerm, loadPartners, searchPartners]);
-
   // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
     if (debouncedSearchTerm) {
@@ -196,9 +156,7 @@ const PartnershipManagement = () => {
           const response = await searchPartnersWithPagination(
             debouncedSearchTerm,
             pageNumber,
-            itemsPerPage,
-            sortField || undefined,
-            sortDirection
+            itemsPerPage
           );
           setPartners(response.data);
           setTotalItems(response.totalItems);
@@ -247,8 +205,6 @@ const PartnershipManagement = () => {
   const handleFilterReset = () => {
     setSelectedCategory(null);
     setSelectedBenefitType(null);
-    setSortField(null);
-    setSortDirection('asc');
     setCurrentPage(1);
     setShowFilterDropdown(false);
   };
@@ -258,38 +214,10 @@ const PartnershipManagement = () => {
     return <span className="text-body-2 font-medium">{benefitType}</span>;
   };
 
-  // 정렬 아이콘 렌더링 함수
-  const renderSortIcon = (field: 'searchRank' | 'favoriteRank' | 'usageRank') => {
-    if (sortField !== field) {
-      return (
-        <div className="flex flex-col ml-2">
-          <TbChevronUp size={16} className="text-grey05" />
-          <TbChevronDown size={16} className="text-grey05 -mt-1" />
-        </div>
-      );
-    }
-
-    if (sortDirection === 'asc') {
-      return (
-        <div className="flex flex-col ml-2">
-          <TbChevronUp size={16} className="text-orange04" />
-          <TbChevronDown size={16} className="text-grey05 -mt-1" />
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex flex-col ml-2">
-          <TbChevronUp size={16} className="text-grey05" />
-          <TbChevronDown size={16} className="text-orange04 -mt-1" />
-        </div>
-      );
-    }
-  };
-
   // 테이블 컬럼 정의
   const columns = [
     {
-      key: 'logo',
+      key: 'image',
       label: '로고',
       width: '80px',
       align: 'center' as const,
@@ -303,10 +231,10 @@ const PartnershipManagement = () => {
         </div>
       ),
     },
-    { key: 'brand', label: '제휴처명', width: '240px' },
-    { key: 'category', label: '카테고리', width: '120px' },
+    { key: 'partnerName', label: '제휴처명', width: '240px' },
+    { key: 'mainCategory', label: '카테고리', width: '120px' },
     {
-      key: 'benefitType',
+      key: 'type',
       label: '혜택 유형',
       width: '120px',
       render: (value: unknown) => renderBenefitType(value as string),
@@ -315,18 +243,6 @@ const PartnershipManagement = () => {
       key: 'searchRank',
       label: '검색 순위',
       width: '120px',
-      sortable: true,
-      headerRender: () => (
-        <button
-          onClick={() => handleSort('searchRank')}
-          className={`flex items-center justify-start transition-colors duration-150 ${
-            sortField === 'searchRank' ? 'text-orange04 rounded-[4px]' : 'text-grey05'
-          }`}
-        >
-          <span>검색 순위</span>
-          {renderSortIcon('searchRank')}
-        </button>
-      ),
       render: (value: unknown) => (
         <span className="text-caption-1 text-left block">{value as number}위</span>
       ),
@@ -335,18 +251,6 @@ const PartnershipManagement = () => {
       key: 'favoriteRank',
       label: '즐겨찾기 순위',
       width: '120px',
-      sortable: true,
-      headerRender: () => (
-        <button
-          onClick={() => handleSort('favoriteRank')}
-          className={`flex items-center justify-start transition-colors duration-150 ${
-            sortField === 'favoriteRank' ? ' text-orange04 rounded-[4px]' : 'text-grey05'
-          }`}
-        >
-          <span>즐겨찾기 순위</span>
-          {renderSortIcon('favoriteRank')}
-        </button>
-      ),
       render: (value: unknown) => (
         <span className="text-caption-1 text-left block">{value as number}위</span>
       ),
@@ -355,18 +259,6 @@ const PartnershipManagement = () => {
       key: 'usageRank',
       label: '이용 순위',
       width: '120px',
-      sortable: true,
-      headerRender: () => (
-        <button
-          onClick={() => handleSort('usageRank')}
-          className={`flex items-center justify-start transition-colors duration-150 ${
-            sortField === 'usageRank' ? ' text-orange04 rounded-[4px]' : 'text-grey05'
-          }`}
-        >
-          <span>이용 순위</span>
-          {renderSortIcon('usageRank')}
-        </button>
-      ),
       render: (value: unknown) => (
         <span className="text-caption-1 text-left block">{value as number}위</span>
       ),

@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setLoginSuccess } from '../../../../store/authSlice';
+import { showToast } from '../../../../utils/toast';
+import { login } from '../../apis/auth';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import AuthLinkRow from '../common/AuthLinkRow';
 import AuthDivider from '../common/AuthDivider';
 import KakaoLoginButton from './KakaoLoginButton';
-import { login } from '../../apis/auth';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   onGoToPhoneAuth: () => void;
@@ -12,18 +16,24 @@ type Props = {
 };
 
 const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      console.log('로그인 요청 중...');
-      const response = await login(email, password); //바인딩된 axios API 호출
-      console.log('로그인 성공:', response.data);
-      // 로그인 성공 후 토큰 저장, 라우팅 등 처리
-    } catch (error) {
-      console.error('로그인 실패:', error);
-      // 사용자에게 실패 알림 표시
+      const response = await login(email, password);
+      const { code, data } = response.data;
+
+      if (code === 'LOGIN_SUCCESS') {
+        dispatch(setLoginSuccess(data));
+        navigate('/');
+      } else {
+        showToast('로그인에 실패하셨습니다.', 'error');
+      }
+    } catch {
+      showToast('로그인에 실패하셨습니다.', 'error');
     }
   };
 
@@ -63,7 +73,6 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
         <AuthLinkRow onGoToPhoneAuth={onGoToPhoneAuth} onGoToFindEmail={onGoToFindEmail} />
         <AuthDivider />
-
         <KakaoLoginButton onClick={handleKakaoLogin} />
       </div>
     </div>

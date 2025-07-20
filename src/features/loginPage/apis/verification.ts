@@ -9,42 +9,28 @@ export const sendVerificationCode = async (name: string, phoneNumber: string) =>
 
 //인증번호 확인
 export const checkVerificationCode = async ({
-  registrationId,
   phoneNumber,
   verificationCode,
 }: {
-  registrationId: string;
   phoneNumber: string;
   verificationCode: string;
 }) => {
   return await api.post('api/v1/verification/sms/confirm', {
-    registrationId,
     phoneNumber,
     verificationCode,
   });
 };
 
 //이메일 인증번호 전송 요청
-export const sendEmailVerificationCode = async ({
-  email,
-  registrationId,
-}: {
-  email: string;
-  registrationId: string;
-}) => {
+export const sendEmailVerificationCode = async ({ email }: { email: string }) => {
   return await api.post('api/v1/verification/email', {
-    registrationId,
     email,
   });
 };
 
-export const checkEmailVerificationCode = async (
-  email: string,
-  verificationCode: string,
-  registrationId: string
-) => {
+//이메일 인증번호 확인
+export const checkEmailVerificationCode = async (email: string, verificationCode: string) => {
   return await api.post('api/v1/verification/email/confirm', {
-    registrationId,
     email,
     verificationCode,
   });

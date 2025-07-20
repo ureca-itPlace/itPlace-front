@@ -13,6 +13,7 @@ export const AuthTransition = () => {
     | 'signUp'
     | 'signUpFinal'
     | 'findEmail'
+    | 'findPassword'
     | 'oauthIntegration'
   >('login');
 
@@ -91,8 +92,10 @@ export const AuthTransition = () => {
   // 회원가입 완료 단계 (같은 카드 내 내부 전환)
   const goToSignUpFinal = () => setFormStep('signUpFinal');
 
-  // 이메일 찾기 결과 화면 (같은 카드 내 내부 전환)
-  const goToFindEmail = () => setFormStep('findEmail');
+  // 이메일 찾기 결과 화면 (애니메이션 포함)
+  const goToFindEmail = () => animateToRight('findEmail');
+
+  const goToFindPassword = () => animateToRight('findPassword');
 
   return {
     formStep,
@@ -105,5 +108,6 @@ export const AuthTransition = () => {
     goToSignUp,
     goToSignUpFinal,
     goToFindEmail,
+    goToFindPassword,
   };
 };

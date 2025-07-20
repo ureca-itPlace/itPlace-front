@@ -1,4 +1,4 @@
-import { WishlistItem } from './types';
+import { WishlistItem } from '../../../types/types';
 
 interface WishlistChartProps {
   title: string;
@@ -15,7 +15,7 @@ const WishlistChart = ({
   width = 836,
   height = 345,
 }: WishlistChartProps) => {
-  const maxValue = Math.max(...data.map((d) => d.value));
+  const maxValue = Math.max(...data.map((d) => d.favoriteCount));
 
   return (
     <div className="bg-white p-6 rounded-[18px]" style={{ width, height }}>
@@ -26,11 +26,11 @@ const WishlistChart = ({
       </h3>
       <div className="space-y-[24px]">
         {data.map((item, index) => {
-          const barWidth = (item.value / maxValue) * 100;
+          const barWidth = (item.favoriteCount / maxValue) * 100;
 
           return (
             <div key={index} className="flex items-center">
-              <span className="text-body-1 w-28 flex-shrink-0 truncate">{item.name}</span>
+              <span className="text-body-1 w-28 flex-shrink-0 truncate">{item.partnerName}</span>
               <div className="flex-1 mx-6">
                 <div className="relative h-6 bg-grey01 rounded-full">
                   <div
@@ -47,7 +47,7 @@ const WishlistChart = ({
                 </div>
               </div>
               <span className="text-body-2 text-black w-24 text-right flex-shrink-0">
-                ({item.value}회)
+                ({item.favoriteCount}회)
               </span>
             </div>
           );
