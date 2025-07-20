@@ -13,3 +13,8 @@ export type VideoSectionProps = {
   onVideoEnd: () => void;
   videoBoxRef: React.RefObject<HTMLDivElement | null>;
 };
+
+export type FeatureSectionProps = {
+  videoEnded: boolean;
+  setVideoEnded: React.Dispatch<React.SetStateAction<boolean>>;
+};

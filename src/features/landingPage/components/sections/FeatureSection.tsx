@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -6,14 +6,15 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import PurpleCircle from '../common/PurpleCircle';
 import VideoSection from './VideoSection';
 
+import { FeatureSectionProps } from '../../types/landing.types.ts';
+
 gsap.registerPlugin(ScrollTrigger);
 
-const FeatureSection = () => {
+const FeatureSection = ({ videoEnded, setVideoEnded }: FeatureSectionProps) => {
   const circleRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const videoBoxRef = useRef<HTMLDivElement>(null); // 추가
-
-  const [videoEnded, setVideoEnded] = useState(false);
+  const videoBoxRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useGSAP(() => {
     if (!circleRef.current || !sectionRef.current || !videoBoxRef.current) return;
@@ -29,6 +30,7 @@ const FeatureSection = () => {
           end: '+=500',
           scrub: 0.5,
           pin: true,
+          anticipatePin: 1,
           markers: true,
         },
         ease: 'none',
@@ -47,7 +49,36 @@ const FeatureSection = () => {
       },
       ease: 'power1.inOut',
     });
-  }, []);
+
+    ScrollTrigger.create({
+      trigger: sectionRef.current,
+      start: 'top bottom',
+      end: 'center top',
+      onUpdate: (self) => {
+        const video = videoRef.current;
+        const progress = self.progress;
+        if (!video) return;
+        // 아래로 스크롤, 거의 끝에 도달했을 때 영상 재생
+        if (self.direction === 1 && !videoEnded && video.paused && progress > 0.95) {
+          video.play().catch((err) => {
+            console.log('비디오 재생 실패:', err);
+          });
+        }
+        // 위로 스크롤 시 영상 정지
+        if (self.direction === -1 && !videoEnded && !video.paused) {
+          video.pause();
+        }
+      },
+      onLeaveBack: () => {
+        const video = videoRef.current;
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
+        }
+        setVideoEnded(false);
+      },
+    });
+  }, [videoEnded]);
 
   return (
     <section
@@ -60,6 +91,7 @@ const FeatureSection = () => {
           setVideoEnded(true);
         }}
         videoBoxRef={videoBoxRef}
+        ref={videoRef}
       />
       <PurpleCircle ref={circleRef} />
     </section>
