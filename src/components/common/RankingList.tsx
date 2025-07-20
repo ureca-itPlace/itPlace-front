@@ -1,4 +1,4 @@
-import { RankingItem } from '../../features/adminPage/components/Dashboard/types';
+import { RankingItem } from '../../features/adminPage/types/types';
 
 interface RankingListProps {
   title: string;

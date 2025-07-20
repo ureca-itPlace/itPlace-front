@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { ClickDataItem } from './types';
+import { ClickDataItem } from '../../../types/types';
 
 interface ClickStatisticsProps {
   title: string;

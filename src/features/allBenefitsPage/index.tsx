@@ -1,6 +1,6 @@
 import React from 'react';
-import EventBanner from './EventBanner';
-import SimpleRanking from './SimpleRanking';
+import EventBanner from './components/EventBanner';
+import SimpleRanking from './components/SimpleRanking';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { debounce } from 'lodash';
 import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
@@ -21,7 +21,7 @@ import BenefitDetailModal from './components/BenefitDetailModal';
 
 const AllBenefitsLayout: React.FC = () => {
   // 중요 !!!!!! 개발 모드 설정 (true: Mock 데이터 사용, false: 실제 API 사용)
-  const USE_MOCK_DATA = true;
+  const USE_MOCK_DATA = false;
 
   // 임시 사용자 ID (실제로는 인증 상태에서 가져와야 함)
   const userId = 1;
@@ -54,7 +54,12 @@ const AllBenefitsLayout: React.FC = () => {
         };
 
         if (keyword) params.keyword = keyword;
-        if (category && category !== '전체') params.category = category;
+        if (category && category !== '전체') {
+          // 카테고리명 매핑
+          let apiCategory = category;
+          if (category === '액티비티') apiCategory = '엑티비티';
+          params.category = apiCategory;
+        }
         if (filterType && filterType !== '전체') {
           params.filter = filterType === '온라인' ? 'ONLINE' : 'OFFLINE';
         }
@@ -291,7 +296,7 @@ const AllBenefitsLayout: React.FC = () => {
         {/* 추후 다른 컴포넌트 추가 시 여기에 배치 */}
       </div>
       <div className="pt-7 px-7">
-        <div className="w-[1783px] flex items-center justify-between">
+        <div className="w-[1783px] flex items-start justify-between">
           <BenefitFilterToggle value={filter} onChange={setFilter} />
           <div className="flex gap-2">
             <SearchBar
@@ -365,7 +370,7 @@ const AllBenefitsLayout: React.FC = () => {
               <div className="text-grey03">검색 중...</div>
             </div>
           )}
-          <div className="w-[1783px] grid grid-cols-3 gap-[17px] min-h-[683px]">
+          <div className="w-[1783px] grid grid-cols-3 gap-[17px]">
             {benefits.length > 0 ? (
               benefits.map((benefit) => (
                 <div
@@ -374,11 +379,21 @@ const AllBenefitsLayout: React.FC = () => {
                   onClick={() => handleCardClick(benefit)}
                 >
                   {/* 왼쪽 콘텐츠 */}
-                  <div className="flex flex-col ">
-                    <h3 className="text-title-4 text-black mb-2">{benefit.benefitName}</h3>
-                    <p className="text-body-0 text-grey05 whitespace-pre-line">
-                      {getBenefitDescription(benefit.tierBenefits)}
-                    </p>
+                  <div className="flex flex-col flex-1 mr-4 overflow-hidden">
+                    <h3 className="text-title-4 text-black mb-2 truncate">{benefit.benefitName}</h3>
+                    <div className="text-body-0 text-grey05 overflow-hidden">
+                      <div
+                        className="line-clamp-4"
+                        style={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 4,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {getBenefitDescription(benefit.tierBenefits)}
+                      </div>
+                    </div>
                   </div>
 
                   {/* 오른쪽 로고 및 즐겨찾기 */}
