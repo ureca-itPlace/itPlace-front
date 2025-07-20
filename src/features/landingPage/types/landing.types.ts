@@ -11,4 +11,5 @@ export type IntroAnimationProps = {
 
 export type VideoSectionProps = {
   onVideoEnd: () => void;
+  videoBoxRef: React.RefObject<HTMLDivElement | null>;
 };

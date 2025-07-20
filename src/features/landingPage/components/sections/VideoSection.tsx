@@ -1,9 +1,5 @@
 import { forwardRef } from 'react';
-
-type VideoSectionProps = {
-  onVideoEnd: () => void;
-  videoBoxRef: React.RefObject<HTMLDivElement | null>;
-};
+import { VideoSectionProps } from '../../types/landing.types.ts';
 
 const VideoSection = forwardRef<HTMLVideoElement, VideoSectionProps>(
   ({ onVideoEnd, videoBoxRef }, ref) => {
@@ -18,8 +14,8 @@ const VideoSection = forwardRef<HTMLVideoElement, VideoSectionProps>(
             ref={ref}
             src="/videos/hero-rabbit.mp4"
             muted
-            loop
-            autoPlay
+            loop={false}
+            autoPlay={false}
             playsInline
             onEnded={onVideoEnd}
             className="w-full h-screen inset-0 object-cover"
