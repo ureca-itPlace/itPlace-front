@@ -59,7 +59,7 @@ const FeatureSection = ({ videoEnded, setVideoEnded }: FeatureSectionProps) => {
         const progress = self.progress;
         if (!video) return;
         // 아래로 스크롤, 거의 끝에 도달했을 때 영상 재생
-        if (self.direction === 1 && !videoEnded && video.paused && progress > 0.95) {
+        if (self.direction === 1 && !videoEnded && video.paused && progress > 0.7) {
           video.play().catch((err) => {
             console.log('비디오 재생 실패:', err);
           });
@@ -80,12 +80,12 @@ const FeatureSection = ({ videoEnded, setVideoEnded }: FeatureSectionProps) => {
     });
 
     ScrollTrigger.refresh();
-  }, [videoEnded]);
+  }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen bg-gray-800 overflow-hidden text-white flex items-center justify-center"
+      className="relative w-full h-screen bg-black overflow-hidden text-white flex items-center justify-center"
     >
       <div className="w-full h-full flex gap-96 items-center justify-center max-sm:flex-col">
         <div className="flex flex-col gap-28 text-[64px] ml-36">
