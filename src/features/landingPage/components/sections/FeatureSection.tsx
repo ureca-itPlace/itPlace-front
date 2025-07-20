@@ -1,19 +1,22 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import PurpleCircle from '../common/PurpleCircle';
+import VideoSection from './VideoSection';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const FeatureSection = () => {
   const circleRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const videoBoxRef = useRef<HTMLDivElement>(null); // 추가
 
-  // GSAP 애니메이션
+  const [videoEnded, setVideoEnded] = useState(false);
+
   useGSAP(() => {
-    if (!circleRef.current || !sectionRef.current) return;
+    if (!circleRef.current || !sectionRef.current || !videoBoxRef.current) return;
 
     gsap.fromTo(
       circleRef.current,
@@ -26,21 +29,40 @@ const FeatureSection = () => {
           end: '+=500',
           scrub: 0.5,
           pin: true,
-          markers: true, // 개발 후 삭제하기
+          markers: true,
         },
         ease: 'none',
       }
     );
+
+    gsap.to(videoBoxRef.current, {
+      clipPath: 'circle(100% at 50% 50%)',
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'center center',
+        end: '+=500',
+        scrub: 0.5,
+        pin: false,
+        markers: true,
+      },
+      ease: 'power1.inOut',
+    });
   }, []);
 
   return (
-    <div
+    <section
       ref={sectionRef}
-      className="relative w-full h-screen flex justify-center items-center text-white text-8xl bg-black overflow-hidden"
+      className="relative w-full h-screen bg-black overflow-hidden flex justify-center items-center text-white text-8xl"
     >
       기능 설명 섹션입니다
+      <VideoSection
+        onVideoEnd={() => {
+          setVideoEnded(true);
+        }}
+        videoBoxRef={videoBoxRef}
+      />
       <PurpleCircle ref={circleRef} />
-    </div>
+    </section>
   );
 };
 

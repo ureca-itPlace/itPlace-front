@@ -8,25 +8,18 @@ import IntroSection from '../features/landingPage/components/sections/IntroSecti
 import EarthSection from '../features/landingPage/components/sections/EarthSection';
 import MapSection from '../features/landingPage/components/sections/MapSection';
 import FeatureSection from '../features/landingPage/components/sections/FeatureSection';
-// import VideoSection from '../features/landingPage/components/sections/VideoSection';
 import StartCTASection from '../features/landingPage/components/sections/StartCTASection';
+
 import LoadLanding from '../features/landingPage/components/common/LoadLanding';
-// import PurpleCircle from '../features/landingPage/components/common/PurpleCircle';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
 const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [introEnded, setIntroEnded] = useState(false);
-  // const [videoEnded, setVideoEnded] = useState(false);
 
-  // const circleRef = useRef<HTMLDivElement>(null);
-  // const featureSectionRef = useRef<HTMLDivElement>(null);
-  // const videoMaskRef = useRef<HTMLDivElement>(null);
-  // const ctaRef = useRef<HTMLDivElement>(null);
-  // const videoRef = useRef<HTMLVideoElement>(null);
-
-  // const earthSectionRef = useRef<HTMLDivElement>(null);
+  const earthSectionRef = useRef<HTMLDivElement>(null);
+  const mapSectionRef = useRef<HTMLDivElement>(null);
 
   // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
@@ -40,31 +33,21 @@ const LandingPage = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!introEnded) {
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.documentElement.style.overflow = 'auto';
-      document.body.style.overflow = 'auto';
-    }
-    return () => {
-      document.documentElement.style.overflow = 'auto';
-      document.body.style.overflow = 'auto';
-    };
-  }, [introEnded]);
-
   if (isLoading) {
     return <LoadLanding />;
   }
 
   return (
-    <div className="relative">
+    <div className="relative overflow-x-hidden">
       {introEnded ? (
         <>
-          <EarthSection />
-          <MapSection />
+          <EarthSection ref={earthSectionRef} />
+          <MapSection ref={mapSectionRef} />
+
+          {/* 기능 섹션 */}
           <FeatureSection />
+
+          {/* CTA 섹션 */}
           <StartCTASection />
         </>
       ) : (
