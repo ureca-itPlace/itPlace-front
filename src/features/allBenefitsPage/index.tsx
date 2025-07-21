@@ -23,9 +23,6 @@ const AllBenefitsLayout: React.FC = () => {
   // 중요 !!!!!! 개발 모드 설정 (true: Mock 데이터 사용, false: 실제 API 사용)
   const USE_MOCK_DATA = false;
 
-  // 임시 사용자 ID (실제로는 인증 상태에서 가져와야 함)
-  const userId = 1;
-
   const [filter, setFilter] = useState<'default' | 'vipkok'>('default');
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -48,7 +45,6 @@ const AllBenefitsLayout: React.FC = () => {
       try {
         const params: BenefitApiParams = {
           mainCategory: filter === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT',
-          userId: userId, // 실제 사용자 ID 사용
           page: page,
           size: 9, // 3x3 그리드
         };
