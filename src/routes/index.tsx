@@ -14,7 +14,6 @@ import NotFoundPage from '../pages/NotFoundPage';
 import OAuthRedirectHandler from '../features/loginPage/layouts/OAuthRedirectHandler';
 import PublicRoute from '../features/loginPage/layouts/PublicRoute'; // PublicRoute import
 
-
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> }, // 기본 라우터
   { path: '/admin', element: <AdminPage /> },
