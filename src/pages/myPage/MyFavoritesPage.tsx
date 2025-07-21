@@ -39,8 +39,9 @@ export default function MyFavoritesPage() {
     <>
       <MyPageContentLayout
         // ✨ MainContent 영역
+
         main={
-          <div className="flex-shrink-0">
+          <div className="flex flex-col flex-1 h-full">
             {/* 상단 타이틀 */}
             <h1 className="text-title-2 text-black mb-7">찜한 혜택</h1>
 
@@ -126,7 +127,7 @@ export default function MyFavoritesPage() {
 
             {/* 페이지네이션 */}
             {currentItems.length > 0 && (
-              <div className="mt-auto relativ flex justify-center items-end">
+              <div className="mt-auto relative flex justify-center items-end">
                 <Pagination
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
