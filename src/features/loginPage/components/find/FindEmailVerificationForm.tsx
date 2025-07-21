@@ -6,6 +6,7 @@ import AuthButton from '../common/AuthButton';
 import { TbClock } from 'react-icons/tb';
 import { confirmFindEmail, sendFindEmailCode } from '../../apis/user';
 import { showToast } from '../../../../utils/toast';
+import LoadingSpinner from '../../../../components/common/LoadingSpinner'; // LoadingSpinner 가져오기
 
 type Props = {
   name: string;
@@ -138,9 +139,13 @@ const FindEmailVerificationForm = ({ name, phone, onSuccess }: Props) => {
             type="button"
             onClick={handleCheckCode}
             disabled={loading}
-            className="absolute right-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px]"
+            className="absolute right-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px] flex items-center justify-center"
           >
-            {loading ? '확인중' : '확인'}
+            {loading ? (
+              <LoadingSpinner className="h-5 w-5 border-2 border-white border-t-transparent" />
+            ) : (
+              '확인'
+            )}
           </button>
         </div>
         {codeError && <p className="w-[320px] text-danger text-body-3 mt-[6px]">{codeError}</p>}
