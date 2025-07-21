@@ -5,7 +5,7 @@ import {
   getStoreListByCategory,
   getCurrentLocation,
   getAddressFromCoordinates,
-} from '../components/SidebarList/api/storeApi';
+} from '../api/storeApi';
 import { convertStoreDataToPlatform } from '../utils/storeUtils';
 
 export const useStoreData = () => {
@@ -89,6 +89,9 @@ export const useStoreData = () => {
   // 지도 중심 위치 변경 시 위치 정보 업데이트
   const updateLocationFromMap = async (lat: number, lng: number) => {
     try {
+      // 새로운 좌표를 사용자 좌표로 설정
+      setUserCoords({ lat, lng });
+
       const address = await getAddressFromCoordinates(lat, lng);
       setCurrentLocation(address);
 

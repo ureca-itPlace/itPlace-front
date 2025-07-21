@@ -15,7 +15,7 @@ export const checkVerificationCode = async ({
   phoneNumber: string;
   verificationCode: string;
 }) => {
-  return await api.post('api/v1/verification/sms/confirm', {
+  return await api.post('/api/v1/verification/sms/confirm', {
     phoneNumber,
     verificationCode,
   });
@@ -23,14 +23,14 @@ export const checkVerificationCode = async ({
 
 //이메일 인증번호 전송 요청
 export const sendEmailVerificationCode = async ({ email }: { email: string }) => {
-  return await api.post('api/v1/verification/email', {
+  return await api.post('/api/v1/verification/email', {
     email,
   });
 };
 
 //이메일 인증번호 확인
 export const checkEmailVerificationCode = async (email: string, verificationCode: string) => {
-  return await api.post('api/v1/verification/email/confirm', {
+  return await api.post('/api/v1/verification/email/confirm', {
     email,
     verificationCode,
   });

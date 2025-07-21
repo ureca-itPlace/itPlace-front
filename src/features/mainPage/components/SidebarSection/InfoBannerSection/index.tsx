@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface InfoBannerProps {
+interface InfoBannerSectionProps {
   message: string;
   variant?: 'primary' | 'secondary';
 }
 
-const InfoBanner: React.FC<InfoBannerProps> = ({ message, variant = 'primary' }) => {
+const InfoBannerSection: React.FC<InfoBannerSectionProps> = ({ message, variant = 'primary' }) => {
   const borderColor = variant === 'primary' ? 'border-purple04' : 'border-grey02';
   const textColor = variant === 'primary' ? 'text-purple04' : 'text-grey05';
 
@@ -16,4 +16,4 @@ const InfoBanner: React.FC<InfoBannerProps> = ({ message, variant = 'primary' })
   );
 };
 
-export default InfoBanner;
+export default InfoBannerSection;

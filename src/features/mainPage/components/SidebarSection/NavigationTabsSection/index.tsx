@@ -5,13 +5,17 @@ interface Tab {
   label: string;
 }
 
-interface CategoryTabsProps {
+interface NavigationTabsSectionProps {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (tabId: string) => void;
 }
 
-const CategoryTabs: React.FC<CategoryTabsProps> = ({ tabs, activeTab, onTabChange }) => {
+const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
+  tabs,
+  activeTab,
+  onTabChange,
+}) => {
   return (
     <div className="flex gap-2">
       {tabs.map((tab) => (
@@ -31,4 +35,4 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({ tabs, activeTab, onTabChang
   );
 };
 
-export default CategoryTabs;
+export default NavigationTabsSection;

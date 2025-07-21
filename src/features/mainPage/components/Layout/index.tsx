@@ -1,14 +1,17 @@
 import React, { useState, useCallback } from 'react';
-import CategoryTags from '../CategoryTags';
-import KakaoMap from '../KakaoMap';
-import SidebarList from '../SidebarList';
+import SidebarSection from '../SidebarSection';
+import MapSection from '../MapSection';
 import { Platform, Category, MapLocation } from '../../types';
 import { useStoreData } from '../../hooks/useStoreData';
 
 const MainPageLayout: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]);
+  const [centerLocation, setCenterLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
 
   // 실제 카테고리 정의
   const categories: Category[] = [
@@ -41,7 +44,7 @@ const MainPageLayout: React.FC = () => {
       setSelectedPlatform(null);
 
       // API 기반 카테고리 필터링
-      const categoryValue = categoryId === 'all' ? null : categoryId;
+      const categoryValue = categoryId === '전체' ? null : categoryId;
       console.log('📡 API로 전달될 카테고리 값:', categoryValue);
       filterByCategory(categoryValue);
 
@@ -70,47 +73,46 @@ const MainPageLayout: React.FC = () => {
     [updateLocationFromMap]
   );
 
+  // 현재 위치로 이동 핸들러
+  const handleLocationMove = useCallback(
+    (latitude: number, longitude: number) => {
+      updateLocationFromMap(latitude, longitude);
+      // 지도 중심도 해당 위치로 이동
+      setCenterLocation({ latitude, longitude });
+    },
+    [updateLocationFromMap]
+  );
+
+  // 현 지도에서 검색 핸들러
+  const handleSearchInMap = useCallback(() => {
+    // 현 지도에서 검색 로직 (추후 구현)
+    console.log('현 지도에서 검색 클릭됨');
+  }, []);
+
   return (
     <div className="h-screen flex items-center justify-center gap-6 bg-grey01 p-6">
-      {/* 사이드바 */}
-      <div className="bg-white flex flex-col overflow-hidden w-[370px] h-[891px] rounded-[18px] drop-shadow-basic">
-        <SidebarList
-          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-          selectedPlatform={selectedPlatform}
-          onPlatformSelect={handlePlatformSelect}
-          isLoading={isLoading}
-          currentLocation={currentLocation}
-          error={error}
-        />
-      </div>
+      <SidebarSection
+        platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+        selectedPlatform={selectedPlatform}
+        onPlatformSelect={handlePlatformSelect}
+        currentLocation={currentLocation}
+        isLoading={isLoading}
+        error={error}
+      />
 
-      {/* 지도 영역 */}
-      <div className="relative">
-        {/* 카테고리 태그 - 지도 위 오버레이 */}
-        <div className="absolute top-4 left-5 z-10">
-          <CategoryTags
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={handleCategorySelect}
-          />
-        </div>
-
-        <KakaoMap
-          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-          selectedPlatform={selectedPlatform}
-          onPlatformSelect={handlePlatformSelect}
-          onLocationChange={handleLocationChange}
-          onMapCenterChange={handleMapCenterChange}
-        />
-
-        {/* 현재 지도에서 검색 버튼 */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10">
-          <button className="bg-purple04 text-white px-6 py-3 rounded-full shadow-lg hover:bg-purple05 transition-colors duration-200 flex items-center space-x-2">
-            <span>🔍</span>
-            <span>현 지도에서 검색</span>
-          </button>
-        </div>
-      </div>
+      <MapSection
+        platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+        selectedPlatform={selectedPlatform}
+        onPlatformSelect={handlePlatformSelect}
+        onLocationChange={handleLocationChange}
+        onMapCenterChange={handleMapCenterChange}
+        onLocationMove={handleLocationMove}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategorySelect={handleCategorySelect}
+        onSearchInMap={handleSearchInMap}
+        centerLocation={centerLocation}
+      />
     </div>
   );
 };

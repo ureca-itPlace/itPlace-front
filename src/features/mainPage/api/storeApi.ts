@@ -1,5 +1,5 @@
-import api from '../../../../../apis/axiosInstance';
-import { StoreApiResponse, StoreListParams, KakaoAddressResponse } from '../../../types/api';
+import api from '../../../apis/axiosInstance';
+import { StoreApiResponse, StoreListParams, KakaoAddressResponse } from '../types/api';
 
 const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY; // Vite 환경변수에서 카카오 REST API 키 가져오기
 

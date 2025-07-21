@@ -11,7 +11,7 @@ export const signUpFinal = async (payload: {
   birthday: string;
   membershipId: string;
 }) => {
-  return await api.post('api/v1/auth/signUp', payload);
+  return await api.post('/api/v1/auth/signUp', payload);
 };
 
 // 인증번호 요청

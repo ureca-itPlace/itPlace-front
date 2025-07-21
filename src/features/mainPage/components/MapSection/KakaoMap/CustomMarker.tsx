@@ -11,7 +11,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ imageUrl, name, isSelected 
     <div className="relative">
       {/* 상자 부분 */}
       <div
-        className={`w-[68px] h-[68px] rounded-[12px] bg-white flex items-center justify-center ${
+        className={`w-[68px] h-[68px] rounded-[12px] bg-white flex items-center justify-center relative z-10 ${
           isSelected ? 'ring-2 ring-purple04' : ''
         }`}
         style={{
@@ -33,9 +33,9 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ imageUrl, name, isSelected 
 
       {/* 삼각형 부분 */}
       <div
-        className="absolute left-1/2 transform -translate-x-1/2"
+        className="absolute left-1/2 transform -translate-x-1/2 z-0"
         style={{
-          top: '68px',
+          top: '60px',
           width: 0,
           height: 0,
           borderLeft: '8.5px solid transparent',
