@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Platform } from '../../../types';
-import { TbChevronDown, TbCheck } from 'react-icons/tb';
+import { TbChevronDown, TbCheck, TbChevronUp } from 'react-icons/tb';
 import { RootState } from '../../../../../store';
 import AddressTooltip from './AddressTooltip';
+import { showToast } from '../../../../../utils/toast';
 
 interface StoreCardProps {
   platform: Platform;
@@ -11,7 +12,7 @@ interface StoreCardProps {
   onSelect: (platform: Platform) => void;
 }
 
-const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect }) => {
+const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
   // Redux에서 사용자 등급 가져오기
   const membershipGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
 
@@ -23,7 +24,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect })
   const handleCopy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      // TODO: 복사 완료 토스트 메시지 추가 가능
+      showToast('복사가 완료되었습니다.', 'success');
     } catch (err) {
       console.error('복사 실패:', err);
     }
@@ -72,7 +73,11 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect })
                 }}
                 className="hover:text-grey05 transition-colors"
               >
-                <TbChevronDown size={16} className="text-grey04" />
+                {showAddressTooltip ? (
+                  <TbChevronUp size={16} className="text-grey04" />
+                ) : (
+                  <TbChevronDown size={16} className="text-grey04" />
+                )}
               </button>
 
               {/* 주소 툴팁 */}
