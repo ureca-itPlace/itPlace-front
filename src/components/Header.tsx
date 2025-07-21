@@ -11,11 +11,9 @@ import clsx from 'clsx';
 import { useLocation, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import api from '../apis/axiosInstance';
-
-type HeaderProps = {
-  isLoggedIn?: boolean;
-  variant?: 'default' | 'glass';
-};
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { logout } from '../store/authSlice';
 
 const menus = [
   { id: 'intro', label: '잇플 소개', icon: TbSparkles, path: '/' },
@@ -24,14 +22,21 @@ const menus = [
   { id: 'mypage', label: '마이페이지', icon: TbUser, path: '/mypage/info' },
 ];
 
-export default function Header({ isLoggedIn = false, variant = 'default' }: HeaderProps) {
+export default function Header({ variant = 'default' }: { variant?: 'default' | 'glass' }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   const handleLogout = async () => {
     try {
-      await api.post('/logout'); // 🚨 추후 api완성된 후 경로 수정 필요
-      navigate('/main'); // 로그아웃 후 메인페이지로 이동
+      // 로그아웃 API 호출
+      await api.post('api/v1/auth/logout');
+      // 상태 초기화
+      dispatch(logout());
+      // 페이지 이동
+      navigate('/main');
     } catch (err) {
       console.error('로그아웃 실패:', err);
     }
