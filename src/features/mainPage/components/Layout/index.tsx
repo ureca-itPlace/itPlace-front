@@ -12,6 +12,10 @@ const MainPageLayout: React.FC = () => {
     latitude: number;
     longitude: number;
   } | null>(null);
+  const [currentMapLevel, setCurrentMapLevel] = useState<number>(2); // 맵 레벨 상태 추가
+  const [currentMapCenter, setCurrentMapCenter] = useState<{ lat: number; lng: number } | null>(
+    null
+  ); // 지도 중심 저장
 
   // 실제 카테고리 정의
   const categories: Category[] = [
@@ -34,18 +38,17 @@ const MainPageLayout: React.FC = () => {
     error,
     updateLocationFromMap,
     filterByCategory,
+    searchInCurrentMap,
   } = useStoreData();
 
   // 카테고리 선택 핸들러
   const handleCategorySelect = useCallback(
     (categoryId: string) => {
-      console.log('🔍 카테고리 선택됨:', categoryId);
       setSelectedCategory(categoryId);
       setSelectedPlatform(null);
 
       // API 기반 카테고리 필터링
       const categoryValue = categoryId === '전체' ? null : categoryId;
-      console.log('📡 API로 전달될 카테고리 값:', categoryValue);
       filterByCategory(categoryValue);
 
       // 검색 결과 초기화
@@ -60,14 +63,17 @@ const MainPageLayout: React.FC = () => {
   }, []);
 
   // 사용자 위치 변경 핸들러 (초기 위치)
-  const handleLocationChange = useCallback(() => {
-    // 초기 플랫폼 목록은 API에서 로드됨
+  const handleLocationChange = useCallback((location: MapLocation) => {
+    // 초기 지도 중심 설정
+    setCurrentMapCenter({ lat: location.latitude, lng: location.longitude });
     setFilteredPlatforms([]);
   }, []);
 
   // 지도 중심 변경 핸들러 (지도 드래그 시)
   const handleMapCenterChange = useCallback(
     (location: MapLocation) => {
+      // 현재 지도 중심 저장 (API 호출은 안 함)
+      setCurrentMapCenter({ lat: location.latitude, lng: location.longitude });
       updateLocationFromMap(location.latitude, location.longitude);
     },
     [updateLocationFromMap]
@@ -85,8 +91,14 @@ const MainPageLayout: React.FC = () => {
 
   // 현 지도에서 검색 핸들러
   const handleSearchInMap = useCallback(() => {
-    // 현 지도에서 검색 로직 (추후 구현)
-    console.log('현 지도에서 검색 클릭됨');
+    if (currentMapCenter && searchInCurrentMap) {
+      searchInCurrentMap(currentMapCenter.lat, currentMapCenter.lng, currentMapLevel);
+    }
+  }, [currentMapCenter, currentMapLevel, searchInCurrentMap]);
+
+  // 맵 레벨 변경 핸들러
+  const handleMapLevelChange = useCallback((mapLevel: number) => {
+    setCurrentMapLevel(mapLevel);
   }, []);
 
   return (
@@ -112,6 +124,7 @@ const MainPageLayout: React.FC = () => {
         onCategorySelect={handleCategorySelect}
         onSearchInMap={handleSearchInMap}
         centerLocation={centerLocation}
+        onMapLevelChange={handleMapLevelChange}
       />
     </div>
   );

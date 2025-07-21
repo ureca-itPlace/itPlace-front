@@ -79,6 +79,7 @@ interface KakaoMapProps {
   onLocationChange?: (location: MapLocation) => void;
   onMapCenterChange?: (location: MapLocation) => void;
   centerLocation?: { latitude: number; longitude: number } | null;
+  onMapLevelChange?: (mapLevel: number) => void;
 }
 
 const KakaoMap: React.FC<KakaoMapProps> = ({
@@ -88,6 +89,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   onLocationChange,
   onMapCenterChange,
   centerLocation,
+  onMapLevelChange,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<KakaoMap | null>(null);
@@ -126,7 +128,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
     const initializeMap = () => {
       if (!window.kakao || !window.kakao.maps) {
-        console.error('카카오맵 API가 로드되지 않았습니다.');
         return;
       }
 
@@ -140,7 +141,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       // 클러스터러 초기화
       if (window.kakao.maps.MarkerClusterer) {
-        console.log('🟢 클러스터러 초기화 중...');
         const clusterer = new window.kakao.maps.MarkerClusterer({
           map: map,
           averageCenter: true,
@@ -161,16 +161,15 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           ],
         });
         clustererRef.current = clusterer;
-        console.log('✅ 클러스터러 초기화 완료:', !!clustererRef.current);
-      } else {
-        console.log('❌ MarkerClusterer를 사용할 수 없습니다');
       }
 
       // 줌 변경 이벤트 리스너
       window.kakao.maps.event.addListener(map, 'zoom_changed', () => {
         const level = map.getLevel();
-        console.log('🗺️ 현재 줌 레벨:', level, level >= 7 ? '(클러스터링 적용)' : '(개별 마커)');
+        console.log('🗺️ 맵 레벨:', level);
         setCurrentZoomLevel(level);
+        // 부모 컴포넌트에 맵 레벨 변경 알림
+        onMapLevelChange?.(level);
       });
 
       // 지도 드래그 종료 이벤트 리스너 추가 (디바운싱 적용)
@@ -228,11 +227,10 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       return () => clearInterval(checkKakaoMaps);
     }
-  }, [userLocation, onMapCenterChange, isMapInitialized]);
+  }, [userLocation, onMapCenterChange, onMapLevelChange, isMapInitialized]);
 
   // 플랫폼 마커 표시
   useEffect(() => {
-    console.log('📍 platforms 데이터:', platforms);
     if (!mapRef.current || !platforms.length) return;
 
     // 기존 마커 제거
@@ -258,18 +256,8 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       const markerPosition = new window.kakao.maps.LatLng(platform.latitude, platform.longitude);
       const isSelected = selectedPlatform?.id === platform.id;
 
-      console.log(
-        '🔍 현재 줌 레벨:',
-        currentZoomLevel,
-        '클러스터링 조건:',
-        currentZoomLevel >= 7,
-        'clustererRef:',
-        !!clustererRef.current
-      );
-
       // 줌 레벨에 따라 클러스터링 또는 개별 표시
       if (currentZoomLevel >= 7 && clustererRef.current) {
-        console.log('🟢 클러스터링 마커 생성:', platform.name);
         // 클러스터링용 일반 마커 생성
         const clusterMarker = new window.kakao.maps.Marker({
           position: markerPosition,
@@ -282,7 +270,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
         newMarkers.push(clusterMarker);
       } else {
-        console.log('🔴 개별 마커 생성:', platform.name);
         // React 컴포넌트를 HTML로 렌더링
         const markerHTML = renderToString(
           <CustomMarker imageUrl={platform.imageUrl} name={platform.name} isSelected={isSelected} />
@@ -310,10 +297,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
     // 클러스터링 적용
     if (currentZoomLevel >= 7 && clustererRef.current && newMarkers.length > 0) {
-      console.log('🟢 클러스터링 적용! 마커 개수:', newMarkers.length);
       clustererRef.current.addMarkers(newMarkers);
-    } else {
-      console.log('🔴 개별 마커 표시! 커스텀 오버레이 개수:', markersRef.current.length);
     }
   }, [platforms, onPlatformSelect, selectedPlatform, currentZoomLevel]);
 

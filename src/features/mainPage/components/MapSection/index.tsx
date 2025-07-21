@@ -16,6 +16,7 @@ interface MapSectionProps {
   onCategorySelect: (categoryId: string) => void;
   onSearchInMap?: () => void;
   centerLocation?: { latitude: number; longitude: number } | null;
+  onMapLevelChange?: (mapLevel: number) => void;
 }
 
 const MapSection: React.FC<MapSectionProps> = ({
@@ -30,6 +31,7 @@ const MapSection: React.FC<MapSectionProps> = ({
   onCategorySelect,
   onSearchInMap,
   centerLocation,
+  onMapLevelChange,
 }) => {
   return (
     <div className="relative">
@@ -51,6 +53,7 @@ const MapSection: React.FC<MapSectionProps> = ({
         onLocationChange={onLocationChange}
         onMapCenterChange={onMapCenterChange}
         centerLocation={centerLocation}
+        onMapLevelChange={onMapLevelChange}
       />
 
       <MapControls onLocationMove={onLocationMove} onSearchInMap={onSearchInMap} />
