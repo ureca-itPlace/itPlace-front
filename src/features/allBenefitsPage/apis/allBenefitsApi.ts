@@ -68,7 +68,7 @@ export interface ApiResponse<T = unknown> {
 // 혜택 목록 조회 API
 export const getBenefits = async (params: BenefitApiParams): Promise<BenefitResponse> => {
   try {
-    const response = await axiosInstance.get('/benefit', { params });
+    const response = await axiosInstance.get('/api/v1/benefit', { params });
     return response.data.data;
   } catch (error) {
     console.error('혜택 데이터 로드 실패:', error);
@@ -80,7 +80,7 @@ export const getBenefits = async (params: BenefitApiParams): Promise<BenefitResp
 export const addFavorite = async (benefitId: number): Promise<void> => {
   try {
     const requestBody: FavoriteRequest = { benefitId };
-    await axiosInstance.post('/favorites', requestBody);
+    await axiosInstance.post('/api/v1/favorites', requestBody);
   } catch (error) {
     console.error('즐겨찾기 추가 실패:', error);
     throw error;
@@ -91,7 +91,7 @@ export const addFavorite = async (benefitId: number): Promise<void> => {
 export const removeFavorite = async (benefitId: number): Promise<void> => {
   try {
     const requestBody: FavoriteRequest = { benefitId };
-    await axiosInstance.delete('/favorites', { data: requestBody });
+    await axiosInstance.delete('/api/v1/favorites', { data: requestBody });
   } catch (error) {
     console.error('즐겨찾기 삭제 실패:', error);
     throw error;
@@ -101,7 +101,7 @@ export const removeFavorite = async (benefitId: number): Promise<void> => {
 // 혜택 상세 조회 API
 export const getBenefitDetail = async (benefitId: number): Promise<BenefitDetailResponse> => {
   try {
-    const response = await axiosInstance.get(`/benefit/${benefitId}`);
+    const response = await axiosInstance.get(`/api/v1/benefit/${benefitId}`);
     return response.data.data;
   } catch (error) {
     console.error('혜택 상세 정보 로드 실패:', error);
