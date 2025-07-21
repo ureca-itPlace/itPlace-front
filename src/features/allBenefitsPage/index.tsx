@@ -6,6 +6,7 @@ import { debounce } from 'lodash';
 import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
 import SearchBar from '../../components/common/SearchBar';
 import Pagination from '../../components/common/Pagination';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { TbChevronDown, TbStar, TbStarFilled } from 'react-icons/tb';
 import { showToast } from '../../utils/toast';
 import {
@@ -42,6 +43,10 @@ const AllBenefitsLayout: React.FC = () => {
   const fetchBenefits = useCallback(
     async (page: number = 0, keyword?: string, category?: string, filterType?: string) => {
       setIsLoading(true);
+      // 로딩 시작 시 기존 결과를 유지하지 않고 초기화
+      setBenefits([]);
+      setTotalElements(0);
+
       try {
         const params: BenefitApiParams = {
           mainCategory: filter === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT',
@@ -361,13 +366,16 @@ const AllBenefitsLayout: React.FC = () => {
       {/* 카드 그리드 */}
       <div className="px-7 pb-7">
         <div className="relative">
-          {isLoading && (
-            <div className="absolute inset-0 bg-white bg-opacity-75 z-10 flex items-center justify-center">
-              <div className="text-grey03">검색 중...</div>
-            </div>
-          )}
-          <div className="w-[1783px] grid grid-cols-3 gap-[17px]">
-            {benefits.length > 0 ? (
+          <div className="w-[1783px] grid grid-cols-3 gap-[17px] min-h-[400px]">
+            {isLoading ? (
+              // 로딩 중일 때 스피너 표시
+              <div className="col-span-3 flex items-center justify-center h-[400px]">
+                <div className="flex flex-col items-center gap-4">
+                  <LoadingSpinner className="h-10 w-10 border-4 border-purple04 border-t-transparent" />
+                </div>
+              </div>
+            ) : benefits.length > 0 ? (
+              // 혜택 카드들 표시
               benefits.map((benefit) => (
                 <div
                   key={benefit.benefitId}
@@ -421,6 +429,7 @@ const AllBenefitsLayout: React.FC = () => {
                 </div>
               ))
             ) : (
+              // 검색 결과가 없을 때 표시
               <div className="col-span-3 flex items-center justify-center h-[400px]">
                 <div className="text-grey03">검색 결과가 없습니다.</div>
               </div>
