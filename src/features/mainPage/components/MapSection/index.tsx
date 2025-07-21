@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Platform, Category, MapLocation } from '../../types';
 import CategoryTabsSection from '../CategoryTabsSection';
 import KakaoMap from './KakaoMap';
@@ -17,6 +17,7 @@ interface MapSectionProps {
   onSearchInMap?: () => void;
   centerLocation?: { latitude: number; longitude: number } | null;
   onMapLevelChange?: (mapLevel: number) => void;
+  hasInitialSearched?: boolean;
 }
 
 const MapSection: React.FC<MapSectionProps> = ({
@@ -32,9 +33,37 @@ const MapSection: React.FC<MapSectionProps> = ({
   onSearchInMap,
   centerLocation,
   onMapLevelChange,
+  hasInitialSearched = false,
 }) => {
+  const [showSearchButton, setShowSearchButton] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  console.log('🔍 MapSection 상태:', { hasInitialSearched, hasSearched, showSearchButton });
+
+  // 지도 중심 변경 핸들러 (드래그 감지)
+  const handleMapCenterChange = (location: MapLocation) => {
+    console.log('🗺️ 지도 드래그 감지:', { hasInitialSearched, hasSearched, showSearchButton });
+    // 초기 검색이나 수동 검색을 한 후에만 드래그 시 버튼 표시
+    // 임시로 항상 표시하도록 수정
+    console.log('✅ 검색 버튼 표시 (임시)');
+    setShowSearchButton(true);
+    onMapCenterChange?.(location);
+  };
+
+  // 검색 실행 핸들러
+  const handleSearchInMap = () => {
+    setHasSearched(true);
+    setShowSearchButton(false); // 검색하면 버튼 숨김
+    onSearchInMap?.();
+  };
+
+  // 카테고리 변경시 검색 상태 리셋
+  useEffect(() => {
+    setHasSearched(false);
+    setShowSearchButton(false);
+  }, [selectedCategory]);
   return (
-    <div className="relative">
+    <div className="relative w-full h-full">
       {/* 카테고리 태그 - 지도 위 오버레이 */}
       <div className="absolute top-4 left-5 z-10 pointer-events-none">
         <div className="pointer-events-auto">
@@ -51,12 +80,16 @@ const MapSection: React.FC<MapSectionProps> = ({
         selectedPlatform={selectedPlatform}
         onPlatformSelect={onPlatformSelect}
         onLocationChange={onLocationChange}
-        onMapCenterChange={onMapCenterChange}
+        onMapCenterChange={handleMapCenterChange}
         centerLocation={centerLocation}
         onMapLevelChange={onMapLevelChange}
       />
 
-      <MapControls onLocationMove={onLocationMove} onSearchInMap={onSearchInMap} />
+      <MapControls
+        onLocationMove={onLocationMove}
+        onSearchInMap={handleSearchInMap}
+        showSearchButton={showSearchButton}
+      />
     </div>
   );
 };

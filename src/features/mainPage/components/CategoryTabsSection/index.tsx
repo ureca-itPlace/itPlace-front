@@ -19,13 +19,13 @@ interface CategoryTabsSectionProps {
 
 const getCategoryIcon = (categoryId: string): React.ReactElement | undefined => {
   const iconMap: Record<string, React.ReactElement> = {
-    '엔터테인먼트': <TbDeviceTv size={16} />,
+    엔터테인먼트: <TbDeviceTv size={16} />,
     '뷰티/건강': <TbHeart size={16} />,
-    '쇼핑': <TbShoppingBag size={16} />,
+    쇼핑: <TbShoppingBag size={16} />,
     '생활/편의': <TbHome size={16} />,
-    '푸드': <TbToolsKitchen2 size={16} />,
+    푸드: <TbToolsKitchen2 size={16} />,
     '문화/여가': <TbPalette size={16} />,
-    '교육': <TbBook size={16} />,
+    교육: <TbBook size={16} />,
     '여행/교통': <TbPlane size={16} />,
   };
   return iconMap[categoryId];

@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { Platform } from '../../../types';
 import { TbChevronDown, TbCheck } from 'react-icons/tb';
+import { RootState } from '../../../../../store';
+import AddressTooltip from './AddressTooltip';
 
 interface StoreCardProps {
   platform: Platform;
@@ -9,6 +12,40 @@ interface StoreCardProps {
 }
 
 const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect }) => {
+  // Redux에서 사용자 등급 가져오기
+  const membershipGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
+
+  // 주소 툴팁 상태 관리
+  const [showAddressTooltip, setShowAddressTooltip] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  // 복사 기능
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      // TODO: 복사 완료 토스트 메시지 추가 가능
+    } catch (err) {
+      console.error('복사 실패:', err);
+    }
+  };
+
+  // 툴팁 외부 클릭시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+        setShowAddressTooltip(false);
+      }
+    };
+
+    if (showAddressTooltip) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showAddressTooltip]);
+
   return (
     <div
       className={`cursor-pointer transition-colors duration-200 w-[370px] px-5 ${
@@ -27,10 +64,30 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect })
               <span className="text-body-5 text-grey04">{platform.category}</span>
             </div>
             {/* 2줄: 거리 + 주소 */}
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex items-center gap-3 mb-1 relative">
               <span className="text-body-3-bold text-black">{platform.distance}km</span>
               <span className="text-body-3 text-grey04 truncate w-[20ch]">{platform.address}</span>
-              <TbChevronDown size={16} className="text-grey04" />
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowAddressTooltip(!showAddressTooltip);
+                }}
+                className="hover:text-grey05 transition-colors"
+              >
+                <TbChevronDown size={16} className="text-grey04" />
+              </button>
+
+              {/* 주소 툴팁 */}
+              {showAddressTooltip && (
+                <div ref={tooltipRef} className="absolute top-full left-0 mt-2 z-50">
+                  <AddressTooltip
+                    roadAddress={platform.address}
+                    lotAddress={`지번 ${platform.address}`} // 임시로 지번 주소 생성
+                    onCopy={handleCopy}
+                    onClose={() => setShowAddressTooltip(false)}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -58,14 +115,25 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect })
             {platform.benefits.length > 0 ? (
               platform.benefits.map((benefit, benefitIndex) => {
                 const [grade, content] = benefit.split(': ');
+                const isUserGrade =
+                  membershipGrade && grade.toLowerCase() === membershipGrade.toLowerCase();
+
                 return (
                   <div
                     key={benefitIndex}
                     className="grid grid-cols-[20px_60px_1fr] gap-2 items-center"
                   >
                     <TbCheck size={16} className="text-grey04" />
-                    <span className="text-body-4 text-grey05">{grade}:</span>
-                    <span className="text-body-4 text-grey05 truncate">{content}</span>
+                    <span
+                      className={`text-body-4 ${isUserGrade ? 'text-orange04 font-bold' : 'text-grey05'}`}
+                    >
+                      {grade}:
+                    </span>
+                    <span
+                      className={`text-body-4 truncate ${isUserGrade ? 'text-orange04 font-bold' : 'text-grey05'}`}
+                    >
+                      {content}
+                    </span>
                   </div>
                 );
               })

@@ -12,6 +12,7 @@ interface KakaoMap {
   getLevel(): number;
   setCenter(latlng: KakaoLatLng): void;
   getCenter(): KakaoLatLng;
+  relayout(): void;
 }
 
 interface KakaoMarker {
@@ -58,6 +59,7 @@ interface KakaoMaps {
       position: KakaoLatLng;
       content: string;
       yAnchor: number;
+      zIndex?: number;
     }) => KakaoCustomOverlay;
     InfoWindow: new (options: { content: string }) => KakaoInfoWindow;
     event: {
@@ -131,6 +133,15 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         return;
       }
 
+      // 컨테이너 크기가 확정될 때까지 대기
+      const containerWidth = mapContainer.current?.offsetWidth;
+      const containerHeight = mapContainer.current?.offsetHeight;
+
+      if (!containerWidth || !containerHeight) {
+        setTimeout(initializeMap, 100);
+        return;
+      }
+
       const options = {
         center: new window.kakao.maps.LatLng(userLocation.latitude, userLocation.longitude),
         level: 3,
@@ -172,6 +183,18 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         onMapLevelChange?.(level);
       });
 
+      // 지도 드래그 시작 이벤트 (즉시 버튼 표시용)
+      window.kakao.maps.event.addListener(map, 'dragstart', () => {
+        if (onMapCenterChange) {
+          const center = map.getCenter();
+          const centerLocation: MapLocation = {
+            latitude: center.getLat(),
+            longitude: center.getLng(),
+          };
+          onMapCenterChange(centerLocation);
+        }
+      });
+
       // 지도 드래그 종료 이벤트 리스너 추가 (디바운싱 적용)
       window.kakao.maps.event.addListener(map, 'dragend', () => {
         if (onMapCenterChange) {
@@ -192,25 +215,15 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         }
       });
 
-      // 사용자 위치 마커
-      const userMarkerPosition = new window.kakao.maps.LatLng(
-        userLocation.latitude,
-        userLocation.longitude
-      );
-
-      const userMarker = new window.kakao.maps.Marker({
-        position: userMarkerPosition,
-        map: map,
-      });
-
-      // 사용자 위치 정보창
-      const userInfoWindow = new window.kakao.maps.InfoWindow({
-        content: '<div style="padding:5px;">현재 위치</div>',
-      });
-      userInfoWindow.open(map, userMarker);
-
       // 지도 초기화 완료 표시
       setIsMapInitialized(true);
+
+      // 초기화 후 크기 재조정
+      setTimeout(() => {
+        if (map && map.relayout) {
+          map.relayout();
+        }
+      }, 100);
     };
 
     // 카카오맵 API가 이미 로드되어 있으면 바로 초기화
@@ -231,7 +244,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
   // 플랫폼 마커 표시
   useEffect(() => {
-    if (!mapRef.current || !platforms.length) return;
+    if (!mapRef.current) return;
 
     // 기존 마커 제거
     if (clustererRef.current) {
@@ -239,6 +252,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
+
+    // 플랫폼이 없으면 마커 표시 안함
+    if (!platforms.length) {
+      return;
+    }
 
     const newMarkers: KakaoMarker[] = [];
 
@@ -280,6 +298,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           position: markerPosition,
           content: markerHTML,
           yAnchor: 1, // 삼각형 끝부분이 좌표 위치가 되도록
+          zIndex: isSelected ? 1000 : 1, // 선택된 마커가 가장 위에
         });
 
         // 마커 클릭 이벤트 (HTML 요소에 직접 이벤트 추가)
@@ -324,10 +343,13 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   }, [centerLocation]);
 
   return (
-    <div
-      ref={mapContainer}
-      className="overflow-hidden w-[1385px] h-[891px] rounded-[18px] min-h-[891px]"
-    />
+    <div className="w-full h-full">
+      <div
+        ref={mapContainer}
+        className="w-full h-full rounded-[18px]"
+        style={{ minHeight: '500px' }}
+      />
+    </div>
   );
 };
 

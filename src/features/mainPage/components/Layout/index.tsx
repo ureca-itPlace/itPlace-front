@@ -102,30 +102,35 @@ const MainPageLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen flex items-center justify-center gap-6 bg-grey01 p-6">
-      <SidebarSection
-        platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-        selectedPlatform={selectedPlatform}
-        onPlatformSelect={handlePlatformSelect}
-        currentLocation={currentLocation}
-        isLoading={isLoading}
-        error={error}
-      />
+    <div className="h-screen flex gap-6 bg-grey01 p-6">
+      <div className="flex-shrink-0 h-full" style={{ flexBasis: '370px', minWidth: '300px' }}>
+        <SidebarSection
+          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+          selectedPlatform={selectedPlatform}
+          onPlatformSelect={handlePlatformSelect}
+          currentLocation={currentLocation}
+          isLoading={isLoading}
+          error={error}
+        />
+      </div>
 
-      <MapSection
-        platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-        selectedPlatform={selectedPlatform}
-        onPlatformSelect={handlePlatformSelect}
-        onLocationChange={handleLocationChange}
-        onMapCenterChange={handleMapCenterChange}
-        onLocationMove={handleLocationMove}
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onCategorySelect={handleCategorySelect}
-        onSearchInMap={handleSearchInMap}
-        centerLocation={centerLocation}
-        onMapLevelChange={handleMapLevelChange}
-      />
+      <div className="flex-1 h-full" style={{ minWidth: '800px' }}>
+        <MapSection
+          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+          selectedPlatform={selectedPlatform}
+          onPlatformSelect={handlePlatformSelect}
+          onLocationChange={handleLocationChange}
+          onMapCenterChange={handleMapCenterChange}
+          onLocationMove={handleLocationMove}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategorySelect={handleCategorySelect}
+          onSearchInMap={handleSearchInMap}
+          centerLocation={centerLocation}
+          onMapLevelChange={handleMapLevelChange}
+          hasInitialSearched={apiPlatforms.length > 0}
+        />
+      </div>
     </div>
   );
 };

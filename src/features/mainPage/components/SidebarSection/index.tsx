@@ -78,7 +78,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   if (isLoading && activeTab === 'nearby') {
     return (
-      <div className="bg-white flex flex-col overflow-hidden w-[370px] h-[891px] rounded-[18px] drop-shadow-basic">
+      <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
         <div className="w-full h-full flex items-center justify-center">
           <div className="text-grey03">로딩 중...</div>
         </div>
@@ -87,7 +87,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   }
 
   return (
-    <div className="bg-white flex flex-col overflow-hidden w-[370px] h-[891px] rounded-[18px] drop-shadow-basic">
+    <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
       {/* Content Wrapper - 330x860 with 15px top/bottom, 20px left/right margins */}
       <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
         {/* 검색 영역 */}

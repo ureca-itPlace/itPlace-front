@@ -117,7 +117,7 @@ export const useStoreData = () => {
       // 주소 정보만 업데이트 (가맹점 데이터는 재요청하지 않음)
       const address = await getAddressFromCoordinates(lat, lng);
       setCurrentLocation(address);
-    } catch (error) {
+    } catch {
       // 주소 업데이트 실패 시 무시 (지도는 정상 동작)
     }
   };

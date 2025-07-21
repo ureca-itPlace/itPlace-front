@@ -14,15 +14,23 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ imageUrl, name, isSelected 
         width: '68px',
         height: '84px', // 68px + 삼각형 높이 16px
         filter: 'drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.35))',
+        zIndex: isSelected ? 1000 : 1, // 선택된 마커가 가장 위에
+        animation: isSelected ? 'bounceGentle 2s ease-in-out infinite' : 'none',
       }}
     >
+      {/* 인라인 스타일로 키프레임 정의 */}
+      {isSelected && (
+        <style>
+          {`
+            @keyframes bounceGentle {
+              0%, 100% { transform: translateY(0px); }
+              50% { transform: translateY(-8px); }
+            }
+          `}
+        </style>
+      )}
       {/* 말풍선 SVG */}
-      <svg
-        width="68"
-        height="84"
-        viewBox="0 0 68 84"
-        className={`${isSelected ? 'ring-2 ring-purple04 rounded-[12px]' : ''}`}
-      >
+      <svg width="68" height="84" viewBox="0 0 68 84">
         {/* 말풍선 몸체 (둥근 사각형) */}
         <rect x="0" y="0" width="68" height="68" rx="12" ry="12" fill="white" />
         {/* 말풍선 꼬리 (삼각형) */}

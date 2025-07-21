@@ -6,11 +6,7 @@ interface ErrorMessageProps {
   onRetry?: () => void;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ 
-  title = '오류 발생', 
-  message, 
-  onRetry 
-}) => {
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ title = '오류 발생', message, onRetry }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="text-red-500 text-center mb-2 font-medium">{title}</div>
