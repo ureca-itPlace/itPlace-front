@@ -59,7 +59,7 @@ export default function MyFavoritesPage() {
                 onClear={() => setKeyword('')}
                 width={280}
                 height={50}
-                backgroundColor="#f5f5f5"
+                backgroundColor="bg-grey01"
               />
             </div>
 

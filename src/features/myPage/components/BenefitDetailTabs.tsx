@@ -38,7 +38,7 @@ export default function BenefitDetailTabs({
       const myGrade = mockUser.membershipGrade;
       setSelectedGrade(myGrade);
     }
-  }, [benefitId]);
+  }, [benefitId, allBenefit, isVipKok]);
 
   // 🔹 공통된 스타일: 로고 카드
   function LogoBox({ image, alt }: { image: string; alt: string }) {
