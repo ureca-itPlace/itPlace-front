@@ -28,7 +28,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
       if (code === 'LOGIN_SUCCESS') {
         dispatch(setLoginSuccess(data));
-        navigate('/');
+        navigate('/main');
       } else {
         showToast('로그인에 실패하셨습니다.', 'error');
       }
