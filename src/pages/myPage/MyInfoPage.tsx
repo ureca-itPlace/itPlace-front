@@ -10,9 +10,20 @@ import UserDeleteModal from '../../features/myPage/components/MyInfo/UserDeleteM
 import UplusLinkModal from '../../features/myPage/components/MyInfo/UplusLinkModal';
 import { loadUplusData } from '../../features/myPage/apis/uplus';
 
+interface User {
+  userId: number;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  gender: string;
+  birthday: string;
+  membershipId: string;
+  membershipGrade: string;
+}
+
 export default function MyInfoPage() {
   // 실제로는 전역 상태에서 로그인 여부를 가져오면 됨
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isPwModalOpen, setIsPwModalOpen] = useState(false);
   const [currentPw, setCurrentPw] = useState('');
   const [newPw, setNewPw] = useState('');
@@ -20,7 +31,7 @@ export default function MyInfoPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [password, setPassword] = useState('');
   const [showUplusModal, setShowUplusModal] = useState(false);
-  const [grade, setGrade] = useState<string | undefined>(user?.grade); // 초기 grade
+  const [grade, setGrade] = useState<string | undefined>(user?.membershipGrade); // 초기 grade
 
   useEffect(() => {
     // API 미연결로 mockData 사용
@@ -60,7 +71,7 @@ export default function MyInfoPage() {
           </div>
         }
         aside={
-          <FadeWrapper changeKey={user.grade}>
+          <FadeWrapper changeKey={user.membershipGrade}>
             <MembershipInfo
               name={user.name}
               grade={grade} //user.grade로 바꾸면 mockData상에서 멤버십등급을 가져와 변경된 UI 보기 가능
