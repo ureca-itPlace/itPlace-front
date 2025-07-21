@@ -12,18 +12,10 @@ import AllBenefitsPage from '../pages/AllBenefitsPage';
 import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import OAuthRedirectHandler from '../features/loginPage/layouts/OAuthRedirectHandler';
-import AdminRoute from './AdminRoute';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> }, // 기본 라우터
-  {
-    path: '/admin',
-    element: (
-      <AdminRoute>
-        <AdminPage />
-      </AdminRoute>
-    ),
-  },
+  { path: '/admin', element: <AdminPage /> },
   {
     element: <DefaultLayout />,
     children: [
