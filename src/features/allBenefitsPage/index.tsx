@@ -434,7 +434,7 @@ const AllBenefitsLayout: React.FC = () => {
               <div className="col-span-3 flex items-center justify-center h-[400px]">
                 <NoResult
                   message1="앗! 일치하는 결과를 찾을 수 없어요!"
-                  message2="다른 키워드나 조건으로 다시 찾아보세요."
+                  message2="다른 키워드나 혜택으로 다시 찾아보세요."
                 />
               </div>
             )}
