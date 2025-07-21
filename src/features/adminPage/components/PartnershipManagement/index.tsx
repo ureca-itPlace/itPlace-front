@@ -7,7 +7,7 @@ import FilterDropdown from '../../../../components/common/FilterDropdown';
 import DataTable from '../../../../components/common/DataTable';
 import ActionButton from '../../../../components/common/ActionButton';
 import Pagination from '../../../../components/common/Pagination';
-import PartnerDetailModal from './PartnerDetailModal';
+import PartnerDetailModal from './components/PartnerDetailModal';
 import {
   Partner,
   searchPartnersWithPagination,

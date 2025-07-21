@@ -67,7 +67,7 @@ export interface UserDetail {
 
 // 전체 사용자 수 조회 API
 export const getTotalUserCount = async (): Promise<ApiResponse<number>> => {
-  const response = await api.get('/users/total');
+  const response = await api.get('/api/v1/users/total');
   return response.data;
 };
 
@@ -88,7 +88,7 @@ export const getAllUsers = async (
   if (userType) params.append('userType', userType);
   if (grade) params.append('grade', grade);
 
-  const response = await api.get(`/users?${params}`);
+  const response = await api.get(`/api/v1/users?${params}`);
   return response.data;
 };
 
@@ -104,13 +104,13 @@ export const searchUsers = async (
     size: size.toString(),
   });
 
-  const response = await api.get(`/users/search?${params}`);
+  const response = await api.get(`/api/v1/users/search?${params}`);
   return response.data;
 };
 
 // 사용자 혜택 이용내역 조회 API
 export const getUserBenefitUsage = async (userId: number): Promise<ApiResponse<UserDetail>> => {
-  const response = await api.get(`/users/${userId}`);
+  const response = await api.get(`/api/v1/users/${userId}`);
   return response.data;
 };
 
@@ -118,7 +118,7 @@ export const getUserBenefitUsage = async (userId: number): Promise<ApiResponse<U
 export const refreshUserBatch = async (): Promise<
   ApiResponse<{ batchResult: BatchRefreshResult }>
 > => {
-  const response = await api.post('/users/batch-refresh', {});
+  const response = await api.post('/api/v1/users/batch-refresh', {});
   return response.data;
 };
 

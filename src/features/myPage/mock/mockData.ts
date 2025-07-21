@@ -238,7 +238,12 @@ export const mockFavorites: FavoriteItem[] = [
 
 // 현재 사용자 목업
 export const mockUser = {
-  userId: 123,
+  userId: 1,
   name: '홍길동',
-  membershipGrade: 'VVIP', // VVIP, VIP, BASIC
+  email: 'hong@example.com',
+  phoneNumber: '010-1234-5678',
+  gender: 'MALE',
+  birthday: '1990-01-01',
+  membershipId: 'M001',
+  membershipGrade: 'VIP', // VVIP, VIP, BASIC
 };

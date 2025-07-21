@@ -1,6 +1,6 @@
 import React from 'react';
-import Modal from '../../../../components/common/AdminModal';
-import { Member } from './apis/MemberManagementApis';
+import Modal from '../../../../../components/common/AdminModal';
+import { Member } from '../apis/MemberManagementApis';
 
 interface PartnerUsage {
   brand: string;

@@ -66,7 +66,7 @@ export interface BenefitBatchRefreshResult {
 
 // 전체 제휴처 수 조회 API
 export const getTotalBenefitCount = async (): Promise<ApiResponse<number>> => {
-  const response = await api.get('/benefits/total');
+  const response = await api.get('/api/v1/benefits/total');
   return response.data;
 };
 
@@ -87,7 +87,7 @@ export const getAllPartners = async (
   if (category) params.append('category', category);
   if (type) params.append('type', type);
 
-  const response = await api.get(`/benefits?${params}`);
+  const response = await api.get(`/api/v1/benefits?${params}`);
   return response.data;
 };
 
@@ -105,13 +105,13 @@ export const searchBenefits = async (
     sort,
   });
 
-  const response = await api.get(`/benefits/search?${params}`);
+  const response = await api.get(`/api/v1/benefits/search?${params}`);
   return response.data;
 };
 
 // 혜택 상세 조회 API
 export const getBenefitDetail = async (benefitId: number): Promise<ApiResponse<BenefitDetail>> => {
-  const response = await api.get(`/benefit/${benefitId}`);
+  const response = await api.get(`/api/v1/benefit/${benefitId}`);
   return response.data;
 };
 
@@ -120,7 +120,7 @@ export const updateBenefit = async (
   benefitId: number,
   benefitData: Partial<BenefitDetail>
 ): Promise<ApiResponse<BenefitDetail>> => {
-  const response = await api.put(`/benefit/${benefitId}`, benefitData);
+  const response = await api.put(`/api/v1/benefit/${benefitId}`, benefitData);
   return response.data;
 };
 
@@ -128,7 +128,7 @@ export const updateBenefit = async (
 export const refreshBenefitBatch = async (): Promise<
   ApiResponse<{ batchResult: BenefitBatchRefreshResult }>
 > => {
-  const response = await api.post('/benefits/batch-refresh', {});
+  const response = await api.post('/api/v1/benefits/batch-refresh', {});
   return response.data;
 };
 

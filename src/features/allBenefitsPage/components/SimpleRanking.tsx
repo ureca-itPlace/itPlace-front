@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {
   getPartnersSearchRanking,
   PartnerSearchRankingItem,
-} from '../adminPage/components/Dashboard/apis/DashboardApis';
-import { RankingItem } from '../adminPage/components/Dashboard/types';
+} from '../../adminPage/components/Dashboard/apis/DashboardApis';
+import { RankingItem } from '../../adminPage/types/types';
 
 // API 응답을 RankingItem으로 변환하는 함수
 const convertToRankingItem = (apiData: PartnerSearchRankingItem[]): RankingItem[] => {

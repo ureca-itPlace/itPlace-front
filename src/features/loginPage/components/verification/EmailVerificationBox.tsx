@@ -3,6 +3,7 @@ import AuthInput from '../common/AuthInput';
 import ErrorMessage from '../common/ErrorMessage';
 import Modal from '../../../../components/Modal';
 import useEmailVerification from '../../hooks/useEmailVerification';
+import LoadingSpinner from '../../../../components/common/LoadingSpinner'; // LoadingSpinner 가져오기
 
 type Props = {
   email: string;
@@ -60,10 +61,14 @@ const EmailVerificationBox = ({
             type="button"
             onClick={handleSendCode}
             disabled={!email || manualLoading}
-            className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition
+            className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition flex items-center justify-center
               ${!email ? 'bg-grey02 text-grey04' : 'bg-purple04 text-white'}`}
           >
-            {manualLoading ? '전송중' : '인증'}
+            {manualLoading ? (
+              <LoadingSpinner className="h-5 w-5 border-2 border-white border-t-transparent" />
+            ) : (
+              '인증'
+            )}
           </button>
         )}
       </div>
@@ -94,7 +99,7 @@ const EmailVerificationBox = ({
       {loading && (
         <Modal isOpen={loading} title="인증 메일을 전송 중입니다." onClose={() => {}}>
           <div className="w-full flex justify-center mt-[16px]">
-            <div className="w-[32px] h-[32px] border-4 border-purple04 border-t-transparent rounded-full animate-spin" />
+            <LoadingSpinner />
           </div>
         </Modal>
       )}
