@@ -36,8 +36,7 @@ export const getTokenFromCookie = (): string | null => {
   const cookies = document.cookie.split(';');
   for (const cookie of cookies) {
     const [name, value] = cookie.trim().split('=');
-    // 쿠키 이름에 맞게 수정
-    if (name === 'accessToken' || name === 'token') {
+    if (name === 'access') {
       return value;
     }
   }
