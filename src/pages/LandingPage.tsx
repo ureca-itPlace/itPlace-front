@@ -1,15 +1,19 @@
-import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { useState, useRef, useEffect, lazy } from 'react';
 
-import { useGSAP } from '@gsap/react';
 import IntroSection from '../features/landingPage/components/sections/IntroSection';
-import EarthSection from '../features/landingPage/components/sections/EarthSection';
-import MapSection from '../features/landingPage/components/sections/MapSection';
-import FeatureSection from '../features/landingPage/components/sections/FeatureSection';
-import VideoSection from '../features/landingPage/components/sections/VideoSection';
-import StartCTASection from '../features/landingPage/components/sections/StartCTASection';
+const EarthSection = lazy(() => import('../features/landingPage/components/sections/EarthSection'));
+const MapSection = lazy(() => import('../features/landingPage/components/sections/MapSection'));
+const FeatureSection = lazy(
+  () => import('../features/landingPage/components/sections/FeatureSection')
+);
+const VideoSection = lazy(() => import('../features/landingPage/components/sections/VideoSection'));
+const StartCTASection = lazy(
+  () => import('../features/landingPage/components/sections/StartCTASection')
+);
 
 import LoadLanding from '../features/landingPage/components/common/LoadLanding';
 
@@ -35,8 +39,10 @@ const LandingPage = () => {
     };
   }, []);
 
+  // 비디오 종료 후 맨 아래로 이동
   useEffect(() => {
     if (videoEnded) {
+      console.log('비디오 종료');
       gsap.to(window, {
         scrollTo: { y: 'max', autoKill: false },
         duration: 0.6,
@@ -46,6 +52,7 @@ const LandingPage = () => {
   }, [videoEnded]);
 
   if (isLoading) {
+    console.log('로딩중');
     return <LoadLanding />;
   }
 
