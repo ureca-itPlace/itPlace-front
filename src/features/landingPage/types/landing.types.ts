@@ -9,12 +9,11 @@ export type IntroAnimationProps = {
   onComplete: () => void;
 };
 
-export type VideoSectionProps = {
+export type VideoProps = {
   onVideoEnd: () => void;
   videoBoxRef: React.RefObject<HTMLDivElement | null>;
 };
 
-export type FeatureSectionProps = {
-  videoEnded: boolean;
+export type VideoSectionProps = {
   setVideoEnded: React.Dispatch<React.SetStateAction<boolean>>;
 };
