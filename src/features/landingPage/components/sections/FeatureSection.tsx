@@ -38,7 +38,7 @@ const FeatureSection = () => {
       },
     });
 
-    // 카드 등장 & 퇴장 애니메이션
+    // 2. 카드 등장 & 퇴장 애니메이션
     featureData.forEach((_, idx) => {
       if (idx > 0) {
         tl.to(
@@ -61,24 +61,6 @@ const FeatureSection = () => {
         );
       }
     });
-
-    featureData.forEach((_, idx) => {
-      if (!cardRefs.current[idx]) return;
-      ScrollTrigger.create({
-        trigger: cardRefs.current[idx],
-        start: 'top center',
-        end: 'bottom center',
-        onToggle: (self) => {
-          if (self.isActive) {
-            setActiveIdx(idx);
-          }
-        },
-      });
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
   }, [cardRefs, sectionRef]);
 
   return (
@@ -88,18 +70,10 @@ const FeatureSection = () => {
     >
       <div className="w-full h-full flex items-center justify-center max-sm:flex-col">
         <nav ref={featureListRef}>
-          <ul className="flex flex-col gap-28 text-[64px] ml-36 whitespace-nowrap">
+          <ul className="flex flex-col gap-28 text-[64px] ml-36 whitespace-nowrap text-white">
             {featureData.map((feature, i) => (
               <li key={feature.title}>
-                <a
-                  className={
-                    activeIdx === i
-                      ? 'text-purple04 transition-colors'
-                      : 'text-white transition-colors'
-                  }
-                >
-                  {feature.title}
-                </a>
+                <a>{feature.title}</a>
               </li>
             ))}
           </ul>
