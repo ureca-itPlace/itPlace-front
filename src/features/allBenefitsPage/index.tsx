@@ -7,6 +7,7 @@ import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
 import SearchBar from '../../components/common/SearchBar';
 import Pagination from '../../components/common/Pagination';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import NoResult from '../../components/NoResult';
 import { TbChevronDown, TbStar, TbStarFilled } from 'react-icons/tb';
 import { showToast } from '../../utils/toast';
 import {
@@ -431,7 +432,10 @@ const AllBenefitsLayout: React.FC = () => {
             ) : (
               // 검색 결과가 없을 때 표시
               <div className="col-span-3 flex items-center justify-center h-[400px]">
-                <div className="text-grey03">검색 결과가 없습니다.</div>
+                <NoResult
+                  message1="앗! 일치하는 결과를 찾을 수 없어요!"
+                  message2="다른 키워드나 조건으로 다시 찾아보세요."
+                />
               </div>
             )}
           </div>
