@@ -37,6 +37,7 @@ const MapSection = forwardRef<HTMLDivElement>((_, ref) => {
       {
         scale: 1,
         opacity: 0,
+        filter: 'blur(10px)',
       }
     );
 
@@ -137,6 +138,7 @@ const MapSection = forwardRef<HTMLDivElement>((_, ref) => {
         thirdMapImageRef.current,
         {
           scale: 1.5,
+          y: 100,
           opacity: 0,
           ease: 'power2.in',
           duration: 1,
