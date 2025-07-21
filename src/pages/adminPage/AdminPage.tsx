@@ -1,4 +1,6 @@
+import React from 'react';
 import AdminLayout from '../../features/adminPage/components/Layout';
+
 const AdminPage = () => {
   return <AdminLayout />;
 };
