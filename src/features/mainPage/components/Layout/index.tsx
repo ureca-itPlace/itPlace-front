@@ -58,7 +58,7 @@ const MainPageLayout: React.FC = () => {
   );
 
   // 플랫폼 선택 핸들러
-  const handlePlatformSelect = useCallback((platform: Platform) => {
+  const handlePlatformSelect = useCallback((platform: Platform | null) => {
     setSelectedPlatform(platform);
   }, []);
 
@@ -102,7 +102,7 @@ const MainPageLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen flex gap-6 bg-grey01 p-6">
+    <div className="h-screen flex gap-6 bg-grey01 p-6 relative">
       <div className="flex-shrink-0 h-full" style={{ flexBasis: '370px', minWidth: '300px' }}>
         <SidebarSection
           platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
@@ -129,6 +129,24 @@ const MainPageLayout: React.FC = () => {
           centerLocation={centerLocation}
           onMapLevelChange={handleMapLevelChange}
           hasInitialSearched={apiPlatforms.length > 0}
+        />
+      </div>
+
+      {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
+      <div
+        className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
+        style={{
+          left: '370px',
+          transform: 'translateX(-20%)',
+          width: '380px',
+          height: '260px', // 허리까지만 보이도록 절반 높이
+        }}
+      >
+        <img
+          src="/images/main/mainCharacter.webp"
+          alt="잇플 캐릭터"
+          className="w-full h-auto object-contain object-bottom"
+          style={{ width: '380px', height: '380px' }}
         />
       </div>
     </div>

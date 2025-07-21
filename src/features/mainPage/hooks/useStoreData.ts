@@ -90,7 +90,7 @@ export const useStoreData = () => {
     };
 
     initializeData();
-  }, []); // 초기 로드는 1회만 실행
+  }, [selectedCategory]); // selectedCategory 의존성 추가
 
   // 카테고리 변경 시 현재 지도 중심 기준으로 검색
   useEffect(() => {

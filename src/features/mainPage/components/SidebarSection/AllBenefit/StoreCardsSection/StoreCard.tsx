@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Platform } from '../../../types';
+import { Platform } from '../../../../types';
 import { TbChevronDown, TbCheck, TbChevronUp } from 'react-icons/tb';
-import { RootState } from '../../../../../store';
+import { RootState } from '../../../../../../store';
 import AddressTooltip from './AddressTooltip';
-import { showToast } from '../../../../../utils/toast';
+import { showToast } from '../../../../../../utils/toast';
 
 interface StoreCardProps {
   platform: Platform;
@@ -65,7 +65,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
             {/* 2줄: 거리 + 주소 */}
             <div className="flex items-center gap-3 mb-1 relative">
               <span className="text-body-3-bold text-black">{platform.distance}km</span>
-              <span className="text-body-3 text-grey04 truncate w-[20ch]">{platform.address}</span>
+              <span className="text-body-3 text-grey04 truncate w-[20ch]">{platform.roadName}</span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -84,8 +84,8 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
               {showAddressTooltip && (
                 <div ref={tooltipRef} className="absolute top-full left-0 mt-2 z-50">
                   <AddressTooltip
-                    roadAddress={platform.address}
-                    lotAddress={`지번 ${platform.address}`} // 임시로 지번 주소 생성
+                    roadAddress={platform.roadAddress}
+                    lotAddress={platform.address}
                     onCopy={handleCopy}
                     onClose={() => setShowAddressTooltip(false)}
                   />

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
-import SearchSection from './SearchSection';
-import InfoBannerSection from './InfoBannerSection';
-import NavigationTabsSection from './NavigationTabsSection';
-import StoreCardsSection from './StoreCardsSection';
-import FavoriteStoreList from './FavoriteStoreList';
-import StoreDetailCard from './StoreCardsSection/StoreDetailCard';
+import LoadingSpinner from '../../../../components/common/LoadingSpinner';
+import SearchSection from '../SidebarSection/AllBenefit/SearchSection';
+import InfoBannerSection from '../SidebarSection/AllBenefit/InfoBannerSection';
+import NavigationTabsSection from '../SidebarSection/AllBenefit/NavigationTabsSection';
+import StoreCardsSection from '../SidebarSection/AllBenefit/StoreCardsSection';
+import FavoriteStoreList from '../SidebarSection/AllBenefit/FavoriteStoreList';
+import StoreDetailCard from './StoreDetail';
 
 interface Tab {
   id: string;
@@ -21,7 +22,7 @@ interface Store {
 interface SidebarSectionProps {
   platforms: Platform[];
   selectedPlatform?: Platform | null;
-  onPlatformSelect: (platform: Platform) => void;
+  onPlatformSelect: (platform: Platform | null) => void;
   currentLocation: string;
   isLoading: boolean;
   error?: string | null;
@@ -49,7 +50,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   // 상세보기에서 닫기
   const handleDetailClose = () => {
     setViewMode('list');
-    // selectedPlatform은 유지 (회색 배경 유지)
+    onPlatformSelect(null); // selectedPlatform 초기화
   };
 
   // 외부에서 플랫폼 선택 시 (맵 마커 클릭 등) 상세보기로 전환
@@ -57,7 +58,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     if (selectedPlatform && viewMode === 'list') {
       setViewMode('detail');
     }
-  }, [selectedPlatform]);
+  }, [selectedPlatform, viewMode]);
 
   const mainTabs: Tab[] = [
     { id: 'nearby', label: '주변 혜택' },
@@ -99,8 +100,9 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   if (isLoading && activeTab === 'nearby') {
     return (
       <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="text-grey03">로딩 중...</div>
+        <div className="w-full h-full flex flex-col items-center justify-center">
+          <LoadingSpinner />
+          <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
         </div>
       </div>
     );

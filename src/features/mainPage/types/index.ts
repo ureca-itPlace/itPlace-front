@@ -4,7 +4,14 @@ export interface Platform {
   partnerId: number;
   name: string;
   category: string;
+  business: string;
+  city: string;
+  town: string;
+  legalDong: string;
   address: string;
+  roadName: string;
+  roadAddress: string;
+  postCode: string;
   latitude: number;
   longitude: number;
   benefits: string[];
