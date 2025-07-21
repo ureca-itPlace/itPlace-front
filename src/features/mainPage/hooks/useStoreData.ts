@@ -6,7 +6,8 @@ import {
   getCurrentLocation,
   getAddressFromCoordinates,
 } from '../api/storeApi';
-import { convertStoreDataToPlatform } from '../utils/storeUtils';
+import { convertStoreDataToPlatform, createPlatformWithoutCoords } from '../utils/storeUtils';
+import { DEFAULT_RADIUS } from '../constants';
 
 // 맵 레벨에 따른 반경 계산 함수
 const getRadiusByMapLevel = (mapLevel: number): number => {
@@ -35,6 +36,9 @@ export const useStoreData = () => {
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>('위치 정보 로딩 중...');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [currentMapCenter, setCurrentMapCenter] = useState<{ lat: number; lng: number } | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -48,6 +52,7 @@ export const useStoreData = () => {
         // 1. 현재 위치 가져오기
         const coords = await getCurrentLocation();
         setUserCoords(coords);
+        setCurrentMapCenter(coords); // 초기 지도 중심도 현재 위치로 설정
 
         // 2. 좌표를 주소로 변환
         const address = await getAddressFromCoordinates(coords.lat, coords.lng);
@@ -58,13 +63,13 @@ export const useStoreData = () => {
           ? await getStoreListByCategory({
               lat: coords.lat,
               lng: coords.lng,
-              radiusMeters: 1000, // 초기 로드는 1km 고정
+              radiusMeters: DEFAULT_RADIUS, // 초기 로드 기본 반경
               category: selectedCategory,
             })
           : await getStoreList({
               lat: coords.lat,
               lng: coords.lng,
-              radiusMeters: 1000, // 초기 로드는 1km 고정
+              radiusMeters: DEFAULT_RADIUS, // 초기 로드 기본 반경
             });
 
         // 4. API 데이터를 Platform 타입으로 변환
@@ -72,28 +77,7 @@ export const useStoreData = () => {
         // 모든 가맹점 (좌표 없는 것도 포함) - 리스트용
         const allPlatforms = storeResponse.data.map((storeData) => {
           const platform = convertStoreDataToPlatform(storeData, coords.lat, coords.lng);
-          if (platform === null) {
-            // 좌표 없는 경우 기본값으로 처리 (리스트에는 표시, 마커는 제외)
-            const { store, partner, tierBenefit } = storeData;
-            const gradeOrder = ['VIP콕', 'BASIC', 'VIP', 'VVIP'];
-            const benefits = gradeOrder.map((grade) => {
-              const benefit = tierBenefit.find((b) => b.grade === grade);
-              return benefit ? `${grade}: ${benefit.context}` : `${grade}: -`;
-            });
-            return {
-              id: store.storeId.toString(),
-              name: store.storeName,
-              category: partner.category,
-              address: store.roadAddress || store.address,
-              latitude: 0, // 마커 표시 안됨을 나타내는 값
-              longitude: 0,
-              benefits: benefits,
-              rating: 4.5,
-              distance: 0,
-              imageUrl: partner.image,
-            };
-          }
-          return platform;
+          return platform ?? createPlatformWithoutCoords(storeData);
         });
 
         setPlatforms(allPlatforms);
@@ -106,13 +90,53 @@ export const useStoreData = () => {
     };
 
     initializeData();
-  }, [selectedCategory]); // mapLevel 의존성 제거
+  }, []); // 초기 로드는 1회만 실행
+
+  // 카테고리 변경 시 현재 지도 중심 기준으로 검색
+  useEffect(() => {
+    if (!selectedCategory || !currentMapCenter) return;
+
+    const searchByCategory = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // 현재 지도 중심 좌표 기준으로 카테고리 검색
+        const storeResponse = await getStoreListByCategory({
+          lat: currentMapCenter.lat,
+          lng: currentMapCenter.lng,
+          radiusMeters: DEFAULT_RADIUS,
+          category: selectedCategory,
+        });
+
+        // API 데이터를 Platform 타입으로 변환
+        const allPlatforms = storeResponse.data.map((storeData) => {
+          const platform = convertStoreDataToPlatform(
+            storeData,
+            currentMapCenter.lat,
+            currentMapCenter.lng
+          );
+          return platform ?? createPlatformWithoutCoords(storeData);
+        });
+
+        setPlatforms(allPlatforms);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : '카테고리 검색 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    searchByCategory();
+  }, [selectedCategory, currentMapCenter]);
 
   // 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 제거)
   const updateLocationFromMap = async (lat: number, lng: number) => {
     try {
       // 새로운 좌표를 사용자 좌표로 설정
       setUserCoords({ lat, lng });
+      // 현재 지도 중심도 업데이트 (카테고리 검색 시 이 좌표 사용)
+      setCurrentMapCenter({ lat, lng });
 
       // 주소 정보만 업데이트 (가맹점 데이터는 재요청하지 않음)
       const address = await getAddressFromCoordinates(lat, lng);
@@ -132,6 +156,9 @@ export const useStoreData = () => {
     try {
       setIsLoading(true);
       setError(null);
+
+      // 현재 지도 중심 업데이트 (카테고리 검색에서 이 좌표 사용)
+      setCurrentMapCenter({ lat: centerLat, lng: centerLng });
 
       // 맵 레벨에 따른 반경 계산
       const radius = getRadiusByMapLevel(mapLevel);
@@ -153,28 +180,7 @@ export const useStoreData = () => {
       // 모든 가맹점 (좌표 없는 것도 포함) - 리스트용
       const allPlatforms = storeResponse.data.map((storeData) => {
         const platform = convertStoreDataToPlatform(storeData, centerLat, centerLng);
-        if (platform === null) {
-          // 좌표 없는 경우 기본값으로 처리 (리스트에는 표시, 마커는 제외)
-          const { store, partner, tierBenefit } = storeData;
-          const gradeOrder = ['VIP콕', 'BASIC', 'VIP', 'VVIP'];
-          const benefits = gradeOrder.map((grade) => {
-            const benefit = tierBenefit.find((b) => b.grade === grade);
-            return benefit ? `${grade}: ${benefit.context}` : `${grade}: -`;
-          });
-          return {
-            id: store.storeId.toString(),
-            name: store.storeName,
-            category: partner.category,
-            address: store.roadAddress || store.address,
-            latitude: 0, // 마커 표시 안됨을 나타내는 값
-            longitude: 0,
-            benefits: benefits,
-            rating: 4.5,
-            distance: 0,
-            imageUrl: partner.image,
-          };
-        }
-        return platform;
+        return platform ?? createPlatformWithoutCoords(storeData);
       });
 
       setPlatforms(allPlatforms);

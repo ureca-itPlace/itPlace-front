@@ -48,9 +48,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect })
 
   return (
     <div
-      className={`cursor-pointer transition-colors duration-200 w-[370px] px-5 ${
-        isSelected ? 'bg-grey01' : 'bg-white'
-      }`}
+      className="group cursor-pointer transition-colors duration-200 w-[370px] px-5 bg-white hover:bg-grey01"
       onClick={() => onSelect(platform)}
     >
       <div className="py-4">
@@ -108,7 +106,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect })
         </div>
 
         {/* 하단부: 혜택 내용 박스 */}
-        <div className={`rounded-[10px] p-3 w-[330px] ${isSelected ? 'bg-white' : 'bg-grey01'}`}>
+        <div className="rounded-[10px] p-3 w-[330px] bg-grey01 group-hover:bg-white">
           <div className="text-body-3-bold text-grey05 mb-2">혜택 내용</div>
 
           <div className="space-y-1">
@@ -127,7 +125,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, isSelected, onSelect })
                     <span
                       className={`text-body-4 ${isUserGrade ? 'text-orange04 font-bold' : 'text-grey05'}`}
                     >
-                      {grade}:
+                      {grade === 'BASIC' ? '우수' : grade}
                     </span>
                     <span
                       className={`text-body-4 truncate ${isUserGrade ? 'text-orange04 font-bold' : 'text-grey05'}`}

@@ -40,6 +40,36 @@ export interface TierBenefit {
   context: string;
 }
 
+// 상세 혜택 API 타입 정의
+export interface BenefitDetailRequest {
+  storeId: number;
+  partnerId: number;
+  mainCategory: 'VIP_COCK' | 'BASIC_BENEFIT';
+}
+
+export interface BenefitDetailResponse {
+  code: string;
+  status: string;
+  message: string;
+  timestamp: string;
+  data: BenefitDetailData;
+}
+
+export interface BenefitDetailData {
+  benefitId: string;
+  benefitName: string;
+  mainCategory: string;
+  manual: string;
+  url: string;
+  tierBenefits: DetailTierBenefit[];
+}
+
+export interface DetailTierBenefit {
+  grade: string;
+  context: string;
+  isAll: boolean;
+}
+
 // 카카오 좌표→주소 변환 API 타입
 export interface KakaoAddressResponse {
   meta: {

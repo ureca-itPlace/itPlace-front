@@ -6,7 +6,7 @@ import {
   TbShoppingBag,
   TbHome,
   TbToolsKitchen2,
-  TbPalette,
+  TbMovie,
   TbBook,
   TbPlane,
 } from 'react-icons/tb';
@@ -19,14 +19,14 @@ interface CategoryTabsSectionProps {
 
 const getCategoryIcon = (categoryId: string): React.ReactElement | undefined => {
   const iconMap: Record<string, React.ReactElement> = {
-    엔터테인먼트: <TbDeviceTv size={16} />,
-    '뷰티/건강': <TbHeart size={16} />,
-    쇼핑: <TbShoppingBag size={16} />,
-    '생활/편의': <TbHome size={16} />,
-    푸드: <TbToolsKitchen2 size={16} />,
-    '문화/여가': <TbPalette size={16} />,
-    교육: <TbBook size={16} />,
-    '여행/교통': <TbPlane size={16} />,
+    엔터테인먼트: <TbDeviceTv size={20} className="text-orange04" />,
+    '뷰티/건강': <TbHeart size={20} className="text-pink04" />,
+    쇼핑: <TbShoppingBag size={20} className="text-purple04" />,
+    '생활/편의': <TbHome size={20} className="text-orange04" />,
+    푸드: <TbToolsKitchen2 size={20} className="text-pink04" />,
+    '문화/여가': <TbMovie size={20} className="text-purple04" />,
+    교육: <TbBook size={20} className="text-orange04" />,
+    '여행/교통': <TbPlane size={20} className="text-pink04" />,
   };
   return iconMap[categoryId];
 };

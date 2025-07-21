@@ -1,5 +1,7 @@
 export interface Platform {
   id: string;
+  storeId: number;
+  partnerId: number;
   name: string;
   category: string;
   address: string;

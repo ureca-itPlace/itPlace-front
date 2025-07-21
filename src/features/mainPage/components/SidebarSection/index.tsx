@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
 import SearchSection from './SearchSection';
 import InfoBannerSection from './InfoBannerSection';
 import NavigationTabsSection from './NavigationTabsSection';
 import StoreCardsSection from './StoreCardsSection';
 import FavoriteStoreList from './FavoriteStoreList';
+import StoreDetailCard from './StoreCardsSection/StoreDetailCard';
 
 interface Tab {
   id: string;
@@ -37,6 +38,26 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onSearchChange,
 }) => {
   const [activeTab, setActiveTab] = useState('nearby');
+  const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
+
+  // 카드 클릭 시 상세보기로 전환
+  const handleCardClick = (platform: Platform) => {
+    onPlatformSelect(platform);
+    setViewMode('detail');
+  };
+
+  // 상세보기에서 닫기
+  const handleDetailClose = () => {
+    setViewMode('list');
+    // selectedPlatform은 유지 (회색 배경 유지)
+  };
+
+  // 외부에서 플랫폼 선택 시 (맵 마커 클릭 등) 상세보기로 전환
+  useEffect(() => {
+    if (selectedPlatform && viewMode === 'list') {
+      setViewMode('detail');
+    }
+  }, [selectedPlatform]);
 
   const mainTabs: Tab[] = [
     { id: 'nearby', label: '주변 혜택' },
@@ -54,7 +75,6 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   ];
 
   const handleSearchChange = (query: string) => {
-    console.log('Search query:', query);
     onSearchChange?.(query);
   };
 
@@ -88,53 +108,62 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   return (
     <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
-      {/* Content Wrapper - 330x860 with 15px top/bottom, 20px left/right margins */}
-      <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
-        {/* 검색 영역 */}
-        <div className="pb-8 flex-shrink-0">
-          <SearchSection onSearchChange={handleSearchChange} />
+      {viewMode === 'list' ? (
+        // 리스트 모드: 기존 UI
+        <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
+          {/* 검색 영역 */}
+          <div className="pb-8 flex-shrink-0">
+            <SearchSection onSearchChange={handleSearchChange} />
 
-          <div className="mb-4">
-            <NavigationTabsSection
-              tabs={mainTabs}
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
+            <div className="mb-4">
+              <NavigationTabsSection
+                tabs={mainTabs}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+              />
+            </div>
+
+            <InfoBannerSection message={getInfoBannerMessage()} variant="primary" />
+          </div>
+
+          {/* 컨텐츠 영역 - 탭에 따라 다른 컴포넌트 렌더링 */}
+          {activeTab === 'nearby' && (
+            <StoreCardsSection
+              platforms={platforms}
+              selectedPlatform={selectedPlatform}
+              onPlatformSelect={handleCardClick}
+              currentLocation={currentLocation}
+              isLoading={isLoading}
+              error={error}
             />
-          </div>
+          )}
 
-          <InfoBannerSection message={getInfoBannerMessage()} variant="primary" />
+          {activeTab === 'favorites' && (
+            <>
+              {/* 즐겨찾기 스토어 리스트 */}
+              <div className="flex-1 overflow-y-auto pt-4">
+                <FavoriteStoreList stores={mockStores} onStoreClick={handleStoreClick} />
+              </div>
+            </>
+          )}
+
+          {activeTab === 'ai' && (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-grey04 text-center">
+                <div className="text-lg mb-2">🤖</div>
+                <div>AI 추천 기능 준비중입니다</div>
+              </div>
+            </div>
+          )}
         </div>
-
-        {/* 컨텐츠 영역 - 탭에 따라 다른 컴포넌트 렌더링 */}
-        {activeTab === 'nearby' && (
-          <StoreCardsSection
-            platforms={platforms}
-            selectedPlatform={selectedPlatform}
-            onPlatformSelect={onPlatformSelect}
-            currentLocation={currentLocation}
-            isLoading={isLoading}
-            error={error}
-          />
-        )}
-
-        {activeTab === 'favorites' && (
-          <>
-            {/* 즐겨찾기 스토어 리스트 */}
-            <div className="flex-1 overflow-y-auto pt-4">
-              <FavoriteStoreList stores={mockStores} onStoreClick={handleStoreClick} />
-            </div>
-          </>
-        )}
-
-        {activeTab === 'ai' && (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-grey04 text-center">
-              <div className="text-lg mb-2">🤖</div>
-              <div>AI 추천 기능 준비중입니다</div>
-            </div>
-          </div>
-        )}
-      </div>
+      ) : (
+        // 상세 모드: StoreDetailCard만 전체 화면으로
+        <div className="h-full overflow-y-auto">
+          {selectedPlatform && (
+            <StoreDetailCard platform={selectedPlatform} onClose={handleDetailClose} />
+          )}
+        </div>
+      )}
     </div>
   );
 };

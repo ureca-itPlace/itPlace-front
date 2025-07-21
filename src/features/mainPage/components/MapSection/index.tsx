@@ -38,14 +38,10 @@ const MapSection: React.FC<MapSectionProps> = ({
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  console.log('🔍 MapSection 상태:', { hasInitialSearched, hasSearched, showSearchButton });
-
   // 지도 중심 변경 핸들러 (드래그 감지)
   const handleMapCenterChange = (location: MapLocation) => {
     console.log('🗺️ 지도 드래그 감지:', { hasInitialSearched, hasSearched, showSearchButton });
     // 초기 검색이나 수동 검색을 한 후에만 드래그 시 버튼 표시
-    // 임시로 항상 표시하도록 수정
-    console.log('✅ 검색 버튼 표시 (임시)');
     setShowSearchButton(true);
     onMapCenterChange?.(location);
   };
@@ -60,6 +56,7 @@ const MapSection: React.FC<MapSectionProps> = ({
   // 카테고리 변경시 검색 상태 리셋
   useEffect(() => {
     setHasSearched(false);
+
     setShowSearchButton(false);
   }, [selectedCategory]);
   return (

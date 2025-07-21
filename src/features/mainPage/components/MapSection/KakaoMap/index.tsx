@@ -177,7 +177,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       // 줌 변경 이벤트 리스너
       window.kakao.maps.event.addListener(map, 'zoom_changed', () => {
         const level = map.getLevel();
-        console.log('🗺️ 맵 레벨:', level);
         setCurrentZoomLevel(level);
         // 부모 컴포넌트에 맵 레벨 변경 알림
         onMapLevelChange?.(level);

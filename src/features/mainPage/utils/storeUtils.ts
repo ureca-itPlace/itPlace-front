@@ -1,5 +1,6 @@
 import { StoreData } from '../types/api';
 import { Platform } from '../types';
+import { GRADE_ORDER } from '../constants';
 
 /**
  * API 응답 데이터를 Platform 타입으로 변환
@@ -22,22 +23,50 @@ export const convertStoreDataToPlatform = (
   const distance = calculateDistance(userLat, userLng, store.latitude, store.longitude);
 
   // 모든 등급에 대해 혜택 정보 생성 (없으면 '-')
-  const gradeOrder = ['VIP콕', 'BASIC', 'VIP', 'VVIP'];
-  const benefits = gradeOrder.map((grade) => {
+  const benefits = GRADE_ORDER.map((grade) => {
     const benefit = tierBenefit.find((b) => b.grade === grade);
     return benefit ? `${grade}: ${benefit.context}` : `${grade}: -`;
   });
 
   return {
     id: store.storeId.toString(),
+    storeId: store.storeId,
+    partnerId: partner.partnerId,
     name: store.storeName,
     category: partner.category,
     address: store.roadAddress || store.address,
     latitude: store.latitude,
     longitude: store.longitude,
     benefits: benefits,
-    rating: 4.5, // 기본값 (API에 평점 정보가 있다면 사용)
+    rating: 4.5,
     distance: Math.round(distance * 10) / 10, // 소수점 첫째 자리까지
+    imageUrl: partner.image,
+  };
+};
+
+/**
+ * 좌표가 없는 경우를 위한 기본 Platform 객체 생성
+ */
+export const createPlatformWithoutCoords = (storeData: StoreData): Platform => {
+  const { store, partner, tierBenefit } = storeData;
+
+  const benefits = GRADE_ORDER.map((grade) => {
+    const benefit = tierBenefit.find((b) => b.grade === grade);
+    return benefit ? `${grade}: ${benefit.context}` : `${grade}: -`;
+  });
+
+  return {
+    id: store.storeId.toString(),
+    storeId: store.storeId,
+    partnerId: partner.partnerId,
+    name: store.storeName,
+    category: partner.category,
+    address: store.roadAddress || store.address,
+    latitude: 0, // 마커 표시 안됨을 나타내는 값
+    longitude: 0,
+    benefits: benefits,
+    rating: 4.5,
+    distance: 0,
     imageUrl: partner.image,
   };
 };
