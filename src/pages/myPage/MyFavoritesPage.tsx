@@ -3,8 +3,8 @@ import { Pagination } from '../../components/common';
 import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
 import SearchBar from '../../components/common/SearchBar';
 import NoResult from '../../components/NoResult';
-import BenefitCardList from '../../features/myPage/components/BenefitCardList';
-import EditControls from '../../features/myPage/components/EditControls';
+import BenefitCardList from '../../features/myPage/components/Favorites/BenefitCardList';
+import EditControls from '../../features/myPage/components/Favorites/EditControls';
 import MyPageContentLayout from '../../features/myPage/layout/MyPageContentLayout';
 import FavoritesDeleteModal from '../../features/myPage/components/Favorites/FavoritesDeleteModal';
 import FavoritesAside from '../../features/myPage/components/Favorites/FavoritesAside';
@@ -33,7 +33,7 @@ export default function MyFavoritesPage() {
     handlePageChange,
     itemsPerPage,
     currentPage,
-  } = useFavorites();
+  } = useFavorites(undefined, 6);
 
   return (
     <>
@@ -125,38 +125,40 @@ export default function MyFavoritesPage() {
             </div>
 
             {/* 페이지네이션 */}
-            <div className="mt-auto relativ flex justify-center items-end">
-              <Pagination
-                currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                totalItems={filteredFavorites.length}
-                onPageChange={handlePageChange}
-                width={37}
-              />
-              {/* 편집 모드에서 나오는 버튼 */}
-              {currentItems.length > 0 && isEditing && (
-                <div className="absolute right-[56px] flex gap-3">
-                  <button
-                    onClick={() => {
-                      setIsEditing(false);
-                      setSelectedItems([]);
-                    }}
-                    className="px-4 py-2 rounded-[16px] bg-grey01 hover:bg-grey02 text-title-8 text-grey04"
-                  >
-                    편집 취소
-                  </button>
-                  <button
-                    onClick={() => {
-                      setPendingDeleteId(null);
-                      setIsDeleteModalOpen(true);
-                    }}
-                    className="px-4 py-2 rounded-[16px] bg-purple04 hover:bg-purple05 text-title-8 text-white"
-                  >
-                    삭제하기
-                  </button>
-                </div>
-              )}
-            </div>
+            {currentItems.length > 0 && (
+              <div className="mt-auto relativ flex justify-center items-end">
+                <Pagination
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={filteredFavorites.length}
+                  onPageChange={handlePageChange}
+                  width={37}
+                />
+                {/* 편집 모드에서 나오는 버튼 */}
+                {currentItems.length > 0 && isEditing && (
+                  <div className="absolute right-[56px] flex gap-3">
+                    <button
+                      onClick={() => {
+                        setIsEditing(false);
+                        setSelectedItems([]);
+                      }}
+                      className="px-4 py-2 rounded-[16px] bg-grey01 hover:bg-grey02 text-title-8 text-grey04"
+                    >
+                      편집 취소
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPendingDeleteId(null);
+                        setIsDeleteModalOpen(true);
+                      }}
+                      className="px-4 py-2 rounded-[16px] bg-purple04 hover:bg-purple05 text-title-8 text-white"
+                    >
+                      삭제하기
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         }
         // ✨ RightAside 영역
