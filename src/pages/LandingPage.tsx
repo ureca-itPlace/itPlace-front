@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useState, useRef, useEffect, lazy } from 'react';
 
+import LoadLanding from '../features/landingPage/components/common/LoadLanding';
 import IntroSection from '../features/landingPage/components/sections/IntroSection';
 const EarthSection = lazy(() => import('../features/landingPage/components/sections/EarthSection'));
 const MapSection = lazy(() => import('../features/landingPage/components/sections/MapSection'));
@@ -14,8 +15,6 @@ const VideoSection = lazy(() => import('../features/landingPage/components/secti
 const StartCTASection = lazy(
   () => import('../features/landingPage/components/sections/StartCTASection')
 );
-
-import LoadLanding from '../features/landingPage/components/common/LoadLanding';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
