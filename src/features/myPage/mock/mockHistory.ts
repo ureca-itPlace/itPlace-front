@@ -2,7 +2,7 @@
 export const mockHistory = [
   {
     image: '/images/mock/gs25.png',
-    benefitName: 'GS25',
+    benefitName: 'GS25얄리얄리얄랴셩 웅앵옹웅앵용잉앵옹',
     discountAmount: 4500,
     usedAt: '2025-07-03 11:23 AM',
   },

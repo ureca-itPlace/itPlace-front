@@ -150,22 +150,34 @@ export default function MyHistoryPage() {
                 {currentItems.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex justify-between items-center border border-purple02 rounded-[10px] p-2"
+                    className="flex items-center border border-purple02 rounded-[10px] p-2"
                   >
-                    <div className="flex items-center gap-14">
+                    {/* 왼쪽: 이미지 + 이름 */}
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
                       <img
                         src={item.image}
                         alt={item.benefitName}
-                        className="h-[70px] w-auto object-contain"
+                        className="h-[70px] w-auto object-contain flex-shrink-0"
                       />
-                      <span className="text-purple05 text-title-5 font-semibold">
+                      <span
+                        className="ml-2 
+        text-purple05 text-title-5 font-semibold
+        overflow-hidden text-ellipsis whitespace-nowrap
+        block
+      "
+                        title={item.benefitName}
+                      >
                         {item.benefitName}
                       </span>
                     </div>
-                    <span className="text-black text-title-5 font-semibold">
-                      {item.discountAmount.toLocaleString()}원
-                    </span>
-                    <span className="text-grey05 text-body-1 pr-4">{item.usedAt}</span>
+
+                    {/* 오른쪽: 가격 + 날짜를 묶음 */}
+                    <div className="flex items-center gap-4 flex-shrink-0">
+                      <span className="text-black text-title-5 font-semibold w-[120px] text-right">
+                        {item.discountAmount.toLocaleString()}원
+                      </span>
+                      <span className="text-grey05 text-body-1 px-4">{item.usedAt}</span>
+                    </div>
                   </div>
                 ))}
               </div>
