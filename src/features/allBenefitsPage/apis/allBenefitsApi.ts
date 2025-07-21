@@ -29,9 +29,8 @@ export interface BenefitResponse {
 
 export interface BenefitApiParams {
   mainCategory: 'VIP_COCK' | 'BASIC_BENEFIT';
-  userId: number;
-  page: number;
-  size: number;
+  page?: number;
+  size?: number;
   keyword?: string;
   category?: string;
   filter?: 'ONLINE' | 'OFFLINE';
@@ -68,7 +67,18 @@ export interface ApiResponse<T = unknown> {
 // 혜택 목록 조회 API
 export const getBenefits = async (params: BenefitApiParams): Promise<BenefitResponse> => {
   try {
-    const response = await axiosInstance.get('/api/v1/benefit', { params });
+    // 기본값 설정
+    const queryParams = {
+      mainCategory: params.mainCategory,
+      page: params.page ?? 0,
+      size: params.size ?? 12,
+      sort: params.sort ?? 'POPULARITY',
+      ...(params.category && { category: params.category }),
+      ...(params.filter && { filter: params.filter }),
+      ...(params.keyword && { keyword: params.keyword }),
+    };
+
+    const response = await axiosInstance.get('/api/v1/benefit', { params: queryParams });
     return response.data.data;
   } catch (error) {
     console.error('혜택 데이터 로드 실패:', error);
