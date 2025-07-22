@@ -13,8 +13,8 @@ const EarthSection = () => {
   }, []);
 
   return (
-    <div ref={earthSectionRef} className="h-screen w-full bg-black">
-      {triggerReady && <EarthScene trigger={earthSectionRef} />}
+    <div ref={earthSectionRef} className="h-screen w-full bg-black overflow-hidden">
+      {triggerReady && <EarthScene earthAnimationTrigger={earthSectionRef} />}
     </div>
   );
 };
