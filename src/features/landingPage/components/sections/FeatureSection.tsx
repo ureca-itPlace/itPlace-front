@@ -31,7 +31,7 @@ const FeatureSection = () => {
         trigger: sectionRef.current,
         start: 'center center',
         end: '+=2000',
-        scrub: 0.5,
+        scrub: 0.3,
         pin: true,
         anticipatePin: 1,
         markers: true,
@@ -47,6 +47,7 @@ const FeatureSection = () => {
             y: '0%',
             duration: 1.2,
             ease: 'power1.inOut',
+            onStart: () => setActiveIdx(idx),
           },
           '+=0.5'
         );
@@ -61,33 +62,79 @@ const FeatureSection = () => {
         );
       }
     });
+
+    featureData.forEach((_, idx) => {
+      if (!cardRefs.current[idx]) return;
+
+      ScrollTrigger.create({
+        trigger: cardRefs.current[idx],
+        start: 'top top',
+        end: 'bottom top',
+        onToggle: (self) => {
+          if (self.isActive) {
+            setActiveIdx(idx);
+          }
+        },
+        markers: {
+          startColor: 'purple',
+          endColor: 'orange',
+          fontSize: '14px',
+          indent: 20,
+        },
+      });
+    });
   }, [cardRefs, sectionRef]);
+
+  const handleMenuClick = (idx: number) => {
+    const targetCard = cardRefs.current[idx];
+    if (targetCard) {
+      // 카드 위치를 y:0%로 설정
+      gsap.to(targetCard, {
+        y: '0%',
+        duration: 1.2,
+        ease: 'power1.inOut',
+      });
+
+      // 해당 카드로 스크롤 이동
+      gsap.to(window, {
+        scrollTo: targetCard,
+        duration: 1.2,
+        ease: 'power2.inOut',
+      });
+
+      setActiveIdx(idx);
+    }
+  };
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen bg-black text-black flex items-center justify-center overflow-hidden"
+      className="relative w-full h-screen bg-black flex items-center justify-center overflow-hidden"
     >
       <div className="w-full h-full flex items-center justify-center max-sm:flex-col">
         <nav ref={featureListRef}>
           <ul className="flex flex-col gap-28 text-[64px] ml-36 whitespace-nowrap text-white">
             {featureData.map((feature, i) => (
               <li key={feature.title}>
-                <a>{feature.title}</a>
+                <button
+                  onClick={() => handleMenuClick(i)}
+                  className={`transition-colors ${activeIdx === i ? 'text-purple04' : 'text-white'}`}
+                >
+                  {feature.title}
+                </button>
               </li>
             ))}
           </ul>
         </nav>
 
-        <ul className="flex flex-col w-[57%] h-full ml-auto">
+        <ul className="relative flex flex-col w-[57%] h-full ml-auto text-black">
           {featureData.map((feature, i) => (
             <li
               key={feature.title}
               ref={(el) => {
                 if (el) cardRefs.current[i] = el;
               }}
-              className={`${feature.color} flex flex-col items-center justify-center h-screen w-full ml-auto`}
-              style={{ position: 'absolute', top: 0, right: 0, width: '57%' }}
+              className={`${feature.color} absolute top-0 right-0 flex flex-col items-center justify-center h-screen w-full ml-auto`}
             >
               <div className="flex items-center justify-center mb-20 mt-24 w-[964px] h-[476px]">
                 <img
