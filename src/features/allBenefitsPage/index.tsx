@@ -123,8 +123,8 @@ const AllBenefitsLayout: React.FC = () => {
           );
           showToast(
             favorites.includes(benefitId)
-              ? '즐겨찾기에서 삭제되었습니다'
-              : '즐겨찾기에 추가되었습니다',
+              ? '관심 혜택에서 삭제되었습니다'
+              : '관심 혜택에 추가되었습니다',
             'success'
           );
           return;
@@ -135,12 +135,12 @@ const AllBenefitsLayout: React.FC = () => {
           // 즐겨찾기 삭제
           await removeFavorite(benefitId);
           setFavorites((prev) => prev.filter((id) => id !== benefitId));
-          showToast('즐겨찾기에서 삭제되었습니다', 'success');
+          showToast('관심 혜택에서 삭제되었습니다', 'success');
         } else {
           // 즐겨찾기 추가
           await addFavorite(benefitId);
           setFavorites((prev) => [...prev, benefitId]);
-          showToast('즐겨찾기에 추가되었습니다', 'success');
+          showToast('관심 혜택에 추가되었습니다', 'success');
         }
 
         // 혜택 목록의 즐겨찾기 상태도 업데이트
@@ -152,8 +152,8 @@ const AllBenefitsLayout: React.FC = () => {
           )
         );
       } catch (error) {
-        console.error('즐겨찾기 토글 실패:', error);
-        showToast('즐겨찾기 처리 중 오류가 발생했습니다', 'error');
+        console.error('관심 혜택 토글 실패:', error);
+        showToast('관심 혜택 처리 중 오류가 발생했습니다', 'error');
       }
     },
     [favorites, USE_MOCK_DATA]
