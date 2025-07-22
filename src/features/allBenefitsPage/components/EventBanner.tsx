@@ -7,7 +7,7 @@ const images = ['/images/allBenefits/event1.png', '/images/allBenefits/event2.pn
 
 const EventBanner: React.FC = () => {
   return (
-    <div className="rounded-[18px] drop-shadow-basic flex items-center justify-center w-[1200px] h-[250px] max-md:w-[350px] max-md:h-[90px]">
+    <div className="rounded-[18px] drop-shadow-basic flex items-center justify-center w-[1200px] h-[250px] max-md:w-[calc(100vw-56px)] max-md:h-[100px]">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={30}

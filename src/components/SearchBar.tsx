@@ -21,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   backgroundColor,
 }) => {
   return (
-    <div className="relative" style={{ width, height }}>
+    <div className="relative " style={{ width, height }}>
       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
         <TbSearch size={18} className="text-purple04" />
       </div>

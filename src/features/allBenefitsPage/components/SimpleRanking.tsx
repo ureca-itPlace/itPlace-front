@@ -80,7 +80,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
 
   return (
     <div
-      className={`bg-orange01 rounded-[18px] drop-shadow-basic p-6 max-md:pt-4 w-[555px] h-[250px] max-md:w-[350px] max-md:h-[100px] ${className}`}
+      className={`bg-orange01 rounded-[18px] drop-shadow-basic p-6 max-md:pt-4 w-[555px] h-[250px] max-md:w-[calc(100vw-56px)] max-md:h-[100px] ${className}`}
     >
       {/* PC: 전체 리스트, 모바일: 슬라이드 */}
       <h3 className="text-title-3 text-black mb-6 max-md:text-title-6 max-md:mb-4">{title}</h3>
