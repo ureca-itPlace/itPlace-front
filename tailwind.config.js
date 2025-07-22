@@ -84,10 +84,10 @@ export default {
       xl: '1280px',
       '2xl': '1536px',
       // max-width 기반 반대 방향 브레이크포인트 (웹 우선 대응)
-      'max-xl': { max: '1536px' }, // 125% 배율 대비
-      'max-lg': { max: '1023px' }, // 1023px 이하
-      'max-md': { max: '767px' },
-      'max-sm': { max: '639px' },
+      'max-xl': { max: '1536px' }, // 노트북 FHD 125% 배율 대비
+      'max-lg': { max: '1023px' }, // 태블릿 가로 1023px 이하
+      'max-md': { max: '767px' }, // 태블릿 세로
+      'max-sm': { max: '639px' }, // 모바일 세로
     },
   },
   plugins: [

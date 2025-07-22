@@ -8,7 +8,7 @@ import SearchBar from '../../components/SearchBar';
 import Pagination from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoResult from '../../components/NoResult';
-import { TbChevronDown, TbStar, TbStarFilled } from 'react-icons/tb';
+import { TbChevronDown, TbStar, TbStarFilled, TbMenu2 } from 'react-icons/tb';
 import { showToast } from '../../utils/toast';
 import {
   getBenefits,
@@ -291,16 +291,35 @@ const AllBenefitsLayout: React.FC = () => {
   };
 
   return (
-    <div>
-      <div className="p-7 flex gap-7 items-start">
+    <div className="max-md:pt-[54px]">
+      {/* 모바일 헤더 */}
+      <div className="fixed top-0 left-0 w-full h-[54px] bg-white max-md:flex items-center justify-between px-4 z-[9999] border-b border-grey01 hidden">
+        <div className="text-body-2 text-black">전체 혜택</div>
+        <button className="w-8 h-8 flex items-center justify-center" aria-label="메뉴">
+          <TbMenu2 className="w-6 h-6 text-black" />
+        </button>
+      </div>
+
+      {/* 데스크탑/태블릿 레이아웃 */}
+      <div className="p-7 flex gap-7 items-start max-md:flex-col">
         <EventBanner />
         <SimpleRanking />
-        {/* 추후 다른 컴포넌트 추가 시 여기에 배치 */}
       </div>
+
+      {/* 모바일: 랭킹 아래 토글버튼
+      <div className="max-md:block hidden px-4 pt-2">
+        <BenefitFilterToggle value={filter} onChange={setFilter} />
+      </div> */}
+
+      {/* 데스크탑: 기존 토글버튼 위치 */}
       <div className="pt-7 px-7">
-        <div className="w-[1783px] flex items-start justify-between">
-          <BenefitFilterToggle value={filter} onChange={setFilter} />
-          <div className="flex gap-2">
+        <div className="w-[1783px] flex items-start justify-between max-md:flex-col">
+          <BenefitFilterToggle
+            value={filter}
+            onChange={setFilter}
+            width="w-[300px] max-md:w-[345px]"
+          />
+          <div className="flex gap-2 max-md:mb-10">
             <SearchBar
               placeholder="제휴처 검색"
               value={searchTerm}
@@ -311,7 +330,7 @@ const AllBenefitsLayout: React.FC = () => {
               backgroundColor="bg-grey01"
             />
             {/* 정렬 필터 드롭다운 */}
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative max-md:hidden" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={`flex items-center gap-2 px-4 py-3 border border-grey02 rounded-[10px] hover:bg-grey01 transition-colors min-w-[120px] justify-between ${
@@ -409,7 +428,7 @@ const AllBenefitsLayout: React.FC = () => {
                         e.stopPropagation(); // 카드 클릭 이벤트 중단
                         toggleFavorite(benefit.benefitId);
                       }}
-                      className="mb-4 text-yellow-400 hover:scale-110 transition-transform"
+                      className="mb-4 text-orange03 hover:scale-110 transition-transform"
                     >
                       {benefit.isFavorite || favorites.includes(benefit.benefitId) ? (
                         <TbStarFilled className="w-6 h-6" />
