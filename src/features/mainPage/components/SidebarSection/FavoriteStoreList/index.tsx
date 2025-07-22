@@ -33,12 +33,12 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {favorites.map((favorite) => (
         <div
           key={favorite.benefitId}
           onClick={() => onItemClick(favorite)}
-          className="h-[60px] bg-grey01 rounded-[10px] px-2 flex items-center cursor-pointer hover:bg-purple01 transition-colors"
+          className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-2 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden"
         >
           {/* 왼쪽: 파트너 이미지 */}
           <div className="w-[50px] h-[50px] rounded-[10px] overflow-hidden flex-shrink-0 mr-6">

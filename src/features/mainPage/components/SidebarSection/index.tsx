@@ -164,7 +164,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               </div>
 
               {/* 즐겨찾기 스토어 리스트 */}
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto w-[370px]">
                 <FavoriteStoreList
                   favorites={favorites}
                   onItemClick={handleFavoriteClick}
