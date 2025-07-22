@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import MyPageContentLayout from '../../features/myPage/layout/MyPageContentLayout';
-import Pagination from '../../components/common/Pagination';
-import SearchBar from '../../components/common/SearchBar';
+import Pagination from '../../components/Pagination';
+import SearchBar from '../../components/SearchBar';
 import NoResult from '../../components/NoResult';
 import { mockHistory } from '../../features/myPage/mock/mockHistory';
 import DatePicker from 'react-datepicker';
