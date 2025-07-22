@@ -16,6 +16,7 @@ interface StoreDetailCardProps {
 const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) => {
   const [activeTab, setActiveTab] = useState<'default' | 'vipkok'>('default');
   const [detailData, setDetailData] = useState<BenefitDetailResponse | null>(null);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   const fetchDetail = useCallback(async () => {
     const category = activeTab === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT';
@@ -26,6 +27,10 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         mainCategory: category,
       });
       setDetailData(res);
+      // API 응답에서 isFavorite 상태 업데이트
+      if (res?.data?.isFavorite !== undefined) {
+        setIsFavorite(res.data.isFavorite);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -34,6 +39,11 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   useEffect(() => {
     fetchDetail();
   }, [fetchDetail]);
+
+  // 즐겨찾기 상태 변경 핸들러
+  const handleFavoriteChange = (newIsFavorite: boolean) => {
+    setIsFavorite(newIsFavorite);
+  };
 
   return (
     <div className="w-full bg-white rounded-t-[20px] shadow-lg flex flex-col h-full">
@@ -60,7 +70,13 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
 
       {/* 고정 버튼 */}
       <div className="px-6 pb-4 flex-shrink-0">
-        <StoreDetailActionButton />
+        {detailData?.data?.benefitId && (
+          <StoreDetailActionButton
+            benefitId={detailData.data.benefitId}
+            isFavorite={isFavorite}
+            onFavoriteChange={handleFavoriteChange}
+          />
+        )}
       </div>
     </div>
   );

@@ -62,6 +62,7 @@ export interface BenefitDetailData {
   manual: string;
   url: string;
   tierBenefits: DetailTierBenefit[];
+  isFavorite: boolean;
 }
 
 export interface DetailTierBenefit {
@@ -98,4 +99,17 @@ export interface StoreListParams {
   lat: number;
   lng: number;
   radiusMeters: number;
+}
+
+// 즐겨찾기 API 타입
+export interface FavoriteRequest {
+  benefitId: number;
+}
+
+export interface FavoriteResponse {
+  code: string;
+  status: string;
+  message: string;
+  data: null;
+  timestamp: string;
 }
