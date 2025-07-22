@@ -44,12 +44,9 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
-  const {
-    favorites,
-    isLoading: isFavoritesLoading,
-    error: favoritesError,
-    refreshFavorites,
-  } = useFavoritesList(activeTab === 'favorites' ? selectedCategory : undefined);
+  const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
+    activeTab === 'favorites' ? selectedCategory : undefined
+  );
 
   // 카드 클릭 시 상세보기로 전환
   const handleCardClick = (platform: Platform) => {
@@ -89,6 +86,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   const handleFavoriteClick = (favorite: FavoriteBenefit) => {
     // TODO: 상세보기 모달 열기 또는 상세 페이지로 이동
+    console.log('즐겨찾기 클릭:', favorite);
   };
 
   const handleCategorySelect = (categoryId: string) => {
@@ -166,7 +164,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               </div>
 
               {/* 즐겨찾기 스토어 리스트 */}
-              <div className="flex-1 overflow-y-auto pt-4">
+              <div className="flex-1 overflow-y-auto">
                 <FavoriteStoreList
                   favorites={favorites}
                   onItemClick={handleFavoriteClick}
@@ -185,6 +183,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                   selectedCategory={selectedCategory}
                   onCategorySelect={(categoryId) => {
                     // TODO: AI 추천 카테고리 기능 구현
+                    console.log('AI 추천 카테고리 선택:', categoryId);
                   }}
                   mode="sidebar"
                 />

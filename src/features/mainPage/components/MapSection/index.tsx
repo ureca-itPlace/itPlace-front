@@ -17,7 +17,6 @@ interface MapSectionProps {
   onSearchInMap?: () => void;
   centerLocation?: { latitude: number; longitude: number } | null;
   onMapLevelChange?: (mapLevel: number) => void;
-  hasInitialSearched?: boolean;
   activeTab: string;
 }
 
@@ -34,11 +33,9 @@ const MapSection: React.FC<MapSectionProps> = ({
   onSearchInMap,
   centerLocation,
   onMapLevelChange,
-  hasInitialSearched = false,
   activeTab,
 }) => {
   const [showSearchButton, setShowSearchButton] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
 
   // 지도 중심 변경 핸들러 (드래그 감지)
   const handleMapCenterChange = (location: MapLocation) => {
@@ -49,15 +46,12 @@ const MapSection: React.FC<MapSectionProps> = ({
 
   // 검색 실행 핸들러
   const handleSearchInMap = () => {
-    setHasSearched(true);
     setShowSearchButton(false); // 검색하면 버튼 숨김
     onSearchInMap?.();
   };
 
-  // 카테고리 변경시 검색 상태 리셋
+  // 카테고리 변경시 검색 버튼 숨김
   useEffect(() => {
-    setHasSearched(false);
-
     setShowSearchButton(false);
   }, [selectedCategory]);
   return (

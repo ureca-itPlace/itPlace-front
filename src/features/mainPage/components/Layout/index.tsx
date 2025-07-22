@@ -5,41 +5,47 @@ import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
 
+/**
+ * 메인페이지 레이아웃 컴포넌트
+ * 사이드바와 지도 영역을 관리하고 두 영역 간의 데이터 연동 처리
+ */
+
 const MainPageLayout: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('전체');
-  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
-  const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]);
-  const [activeTab, setActiveTab] = useState<string>('nearby'); // SidebarSection의 activeTab 상태를 상위로 이동
-  const [currentMapLevel, setCurrentMapLevel] = useState<number>(2); // 맵 레벨 상태 추가
+  // UI 상태 관리
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null); // 선택된 가맹점
+  const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]); // 검색 결과 가맹점 목록
+  const [activeTab, setActiveTab] = useState<string>('nearby'); // 사이드바 활성 탭 ('주변 혜택', '관심 혜택', '잏AI 추천')
+
+  // 지도 관련 상태
+  const [currentMapLevel, setCurrentMapLevel] = useState<number>(2); // 지도 확대/축소 레벨
   const [currentMapCenter, setCurrentMapCenter] = useState<{ lat: number; lng: number } | null>(
     null
-  ); // 지도 중심 저장 (centerLocation과 통합)
+  ); // 지도 중심 좌표
 
-  // 카테고리는 상수에서 가져옴 (중복 제거)
-
-  // API에서 실제 가맹점 데이터 가져오기
+  // 가맹점 데이터 및 API 상태 관리
   const {
-    platforms: apiPlatforms,
-    currentLocation,
-    isLoading,
-    error,
-    updateLocationFromMap,
-    filterByCategory,
-    searchInCurrentMap,
+    platforms: apiPlatforms, // API에서 가져온 가맹점 목록
+    currentLocation, // 현재 위치 주소 텍스트
+    isLoading, // 로딩 상태
+    error, // 에러 상태
+    selectedCategory, // 선택된 카테고리 (useStoreData에서 관리)
+    updateLocationFromMap, // 지도에서 위치 이동 시 주소 업데이트
+    filterByCategory, // 카테고리 필터링
+    searchInCurrentMap, // 현재 지도 영역에서 검색
   } = useStoreData();
 
-  // 카테고리 선택 핸들러
+  /**
+   * 카테고리 선택 처리
+   * 카테고리 변경 시 선택된 가맹점 및 검색 결과 초기화
+   */
   const handleCategorySelect = useCallback(
     (categoryId: string) => {
-      setSelectedCategory(categoryId);
-      setSelectedPlatform(null);
+      setSelectedPlatform(null); // 선택된 가맹점 초기화
+      setFilteredPlatforms([]); // 검색 결과 초기화
 
-      // API 기반 카테고리 필터링
+      // API 기반 카테고리 필터링 ('전체' -> null 변환)
       const categoryValue = categoryId === '전체' ? null : categoryId;
       filterByCategory(categoryValue);
-
-      // 검색 결과 초기화
-      setFilteredPlatforms([]);
     },
     [filterByCategory]
   );
@@ -118,7 +124,7 @@ const MainPageLayout: React.FC = () => {
           onMapCenterChange={handleMapCenterChange}
           onLocationMove={handleLocationMove}
           categories={CATEGORIES}
-          selectedCategory={selectedCategory}
+          selectedCategory={selectedCategory || '전체'}
           onCategorySelect={handleCategorySelect}
           onSearchInMap={handleSearchInMap}
           centerLocation={
@@ -127,7 +133,6 @@ const MainPageLayout: React.FC = () => {
               : null
           }
           onMapLevelChange={handleMapLevelChange}
-          hasInitialSearched={apiPlatforms.length > 0}
           activeTab={activeTab}
         />
       </div>

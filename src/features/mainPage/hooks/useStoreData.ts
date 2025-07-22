@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Platform } from '../types';
 import {
   getStoreList,
@@ -6,160 +6,126 @@ import {
   getCurrentLocation,
   getAddressFromCoordinates,
 } from '../api/storeApi';
-import { convertStoreDataToPlatform, createPlatformWithoutCoords } from '../utils/storeUtils';
+import { transformStoreDataToPlatforms } from '../utils/dataTransform';
+import { getRadiusByMapLevel } from '../utils/mapUtils';
+import { useApiCall } from './useApiCall';
 import { DEFAULT_RADIUS } from '../constants';
 
-// 맵 레벨에 따른 반경 계산 함수
-const getRadiusByMapLevel = (mapLevel: number): number => {
-  // 맵 레벨이 작을수록(확대) 작은 반경, 클수록(축소) 큰 반경
-  const radiusMap: { [key: number]: number } = {
-    1: 500, // 최대 확대 - 500m
-    2: 1000, // 1km (기본값)
-    3: 2000, // 2km
-    4: 3000, // 3km
-    5: 5000, // 5km
-    6: 7000, // 7km
-    7: 10000, // 10km
-    8: 15000, // 15km
-    9: 20000, // 20km
-    10: 30000, // 30km
-    11: 50000, // 50km
-    12: 70000, // 70km
-    13: 100000, // 100km
-    14: 150000, // 150km - 최대 축소
-  };
-
-  return radiusMap[mapLevel] || 1000; // 기본값 5km
-};
-
+/**
+ * 가맹점 데이터 관리 훅
+ * 위치 기반 가맹점 검색, 카테고리 필터링, 지도 연동 기능 제공
+ */
 export const useStoreData = () => {
-  const [platforms, setPlatforms] = useState<Platform[]>([]);
+  // API 상태 관리
+  const { data: platforms, isLoading, error, execute } = useApiCall<Platform[]>([]);
+
+  // 위치 관련 상태
   const [currentLocation, setCurrentLocation] = useState<string>('위치 정보 로딩 중...');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-  const [currentMapCenter, setCurrentMapCenter] = useState<{ lat: number; lng: number } | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  useEffect(() => {
-    const initializeData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+  /**
+   * 카테고리별 가맹점 데이터 로드
+   * 카테고리가 '전체'이거나 null인 경우 전체 검색, 그 외에는 카테고리별 검색
+   */
+  const loadStoresByCategory = useCallback(
+    async (lat: number, lng: number, radius: number, category: string | null) => {
+      const shouldFilterByCategory = category && category !== '전체';
 
-        // 1. 현재 위치 가져오기
-        const coords = await getCurrentLocation();
-        setUserCoords(coords);
-        setCurrentMapCenter(coords); // 초기 지도 중심도 현재 위치로 설정
+      const storeResponse = shouldFilterByCategory
+        ? await getStoreListByCategory({ lat, lng, radiusMeters: radius, category })
+        : await getStoreList({ lat, lng, radiusMeters: radius });
 
-        // 2. 좌표를 주소로 변환
-        const address = await getAddressFromCoordinates(coords.lat, coords.lng);
-        setCurrentLocation(address);
+      return transformStoreDataToPlatforms(storeResponse.data, lat, lng);
+    },
+    []
+  );
 
-        // 3. 주변 가맹점 데이터 가져오기 (초기 로드 - 기본 반경 1km)
-        const storeResponse =
-          selectedCategory && selectedCategory !== '전체'
-            ? await getStoreListByCategory({
-                lat: coords.lat,
-                lng: coords.lng,
-                radiusMeters: DEFAULT_RADIUS,
-                category: selectedCategory,
-              })
-            : await getStoreList({
-                lat: coords.lat,
-                lng: coords.lng,
-                radiusMeters: DEFAULT_RADIUS,
-              });
-
-        // 4. API 데이터를 Platform 타입으로 변환
-        const allPlatforms = storeResponse.data.map((storeData) => {
-          const platform = convertStoreDataToPlatform(storeData, coords.lat, coords.lng);
-          return platform ?? createPlatformWithoutCoords(storeData);
-        });
-
-        setPlatforms(allPlatforms);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
-        setCurrentLocation('위치 정보 없음');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initializeData();
-  }, [selectedCategory]); // 하나의 useEffect로 통합
-
-  // 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 제거)
-  const updateLocationFromMap = async (lat: number, lng: number) => {
+  /**
+   * 좌표 업데이트 및 주소 변환 공통 함수
+   */
+  const updateLocationInfo = useCallback(async (lat: number, lng: number) => {
+    setUserCoords({ lat, lng });
     try {
-      // 새로운 좌표를 사용자 좌표로 설정
-      setUserCoords({ lat, lng });
-      // 현재 지도 중심도 업데이트 (카테고리 검색 시 이 좌표 사용)
-      setCurrentMapCenter({ lat, lng });
-
-      // 주소 정보만 업데이트 (가맹점 데이터는 재요청하지 않음)
       const address = await getAddressFromCoordinates(lat, lng);
       setCurrentLocation(address);
     } catch {
-      // 주소 업데이트 실패 시 무시 (지도는 정상 동작)
+      // 주소 변환 실패 시 무시 (지도는 정상 동작)
     }
-  };
+  }, []);
 
-  // 카테고리 필터링 함수
-  const filterByCategory = (category: string | null) => {
+  // 초기 데이터 로드 및 카테고리 변경 시 재로드
+  useEffect(() => {
+    const initializeData = async () => {
+      // 1. 현재 위치 가져오기
+      const coords = await getCurrentLocation();
+      await updateLocationInfo(coords.lat, coords.lng);
+
+      // 2. 주변 가맹점 데이터 로드
+      const platforms = await loadStoresByCategory(
+        coords.lat,
+        coords.lng,
+        DEFAULT_RADIUS,
+        selectedCategory
+      );
+
+      return platforms; // 데이터 반환
+    };
+
+    execute(initializeData);
+  }, [selectedCategory, execute, loadStoresByCategory, updateLocationInfo]);
+
+  /**
+   * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
+   */
+  const updateLocationFromMap = useCallback(
+    async (lat: number, lng: number) => {
+      await updateLocationInfo(lat, lng);
+    },
+    [updateLocationInfo]
+  );
+
+  /**
+   * 카테고리 필터링
+   * 카테고리 변경 시 useEffect가 자동으로 새 데이터를 로드함
+   */
+  const filterByCategory = useCallback((category: string | null) => {
     setSelectedCategory(category);
-  };
+  }, []);
 
-  // 현 지도에서 검색 함수 (수동 검색)
-  const searchInCurrentMap = async (centerLat: number, centerLng: number, mapLevel: number) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  /**
+   * 현재 지도 영역에서 가맹점 검색 (수동 검색)
+   * 지도 레벨에 따른 반경으로 검색하고 위치 정보도 업데이트
+   */
+  const searchInCurrentMap = useCallback(
+    async (centerLat: number, centerLng: number, mapLevel: number) => {
+      const searchInMap = async () => {
+        // 맵 레벨에 따른 반경 계산
+        const radius = getRadiusByMapLevel(mapLevel);
 
-      // 현재 지도 중심 업데이트 (카테고리 검색에서 이 좌표 사용)
-      setCurrentMapCenter({ lat: centerLat, lng: centerLng });
+        // 가맹점 검색
+        const platforms = await loadStoresByCategory(
+          centerLat,
+          centerLng,
+          radius,
+          selectedCategory
+        );
 
-      // 맵 레벨에 따른 반경 계산
-      const radius = getRadiusByMapLevel(mapLevel);
+        // 위치 정보 업데이트
+        await updateLocationInfo(centerLat, centerLng);
 
-      // 현재 카테고리와 위치 기준으로 검색
-      const storeResponse =
-        selectedCategory && selectedCategory !== '전체'
-          ? await getStoreListByCategory({
-              lat: centerLat,
-              lng: centerLng,
-              radiusMeters: radius,
-              category: selectedCategory,
-            })
-          : await getStoreList({
-              lat: centerLat,
-              lng: centerLng,
-              radiusMeters: radius,
-            });
+        return platforms;
+      };
 
-      // 모든 가맹점 (좌표 없는 것도 포함) - 리스트용
-      const allPlatforms = storeResponse.data.map((storeData) => {
-        const platform = convertStoreDataToPlatform(storeData, centerLat, centerLng);
-        return platform ?? createPlatformWithoutCoords(storeData);
-      });
-
-      setPlatforms(allPlatforms);
-
-      // 검색한 위치의 주소 정보도 업데이트
-      const address = await getAddressFromCoordinates(centerLat, centerLng);
-      setCurrentLocation(address);
-      setUserCoords({ lat: centerLat, lng: centerLng });
-    } catch (error) {
-      setError(error instanceof Error ? error.message : '검색 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      await execute(searchInMap);
+    },
+    [selectedCategory, execute, loadStoresByCategory, updateLocationInfo]
+  );
 
   return {
-    platforms,
+    platforms: platforms || [], // null 방어
     currentLocation,
     userCoords,
     isLoading,
@@ -167,6 +133,6 @@ export const useStoreData = () => {
     selectedCategory,
     updateLocationFromMap,
     filterByCategory,
-    searchInCurrentMap, // 수동 검색 함수 추가
+    searchInCurrentMap,
   };
 };

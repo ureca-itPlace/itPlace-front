@@ -1,62 +1,51 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { FavoriteBenefit, FavoritesListRequest } from '../types/api';
-import { FAVORITES_PAGE_SIZE, FAVORITES_DEFAULT_PAGE } from '../constants';
 import { getFavoritesList } from '../api/favoritesListApi';
+import { useApiCall } from './useApiCall';
 
+/**
+ * 즐겨찾기 목록 관리 훅
+ * 카테고리별 즐겨찾기 조회 및 새로고침 기능 제공
+ */
 export const useFavoritesList = (category?: string) => {
-  const [favorites, setFavorites] = useState<FavoriteBenefit[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [totalElements, setTotalElements] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [hasNext, setHasNext] = useState(false);
+  const { data: favorites, isLoading, error, execute } = useApiCall<FavoriteBenefit[]>([]);
 
-  const fetchFavorites = async (selectedCategory?: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
+  /**
+   * 즐겨찾기 목록 조회
+   * 카테고리가 '전체'이거나 비어있으면 전체 조회, 그 외에는 카테고리별 조회
+   */
+  const fetchFavorites = useCallback(async (selectedCategory?: string) => {
+    const params: FavoritesListRequest = {};
 
-      const params: FavoritesListRequest = {
-        page: FAVORITES_DEFAULT_PAGE,
-        size: FAVORITES_PAGE_SIZE,
-      };
-
-      // 전체가 아닌 경우에만 category 파라미터 추가
-      if (selectedCategory && selectedCategory !== '전체') {
-        params.category = selectedCategory;
-      }
-
-      // 실제 API 호출
-      const response = await getFavoritesList(params);
-
-      setFavorites(response.data.content);
-      setTotalElements(response.data.totalElements);
-      setTotalPages(response.data.totalPages);
-      setCurrentPage(response.data.currentPage);
-      setHasNext(response.data.hasNext);
-    } catch (err) {
-      console.error('즐겨찾기 목록 조회 오류:', err);
-      setError('즐겨찾기 목록을 불러올 수 없습니다.');
-      setFavorites([]);
-    } finally {
-      setIsLoading(false);
+    // 카테고리 필터링 설정
+    if (selectedCategory && selectedCategory !== '전체') {
+      params.category = selectedCategory;
     }
-  };
 
-  // 카테고리 변경될 때마다 API 호출
+    const data = await getFavoritesList(params);
+    return data;
+  }, []);
+
+  // 카테고리 변경 시 즐겨찾기 목록 재로드
   useEffect(() => {
-    fetchFavorites(category);
-  }, [category]);
+    if (category !== undefined) {
+      execute(() => fetchFavorites(category));
+    }
+  }, [category, execute, fetchFavorites]);
+
+  /**
+   * 즐겨찾기 목록 새로고침
+   */
+  const refreshFavorites = useCallback(() => {
+    if (category !== undefined) {
+      execute(() => fetchFavorites(category));
+    }
+  }, [category, execute, fetchFavorites]);
 
   return {
-    favorites,
+    favorites: favorites || [], // null 방어
     isLoading,
     error,
-    totalElements,
-    totalPages,
-    currentPage,
-    hasNext,
-    refreshFavorites: () => fetchFavorites(category),
+    refreshFavorites,
   };
 };

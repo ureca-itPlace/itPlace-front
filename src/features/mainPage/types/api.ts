@@ -117,24 +117,6 @@ export interface FavoriteResponse {
 // 즐겨찾기 목록 조회 API 타입
 export interface FavoritesListRequest {
   category?: string;
-  page?: number;
-  size?: number;
-}
-
-export interface FavoritesListResponse {
-  code: string;
-  status: string;
-  message: string;
-  data: FavoritesListData;
-  timestamp: string;
-}
-
-export interface FavoritesListData {
-  content: FavoriteBenefit[];
-  totalElements: number;
-  totalPages: number;
-  currentPage: number;
-  hasNext: boolean;
 }
 
 export interface FavoriteBenefit {

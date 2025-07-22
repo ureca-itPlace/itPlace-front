@@ -13,8 +13,7 @@ import {
   TbBook,
   TbPlane,
 } from 'react-icons/tb';
-import 'swiper/css';
-import 'swiper/css/free-mode';
+import 'swiper/swiper-bundle.css';
 
 type CategoryTabsMode = 'map' | 'sidebar';
 
@@ -25,9 +24,10 @@ interface CategoryTabsSectionProps {
   mode?: CategoryTabsMode;
 }
 
-// 카테고리 색상 매핑 (메모이제이션을 위해 컴포넌트 외부로 이동)
+// 카테고리 색상 매핑
 const CATEGORY_COLOR_MAP: Record<string, string> = {
-  엔터테인먼트: 'text-orange04',
+  'APP/기기': 'text-purple04',
+  액티비티: 'text-orange04',
   '뷰티/건강': 'text-pink04',
   쇼핑: 'text-purple04',
   '생활/편의': 'text-orange04',
@@ -45,7 +45,8 @@ const getCategoryIcon = (
   const iconSize = 20;
 
   const iconMap: Record<string, React.ReactElement> = {
-    엔터테인먼트: <TbDeviceTv size={iconSize} className={iconColor} />,
+    'APP/기기': <TbDeviceTv size={iconSize} className={iconColor} />,
+    액티비티: <TbHeart size={iconSize} className={iconColor} />,
     '뷰티/건강': <TbHeart size={iconSize} className={iconColor} />,
     쇼핑: <TbShoppingBag size={iconSize} className={iconColor} />,
     '생활/편의': <TbHome size={iconSize} className={iconColor} />,
@@ -72,8 +73,8 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
       container: `flex items-center ${isSidebarMode ? 'gap-2' : 'gap-3'} overflow-x-auto scrollbar-hide pb-2`,
       button: `flex-shrink-0 flex items-center justify-center gap-2 font-medium transition-colors duration-200 border-none ${
         isSidebarMode
-          ? `h-[${LAYOUT.CATEGORY_TAB_HEIGHT_COMPACT}px] px-4 rounded-[20px] text-body-2` // 사이드바: 높이 40px, 작은 패딩, body-2
-          : `h-[${LAYOUT.CATEGORY_TAB_HEIGHT}px] px-6 rounded-[30px] text-body-2 shadow-[0_2px_4px_rgba(0,0,0,0.2)]` // 맵: 높이 48px, 큰 패딩, 그림자
+          ? `h-[${LAYOUT.CATEGORY_TAB_HEIGHT_COMPACT}px] px-4 rounded-[20px] text-body-2 shadow-[0_2px_4px_rgba(0,0,0,0.1)]` // 사이드바: 높이 40px, 작은 패딩, body-2, 가벼운 그림자
+          : `h-[${LAYOUT.CATEGORY_TAB_HEIGHT}px] px-6 rounded-[30px] text-body-2 shadow-[0_2px_4px_rgba(0,0,0,0.2)]` // 맵: 높이 48px, 큰 패딩, 진한 그림자
       }`,
       showIcon: isMapMode, // 맵 모드에서만 아이콘 표시
     };
@@ -89,7 +90,7 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
           slidesPerView="auto"
           freeMode={true}
           grabCursor={true}
-          className="category-tabs-swiper"
+          className="category-tabs-swiper !overflow-visible"
         >
           {categories.map((category) => (
             <SwiperSlide key={category.id} style={{ width: 'auto' }}>

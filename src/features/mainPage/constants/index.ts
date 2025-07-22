@@ -5,7 +5,8 @@ export const DEFAULT_RADIUS = 1000; // 기본 반경 1km
 // 카테고리 정의
 export const CATEGORIES = [
   { id: '전체', name: '전체' },
-  { id: '엔터테인먼트', name: '엔터테인먼트' },
+  { id: 'APP/기기', name: 'APP/기기' },
+  { id: '액티비티', name: '액티비티' },
   { id: '뷰티/건강', name: '뷰티/건강' },
   { id: '쇼핑', name: '쇼핑' },
   { id: '생활/편의', name: '생활/편의' },
@@ -13,7 +14,7 @@ export const CATEGORIES = [
   { id: '문화/여가', name: '문화/여가' },
   { id: '교육', name: '교육' },
   { id: '여행/교통', name: '여행/교통' },
-] as const;
+];
 
 // 즐겨찾기 API 설정
 export const FAVORITES_PAGE_SIZE = 150;
