@@ -79,10 +79,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       return `${baseClass} bg-grey03 text-grey04 cursor-not-allowed`;
     }
 
-    if (isFavorite) {
-      return `${baseClass} bg-red04 hover:bg-red05 text-white`;
-    }
-
+    // 추가든 삭제든 모두 같은 보라색으로 통일
     return `${baseClass} bg-purple04 hover:bg-purple05 text-white`;
   };
 

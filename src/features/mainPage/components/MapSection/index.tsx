@@ -18,6 +18,7 @@ interface MapSectionProps {
   centerLocation?: { latitude: number; longitude: number } | null;
   onMapLevelChange?: (mapLevel: number) => void;
   hasInitialSearched?: boolean;
+  activeTab: string;
 }
 
 const MapSection: React.FC<MapSectionProps> = ({
@@ -34,13 +35,13 @@ const MapSection: React.FC<MapSectionProps> = ({
   centerLocation,
   onMapLevelChange,
   hasInitialSearched = false,
+  activeTab,
 }) => {
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
   // 지도 중심 변경 핸들러 (드래그 감지)
   const handleMapCenterChange = (location: MapLocation) => {
-    console.log('🗺️ 지도 드래그 감지:', { hasInitialSearched, hasSearched, showSearchButton });
     // 초기 검색이나 수동 검색을 한 후에만 드래그 시 버튼 표시
     setShowSearchButton(true);
     onMapCenterChange?.(location);
@@ -61,16 +62,19 @@ const MapSection: React.FC<MapSectionProps> = ({
   }, [selectedCategory]);
   return (
     <div className="relative w-full h-full">
-      {/* 카테고리 태그 - 지도 위 오버레이 */}
-      <div className="absolute top-4 left-5 z-10 pointer-events-none">
-        <div className="pointer-events-auto">
-          <CategoryTabsSection
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={onCategorySelect}
-          />
+      {/* 카테고리 태그 - 주변 혜택 탭일 때만 지도 위 오버레이 */}
+      {activeTab === 'nearby' && (
+        <div className="absolute top-4 left-5 z-10 pointer-events-none">
+          <div className="pointer-events-auto">
+            <CategoryTabsSection
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategorySelect={onCategorySelect}
+              mode="map"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <KakaoMap
         platforms={platforms}

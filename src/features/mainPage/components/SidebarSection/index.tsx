@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
+import { FavoriteBenefit } from '../../types/api';
+import { CATEGORIES } from '../../constants';
 import LoadingSpinner from '../../../../components/LoadingSpinner';
 import SearchSection from './SearchSection';
 import InfoBannerSection from './InfoBannerSection';
@@ -7,16 +9,12 @@ import NavigationTabsSection from './NavigationTabsSection';
 import StoreCardsSection from './AllBenefit';
 import FavoriteStoreList from './FavoriteStoreList';
 import StoreDetailCard from './StoreDetail';
+import CategoryTabsSection from './CategoryTabsSection';
+import { useFavoritesList } from '../../hooks/useFavoritesList';
 
 interface Tab {
   id: string;
   label: string;
-}
-
-interface Store {
-  id: string;
-  name: string;
-  category: string;
 }
 
 interface SidebarSectionProps {
@@ -27,6 +25,8 @@ interface SidebarSectionProps {
   isLoading: boolean;
   error?: string | null;
   onSearchChange?: (query: string) => void;
+  activeTab: string;
+  onActiveTabChange: (tab: string) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -37,9 +37,19 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   isLoading,
   error,
   onSearchChange,
+  activeTab,
+  onActiveTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState('nearby');
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
+
+  // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
+  const {
+    favorites,
+    isLoading: isFavoritesLoading,
+    error: favoritesError,
+    refreshFavorites,
+  } = useFavoritesList(activeTab === 'favorites' ? selectedCategory : undefined);
 
   // 카드 클릭 시 상세보기로 전환
   const handleCardClick = (platform: Platform) => {
@@ -73,21 +83,17 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     { id: 'ai', label: '잇플AI 추천' },
   ];
 
-  // Mock stores for favorites tab (기존 SidebarList에서 가져옴)
-  const mockStores: Store[] = [
-    { id: '1', name: '파리바게뜨', category: '베이커리' },
-    { id: '2', name: '스카이라운지', category: '카페' },
-    { id: '3', name: '오가네 파프리카의 점검', category: '음식점' },
-    { id: '4', name: 'GS THE FRESH', category: '편의점' },
-    { id: '5', name: 'GS25', category: '편의점' },
-  ];
-
   const handleSearchChange = (query: string) => {
     onSearchChange?.(query);
   };
 
-  const handleStoreClick = (store: Store) => {
-    console.log('Store clicked:', store);
+  const handleFavoriteClick = (favorite: FavoriteBenefit) => {
+    // TODO: 상세보기 모달 열기 또는 상세 페이지로 이동
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    // 카테고리 변경은 useFavoritesList 내부의 useEffect에서 자동 처리됨
   };
 
   // 탭별 다른 InfoBanner 메시지
@@ -128,7 +134,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               <NavigationTabsSection
                 tabs={mainTabs}
                 activeTab={activeTab}
-                onTabChange={setActiveTab}
+                onTabChange={onActiveTabChange}
               />
             </div>
 
@@ -149,20 +155,48 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'favorites' && (
             <>
+              {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
+              <div className="mb-4">
+                <CategoryTabsSection
+                  categories={CATEGORIES}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={handleCategorySelect}
+                  mode="sidebar"
+                />
+              </div>
+
               {/* 즐겨찾기 스토어 리스트 */}
               <div className="flex-1 overflow-y-auto pt-4">
-                <FavoriteStoreList stores={mockStores} onStoreClick={handleStoreClick} />
+                <FavoriteStoreList
+                  favorites={favorites}
+                  onItemClick={handleFavoriteClick}
+                  isLoading={isFavoritesLoading}
+                />
               </div>
             </>
           )}
 
           {activeTab === 'ai' && (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-grey04 text-center">
-                <div className="text-lg mb-2">🤖</div>
-                <div>AI 추천 기능 준비중입니다</div>
+            <>
+              {/* 카테고리 탭 (AI 추천용 - 사이드바 모드) */}
+              <div className="mb-4">
+                <CategoryTabsSection
+                  categories={CATEGORIES}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={(categoryId) => {
+                    // TODO: AI 추천 카테고리 기능 구현
+                  }}
+                  mode="sidebar"
+                />
               </div>
-            </div>
+
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-grey04 text-center">
+                  <div className="text-lg mb-2">🤖</div>
+                  <div>AI 추천 기능 준비중입니다</div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       ) : (

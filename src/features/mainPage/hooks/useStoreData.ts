@@ -59,22 +59,21 @@ export const useStoreData = () => {
         setCurrentLocation(address);
 
         // 3. 주변 가맹점 데이터 가져오기 (초기 로드 - 기본 반경 1km)
-        const storeResponse = selectedCategory
-          ? await getStoreListByCategory({
-              lat: coords.lat,
-              lng: coords.lng,
-              radiusMeters: DEFAULT_RADIUS, // 초기 로드 기본 반경
-              category: selectedCategory,
-            })
-          : await getStoreList({
-              lat: coords.lat,
-              lng: coords.lng,
-              radiusMeters: DEFAULT_RADIUS, // 초기 로드 기본 반경
-            });
+        const storeResponse =
+          selectedCategory && selectedCategory !== '전체'
+            ? await getStoreListByCategory({
+                lat: coords.lat,
+                lng: coords.lng,
+                radiusMeters: DEFAULT_RADIUS,
+                category: selectedCategory,
+              })
+            : await getStoreList({
+                lat: coords.lat,
+                lng: coords.lng,
+                radiusMeters: DEFAULT_RADIUS,
+              });
 
         // 4. API 데이터를 Platform 타입으로 변환
-
-        // 모든 가맹점 (좌표 없는 것도 포함) - 리스트용
         const allPlatforms = storeResponse.data.map((storeData) => {
           const platform = convertStoreDataToPlatform(storeData, coords.lat, coords.lng);
           return platform ?? createPlatformWithoutCoords(storeData);
@@ -90,45 +89,7 @@ export const useStoreData = () => {
     };
 
     initializeData();
-  }, [selectedCategory]); // selectedCategory 의존성 추가
-
-  // 카테고리 변경 시 현재 지도 중심 기준으로 검색
-  useEffect(() => {
-    if (!selectedCategory || !currentMapCenter) return;
-
-    const searchByCategory = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        // 현재 지도 중심 좌표 기준으로 카테고리 검색
-        const storeResponse = await getStoreListByCategory({
-          lat: currentMapCenter.lat,
-          lng: currentMapCenter.lng,
-          radiusMeters: DEFAULT_RADIUS,
-          category: selectedCategory,
-        });
-
-        // API 데이터를 Platform 타입으로 변환
-        const allPlatforms = storeResponse.data.map((storeData) => {
-          const platform = convertStoreDataToPlatform(
-            storeData,
-            currentMapCenter.lat,
-            currentMapCenter.lng
-          );
-          return platform ?? createPlatformWithoutCoords(storeData);
-        });
-
-        setPlatforms(allPlatforms);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : '카테고리 검색 중 오류가 발생했습니다.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    searchByCategory();
-  }, [selectedCategory, currentMapCenter]);
+  }, [selectedCategory]); // 하나의 useEffect로 통합
 
   // 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 제거)
   const updateLocationFromMap = async (lat: number, lng: number) => {
@@ -164,18 +125,19 @@ export const useStoreData = () => {
       const radius = getRadiusByMapLevel(mapLevel);
 
       // 현재 카테고리와 위치 기준으로 검색
-      const storeResponse = selectedCategory
-        ? await getStoreListByCategory({
-            lat: centerLat,
-            lng: centerLng,
-            radiusMeters: radius,
-            category: selectedCategory,
-          })
-        : await getStoreList({
-            lat: centerLat,
-            lng: centerLng,
-            radiusMeters: radius,
-          });
+      const storeResponse =
+        selectedCategory && selectedCategory !== '전체'
+          ? await getStoreListByCategory({
+              lat: centerLat,
+              lng: centerLng,
+              radiusMeters: radius,
+              category: selectedCategory,
+            })
+          : await getStoreList({
+              lat: centerLat,
+              lng: centerLng,
+              radiusMeters: radius,
+            });
 
       // 모든 가맹점 (좌표 없는 것도 포함) - 리스트용
       const allPlatforms = storeResponse.data.map((storeData) => {

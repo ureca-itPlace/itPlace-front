@@ -1,34 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import SidebarSection from '../SidebarSection';
 import MapSection from '../MapSection';
-import { Platform, Category, MapLocation } from '../../types';
+import { Platform, MapLocation } from '../../types';
+import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
 
 const MainPageLayout: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('전체');
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null);
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]);
-  const [centerLocation, setCenterLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('nearby'); // SidebarSection의 activeTab 상태를 상위로 이동
   const [currentMapLevel, setCurrentMapLevel] = useState<number>(2); // 맵 레벨 상태 추가
   const [currentMapCenter, setCurrentMapCenter] = useState<{ lat: number; lng: number } | null>(
     null
-  ); // 지도 중심 저장
+  ); // 지도 중심 저장 (centerLocation과 통합)
 
-  // 실제 카테고리 정의
-  const categories: Category[] = [
-    { id: '전체', name: '전체' },
-    { id: '엔터테인먼트', name: '엔터테인먼트' },
-    { id: '뷰티/건강', name: '뷰티/건강' },
-    { id: '쇼핑', name: '쇼핑' },
-    { id: '생활/편의', name: '생활/편의' },
-    { id: '푸드', name: '푸드' },
-    { id: '문화/여가', name: '문화/여가' },
-    { id: '교육', name: '교육' },
-    { id: '여행/교통', name: '여행/교통' },
-  ];
+  // 카테고리는 상수에서 가져옴 (중복 제거)
 
   // API에서 실제 가맹점 데이터 가져오기
   const {
@@ -84,7 +71,7 @@ const MainPageLayout: React.FC = () => {
     (latitude: number, longitude: number) => {
       updateLocationFromMap(latitude, longitude);
       // 지도 중심도 해당 위치로 이동
-      setCenterLocation({ latitude, longitude });
+      setCurrentMapCenter({ lat: latitude, lng: longitude });
     },
     [updateLocationFromMap]
   );
@@ -103,7 +90,13 @@ const MainPageLayout: React.FC = () => {
 
   return (
     <div className="h-screen flex gap-6 bg-grey01 p-6 relative">
-      <div className="flex-shrink-0 h-full" style={{ flexBasis: '370px', minWidth: '300px' }}>
+      <div
+        className="flex-shrink-0 h-full"
+        style={{
+          flexBasis: `${LAYOUT.SIDEBAR_WIDTH}px`,
+          minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
+        }}
+      >
         <SidebarSection
           platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
           selectedPlatform={selectedPlatform}
@@ -111,10 +104,12 @@ const MainPageLayout: React.FC = () => {
           currentLocation={currentLocation}
           isLoading={isLoading}
           error={error}
+          activeTab={activeTab}
+          onActiveTabChange={setActiveTab}
         />
       </div>
 
-      <div className="flex-1 h-full" style={{ minWidth: '800px' }}>
+      <div className="flex-1 h-full" style={{ minWidth: `${LAYOUT.MAP_MIN_WIDTH}px` }}>
         <MapSection
           platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
           selectedPlatform={selectedPlatform}
@@ -122,13 +117,18 @@ const MainPageLayout: React.FC = () => {
           onLocationChange={handleLocationChange}
           onMapCenterChange={handleMapCenterChange}
           onLocationMove={handleLocationMove}
-          categories={categories}
+          categories={CATEGORIES}
           selectedCategory={selectedCategory}
           onCategorySelect={handleCategorySelect}
           onSearchInMap={handleSearchInMap}
-          centerLocation={centerLocation}
+          centerLocation={
+            currentMapCenter
+              ? { latitude: currentMapCenter.lat, longitude: currentMapCenter.lng }
+              : null
+          }
           onMapLevelChange={handleMapLevelChange}
           hasInitialSearched={apiPlatforms.length > 0}
+          activeTab={activeTab}
         />
       </div>
 
