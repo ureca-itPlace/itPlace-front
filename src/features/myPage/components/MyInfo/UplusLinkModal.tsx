@@ -1,22 +1,50 @@
 // src/features/myPage/components/MyInfo/UplusLinkModal.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from '../../../../components/Modal';
+import { showToast } from '../../../../utils/toast';
+import { UplusSuccessResponse, UplusErrorResponse } from '../../../../types/uplus'; // 타입 import
+import { AxiosResponse } from 'axios';
+import api from '../../../../apis/axiosInstance';
 
 interface UplusLinkModalProps {
   isOpen: boolean;
   phone: string;
   onClose: () => void;
-  onVerified: (grade: string) => void;
-  loadUplusData: (phone: string) => Promise<any>; // 실제 API 타입 맞게 수정
+  onVerified: () => void;
 }
 
-const UplusLinkModal: React.FC<UplusLinkModalProps> = ({
-  isOpen,
-  phone,
-  onClose,
-  onVerified,
-  loadUplusData,
-}) => {
+const UplusLinkModal: React.FC<UplusLinkModalProps> = ({ isOpen, phone, onClose, onVerified }) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleLink = async () => {
+    setLoading(true);
+    try {
+      const res: AxiosResponse<UplusSuccessResponse> = await api.post('/auth/loadUplusData', {
+        phoneNumber: phone,
+      });
+      if (res.data.code === 'UPLUS_DATA_FOUND') {
+        showToast('유플러스 정보 연동에 성공했습니다!', 'success');
+        onVerified(); // ✅ MyInfoPage에서 fetchUser 실행
+        onClose();
+      }
+    } catch (err: unknown) {
+      // 서버가 400일 때
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err &&
+        (err as { response?: { data?: UplusErrorResponse } }).response?.data
+      ) {
+        const data = (err as { response: { data: UplusErrorResponse } }).response.data;
+        showToast(data.message, 'error');
+      } else {
+        showToast('유플러스 정보 연동 중 알 수 없는 오류가 발생했습니다.', 'error');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -24,27 +52,11 @@ const UplusLinkModal: React.FC<UplusLinkModalProps> = ({
       message="기존 가입 정보를 불러오시겠습니까?"
       onClose={onClose}
       buttons={[
+        { label: '아니요', type: 'secondary', onClick: onClose },
         {
-          label: '아니요',
-          type: 'secondary',
-          onClick: onClose,
-        },
-        {
-          label: '예',
+          label: loading ? '불러오는 중...' : '예',
           type: 'primary',
-          onClick: async () => {
-            try {
-              const res = await loadUplusData(phone);
-              const { membershipId } = res.data.data;
-              // 여기서 등급을 계산
-              const grade = membershipId ? 'VVIP' : '';
-              onVerified(grade);
-              onClose();
-            } catch (e) {
-              console.error(e);
-              onClose();
-            }
-          },
+          onClick: handleLink,
         },
       ]}
     />
