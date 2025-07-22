@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
 import LoadingSpinner from '../../../../components/common/LoadingSpinner';
-import SearchSection from '../SidebarSection/SearchSection';
-import InfoBannerSection from '../SidebarSection/InfoBannerSection';
-import NavigationTabsSection from '../SidebarSection/NavigationTabsSection';
+import SearchSection from './SearchSection';
+import InfoBannerSection from './InfoBannerSection';
+import NavigationTabsSection from './NavigationTabsSection';
 import StoreCardsSection from './AllBenefit';
-import FavoriteStoreList from '../SidebarSection/FavoriteStoreList';
+import FavoriteStoreList from './FavoriteStoreList';
 import StoreDetailCard from './StoreDetail';
 
 interface Tab {
