@@ -22,7 +22,7 @@ export const useApiCall = <T = any>(initialData: T | null = null): UseApiCallRet
   const execute = useCallback(async (apiCall: () => Promise<T>) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await apiCall();
       setData(result);

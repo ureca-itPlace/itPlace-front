@@ -56,26 +56,54 @@ export const useStoreData = () => {
     }
   }, []);
 
-  // 초기 데이터 로드 및 카테고리 변경 시 재로드
+  // 초기 데이터 로드 (컴포넌트 마운트 시에만)
   useEffect(() => {
     const initializeData = async () => {
       // 1. 현재 위치 가져오기
       const coords = await getCurrentLocation();
       await updateLocationInfo(coords.lat, coords.lng);
 
-      // 2. 주변 가맹점 데이터 로드
+      // 2. 주변 가맹점 데이터 로드 (초기에는 전체 카테고리)
       const platforms = await loadStoresByCategory(
         coords.lat,
         coords.lng,
         DEFAULT_RADIUS,
-        selectedCategory
+        null // 초기 로드는 전체 카테고리
       );
 
       return platforms; // 데이터 반환
     };
 
     execute(initializeData);
-  }, [selectedCategory, execute, loadStoresByCategory, updateLocationInfo]);
+  }, []); // 빈 배열 - 초기 마운트에만 실행
+
+  // 카테고리 변경 시 재로드 (현재 지도 위치 기준)
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  useEffect(() => {
+    if (!userCoords) return; // 위치 정보가 없으면 대기
+    if (isInitialLoad) {
+      setIsInitialLoad(false);
+      return; // 초기 로드는 위의 useEffect에서 처리
+    }
+
+    const reloadByCategory = async () => {
+      // 현재 userCoords 값을 직접 가져와서 사용
+      const currentCoords = userCoords;
+      if (!currentCoords) return [];
+
+      const platforms = await loadStoresByCategory(
+        currentCoords.lat,
+        currentCoords.lng,
+        DEFAULT_RADIUS,
+        selectedCategory
+      );
+
+      return platforms;
+    };
+
+    execute(reloadByCategory);
+  }, [selectedCategory]); // userCoords 의존성 제거 - 카테고리 변경 시에만 실행
 
   /**
    * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
