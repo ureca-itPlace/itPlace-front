@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SearchBar from '../../../../../components/common/SearchBar';
+import SearchBar from '../../../../../components/SearchBar';
 
 interface SearchSectionProps {
   onSearchChange?: (query: string) => void;

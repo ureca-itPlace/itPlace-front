@@ -55,6 +55,20 @@ export interface BenefitDetailResponse {
   tierBenefits: TierBenefit[];
 }
 
+// 제휴처 검색 순위 관련 타입
+export interface PartnerSearchRankingItem {
+  partnerName: string;
+  searchCount: number;
+  rank: number;
+  previousRank: number | null;
+  rankChange: number | null;
+  changeDerection: 'UP' | 'DOWN' | 'SAME' | 'NEW';
+}
+
+export interface PartnerSearchRankingResponse {
+  searchRanking: PartnerSearchRankingItem[];
+}
+
 // API 응답 타입
 export interface ApiResponse<T = unknown> {
   code: string;
@@ -115,6 +129,25 @@ export const getBenefitDetail = async (benefitId: number): Promise<BenefitDetail
     return response.data.data;
   } catch (error) {
     console.error('혜택 상세 정보 로드 실패:', error);
+    throw error;
+  }
+};
+
+// 제휴처 검색 순위 조회 API
+export const getPartnersSearchRanking = async (
+  period: '12h' | '1d' | '7d' = '1d',
+  limit: number = 5
+): Promise<ApiResponse<PartnerSearchRankingResponse>> => {
+  try {
+    const params = new URLSearchParams({
+      period,
+      limit: limit.toString(),
+    });
+
+    const response = await axiosInstance.get(`/api/v1/partners/search-ranking?${params}`);
+    return response.data;
+  } catch (error) {
+    console.error('제휴처 검색 순위 조회 실패:', error);
     throw error;
   }
 };

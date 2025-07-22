@@ -3,7 +3,6 @@ import { createBrowserRouter } from 'react-router-dom';
 import DefaultLayout from '../layouts/DefaultLayout';
 import LandingPage from '../pages/LandingPage';
 import MainPage from '../pages/MainPage';
-import AdminPage from '../pages/adminPage/AdminPage';
 import MyPageLayout from '../layouts/MyPageLayout';
 import MyInfoPage from '../pages/myPage/MyInfoPage';
 import MyFavoritesPage from '../pages/myPage/MyFavoritesPage';
@@ -16,7 +15,6 @@ import PublicRoute from '../features/loginPage/layouts/PublicRoute'; // PublicRo
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> }, // 기본 라우터
-  { path: '/admin', element: <AdminPage /> },
   {
     element: <DefaultLayout />,
     children: [

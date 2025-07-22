@@ -1,7 +1,7 @@
 import React from 'react';
 import { Platform } from '../../../types';
 import StoreCard from './StoreCard';
-import LoadingSpinner from '../../../../../components/common/LoadingSpinner';
+import LoadingSpinner from '../../../../../components/LoadingSpinner';
 
 interface StoreCardsSectionProps {
   platforms: Platform[];

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
 import SearchSection from './SearchSection';
 import InfoBannerSection from './InfoBannerSection';
 import NavigationTabsSection from './NavigationTabsSection';

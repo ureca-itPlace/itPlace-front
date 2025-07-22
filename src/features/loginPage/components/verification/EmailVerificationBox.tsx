@@ -3,7 +3,7 @@ import AuthInput from '../common/AuthInput';
 import ErrorMessage from '../common/ErrorMessage';
 import Modal from '../../../../components/Modal';
 import useEmailVerification from '../../hooks/useEmailVerification';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner'; // LoadingSpinner 가져오기
+import LoadingSpinner from '../../../../components/LoadingSpinner'; // LoadingSpinner 가져오기
 
 type Props = {
   email: string;
