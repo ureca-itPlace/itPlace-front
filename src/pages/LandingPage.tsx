@@ -28,6 +28,7 @@ const LandingPage = () => {
   // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
     setIsLoading(false);
+    console.log('로딩 끄읕');
   }, []);
 
   // 새로 고침 시 최상단으로 이동
@@ -50,7 +51,6 @@ const LandingPage = () => {
   }, [videoEnded]);
 
   if (isLoading) {
-    console.log('로딩중');
     return <LoadLanding />;
   }
 

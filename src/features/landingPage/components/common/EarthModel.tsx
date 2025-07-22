@@ -1,8 +1,12 @@
-import { FC, useRef } from 'react';
-import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { TextureLoader, Mesh, BackSide, AdditiveBlending } from 'three';
+import { useRef, useEffect } from 'react';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { TextureLoader, Mesh, AdditiveBlending, Group } from 'three';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const EarthModel: FC = () => {
+gsap.registerPlugin(ScrollTrigger);
+
+const EarthModel = ({ trigger }: { trigger: HTMLElement | null }) => {
   const earthTexture = useLoader(
     TextureLoader,
     '../../../../../public/images/landing/textures/earth-map.png'
@@ -11,15 +15,36 @@ const EarthModel: FC = () => {
     TextureLoader,
     '../../../../../public/images/landing/textures/earth-cloud.png'
   );
-  const backgroundTexture = useLoader(
-    TextureLoader,
-    '../../../../../public/images/landing/bg-earth.png'
-  );
 
+  const groupRef = useRef<Group>(null);
   const cloudsRef = useRef<Mesh>(null);
   const earthRef = useRef<Mesh>(null);
   const glowRef = useRef<Mesh>(null);
-  const { camera } = useThree();
+
+  useEffect(() => {
+    if (!groupRef.current || !trigger) return;
+
+    gsap.set(groupRef.current.scale, { x: 1, y: 1, z: 1 });
+
+    const animation = gsap.to(groupRef.current.scale, {
+      x: 2.5,
+      y: 2.5,
+      z: 2.5,
+      scrollTrigger: {
+        trigger,
+        start: 'top top',
+        end: '+=800',
+        scrub: 0.5,
+        pin: true,
+        markers: true,
+      },
+      ease: 'none',
+    });
+
+    return () => {
+      animation.kill();
+    };
+  }, [trigger]);
 
   useFrame(() => {
     if (cloudsRef.current) {
@@ -31,16 +56,10 @@ const EarthModel: FC = () => {
     if (glowRef.current) {
       glowRef.current.layers.set(1);
     }
-    camera.layers.enable(1);
   });
 
   return (
-    <>
-      {/* 우주 배경 */}
-      <mesh>
-        <sphereGeometry args={[90, 64, 64]} />
-        <meshBasicMaterial map={backgroundTexture} side={BackSide} />
-      </mesh>
+    <group ref={groupRef}>
       {/* 실제 지구 */}
       <mesh ref={earthRef}>
         <sphereGeometry args={[1.5, 64, 64]} />
@@ -68,7 +87,7 @@ const EarthModel: FC = () => {
           depthWrite={false}
         />
       </mesh>
-    </>
+    </group>
   );
 };
 
