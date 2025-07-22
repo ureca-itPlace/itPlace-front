@@ -141,7 +141,11 @@ export default function MyFavoritesPage() {
               />
             )}
             {/* 페이지네이션 */}
-            {currentItems.length > 0 && (
+            {/* 페이지네이션 */}
+            {!(
+              (keyword.trim() && currentItems.length === 0) || // 검색 중이고 결과가 0
+              (!keyword.trim() && allFavorites.length === 0) // 검색 안 했는데 전체도 0
+            ) && (
               <div className="mt-auto relative flex justify-center items-end">
                 <Pagination
                   currentPage={currentPage}
@@ -150,8 +154,7 @@ export default function MyFavoritesPage() {
                   onPageChange={handlePageChange}
                   width={37}
                 />
-                {/* 편집 모드에서 나오는 버튼 */}
-                {currentItems.length > 0 && isEditing && (
+                {isEditing && (
                   <div className="absolute right-[56px] flex gap-3">
                     <button
                       onClick={() => {
