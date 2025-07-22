@@ -53,8 +53,6 @@ export default function MyHistoryPage() {
           },
         });
 
-        console.log('📌 멤버십 이력 API 응답:', res.data);
-
         const data = res.data?.data;
         if (data && Array.isArray(data.content)) {
           setHistory(data.content);
