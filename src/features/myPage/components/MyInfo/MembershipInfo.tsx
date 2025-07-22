@@ -26,7 +26,7 @@ const MembershipInfo: React.FC<Props> = ({ name, grade, onClickLink }) => {
             <br /> 놓치기 아까운 혜택이 가득해요!
           </p>
           <div className="bg-gradient-myPage text-white text-[96px] font-bold text-center rounded-[18px] px-6 pb-0 pt-4 mt-10">
-            {grade}
+            {displayGrade}
           </div>
         </>
       ) : (
