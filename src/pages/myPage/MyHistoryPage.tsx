@@ -11,6 +11,7 @@ import NoResult from '../../components/NoResult';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RiResetRightFill } from 'react-icons/ri';
+import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 
 interface HistoryItem {
   image: string;
@@ -213,25 +214,27 @@ export default function MyHistoryPage() {
         </div>
       }
       aside={
-        <div className="text-center">
-          <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
-          <div className="flex flex-col items-center justify-center mt-6">
-            <img
-              src="/images/myPage/icon-money.webp"
-              alt="혜택 사용 이력 아이콘"
-              className="w-[250px] h-auto"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                target.src = '/images/myPage/icon-money.png';
-              }}
-            />
-            <p className="text-[36px] font-semibold text-grey05 pt-10">
-              <span className="text-orange04">{totalAmount.toLocaleString()}</span>
-              원 <br /> 할인 받았어요!
-            </p>
+        <FadeWrapper changeKey={totalAmount.toLocaleString()}>
+          <div className="text-center">
+            <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
+            <div className="flex flex-col items-center justify-center mt-6">
+              <img
+                src="/images/myPage/icon-money.webp"
+                alt="혜택 사용 이력 아이콘"
+                className="w-[250px] h-auto"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = '/images/myPage/icon-money.png';
+                }}
+              />
+              <p className="text-[36px] font-semibold text-grey05 pt-10">
+                <span className="text-orange04">{totalAmount.toLocaleString()}</span>
+                원 <br /> 할인 받았어요!
+              </p>
+            </div>
           </div>
-        </div>
+        </FadeWrapper>
       }
       bottomImage="/images/myPage/bunny-history.webp"
       bottomImageAlt="혜택 사용 이력 토끼"
