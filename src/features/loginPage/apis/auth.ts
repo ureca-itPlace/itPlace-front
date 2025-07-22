@@ -13,11 +13,11 @@ export const login = (email: string, password: string) => {
 };
 
 export const loadUplusData = (phoneNumber: string) => {
-  return api.post('api/v1/auth/loadUplusData', {
+  return api.post('/api/v1/auth/loadUplusData', {
     phoneNumber,
   });
 };
 
 export const kakaoOAuthLogin = (code: string) => {
-  return api.post('api/v1/oauth2/authorization/kakao', { code });
+  return api.post('/api/v1/oauth2/authorization/kakao', { code });
 };
