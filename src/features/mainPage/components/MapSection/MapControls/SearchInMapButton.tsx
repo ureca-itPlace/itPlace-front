@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
+import { TbSearch } from 'react-icons/tb';
 
 interface SearchInMapButtonProps {
   onClick?: () => void;
@@ -49,7 +50,7 @@ const SearchInMapButton: React.FC<SearchInMapButtonProps> = ({ onClick }) => {
       onClick={handleClick}
       className="bg-purple04 text-white px-6 py-3 rounded-full shadow-lg hover:bg-purple05 transition-colors duration-200 flex items-center space-x-2"
     >
-      <span>🔍</span>
+      <TbSearch size={20} />
       <span>현 지도에서 검색</span>
     </button>
   );

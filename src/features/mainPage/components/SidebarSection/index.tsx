@@ -60,6 +60,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     }
   }, [selectedPlatform, viewMode]);
 
+  // 플랫폼 선택이 해제되면 리스트 모드로 돌아가기
+  useEffect(() => {
+    if (!selectedPlatform && viewMode === 'detail') {
+      setViewMode('list');
+    }
+  }, [selectedPlatform, viewMode]);
+
   const mainTabs: Tab[] = [
     { id: 'nearby', label: '주변 혜택' },
     { id: 'favorites', label: '관심 혜택' },
