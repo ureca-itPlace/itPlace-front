@@ -4,7 +4,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import PurpleCircle from '../common/PurpleCircle';
-import Video from '../common/video';
+import Video from '../common/Video';
 
 import { VideoSectionProps } from '../../types/landing.types';
 
@@ -38,7 +38,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
       videoBoxRef.current,
       {
         clipPath: 'circle(100% at 50% 50%)',
-        duration: 2,
+        duration: 3,
         ease: 'none',
       },
       '-=1.5'
