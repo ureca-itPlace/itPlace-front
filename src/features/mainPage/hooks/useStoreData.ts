@@ -25,6 +25,7 @@ export const useStoreData = () => {
 
   // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [currentMapLevelInHook, setCurrentMapLevelInHook] = useState<number>(2); // 지도 레벨 상태 추가
 
   /**
    * 카테고리별 가맹점 데이터 로드
@@ -95,7 +96,7 @@ export const useStoreData = () => {
       const platforms = await loadStoresByCategory(
         currentCoords.lat,
         currentCoords.lng,
-        DEFAULT_RADIUS,
+        getRadiusByMapLevel(currentMapLevelInHook), // DEFAULT_RADIUS 대신 현재 맵 레벨 반경 사용
         selectedCategory
       );
 
@@ -119,8 +120,9 @@ export const useStoreData = () => {
    * 카테고리 필터링
    * 카테고리 변경 시 useEffect가 자동으로 새 데이터를 로드함
    */
-  const filterByCategory = useCallback((category: string | null) => {
+  const filterByCategory = useCallback((category: string | null, mapLevel: number) => {
     setSelectedCategory(category);
+    setCurrentMapLevelInHook(mapLevel);
   }, []);
 
   /**
@@ -162,5 +164,6 @@ export const useStoreData = () => {
     updateLocationFromMap,
     filterByCategory,
     searchInCurrentMap,
+    currentMapLevelInHook,
   };
 };

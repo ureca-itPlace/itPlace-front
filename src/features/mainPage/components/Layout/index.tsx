@@ -45,7 +45,7 @@ const MainPageLayout: React.FC = () => {
 
       // API 기반 카테고리 필터링 ('전체' -> null 변환)
       const categoryValue = categoryId === '전체' ? null : categoryId;
-      filterByCategory(categoryValue);
+      filterByCategory(categoryValue, currentMapLevel);
     },
     [filterByCategory]
   );
