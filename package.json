@@ -12,6 +12,9 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@react-three/drei": "^10.5.1",
+    "@react-three/fiber": "^9.2.0",
+    "@react-three/postprocessing": "^3.0.4",
     "@reduxjs/toolkit": "^2.8.2",
     "@types/lodash": "^4.17.20",
     "axios": "^1.10.0",
@@ -31,7 +34,8 @@
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.0",
     "redux-persist": "^6.0.0",
-    "swiper": "^11.2.10"
+    "swiper": "^11.2.10",
+    "three": "^0.178.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

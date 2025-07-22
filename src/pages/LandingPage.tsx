@@ -23,7 +23,6 @@ const LandingPage = () => {
   const [introEnded, setIntroEnded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
-  const earthSectionRef = useRef<HTMLDivElement>(null);
   const mapSectionRef = useRef<HTMLDivElement>(null);
 
   // 컴포넌트 마운트 시 로딩 완료
@@ -59,7 +58,7 @@ const LandingPage = () => {
     <div className="relative overflow-x-hidden">
       {introEnded ? (
         <>
-          <EarthSection ref={earthSectionRef} />
+          <EarthSection />
           <MapSection ref={mapSectionRef} />
           <FeatureSection />
           <VideoSection setVideoEnded={setVideoEnded} />
