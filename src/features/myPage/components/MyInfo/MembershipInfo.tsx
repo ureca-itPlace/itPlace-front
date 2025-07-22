@@ -7,7 +7,12 @@ type Props = {
   onClickLink?: () => void;
 };
 
+const gradeMapping: Record<string, string> = {
+  BASIC: '우수',
+};
+
 const MembershipInfo: React.FC<Props> = ({ name, grade, onClickLink }) => {
+  const displayGrade = grade ? (gradeMapping[grade] ?? grade) : undefined;
   return (
     <div className="flex flex-col gap-4">
       {grade ? (
@@ -17,7 +22,7 @@ const MembershipInfo: React.FC<Props> = ({ name, grade, onClickLink }) => {
           </p>
           <p className="text-grey05 text-body-0">
             {name.slice(1)}님의 멤버십 등급은{' '}
-            <span className="text-purple03 text-body-0-bold">{grade}</span> 입니다.
+            <span className="text-purple03 text-body-0-bold">{displayGrade}</span> 입니다.
             <br /> 놓치기 아까운 혜택이 가득해요!
           </p>
           <div className="bg-gradient-myPage text-white text-[96px] font-bold text-center rounded-[18px] px-6 pb-0 pt-4 mt-10">
