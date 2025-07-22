@@ -1,128 +1,157 @@
-import { useRef } from 'react';
-import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef, useState } from 'react';
 
-import PurpleCircle from '../common/PurpleCircle';
-import VideoSection from './VideoSection';
-
-import { FeatureSectionProps } from '../../types/landing.types.ts';
+// import FeatureMenu from '../common/FeatureMenu.tsx';
+// import FeatureCard from '../common/FeatureCard.tsx';
+import { featureData } from '../../data/featuresData.ts';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FeatureSection = ({ videoEnded, setVideoEnded }: FeatureSectionProps) => {
-  const circleRef = useRef<HTMLDivElement>(null);
+const FeatureSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const videoBoxRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const cardRefs = useRef<HTMLLIElement[]>([]);
+  const featureListRef = useRef<HTMLDivElement>(null);
+
+  const [activeIdx, setActiveIdx] = useState(0);
 
   useGSAP(() => {
-    if (!circleRef.current || !sectionRef.current || !videoBoxRef.current) return;
+    if (!sectionRef.current || !featureListRef.current) return;
 
-    gsap.fromTo(
-      circleRef.current,
-      { scale: 0.3 },
-      {
-        scale: 30,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'center center',
-          end: '+=500',
-          scrub: 0.5,
-          pin: true,
-          anticipatePin: 1,
-          markers: true,
-        },
-        ease: 'none',
-      }
-    );
+    // 초기 상태 설정
+    cardRefs.current.forEach((el, idx) => {
+      if (!el) return;
+      gsap.set(el, { y: idx === 0 ? '0%' : '100%' });
+    });
 
-    gsap.to(videoBoxRef.current, {
-      clipPath: 'circle(100% at 50% 50%)',
+    // 애니메이션 전체 타임라인
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'center center',
-        end: '+=500',
-        scrub: 0.5,
-        pin: false,
+        end: '+=2000',
+        scrub: 0.3,
+        pin: true,
+        anticipatePin: 1,
         markers: true,
       },
-      ease: 'power1.inOut',
     });
 
-    ScrollTrigger.create({
-      trigger: sectionRef.current,
-      start: 'top bottom',
-      end: 'center top',
-      onUpdate: (self) => {
-        const video = videoRef.current;
-        const progress = self.progress;
-        if (!video) return;
-        // 아래로 스크롤, 거의 끝에 도달했을 때 영상 재생
-        if (self.direction === 1 && !videoEnded && video.paused && progress > 0.7) {
-          video.play().catch((err) => {
-            console.log('비디오 재생 실패:', err);
-          });
-        }
-        // 위로 스크롤 시 영상 정지
-        if (self.direction === -1 && !videoEnded && !video.paused) {
-          video.pause();
-        }
-      },
-      onLeaveBack: () => {
-        const video = videoRef.current;
-        if (video) {
-          video.pause();
-          video.currentTime = 0;
-        }
-        setVideoEnded(false);
-      },
+    // 2. 카드 등장 & 퇴장 애니메이션
+    featureData.forEach((_, idx) => {
+      if (idx > 0) {
+        tl.to(
+          cardRefs.current[idx],
+          {
+            y: '0%',
+            duration: 1.2,
+            ease: 'power1.inOut',
+            onStart: () => setActiveIdx(idx),
+          },
+          '+=0.5'
+        );
+        tl.to(
+          cardRefs.current[idx - 1],
+          {
+            y: '-100%',
+            duration: 1.2,
+            ease: 'power1.inOut',
+          },
+          '<'
+        );
+      }
     });
 
-    ScrollTrigger.refresh();
-  }, []);
+    featureData.forEach((_, idx) => {
+      if (!cardRefs.current[idx]) return;
+
+      ScrollTrigger.create({
+        trigger: cardRefs.current[idx],
+        start: 'top top',
+        end: 'bottom top',
+        onToggle: (self) => {
+          if (self.isActive) {
+            setActiveIdx(idx);
+          }
+        },
+        markers: {
+          startColor: 'purple',
+          endColor: 'orange',
+          fontSize: '14px',
+          indent: 20,
+        },
+      });
+    });
+  }, [cardRefs, sectionRef]);
+
+  const handleMenuClick = (idx: number) => {
+    const targetCard = cardRefs.current[idx];
+    if (targetCard) {
+      // 카드 위치를 y:0%로 설정
+      gsap.to(targetCard, {
+        y: '0%',
+        duration: 1.2,
+        ease: 'power1.inOut',
+      });
+
+      // 해당 카드로 스크롤 이동
+      gsap.to(window, {
+        scrollTo: targetCard,
+        duration: 1.2,
+        ease: 'power2.inOut',
+      });
+
+      setActiveIdx(idx);
+    }
+  };
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen bg-black overflow-hidden text-white flex items-center justify-center"
+      className="relative w-full h-screen bg-black flex items-center justify-center overflow-hidden"
     >
-      <div className="w-full h-full flex gap-96 items-center justify-center max-sm:flex-col">
-        <div className="flex flex-col gap-28 text-[64px] ml-36">
-          <h1>메뉴1</h1>
-          <h1>메뉴2</h1>
-          <h1>메뉴3</h1>
-          <h1>메뉴4</h1>
-        </div>
-        <div className="flex flex-col w-[1100px] h-full ml-auto">
-          <div className="bg-gray-600 flex flex-col items-center justify-center h-screen w-[1100px] ml-auto">
-            <div className="flex items-center justify-center mb-20 mt-24 w-[964px] h-[476px]">
-              <img
-                src="/images/landing/landing-feature-1.png"
-                alt="기능-소개1"
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex flex-col gap-14 ml-16 mr-20">
-              <h1 className="text-title-1">지도에서 주변 제휴처를 한눈에!</h1>
-              <h4 className="text-2xl leading-loose font-light pb-20">
-                이제 복잡한 검색 없이 지도에서 내 주변의 제휴 매장과 혜택을 바로 확인하세요. 현재
-                위치를 기준으로 가까운 제휴처들을 표시해 빠르게 찾고 편리하게 이용할 수 있습니다.
-              </h4>
-            </div>
-          </div>
-        </div>
+      <div className="w-full h-full flex items-center justify-center max-sm:flex-col">
+        <nav ref={featureListRef}>
+          <ul className="flex flex-col gap-28 text-[64px] ml-36 whitespace-nowrap text-white">
+            {featureData.map((feature, i) => (
+              <li key={feature.title}>
+                <button
+                  onClick={() => handleMenuClick(i)}
+                  className={`transition-colors ${activeIdx === i ? 'text-purple04' : 'text-white'}`}
+                >
+                  {feature.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <ul className="relative flex flex-col w-[57%] h-full ml-auto text-black">
+          {featureData.map((feature, i) => (
+            <li
+              key={feature.title}
+              ref={(el) => {
+                if (el) cardRefs.current[i] = el;
+              }}
+              className={`${feature.color} absolute top-0 right-0 flex flex-col items-center justify-center h-screen w-full ml-auto`}
+            >
+              <div className="flex items-center justify-center mb-20 mt-24 w-[964px] h-[476px]">
+                <img
+                  src={feature.image}
+                  alt={`기능-소개${i + 1}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col gap-14 ml-16 mr-20">
+                <h1 className="text-title-1">{feature.title}</h1>
+                <h4 className="text-2xl leading-loose font-light pb-20">{feature.description}</h4>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
-      {/* 기능 설명 섹션입니다 */}
-      <VideoSection
-        onVideoEnd={() => {
-          setVideoEnded(true);
-        }}
-        videoBoxRef={videoBoxRef}
-        ref={videoRef}
-      />
-      <PurpleCircle ref={circleRef} />
     </section>
   );
 };

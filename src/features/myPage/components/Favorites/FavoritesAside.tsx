@@ -1,5 +1,5 @@
 import FadeWrapper from '../FadeWrapper';
-import BenefitDetailTabs from '../BenefitDetailTabs';
+import BenefitDetailTabs from './BenefitDetailTabs';
 import { FavoriteItem } from '../../hooks/useFavorites';
 
 interface FavoritesAsideProps {

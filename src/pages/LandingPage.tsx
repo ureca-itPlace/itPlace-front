@@ -1,16 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-
-import { useGSAP } from '@gsap/react';
-import IntroSection from '../features/landingPage/components/sections/IntroSection';
-import EarthSection from '../features/landingPage/components/sections/EarthSection';
-import MapSection from '../features/landingPage/components/sections/MapSection';
-import FeatureSection from '../features/landingPage/components/sections/FeatureSection';
-import StartCTASection from '../features/landingPage/components/sections/StartCTASection';
+import { useState, useRef, useEffect, lazy } from 'react';
 
 import LoadLanding from '../features/landingPage/components/common/LoadLanding';
+import IntroSection from '../features/landingPage/components/sections/IntroSection';
+const EarthSection = lazy(() => import('../features/landingPage/components/sections/EarthSection'));
+const MapSection = lazy(() => import('../features/landingPage/components/sections/MapSection'));
+const FeatureSection = lazy(
+  () => import('../features/landingPage/components/sections/FeatureSection')
+);
+const VideoSection = lazy(() => import('../features/landingPage/components/sections/VideoSection'));
+const StartCTASection = lazy(
+  () => import('../features/landingPage/components/sections/StartCTASection')
+);
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
@@ -21,7 +25,6 @@ const LandingPage = () => {
 
   const earthSectionRef = useRef<HTMLDivElement>(null);
   const mapSectionRef = useRef<HTMLDivElement>(null);
-  // const ctaRef = useRef<HTMLDivElement>(null);
 
   // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
@@ -35,19 +38,20 @@ const LandingPage = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (videoEnded) {
-  //     if (ctaRef.current) {
-  //       console.log('CTA 섹션 나타남'); // CTA 등장 확인
-  //       gsap.to(ctaRef.current, {
-  //         opacity: 1,
-  //         pointerEvents: 'auto',
-  //       });
-  //     }
-  //   }
-  // }, [videoEnded]);
+  // 비디오 종료 후 맨 아래로 이동
+  useEffect(() => {
+    if (videoEnded) {
+      console.log('비디오 종료');
+      gsap.to(window, {
+        scrollTo: { y: 'max', autoKill: false },
+        duration: 0.6,
+        ease: 'power2.inOut',
+      });
+    }
+  }, [videoEnded]);
 
   if (isLoading) {
+    console.log('로딩중');
     return <LoadLanding />;
   }
 
@@ -57,10 +61,10 @@ const LandingPage = () => {
         <>
           <EarthSection ref={earthSectionRef} />
           <MapSection ref={mapSectionRef} />
-
-          {/* 기능 설명 섹션 */}
-          <FeatureSection videoEnded={videoEnded} setVideoEnded={setVideoEnded} />
-          <StartCTASection />
+          <FeatureSection />
+          <VideoSection setVideoEnded={setVideoEnded} />
+          {/* 비디오가 끝났을 때만 표시 */}
+          {videoEnded && <StartCTASection />}
         </>
       ) : (
         <IntroSection onComplete={() => setIntroEnded(true)} />

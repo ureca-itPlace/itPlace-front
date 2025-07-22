@@ -1,5 +1,5 @@
 // src/features/myPage/components/EditControls.tsx
-import { FavoriteItem } from '../hooks/useFavorites';
+import { FavoriteItem } from '../../hooks/useFavorites';
 
 interface EditControlsProps {
   isEditing: boolean;
