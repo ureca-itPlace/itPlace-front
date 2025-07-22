@@ -8,7 +8,7 @@ import PasswordChangeModal from '../../features/myPage/components/MyInfo/Passwor
 import UserDeleteModal from '../../features/myPage/components/MyInfo/UserDeleteModal';
 import UplusLinkModal from '../../features/myPage/components/MyInfo/UplusLinkModal';
 import api from '../../apis/axiosInstance';
-import LoadingSpinner from '../../components/common/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import { showToast } from '../../utils/toast';
 
 interface UserInfo {

@@ -1,7 +1,7 @@
 import { useFavorites } from '../../features/myPage/hooks/useFavorites';
-import { Pagination } from '../../components/common';
-import BenefitFilterToggle from '../../components/common/BenefitFilterToggle';
-import SearchBar from '../../components/common/SearchBar';
+import { Pagination } from '../../components';
+import BenefitFilterToggle from '../../components/BenefitFilterToggle';
+import SearchBar from '../../components/SearchBar';
 import NoResult from '../../components/NoResult';
 import BenefitCardList from '../../features/myPage/components/Favorites/BenefitCardList';
 import EditControls from '../../features/myPage/components/Favorites/EditControls';

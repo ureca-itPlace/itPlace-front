@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {
-  getPartnersSearchRanking,
-  PartnerSearchRankingItem,
-} from '../../adminPage/components/Dashboard/apis/DashboardApis';
-import { RankingItem } from '../../adminPage/types/types';
+import { getPartnersSearchRanking, PartnerSearchRankingItem } from '../apis/allBenefitsApi';
+import { mockSearchRanking } from '../data/mockData';
+
+// 로컬 RankingItem 타입 정의
+interface RankingItem {
+  partnerName: string;
+  searchCount: number;
+  trend: 'up' | 'down' | 'keep';
+  rankChange: number | null;
+}
 
 // API 응답을 RankingItem으로 변환하는 함수
 const convertToRankingItem = (apiData: PartnerSearchRankingItem[]): RankingItem[] => {
@@ -43,14 +48,15 @@ const SimpleRanking: React.FC = () => {
   useEffect(() => {
     const fetchRankingData = async () => {
       try {
-        // 제휴처 검색 순위 데이터 조회 (상위 5개)
+        // 제휴처 검색 순위 데이터 조회 (상위 3개)
         const searchRankingResponse = await getPartnersSearchRanking('7d', 3);
         const searchRankingItems = convertToRankingItem(searchRankingResponse.data.searchRanking);
         setData(searchRankingItems);
       } catch (err) {
         console.error('랭킹 데이터 조회 실패:', err);
-        // 에러 발생 시 빈 배열로 초기화
-        setData([]);
+        // 에러 발생 시 mock 데이터 사용
+        const mockItems = convertToRankingItem(mockSearchRanking.slice(0, 3));
+        setData(mockItems);
       }
     };
 

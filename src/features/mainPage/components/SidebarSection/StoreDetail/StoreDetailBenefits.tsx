@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { TbCheck } from 'react-icons/tb';
-import BenefitFilterToggle from '../../../../../components/common/BenefitFilterToggle';
+import BenefitFilterToggle from '../../../../../components/BenefitFilterToggle';
 import { RootState } from '../../../../../store';
 import { BenefitDetailResponse } from '../../../types/api';
 

@@ -1,4 +1,48 @@
-import { BenefitItem, BenefitResponse } from '../apis/allBenefitsApi';
+import { BenefitItem, BenefitResponse, PartnerSearchRankingItem } from '../apis/allBenefitsApi';
+
+// 검색 순위 더미 데이터
+export const mockSearchRanking: PartnerSearchRankingItem[] = [
+  {
+    partnerName: 'CGV',
+    searchCount: 1210,
+    rank: 1,
+    previousRank: 2,
+    rankChange: 1,
+    changeDerection: 'UP',
+  },
+  {
+    partnerName: 'GS25',
+    searchCount: 1180,
+    rank: 2,
+    previousRank: 1,
+    rankChange: -1,
+    changeDerection: 'DOWN',
+  },
+  {
+    partnerName: '메가박스',
+    searchCount: 1050,
+    rank: 3,
+    previousRank: 3,
+    rankChange: 0,
+    changeDerection: 'SAME',
+  },
+  {
+    partnerName: '롯데월드',
+    searchCount: 980,
+    rank: 4,
+    previousRank: 5,
+    rankChange: 1,
+    changeDerection: 'UP',
+  },
+  {
+    partnerName: '배스킨라빈스',
+    searchCount: 920,
+    rank: 5,
+    previousRank: 4,
+    rankChange: -1,
+    changeDerection: 'DOWN',
+  },
+];
 
 // Mock 혜택 데이터
 export const mockBenefits: BenefitItem[] = [
