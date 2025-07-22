@@ -42,6 +42,11 @@ export interface FavoriteRequest {
   benefitId: number;
 }
 
+// 즐겨찾기 삭제 요청 타입 (새로운 API 스펙)
+export interface RemoveFavoritesRequest {
+  benefitId: number;
+}
+
 // 혜택 상세 정보 타입
 export interface BenefitDetailResponse {
   benefitId: number;
@@ -114,7 +119,7 @@ export const addFavorite = async (benefitId: number): Promise<void> => {
 // 즐겨찾기 삭제 API
 export const removeFavorite = async (benefitId: number): Promise<void> => {
   try {
-    const requestBody: FavoriteRequest = { benefitId };
+    const requestBody: RemoveFavoritesRequest = { benefitId };
     await axiosInstance.delete('/api/v1/favorites', { data: requestBody });
   } catch (error) {
     console.error('즐겨찾기 삭제 실패:', error);
