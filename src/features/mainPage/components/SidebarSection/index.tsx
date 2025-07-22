@@ -154,7 +154,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           {activeTab === 'favorites' && (
             <>
               {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-4">
+              <div className="mb-6">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}

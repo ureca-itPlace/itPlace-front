@@ -71,9 +71,9 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
 
     return {
       container: `flex items-center ${isSidebarMode ? 'gap-2' : 'gap-3'} overflow-x-auto scrollbar-hide pb-2`,
-      button: `flex-shrink-0 flex items-center justify-center gap-2 font-medium transition-colors duration-200 border-none ${
+      button: `flex-shrink-0 py-2 flex items-center justify-center gap-2 font-medium transition-colors duration-200 border-none ${
         isSidebarMode
-          ? `h-[${LAYOUT.CATEGORY_TAB_HEIGHT_COMPACT}px] px-4 rounded-[20px] text-body-2 shadow-[0_2px_4px_rgba(0,0,0,0.1)]` // 사이드바: 높이 40px, 작은 패딩, body-2, 가벼운 그림자
+          ? `h-[${LAYOUT.CATEGORY_TAB_HEIGHT_COMPACT}px] px-4 rounded-[20px] text-body-2 shadow-[0_2px_4px_rgba(0,0,0,0.2)]` // 사이드바: 높이 40px, 작은 패딩, body-2, 가벼운 그림자
           : `h-[${LAYOUT.CATEGORY_TAB_HEIGHT}px] px-6 rounded-[30px] text-body-2 shadow-[0_2px_4px_rgba(0,0,0,0.2)]` // 맵: 높이 48px, 큰 패딩, 진한 그림자
       }`,
       showIcon: isMapMode, // 맵 모드에서만 아이콘 표시
