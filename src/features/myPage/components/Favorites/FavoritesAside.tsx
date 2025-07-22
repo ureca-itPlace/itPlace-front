@@ -1,12 +1,13 @@
 import FadeWrapper from '../FadeWrapper';
 import BenefitDetailTabs from './BenefitDetailTabs';
-import { FavoriteItem } from '../../hooks/useFavorites';
+import { FavoriteItem } from '../../../../types/favorites';
 
 interface FavoritesAsideProps {
   favorites: FavoriteItem[];
   isEditing: boolean;
   selectedItems: number[];
   selectedId: number | null;
+  userGrade?: string;
 }
 
 export default function FavoritesAside({
@@ -14,6 +15,7 @@ export default function FavoritesAside({
   isEditing,
   selectedItems,
   selectedId,
+  userGrade,
 }: FavoritesAsideProps) {
   // 찜한 혜택이 아예 없을 때
   if (favorites.length === 0) {
@@ -70,8 +72,9 @@ export default function FavoritesAside({
           <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
           <BenefitDetailTabs
             benefitId={selectedId}
-            image={favorites.find((f) => f.benefitId === selectedId)?.image ?? ''}
+            image={favorites.find((f) => f.benefitId === selectedId)?.partnerImage ?? ''}
             name={favorites.find((f) => f.benefitId === selectedId)?.benefitName ?? ''}
+            userGrade={userGrade}
           />
         </>
       ) : (

@@ -1,126 +1,140 @@
 // src/features/myPage/hooks/useFavorites.ts
-import { useState, useEffect } from 'react';
-import { mockFavorites, mockTierBenefits } from '../mock/mockData';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { fetchFavorites, deleteFavorites } from '../apis/favorites';
+import { FavoriteItem } from '../../../types/favorites';
+import { showToast } from '../../../utils/toast';
 
 /**
- * FavoriteItem 타입 정의
+ * 즐겨찾기 상태 및 로직을 관리하는 훅
+ * - category 파라미터를 통해 기본혜택/VIP콕 구분
+ * - 검색은 프론트에서 필터링
  */
-export interface FavoriteItem {
-  benefitId: number;
-  benefitName: string;
-  image: string;
-}
+export function useFavorites(itemsPerPageInit = 6) {
+  // ✅ API로부터 받은 원본 목록
+  const [allFavorites, setAllFavorites] = useState<FavoriteItem[]>([]);
 
-/**
- * 즐겨찾기 상태 및 로직을 관리하는 커스텀 훅
- * 초기 즐겨찾기 목록 (mock 데이터로 기본값 설정)
- */
-export function useFavorites(initial: FavoriteItem[] = mockFavorites, itemsPerPageInit = 6) {
-  // ✅ 즐겨찾기 목록 상태
-  const [favorites, setFavorites] = useState<FavoriteItem[]>(initial);
-
-  // ✅ 현재 선택된 카드의 benefitId (우측 상세보기용)
+  // ✅ 현재 선택된 카드
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  // ✅ VIP콕 / 기본 혜택 필터
+  // ✅ VIP콕/기본혜택 필터
   const [benefitFilter, setBenefitFilter] = useState<'default' | 'vipkok'>('default');
 
-  // ✅ 검색어 상태
+  // ✅ 검색어
   const [keyword, setKeyword] = useState('');
 
-  // ✅ 편집 모드 상태
+  // ✅ 편집 모드
   const [isEditing, setIsEditing] = useState(false);
-
-  // ✅ 편집 모드에서 선택된 아이템 목록
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
 
-  // ✅ 단일 삭제용(별 버튼)으로 선택된 benefitId
+  // ✅ 삭제 모달 관련
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
-
-  // ✅ 삭제 확인 모달 열림 상태
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  // =============================
-  // 🔎 검색어와 필터를 적용한 결과
-  // =============================
-
-  // 1. 검색어 필터링
-  const searchFiltered = favorites.filter((fav) =>
-    fav.benefitName.toLowerCase().includes(keyword.toLowerCase())
-  );
-
-  // 2. VIP콕 / 기본 혜택 필터링
-  const filteredFavorites = searchFiltered.filter((fav) => {
-    const isVipKok = mockTierBenefits.some(
-      (tier) => tier.benefitId === fav.benefitId && tier.grade === 'VIP콕'
-    );
-    return benefitFilter === 'vipkok' ? isVipKok : !isVipKok;
-  });
-
-  // =============================
-  // 📄 페이지네이션
-  // =============================
-  const [itemsPerPage] = useState(itemsPerPageInit); // 한 페이지에 보여줄 개수
+  // ✅ 페이지네이션
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(itemsPerPageInit);
+  const [totalPages, setTotalPages] = useState(1);
 
-  // 현재 페이지에 보여줄 데이터 계산
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredFavorites.slice(indexOfFirstItem, indexOfLastItem);
+  // ✅ 전체 아이템 수 상태
+  const [totalElements, setTotalElements] = useState(0);
 
-  // 페이지 변경 이벤트
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    // 페이지가 바뀔 때 첫 번째 아이템 자동 선택
-    const startIndex = (pageNumber - 1) * itemsPerPage;
-    const newFirst = favorites[startIndex];
+  /**
+   * 카테고리 파라미터로 API 호출
+   */
+  const loadFavorites = useCallback(async () => {
+    try {
+      const category = benefitFilter === 'vipkok' ? 'VIP 콕' : '기본 혜택';
+      const res = await fetchFavorites(category, currentPage - 1, itemsPerPage);
+      setAllFavorites(res.data.content);
+      setTotalPages(res.data.totalPages);
+      setTotalElements(res.data.totalElements); // ✅ 전체 개수 상태 추가
+      setTotalPages(res.data.totalPages);
+    } catch (err) {
+      console.error('즐겨찾기 목록 불러오기 실패', err);
+      setAllFavorites([]);
+      setTotalPages(1);
+      setTotalElements(0); // ✅ 에러 시 0으로 초기화
+    }
+  }, [benefitFilter, currentPage, itemsPerPage]);
+
+  // ✅ currentPage, benefitFilter가 바뀔 때마다 서버 호출
+  useEffect(() => {
+    loadFavorites();
+  }, [loadFavorites]);
+
+  // ✅ 검색 로직 (프론트에서 필터링)
+  const searchedFavorites = useMemo(() => {
+    if (!keyword.trim()) return allFavorites;
+    return allFavorites.filter((fav) =>
+      fav.benefitName.toLowerCase().includes(keyword.trim().toLowerCase())
+    );
+  }, [allFavorites, keyword]);
+
+  useEffect(() => {
+    // 검색 모드일 땐 클라이언트 기준 totalElements
+    if (keyword.trim()) {
+      setTotalElements(searchedFavorites.length);
+      setTotalPages(Math.max(1, Math.ceil(searchedFavorites.length / itemsPerPage)));
+    }
+  }, [keyword, searchedFavorites, itemsPerPage]);
+
+  // ✅ currentItems는 slice 안 함 (서버가 이미 페이지 단위로 내려줌)
+  const currentItems = searchedFavorites;
+
+  // ✅ 페이지 변경 시
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // 현재 페이지의 첫 번째 아이템 선택
+    const newFirst = searchedFavorites[0];
     setSelectedId(newFirst ? newFirst.benefitId : null);
   };
 
-  // =============================
-  // ⭕ 필터링 조건이 바뀌면 항상 1번째 페이지로 이동하도록
-  // =============================
+  // ✅ 필터나 검색 변경 시 1페이지로 초기화
   useEffect(() => {
     setCurrentPage(1);
   }, [benefitFilter, keyword]);
 
-  // =============================
-  // ⭕ 첫 로드시 목록 중 첫번째 기본 선택
-  // =============================
+  // ✅ 목록이 갱신될 때 첫 번째 아이템 선택
   useEffect(() => {
-    if (favorites.length > 0 && selectedId === null) {
-      setSelectedId(favorites[0].benefitId);
+    if (searchedFavorites.length > 0) {
+      setSelectedId(searchedFavorites[0].benefitId);
+    } else {
+      setSelectedId(null);
     }
-  }, [favorites, selectedId]);
+  }, [searchedFavorites]);
 
-  // =============================
-  // ❌ 단일 즐겨찾기 해제
-  // =============================
-  const handleRemoveFavorite = (benefitId: number) => {
-    const updated = favorites.filter((item) => item.benefitId !== benefitId);
-    setFavorites(updated);
-
-    // 선택된 카드가 삭제된 경우 첫 번째 아이템으로 변경
-    if (selectedId === benefitId) {
-      setSelectedId(updated.length > 0 ? updated[0].benefitId : null);
+  // ✅ 단일 삭제
+  const handleRemoveFavorite = async (benefitId: number) => {
+    try {
+      await deleteFavorites([benefitId]); // ✅ API 호출
+      showToast('삭제에 성공했습니다.', 'success'); // ✅ 토스트 알림
+      await loadFavorites(); // ✅ 목록 리로드 (삭제 반영)
+    } catch (e) {
+      console.error('단일 즐겨찾기 삭제 실패', e);
+      showToast('삭제에 실패했습니다.', 'error'); // ❌ 에러 시 토스트
     }
   };
 
-  // =============================
-  // ❌ 여러개 즐겨찾기 해제 (추후 api 연동해서 구현)
-  // =============================
-  const handleDeleteSelected = () => {
-    console.log('즐겨찾기 여러개 삭제 로직을 여기에 작성하면 됨.');
+  // ✅ 다중 삭제
+  const handleDeleteSelected = async () => {
+    try {
+      await deleteFavorites(selectedItems); // ✅ 선택된 항목 모두 삭제
+      showToast('삭제에 성공했습니다.', 'success'); // ✅ 토스트 알림
+      setSelectedItems([]);
+      setIsEditing(false);
+      await loadFavorites(); // ✅ 목록 리로드
+    } catch (e) {
+      console.error('다중 즐겨찾기 삭제 실패', e);
+      showToast('삭제에 실패했습니다.', 'error'); // ❌ 에러 시 토스트
+    }
   };
 
-  // =============================
-  // 💡 훅에서 반환
-  // =============================
   return {
     // 상태
-    favorites,
-    filteredFavorites,
     currentItems,
+    currentPage,
+    itemsPerPage,
+    totalPages,
     selectedId,
     benefitFilter,
     keyword,
@@ -128,8 +142,8 @@ export function useFavorites(initial: FavoriteItem[] = mockFavorites, itemsPerPa
     selectedItems,
     pendingDeleteId,
     isDeleteModalOpen,
-    currentPage,
-    itemsPerPage,
+    allFavorites,
+    totalElements,
 
     // 상태 변경 함수
     setSelectedId,
@@ -140,7 +154,7 @@ export function useFavorites(initial: FavoriteItem[] = mockFavorites, itemsPerPa
     setPendingDeleteId,
     setIsDeleteModalOpen,
 
-    // 로직 함수
+    // 로직
     handlePageChange,
     handleRemoveFavorite,
     handleDeleteSelected,
