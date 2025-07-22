@@ -12,7 +12,7 @@ export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAni
         y: -40,
         ease: 'power1.out',
         zIndex: 30,
-        delay: 1,
+        delay: 0.5,
       },
       'sync'
     )
@@ -24,7 +24,7 @@ export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAni
           y: 0,
           ease: 'power2.out',
           zIndex: 30,
-          delay: 1,
+          delay: 0.5,
         },
         'sync'
       )
@@ -33,7 +33,7 @@ export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAni
         gsap.to(logoRef.current, { color: 'white' });
         gsap.to(descRef.current, { color: 'white' });
         gsap.to(bgRef.current, { backgroundColor: 'black' });
-      }, '+=0.5')
+      }, '+=0.1')
 
       // 3. 로고 & 멘트 fade out
       .add(() => {
@@ -41,14 +41,14 @@ export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAni
           y: 0,
           opacity: 0,
           scale: 0.7,
-          duration: 1,
+          duration: 0.5,
           ease: 'power3.out',
         });
         gsap.to(descRef.current, {
           y: 0,
           opacity: 0,
           scale: 0.7,
-          duration: 1,
+          duration: 0.5,
           ease: 'power3.out',
         });
       }, '+=1')
