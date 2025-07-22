@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Platform } from '../../../../types';
+import { Platform } from '../../../types';
 import { TbChevronDown, TbCheck, TbChevronUp } from 'react-icons/tb';
-import { RootState } from '../../../../../../store';
+import { RootState } from '../../../../../store';
 import AddressTooltip from './AddressTooltip';
-import { showToast } from '../../../../../../utils/toast';
+import { showToast } from '../../../../../utils/toast';
 
 interface StoreCardProps {
   platform: Platform;
@@ -15,6 +15,16 @@ interface StoreCardProps {
 const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
   // Redux에서 사용자 등급 가져오기
   const membershipGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
+
+  // 사용자 등급 확인 헬퍼 함수
+  const isUserGrade = (grade: string) => {
+    return membershipGrade && grade.toLowerCase() === membershipGrade.toLowerCase();
+  };
+
+  // 등급 표시명 변환 헬퍼 함수
+  const getGradeDisplayName = (grade: string) => {
+    return grade === 'BASIC' ? '우수' : grade;
+  };
 
   // 주소 툴팁 상태 관리
   const [showAddressTooltip, setShowAddressTooltip] = useState(false);
@@ -118,8 +128,6 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
             {platform.benefits.length > 0 ? (
               platform.benefits.map((benefit, benefitIndex) => {
                 const [grade, content] = benefit.split(': ');
-                const isUserGrade =
-                  membershipGrade && grade.toLowerCase() === membershipGrade.toLowerCase();
 
                 return (
                   <div
@@ -128,12 +136,12 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
                   >
                     <TbCheck size={16} className="text-grey04" />
                     <span
-                      className={`text-body-4 ${isUserGrade ? 'text-orange04 font-bold' : 'text-grey05'}`}
+                      className={`text-body-4 ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
                     >
-                      {grade === 'BASIC' ? '우수' : grade}
+                      {getGradeDisplayName(grade)}
                     </span>
                     <span
-                      className={`text-body-4 truncate ${isUserGrade ? 'text-orange04 font-bold' : 'text-grey05'}`}
+                      className={`text-body-4 truncate ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
                     >
                       {content}
                     </span>

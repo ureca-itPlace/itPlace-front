@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Platform, Category, MapLocation } from '../../types';
-import CategoryTabsSection from '../CategoryTabsSection';
+import CategoryTabsSection from '../SidebarSection/CategoryTabsSection';
 import KakaoMap from './KakaoMap';
 import MapControls from './MapControls';
 

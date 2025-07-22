@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
 import LoadingSpinner from '../../../../components/common/LoadingSpinner';
-import SearchSection from '../SidebarSection/AllBenefit/SearchSection';
-import InfoBannerSection from '../SidebarSection/AllBenefit/InfoBannerSection';
-import NavigationTabsSection from '../SidebarSection/AllBenefit/NavigationTabsSection';
-import StoreCardsSection from '../SidebarSection/AllBenefit/StoreCardsSection';
-import FavoriteStoreList from '../SidebarSection/AllBenefit/FavoriteStoreList';
+import SearchSection from '../SidebarSection/SearchSection';
+import InfoBannerSection from '../SidebarSection/InfoBannerSection';
+import NavigationTabsSection from '../SidebarSection/NavigationTabsSection';
+import StoreCardsSection from './AllBenefit';
+import FavoriteStoreList from '../SidebarSection/FavoriteStoreList';
 import StoreDetailCard from './StoreDetail';
 
 interface Tab {
@@ -62,7 +62,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   const mainTabs: Tab[] = [
     { id: 'nearby', label: '주변 혜택' },
-    { id: 'favorites', label: '찜한 혜택' },
+    { id: 'favorites', label: '관심 혜택' },
     { id: 'ai', label: '잇플AI 추천' },
   ];
 

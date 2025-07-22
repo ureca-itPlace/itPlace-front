@@ -136,17 +136,17 @@ const MainPageLayout: React.FC = () => {
       <div
         className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
         style={{
-          left: '370px',
+          left: '400px',
           transform: 'translateX(-20%)',
           width: '380px',
-          height: '260px', // 허리까지만 보이도록 절반 높이
+          height: '200px', // 허리까지만 보이도록 절반 높이
         }}
       >
         <img
           src="/images/main/mainCharacter.webp"
           alt="잇플 캐릭터"
           className="w-full h-auto object-contain object-bottom"
-          style={{ width: '380px', height: '380px' }}
+          style={{ width: '190px', height: '190px' }}
         />
       </div>
     </div>

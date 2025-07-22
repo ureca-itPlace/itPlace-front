@@ -59,7 +59,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       </div>
 
       {/* 고정 버튼 */}
-      <div className="px-6 pb-6 flex-shrink-0">
+      <div className="px-6 pb-4 flex-shrink-0">
         <StoreDetailActionButton />
       </div>
     </div>
