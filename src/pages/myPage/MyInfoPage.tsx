@@ -122,6 +122,7 @@ export default function MyInfoPage() {
       <UplusLinkModal
         isOpen={showUplusModal}
         phone={user.phoneNumber}
+        name={user.name}
         onClose={() => setShowUplusModal(false)}
         onVerified={fetchUser} // 성공 후 사용자 정보 다시 조회
       />
