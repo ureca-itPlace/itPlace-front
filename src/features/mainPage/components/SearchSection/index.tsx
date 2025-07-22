@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SearchBar from '../../../../../components/common/SearchBar';
+import SearchBar from '../../../../components/common/SearchBar';
 
 interface SearchSectionProps {
   onSearchChange?: (query: string) => void;
@@ -26,7 +26,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({ onSearchChange }) => {
         value={searchQuery}
         onChange={handleSearchChange}
         onClear={handleSearchClear}
-        backgroundColor="bg-grey01"
+        backgroundColor="grey01"
         width={330}
       />
     </div>
