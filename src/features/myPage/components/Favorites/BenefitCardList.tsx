@@ -1,6 +1,6 @@
 // src/features/myPage/components/BenefitCardList.tsx
 import { TbStarFilled } from 'react-icons/tb';
-import { FavoriteItem } from '../hooks/useFavorites';
+import { FavoriteItem } from '../../hooks/useFavorites';
 
 interface BenefitCardListProps {
   items: FavoriteItem[]; // 현재 페이지에 보여줄 아이템들
@@ -26,7 +26,6 @@ export default function BenefitCardList({
   isEditing,
   selectedItems,
   setSelectedItems,
-  onRemove,
   onRequestDelete,
 }: BenefitCardListProps) {
   // 체크박스 토글 함수

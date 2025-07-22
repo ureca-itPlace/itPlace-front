@@ -15,7 +15,7 @@ export interface FavoriteItem {
  * 즐겨찾기 상태 및 로직을 관리하는 커스텀 훅
  * 초기 즐겨찾기 목록 (mock 데이터로 기본값 설정)
  */
-export function useFavorites(initial: FavoriteItem[] = mockFavorites) {
+export function useFavorites(initial: FavoriteItem[] = mockFavorites, itemsPerPageInit = 6) {
   // ✅ 즐겨찾기 목록 상태
   const [favorites, setFavorites] = useState<FavoriteItem[]>(initial);
 
@@ -60,7 +60,7 @@ export function useFavorites(initial: FavoriteItem[] = mockFavorites) {
   // =============================
   // 📄 페이지네이션
   // =============================
-  const itemsPerPage = 6; // 한 페이지에 보여줄 개수
+  const [itemsPerPage] = useState(itemsPerPageInit); // 한 페이지에 보여줄 개수
   const [currentPage, setCurrentPage] = useState(1);
 
   // 현재 페이지에 보여줄 데이터 계산
@@ -78,7 +78,14 @@ export function useFavorites(initial: FavoriteItem[] = mockFavorites) {
   };
 
   // =============================
-  // ✅ 첫 로드시 목록 중 첫번째 기본 선택
+  // ⭕ 필터링 조건이 바뀌면 항상 1번째 페이지로 이동하도록
+  // =============================
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [benefitFilter, keyword]);
+
+  // =============================
+  // ⭕ 첫 로드시 목록 중 첫번째 기본 선택
   // =============================
   useEffect(() => {
     if (favorites.length > 0 && selectedId === null) {
@@ -100,7 +107,7 @@ export function useFavorites(initial: FavoriteItem[] = mockFavorites) {
   };
 
   // =============================
-  // ❌ 여러개 즐겨찾기 해제 (추후 구현)
+  // ❌ 여러개 즐겨찾기 해제 (추후 api 연동해서 구현)
   // =============================
   const handleDeleteSelected = () => {
     console.log('즐겨찾기 여러개 삭제 로직을 여기에 작성하면 됨.');

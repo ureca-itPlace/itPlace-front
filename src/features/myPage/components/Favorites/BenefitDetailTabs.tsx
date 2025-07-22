@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { mockTierBenefits, mockUser } from '../mock/mockData';
+import { mockTierBenefits, mockUser } from '../../mock/mockData';
 
 // interface TierBenefitItem {
 //   benefitId: number;
