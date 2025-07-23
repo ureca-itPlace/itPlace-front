@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
 // 공통 컴포넌트
@@ -45,17 +45,26 @@ const AuthLayout = () => {
     birthday: '',
     gender: '',
     membershipId: '',
+    verifiedType: '',
   });
+
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const step = params.get('step');
     const verifiedType = params.get('verifiedType');
 
+    // OAuth 관련 URL 파라미터가 있을 때만 처리
+    // 일반적인 로그인 리셋은 별도 useEffect에서 처리
+
+    if (hasInitialized.current) return; // 이미 초기화했으면 실행하지 않음
+
     if (step === 'phoneAuth' && verifiedType === 'oauth') {
       setMode('signup');
       setShowTab(false);
       goToPhoneAuth();
+      hasInitialized.current = true; // 초기화 완료 표시
     }
 
     if (step === 'oauthIntegration' && verifiedType === 'oauth') {
@@ -67,8 +76,26 @@ const AuthLayout = () => {
         membershipId: params.get('membershipId') || '',
       });
       setFormStep('oauthIntegration');
+      hasInitialized.current = true; // 초기화 완료 표시
     }
-  }, [location.search, location, goToPhoneAuth, setFormStep]);
+  }, [location.search, goToPhoneAuth, setFormStep, formStep]);
+
+  // sessionStorage 플래그를 통한 로그인 리셋 처리
+  useEffect(() => {
+    const shouldReset = sessionStorage.getItem('resetToLogin');
+    if (shouldReset && formStep !== 'login') {
+      console.log('🟡 AuthLayout: sessionStorage 플래그 감지 - 로그인으로 리셋');
+      sessionStorage.removeItem('resetToLogin');
+      setMode('signup');
+      setShowTab(false);
+      hasInitialized.current = false;
+      goToLogin();
+    }
+  }, [formStep, goToLogin]);
+
+  useEffect(() => {
+    console.log('🟡 AuthLayout: 현재 formStep =', formStep);
+  }, [formStep]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
@@ -84,11 +111,13 @@ const AuthLayout = () => {
             {formStep === 'login' && (
               <LoginForm
                 onGoToPhoneAuth={() => {
+                  console.log('🟡 AuthLayout: "계정이 없으신가요?" 클릭');
                   setMode('signup');
                   setShowTab(false);
                   goToPhoneAuth();
                 }}
                 onGoToFindEmail={() => {
+                  console.log('🟡 AuthLayout: "아이디/비밀번호 찾기" 클릭');
                   setMode('find');
                   setShowTab(true);
                   goToFindEmail();
@@ -108,25 +137,49 @@ const AuthLayout = () => {
                 showTab={showTab}
                 onGoToLogin={goToLogin}
                 onAuthComplete={({ name, phone }) => {
+                  console.log('🟡 AuthLayout: onAuthComplete 호출됨', { name, phone });
                   setUserData({ name, phone });
+                  console.log('🟡 AuthLayout: goToVerification() 호출');
                   goToVerification();
                 }}
                 onVerified={(verifiedType, user) => {
-                  if (verifiedType === 'new' && mode === 'find') {
-                    setFormStep('findEmail');
-                  } else if (verifiedType === 'new' || verifiedType === 'uplus') {
-                    goToSignUp();
-                  } else if (verifiedType === 'oauth') {
+                  const urlParams = new URLSearchParams(location.search);
+                  const isOAuthFlow = urlParams.get('verifiedType') === 'oauth';
+                  
+                  console.log('🟡 AuthLayout: onVerified 첫 번째 파라미터:', verifiedType);
+                  console.log('🟡 AuthLayout: onVerified 두 번째 파라미터:', user);
+                  console.log('🟡 AuthLayout: onVerified 호출됨', { verifiedType, user, isOAuthFlow });
+                  
+                  if (isOAuthFlow || verifiedType === 'oauth-new') {
+                    // OAuth 플로우는 모든 경우에 OAuthIntegrationForm으로
+                    console.log('🟢 AuthLayout: OAuth 플로우 - OAuthIntegrationForm으로 이동');
                     setOAuthUserData({
                       name: user.name,
                       phone: user.phone,
                       birthday: user.birthday,
                       gender: user.gender,
                       membershipId: user.membershipId,
+                      verifiedType: verifiedType,
                     });
                     setFormStep('oauthIntegration');
                   } else {
-                    goToLogin();
+                    // 일반 플로우는 기존 분기 로직 유지
+                    if (verifiedType === 'new' && mode === 'find') {
+                      setFormStep('findEmail');
+                    } else if (verifiedType === 'new' || verifiedType === 'uplus') {
+                      goToSignUp();
+                    } else if (verifiedType === 'oauth') {
+                      setOAuthUserData({
+                        name: user.name,
+                        phone: user.phone,
+                        birthday: user.birthday,
+                        gender: user.gender,
+                        membershipId: user.membershipId,
+                      });
+                      setFormStep('oauthIntegration');
+                    } else {
+                      goToLogin();
+                    }
                   }
                 }}
                 onSignUpComplete={goToSignUpFinal}
@@ -137,15 +190,22 @@ const AuthLayout = () => {
 
             {/* OAuth 통합 */}
             {formStep === 'oauthIntegration' && (
-              <OAuthIntegrationForm
-                name={oauthUserData.name}
-                phone={oauthUserData.phone}
-                birthday={oauthUserData.birthday}
-                gender={oauthUserData.gender}
-                membershipId={oauthUserData.membershipId}
-                onGoToLogin={goToLogin}
-                onNext={goToSignUpFinal}
-              />
+              <>
+                {console.log('🟡 AuthLayout: OAuthIntegrationForm에 전달하는 props:', {
+                  verifiedType: oauthUserData.verifiedType,
+                  isOAuthNew: oauthUserData.verifiedType === 'oauth-new'
+                })}
+                <OAuthIntegrationForm
+                  name={oauthUserData.name}
+                  phone={oauthUserData.phone}
+                  birthday={oauthUserData.birthday}
+                  gender={oauthUserData.gender}
+                  membershipId={oauthUserData.membershipId}
+                  onGoToLogin={goToLogin}
+                  onNext={goToSignUpFinal}
+                  isOAuthNew={oauthUserData.verifiedType === 'oauth-new'}
+                />
+              </>
             )}
 
             {/* 아이디 찾기 */}

@@ -105,13 +105,16 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
               <span className="mt-1 text-title-8">로그아웃</span>
             </button>
           ) : (
-            <Link
-              to="/login"
+            <button
+              onClick={() => {
+                sessionStorage.setItem('resetToLogin', 'true');
+                navigate('/login');
+              }}
               className="flex flex-col items-center text-white text-title-8 hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.6)]"
             >
               <TbLogin className="text-3xl" strokeWidth={1.3} />
               <span className="mt-1">로그인</span>
-            </Link>
+            </button>
           )}
         </div>
       </aside>
