@@ -102,17 +102,29 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     // 카테고리 변경은 useFavoritesList 내부의 useEffect에서 자동 처리됨
   };
 
-  // 탭별 다른 InfoBanner 메시지
-  const getInfoBannerMessage = () => {
+  // 탭별 다른 InfoBanner 메시지와 강조 텍스트
+  const getBannerConfig = () => {
     switch (activeTab) {
       case 'nearby':
-        return '근처 제휴처만 안내해드릴게요 !';
+        return {
+          message: '근처 제휴처만 안내해드릴게요 !',
+          highlightText: '근처 제휴처',
+        };
       case 'favorites':
-        return '잇플픽이 찜한 혜택을 보여드릴게요!';
+        return {
+          message: '잇플픽이 관심 혜택을 보여드릴게요!',
+          highlightText: '관심 혜택',
+        };
       case 'ai':
-        return 'AI가 추천하는 맞춤 혜택입니다!';
+        return {
+          message: '잇플님의 맞춤 잇플AI 추천을 보여드릴게요!',
+          highlightText: '맞춤 잇플AI 추천',
+        };
       default:
-        return '근처 제휴처만 안내해드릴게요 !';
+        return {
+          message: '근처 제휴처만 안내해드릴게요 !',
+          highlightText: '근처 제휴처',
+        };
     }
   };
 
@@ -148,7 +160,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               />
             </div>
 
-            <InfoBannerSection message={getInfoBannerMessage()} variant="primary" />
+            <InfoBannerSection
+              message={getBannerConfig().message}
+              highlightText={getBannerConfig().highlightText}
+              variant="primary"
+            />
           </div>
 
           {/* 컨텐츠 영역 - 탭에 따라 다른 컴포넌트 렌더링 */}
