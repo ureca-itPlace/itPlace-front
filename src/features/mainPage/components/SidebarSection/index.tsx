@@ -29,6 +29,7 @@ interface SidebarSectionProps {
   onActiveTabChange: (tab: string) => void;
   onKeywordSearch?: (keyword: string) => void;
   searchQuery?: string;
+  onMapCenterMove?: (latitude: number, longitude: number) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -43,6 +44,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onActiveTabChange,
   onKeywordSearch,
   searchQuery,
+  onMapCenterMove,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -52,10 +54,12 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     activeTab === 'favorites' ? selectedCategory : undefined
   );
 
-  // 카드 클릭 시 상세보기로 전환
+  // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
     onPlatformSelect(platform);
     setViewMode('detail');
+    // 해당 가맹점 위치로 지도 중심 이동
+    onMapCenterMove?.(platform.latitude, platform.longitude);
   };
 
   // 상세보기에서 닫기
@@ -89,8 +93,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   };
 
   const handleFavoriteClick = (favorite: FavoriteBenefit) => {
-    // TODO: 상세보기 모달 열기 또는 상세 페이지로 이동
-    console.log('즐겨찾기 클릭:', favorite);
+    // 파트너명으로 검색 실행
+    onKeywordSearch?.(favorite.partnerName);
   };
 
   const handleCategorySelect = (categoryId: string) => {
