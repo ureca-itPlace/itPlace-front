@@ -28,7 +28,7 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
     if (!groupRef.current || !trigger || !canvasWrapperRef.current || !earthCloud1Ref.current)
       return;
 
-    gsap.set(earthCloud1Ref.current, { opacity: 0, x: '-100%', scale: 1 });
+    gsap.set(earthCloud1Ref.current, { opacity: 0.8, x: '-100%', scale: 1 });
 
     // 타임라인 생성
     const tl = gsap.timeline({
@@ -44,23 +44,27 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
     });
 
     // 1. 지구 확대
-    tl.to(groupRef.current.scale, {
-      x: 2.5,
-      y: 2.5,
-      z: 2.5,
-      duration: 2,
-      ease: 'none',
-    });
+    tl.to(
+      groupRef.current.scale,
+      {
+        x: 2.5,
+        y: 2.5,
+        z: 2.5,
+        duration: 3,
+        ease: 'power1.out',
+      },
+      0
+    );
 
     // 2. 캔버스 페이드 아웃 (지구 확대가 끝난 후 시작)
     tl.to(
       canvasWrapperRef.current,
       {
         opacity: 0,
-        duration: 2,
-        ease: 'power1.out',
+        duration: 7,
+        ease: 'none',
       },
-      '-=0.2'
+      1.2
     );
 
     // 3. 구름 등장 (페이드아웃 중간 시점에 시작)
@@ -68,15 +72,16 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
       earthCloud1Ref.current,
       {
         x: '0%',
-        scale: 2,
+        scale: 2.4,
         opacity: 1,
         duration: 5,
         ease: 'power2.out',
       },
-      '-=2.5'
+      2.7
     );
 
     return () => {
+      if (tl.scrollTrigger) tl.scrollTrigger.kill();
       tl.kill();
     };
   }, [trigger]);
