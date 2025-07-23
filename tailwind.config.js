@@ -87,7 +87,7 @@ export default {
       'max-xl': { max: '1536px' }, // 125% 배율 대비
       'max-lg': { max: '1023px' }, // 1023px 이하
       'max-md': { max: '767px' },
-      'max-sm': { max: '639px' },
+      'max-sm': { max: '500px' },
     },
   },
   plugins: [
