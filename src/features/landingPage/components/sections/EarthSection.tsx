@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import EarthScene from '../common/EarthScene';
+import EarthScene from '../EarthScene';
 
 const EarthSection = () => {
   const earthSectionRef = useRef<HTMLDivElement>(null);

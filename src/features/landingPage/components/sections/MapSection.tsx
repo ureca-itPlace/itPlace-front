@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import BlackSquare from '../common/BlackSquare';
+import BlackSquare from '../BlackSquare';
 import { useGSAP } from '@gsap/react';
-import Cloud from '../common/Cloud';
+import Cloud from '../Cloud';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -184,7 +184,7 @@ const MapSection = () => {
         opacity: 1,
         filter: 'blur(0px)',
         ease: 'power2.out',
-        duration: 0.5,
+        duration: 1,
       },
       10.5
     );
@@ -197,7 +197,7 @@ const MapSection = () => {
         ease: 'power1.Out',
         duration: 1.5,
       },
-      11.5
+      12
     );
 
     tl.to({}, { duration: 1 });
