@@ -113,3 +113,24 @@ export interface FavoriteResponse {
   data: null;
   timestamp: string;
 }
+
+// 검색 API 타입
+export interface SearchStoresParams {
+  lat: number;
+  lng: number;
+  radiusMeters: number;
+  category?: string;
+  keyword: string;
+}
+
+// 즐겨찾기 목록 조회 API 타입
+export interface FavoritesListRequest {
+  category?: string;
+}
+
+export interface FavoriteBenefit {
+  benefitId: number;
+  benefitName: string;
+  partnerName: string;
+  partnerImage: string;
+}

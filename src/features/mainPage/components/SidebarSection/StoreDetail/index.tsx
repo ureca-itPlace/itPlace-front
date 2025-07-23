@@ -26,13 +26,16 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         partnerId: platform.partnerId,
         mainCategory: category,
       });
+
       setDetailData(res);
+
       // API 응답에서 isFavorite 상태 업데이트
       if (res?.data?.isFavorite !== undefined) {
         setIsFavorite(res.data.isFavorite);
       }
     } catch (e) {
-      console.error(e);
+      console.error('상세 혜택 API 호출 실패:', e);
+      setDetailData(null);
     }
   }, [activeTab, platform.storeId, platform.partnerId]);
 
@@ -70,12 +73,16 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
 
       {/* 고정 버튼 */}
       <div className="px-6 pb-4 flex-shrink-0">
-        {detailData?.data?.benefitId && (
+        {detailData?.data?.benefitId ? (
           <StoreDetailActionButton
             benefitId={detailData.data.benefitId}
             isFavorite={isFavorite}
             onFavoriteChange={handleFavoriteChange}
           />
+        ) : (
+          <div className="w-full py-3 mt-3 bg-grey03 text-grey04 text-center rounded-[10px]">
+            혜택 정보를 불러오는 중...
+          </div>
         )}
       </div>
     </div>
