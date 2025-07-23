@@ -8,9 +8,17 @@ import InfoBannerSection from './InfoBannerSection';
 import NavigationTabsSection from './NavigationTabsSection';
 import StoreCardsSection from './AllBenefit';
 import FavoriteStoreList from './FavoriteStoreList';
+import RecommendStoreList from './RecommendStoreList';
 import StoreDetailCard from './StoreDetail';
 import CategoryTabsSection from './CategoryTabsSection';
 import { useFavoritesList } from '../../hooks/useFavoritesList';
+
+const recommendStores = Array.from({ length: 10 }).map((_, i) => ({
+  benefitId: i + 1,
+  partnerName: `추천 제휴처 ${i + 1}`,
+  partnerImage: '', // 없으면 이니셜만 뜸
+  rank: i + 1,
+}));
 
 interface Tab {
   id: string;
@@ -207,24 +215,28 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'ai' && (
             <>
-              {/* 카테고리 탭 (AI 추천용 - 사이드바 모드) */}
               <div className="mb-4">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}
                   onCategorySelect={(categoryId) => {
-                    // TODO: AI 추천 카테고리 기능 구현
                     console.log('AI 추천 카테고리 선택:', categoryId);
                   }}
                   mode="sidebar"
                 />
               </div>
 
-              <div className="flex-1 flex items-center justify-center">
-                <div className="text-grey04 text-center">
-                  <div className="text-lg mb-2">🤖</div>
-                  <div>AI 추천 기능 준비중입니다</div>
-                </div>
+              <div
+                className="-mx-5 overflow-y-auto overflow-x-hidden"
+                style={{ height: 'calc(100vh - 360px)' }}
+              >
+                <RecommendStoreList
+                  stores={recommendStores}
+                  onItemClick={(store) => {
+                    onKeywordSearch?.(store.partnerName);
+                  }}
+                  isLoading={false} // 추후 로딩 상태 연동
+                />
               </div>
             </>
           )}
