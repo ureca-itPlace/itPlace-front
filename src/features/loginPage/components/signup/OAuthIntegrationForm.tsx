@@ -10,7 +10,7 @@ type OAuthIntegrationFormProps = {
   gender: string; // 'MALE' | 'FEMALE'
   membershipId: string;
   onGoToLogin: () => void;
-  onNext: () => void; // 다음 단계로 넘어가기
+  onNext: (data: { birthday: string; gender: string }) => void; // 다음 단계로 넘어가기
   isOAuthNew?: boolean; // oauth-new일 때 생년월일/성별 입력 가능
 };
 
@@ -99,7 +99,12 @@ const OAuthIntegrationForm = ({
       </div>
 
       {/* 가입하기 버튼 */}
-      <AuthButton label="가입하기" onClick={onNext} variant="default" className="w-[320px]" />
+      <AuthButton
+        label="가입하기"
+        onClick={() => onNext({ birthday, gender })}
+        variant="default"
+        className="w-[320px]"
+      />
 
       {/* 하단 링크 */}
       <AuthFooter

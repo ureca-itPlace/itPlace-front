@@ -87,6 +87,16 @@ export const resetPassword = async ({
   });
 };
 
+export const oauthSignUp = (data: {
+  name: string;
+  phoneNumber: string;
+  birthday: string;
+  gender: string;
+  membershipId: string;
+}) => {
+  return api.post('/api/v1/auth/oauth/signUp', data);
+};
+
 // /api/v1/users/findPassword
 // 이메일만 넘겨주면 됨
 
