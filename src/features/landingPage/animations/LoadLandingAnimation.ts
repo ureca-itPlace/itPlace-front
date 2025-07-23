@@ -1,7 +1,7 @@
 import gsap from 'gsap';
-import { IntroAnimationProps } from '../types/landing.types';
+import { LoadLandingProps } from '../types/landing.types';
 
-export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAnimationProps) => {
+export const LoadLandingAnimation = ({ logoRef, descRef, bgRef }: LoadLandingProps) => {
   const tl = gsap.timeline();
 
   if (logoRef.current && descRef.current && bgRef.current) {
@@ -51,8 +51,6 @@ export const introAnimation = ({ logoRef, descRef, bgRef, onComplete }: IntroAni
           duration: 0.5,
           ease: 'power3.out',
         });
-      }, '+=1')
-
-      .add(onComplete, '+=1');
+      }, '+=1');
   }
 };

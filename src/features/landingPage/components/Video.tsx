@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { VideoProps } from '../../types/landing.types.ts';
+import { VideoProps } from '../types/landing.types.ts';
 
 const Video = forwardRef<HTMLVideoElement, VideoProps>(({ onVideoEnd, videoBoxRef }, ref) => {
   return (

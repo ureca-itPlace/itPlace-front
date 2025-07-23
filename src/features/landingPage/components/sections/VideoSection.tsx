@@ -3,8 +3,8 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import PurpleCircle from '../common/PurpleCircle';
-import Video from '../common/Video';
+import PurpleCircle from '../PurpleCircle';
+import Video from '../Video';
 
 import { VideoSectionProps } from '../../types/landing.types';
 
