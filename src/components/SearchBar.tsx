@@ -1,6 +1,5 @@
 import React from 'react';
 import { TbSearch, TbX } from 'react-icons/tb';
-
 interface SearchBarProps {
   placeholder: string;
   value: string;
@@ -9,7 +8,6 @@ interface SearchBarProps {
   className?: string;
   backgroundColor?: string;
 }
-
 const SearchBar: React.FC<SearchBarProps> = ({
   placeholder,
   value,
@@ -43,5 +41,4 @@ const SearchBar: React.FC<SearchBarProps> = ({
     </div>
   );
 };
-
 export default SearchBar;

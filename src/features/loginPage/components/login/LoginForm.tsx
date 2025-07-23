@@ -38,7 +38,13 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
   };
 
   const handleKakaoLogin = () => {
-    const kakaoLoginUrl = `http://3.34.79.67/oauth2/authorization/kakao`;
+    console.log('🟡 카카오 로그인 버튼 클릭');
+
+    const kakaoRedirectUrl = import.meta.env.VITE_KAKAO_REDIRECT_URI;
+    const kakaoClientId = import.meta.env.VITE_KAKAO_CLIENT_ID;
+    const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${kakaoRedirectUrl}&response_type=code`;
+
+    console.log('🟡 카카오 인증 URL로 이동:', kakaoLoginUrl);
     window.location.href = kakaoLoginUrl;
   };
 

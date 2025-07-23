@@ -54,7 +54,7 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="relative w-[500px] bg-white rounded-[20px] shadow-xl px-10 py-12 flex flex-col items-center"
+        className="relative w-[500px] bg-white rounded-[20px] shadow-xl p-10 flex flex-col items-center max-xl:w-[460px] max-xl:p-7 max-sm:p-5 max-sm:w-[calc(100%-40px)]"
       >
         {/* 닫기 버튼 */}
         <button onClick={onClose} className="absolute top-5 right-5 text-grey03 hover:text-grey04">
@@ -62,11 +62,15 @@ const Modal: React.FC<ModalProps> = ({
         </button>
 
         {/* 제목 */}
-        {title && <h2 className="text-title-4 font-bold text-black text-center w-full">{title}</h2>}
+        {title && (
+          <h2 className="text-title-4 font-bold text-black text-center w-full max-sm:text-title-6 max-sm:font-bold">
+            {title}
+          </h2>
+        )}
 
         {/* 메시지 */}
         {message && (
-          <p className="text-body-0 text-black whitespace-pre-line text-center mt-[16px] w-full">
+          <p className="text-body-0 text-black whitespace-pre-line text-center mt-[16px] w-full max-sm:text-body-2">
             {message}
           </p>
         )}
@@ -74,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* 서브 메시지 */}
         {subMessage && (
           <p
-            className={`text-center w-full mt-[28px] text-body-0 whitespace-pre-line ${subMessageClass}`}
+            className={`text-center text-black w-full mt-[8px] text-body-0 whitespace-pre-line max-sm:text-body-2 ${subMessageClass}`}
           >
             {subMessage}
           </p>
@@ -84,7 +88,7 @@ const Modal: React.FC<ModalProps> = ({
         {input && (
           <input
             type="text"
-            className="w-full max-w-[436px] h-[50px] mt-[20px] px-[20px] bg-grey01 rounded-[10px] text-body-2 text-grey05 placeholder-grey03"
+            className="w-full max-w-[436px] h-[50px] mt-[20px] px-[20px] bg-grey01 rounded-[10px] text-body-2 text-grey05 placeholder-grey03 max-sm:text-body-3"
             placeholder={inputPlaceholder}
             value={inputValue}
             onChange={(e) => onInputChange?.(e.target.value)}
@@ -96,7 +100,7 @@ const Modal: React.FC<ModalProps> = ({
 
         {/* 버튼 영역 */}
         {buttons.length > 0 && (
-          <div className="mt-[20px] w-full flex gap-4">
+          <div className="mt-[20px] w-full flex gap-4 max-sm:gap-3">
             {buttons.map((btn, idx) => {
               const typeClass =
                 btn.type === 'primary'
@@ -106,7 +110,7 @@ const Modal: React.FC<ModalProps> = ({
               return (
                 <button
                   key={idx}
-                  className={`flex-1 h-[56px] rounded-[10px] text-title-6 transition duration-200 ${typeClass}`}
+                  className={`flex-1 h-[56px] rounded-[10px] text-title-6 transition duration-200 ${typeClass} max-xl:h-[52px] max-sm:h-[46px] max-sm:text-title-7`}
                   onClick={btn.onClick}
                 >
                   {btn.label}
