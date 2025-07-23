@@ -45,6 +45,7 @@
     "@types/react-dom": "^19.0.4",
     "@types/react-js-pagination": "^3.0.7",
     "@types/swiper": "^6.0.0",
+    "@types/three": "^0.178.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.21.0",
