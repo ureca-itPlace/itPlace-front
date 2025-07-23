@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setLoginSuccess } from '../../../store/authSlice';
 import { kakaoOAuthLogin } from '../apis/auth';
 
 const OAuthRedirectHandler = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -39,7 +42,19 @@ const OAuthRedirectHandler = () => {
           navigate('/login?step=phoneAuth&verifiedType=oauth');
         } else if (responseCode === 'LOGIN_SUCCESS') {
           console.log('🟢 로그인 성공 → 메인 페이지로 이동');
-          // TODO: 로그인 성공 처리 (Redux 상태 업데이트 등)
+
+          // Redux에 로그인 정보 저장
+          const userData = response.data?.data;
+          if (userData) {
+            dispatch(
+              setLoginSuccess({
+                name: userData.name,
+                membershipGrade: userData.membershipGrade || 'NORMAL',
+              })
+            );
+            console.log('🟢 Redux에 OAuth 로그인 정보 저장 완료:', userData);
+          }
+
           navigate('/main');
         } else {
           console.log('🟡 알 수 없는 응답 → 로그인 페이지로 이동');
@@ -52,7 +67,7 @@ const OAuthRedirectHandler = () => {
     };
 
     handleKakaoCallback();
-  }, [navigate, searchParams]);
+  }, [dispatch, navigate, searchParams]);
 
   return <div>카카오 로그인 처리 중입니다...</div>;
 };

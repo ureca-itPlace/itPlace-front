@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import gsap from 'gsap';
 import AuthInput from '../common/AuthInput';
 import AuthFooter from '../common/AuthFooter';
@@ -9,7 +9,9 @@ import { checkVerificationCode, sendVerificationCode } from '../../apis/verifica
 import Modal from '../../../../components/Modal';
 import { modalPresets } from '../../constants/modalPresets';
 import { showToast } from '../../../../utils/toast';
-import { loadUplusData } from '../../apis/auth';
+import { loadUplusData, oauthAccountLink } from '../../apis/auth';
+import { useDispatch } from 'react-redux';
+import { setLoginSuccess } from '../../../../store/authSlice';
 
 export interface ModalButton {
   label: string;
@@ -45,12 +47,13 @@ type Props = {
 };
 
 const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) => {
+  const dispatch = useDispatch();
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [isVerified, setIsVerified] = useState(false);
 
   // 인증 성공 후 사용자 상태 저장
-  const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | null>(null);
+  const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | 'oauth-new' | null>(null);
   const userInfoRef = useRef<{
     name: string;
     phone: string;
@@ -154,10 +157,10 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
 
       console.log('🟡 checkVerificationCode API 응답:', {
         userStatus,
-        isLocalUser, 
+        isLocalUser,
         uplusDataExists,
         phoneNumber: phone,
-        fullResponse: res.data
+        fullResponse: res.data,
       });
 
       // OAuth 플로우인지 확인
@@ -166,10 +169,10 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
       console.log('🟡 OAuth 플로우 확인:', { isOAuthFlow, urlParams: urlParams.toString() });
 
       // 분기 처리
-      if (userStatus === 'EXISTING_USER' && isLocalUser === true) {
-        verifiedTypeRef.current = 'local';
+      if (userStatus === 'EXISTING_USER' && isLocalUser === true && !isOAuthFlow) {
+        verifiedTypeRef.current = 'local'; // 일반 플로우에서만 local 처리
       } else if (userStatus === 'EXISTING_USER') {
-        verifiedTypeRef.current = 'oauth';
+        verifiedTypeRef.current = 'oauth'; // OAuth 플로우이거나 OAuth 사용자
       } else if (userStatus === 'NEW_USER' && isOAuthFlow) {
         if (uplusDataExists === true || uplusDataExists === 'true') {
           verifiedTypeRef.current = 'uplus'; // 케이스 8: 카톡신규 + U+ → U+ 모달
@@ -276,15 +279,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
           label="다음"
           onClick={() => {
             const user = userInfoRef.current!;
-            const commonUserInfo = {
-              name: user.name,
-              phone: user.phone,
-              birthday: user.birthday,
-              gender: user.gender,
-              membershipId: user.membershipId,
-              isUplus: verifiedTypeRef.current === 'uplus',
-              verifiedType: verifiedTypeRef.current!,
-            };
 
             console.log('🔍 switch문 실행 직전 verifiedTypeRef.current:', verifiedTypeRef.current);
             switch (verifiedTypeRef.current) {
@@ -302,14 +296,51 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 console.log('🔵 oauth 케이스 실행');
                 setModal(
                   modalPresets.mergeAccount(
-                    () => {
-                      closeModal();
-                      setModal(
-                        modalPresets.integrationSuccess(() => {
+                    async () => {
+                      try {
+                        console.log('🟡 OAuth 계정 통합 API 호출 중...');
+                        const response = await oauthAccountLink(phone);
+
+                        console.log('🟢 OAuth 계정 통합 성공:', response.data);
+
+                        // API 응답의 메시지를 토스트로 표시
+                        const message = response.data?.message || '계정 통합이 완료되었습니다.';
+                        showToast(message, 'success');
+
+                        // 계정 통합 성공 시 Redux에 로그인 정보 저장
+                        const userData = response.data?.data;
+                        if (userData) {
+                          dispatch(
+                            setLoginSuccess({
+                              name: userData.name,
+                              membershipGrade: userData.membershipGrade || 'NORMAL',
+                            })
+                          );
+                          console.log('🟢 Redux에 OAuth 통합 로그인 정보 저장 완료:', userData);
+
+                          // 통합 성공 시 메인 페이지로 직접 이동
                           closeModal();
-                          onGoToLogin();
-                        })
-                      );
+                          window.location.href = '/main';
+                          return;
+                        }
+
+                        closeModal();
+                        setModal(
+                          modalPresets.integrationSuccess(() => {
+                            closeModal();
+                            onGoToLogin();
+                          })
+                        );
+                      } catch (error) {
+                        console.error('🔴 OAuth 계정 통합 실패:', error);
+
+                        const axiosError = error as AxiosError<{ message?: string }>;
+                        const errorMessage =
+                          axiosError.response?.data?.message || '계정 통합에 실패했습니다.';
+                        showToast(errorMessage, 'error');
+
+                        closeModal();
+                      }
                     },
                     () => {
                       closeModal();
@@ -339,12 +370,12 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                       } catch {
                         showToast('U+ 정보 불러오기에 실패했습니다.', 'error');
                         onVerified('uplus', {
-                        name: user.name,
-                        phone: user.phone,
-                        birthday: user.birthday,
-                        gender: user.gender,
-                        membershipId: user.membershipId,
-                      }); // fallback
+                          name: user.name,
+                          phone: user.phone,
+                          birthday: user.birthday,
+                          gender: user.gender,
+                          membershipId: user.membershipId,
+                        }); // fallback
                       }
                     },
                     () => {
@@ -362,7 +393,10 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 break;
 
               case 'oauth-new':
-                console.log('🟢 oauth-new 케이스 실행, verifiedTypeRef.current:', verifiedTypeRef.current);
+                console.log(
+                  '🟢 oauth-new 케이스 실행, verifiedTypeRef.current:',
+                  verifiedTypeRef.current
+                );
                 onVerified('oauth-new', {
                   name: user.name,
                   phone: user.phone,

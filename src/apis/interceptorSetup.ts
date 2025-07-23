@@ -1,3 +1,4 @@
+import { AxiosError, AxiosRequestConfig } from 'axios';
 import api from './axiosInstance';
 import { refreshToken } from '../features/loginPage/apis/auth';
 import { store } from '../store';
@@ -8,12 +9,12 @@ import { persistor } from '../store';
 let isRefreshing = false;
 // 갱신 중 대기하는 요청들을 저장하는 배열
 let failedQueue: Array<{
-  resolve: (value: any) => void;
-  reject: (error: any) => void;
+  resolve: (value: string | null) => void;
+  reject: (error: AxiosError) => void;
 }> = [];
 
 // 대기 중인 요청들을 처리하는 함수
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: AxiosError | null, token: string | null = null) => {
   failedQueue.forEach(({ resolve, reject }) => {
     if (error) {
       reject(error);
@@ -38,8 +39,8 @@ export const setupInterceptors = () => {
   // Response Interceptor
   api.interceptors.response.use(
     (response) => response,
-    async (error) => {
-      const originalRequest = error.config;
+    async (error: AxiosError) => {
+      const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         if (isRefreshing) {
@@ -68,7 +69,7 @@ export const setupInterceptors = () => {
           return api(originalRequest);
         } catch (refreshError) {
           // 토큰 갱신 실패 시 로그아웃 처리
-          processQueue(refreshError, null);
+          processQueue(refreshError as AxiosError, null);
           handleLogout();
           return Promise.reject(refreshError);
         } finally {

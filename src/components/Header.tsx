@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { logout } from '../store/authSlice';
 import Modal from './Modal';
+import { showToast } from '../utils/toast';
 
 const menus = [
   { id: 'intro', label: '잇플 소개', icon: TbSparkles, path: '/' },
@@ -39,10 +40,14 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
       await api.post('api/v1/auth/logout');
       // 상태 초기화
       dispatch(logout());
+      // 성공 토스트 표시
+      showToast('로그아웃 되었습니다.', 'success');
       // 페이지 이동
       navigate('/main');
     } catch (err) {
       console.error('로그아웃 실패:', err);
+      // 실패 토스트 표시
+      showToast('로그아웃에 실패했습니다.', 'error');
     } finally {
       setShowLogoutModal(false); // 모달 닫기
     }

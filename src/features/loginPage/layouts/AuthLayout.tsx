@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import { useDispatch } from 'react-redux';
+import { setLoginSuccess } from '../../../store/authSlice';
 
 // 공통 컴포넌트
 import AuthFormCard from '../components/common/AuthFormCard';
@@ -21,6 +23,7 @@ import { oauthSignUp } from '../apis/user';
 import { AuthTransition } from '../hooks/AuthTransition';
 
 const AuthLayout = () => {
+  const dispatch = useDispatch();
   const {
     formStep,
     setFormStep,
@@ -115,13 +118,33 @@ const AuthLayout = () => {
 
       console.log('🟡 최종 payload 확인:', payload);
 
-      await oauthSignUp(payload); // ✅ 새로운 API로 전송
+      const response = await oauthSignUp(payload);
 
-      showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
+      // 회원가입 성공 후 반환된 사용자 정보 확인
+      console.log('🟢 OAuth 회원가입 성공:', response.data);
 
-      sessionStorage.setItem('resetToLogin', 'true');
-      setFormStep('login');
+      const userData = response.data?.data;
+      if (userData) {
+        // Redux에 로그인 정보 저장 (기존 로그인과 동일한 형식)
+        dispatch(
+          setLoginSuccess({
+            name: userData.name || payload.name,
+            membershipGrade: userData.membershipGrade || 'NORMAL', // 기본값 설정
+          })
+        );
 
+        showToast('회원가입이 완료되었습니다!', 'success');
+
+        // 메인 페이지로 이동
+        window.location.href = '/main';
+      } else {
+        // 사용자 데이터가 없으면 로그인 화면으로
+        showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
+        sessionStorage.setItem('resetToLogin', 'true');
+        setFormStep('login');
+      }
+
+      // 상태 초기화
       setOAuthUserData({
         name: '',
         phone: '',
