@@ -8,7 +8,7 @@ import SearchBar from '../../components/SearchBar';
 import Pagination from '../../components/Pagination';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import NoResult from '../../components/NoResult';
-import { TbChevronDown, TbStar, TbStarFilled, TbMenu2 } from 'react-icons/tb';
+import { TbChevronDown, TbStar, TbStarFilled } from 'react-icons/tb';
 import { showToast } from '../../utils/toast';
 import {
   getBenefits,
@@ -20,6 +20,7 @@ import {
 } from './apis/allBenefitsApi';
 import { /* createMockBenefitResponse, */ toggleMockFavorite } from './data/mockData';
 import BenefitDetailModal from './components/BenefitDetailModal';
+import MobileHeader from '../../components/MobileHeader';
 
 const AllBenefitsLayout: React.FC = () => {
   // 중요 !!!!!! 개발 모드 설정 (true: Mock 데이터 사용, false: 실제 API 사용)
@@ -291,18 +292,22 @@ const AllBenefitsLayout: React.FC = () => {
   };
 
   return (
-    <div className="max-md:pt-[54px]">
+    <div>
       {/* 모바일 헤더 */}
-      <div className="fixed top-0 left-0 w-full h-[54px] bg-white max-md:flex items-center justify-between px-4 z-[9999] border-b border-grey01 hidden">
-        <div className="text-body-2 text-black">전체 혜택</div>
-        <button className="w-8 h-8 flex items-center justify-center" aria-label="메뉴">
-          <TbMenu2 className="w-6 h-6 text-black" />
-        </button>
+      <div className="fixed top-0 left-0 w-full z-[9999] max-md:block hidden">
+        <MobileHeader title="전체 혜택" />
+      </div>
+
+      {/* 이벤트 배너 - 모바일에서만 별도 표시 */}
+      <div className="max-md:block hidden max-md:-mx-5 max-md:mb-4">
+        <EventBanner />
       </div>
 
       {/* 데스크탑/태블릿 레이아웃 */}
-      <div className="p-7 flex gap-7 items-start max-md:flex-col">
-        <EventBanner />
+      <div className="p-7 flex gap-7 items-start max-md:flex-col max-md:p-0">
+        <div className="max-md:hidden">
+          <EventBanner />
+        </div>
         <SimpleRanking />
       </div>
 
@@ -312,21 +317,20 @@ const AllBenefitsLayout: React.FC = () => {
       </div> */}
 
       {/* 데스크탑: 기존 토글버튼 위치 */}
-      <div className="pt-7 px-7 max-md:pt-0">
-        <div className="w-[1783px] flex items-start justify-between max-md:flex-col">
+      <div className="pt-7 px-7 max-md:pt-16 max-md:px-0">
+        <div className="w-[1783px] flex items-start justify-between max-md:flex-col max-md:w-full">
           <BenefitFilterToggle
             value={filter}
             onChange={setFilter}
-            width="w-[300px] max-md:w-[calc(100vw-56px)]"
+            width="w-[300px] max-md:w-full"
           />
-          <div className="flex gap-2 max-md:mb-10">
+          <div className="flex gap-2 max-md:mb-6 max-md:w-full">
             <SearchBar
               placeholder="제휴처 검색"
               value={searchTerm}
               onChange={handleSearchChange}
               onClear={() => setSearchTerm('')}
-              width={350}
-              height={50}
+              className="w-[350px] h-[50px] max-md:w-full"
               backgroundColor="bg-grey01"
             />
             {/* 정렬 필터 드롭다운 */}
@@ -367,15 +371,15 @@ const AllBenefitsLayout: React.FC = () => {
       </div>
 
       {/* 카테고리 필터 */}
-      <div className="px-8 pb-7 max-md:px-2">
+      <div className="px-8 pb-7 max-md:-mx-5 max-md:px-0">
         {/* PC: 기존 고정형, 모바일: 가로 스크롤 */}
-        <div className="bg-grey01 rounded-[10px] w-[1783px] h-[70px] flex items-center px-6 gap-[60px] max-md:w-[calc(100vw-16px)] max-md:h-auto max-md:py-3 max-md:px-2 max-md:overflow-x-auto max-md:gap-4 max-md:pr-4">
+        <div className="bg-grey01 rounded-[10px] w-[1783px] h-[70px] flex items-center px-6 gap-[60px] max-md:w-full max-md:h-[70px]  max-md:px-6 max-md:overflow-x-auto max-md:gap-4 max-md:pr-4">
           <div className="flex items-center gap-[60px] max-md:gap-10 max-md:flex-nowrap max-md:min-w-max">
             {categories.map((category) => (
               <span
                 key={category}
                 onClick={() => handleCategoryChange(category)}
-                className={`text-body-1 max-md:text-body-4 cursor-pointer transition-colors whitespace-nowrap ${
+                className={`text-body-1 max-md:text-body-2 cursor-pointer transition-colors whitespace-nowrap ${
                   selectedCategory === category
                     ? 'text-purple04'
                     : 'text-grey04 hover:text-purple04'
@@ -389,9 +393,9 @@ const AllBenefitsLayout: React.FC = () => {
       </div>
 
       {/* 카드 그리드 */}
-      <div className="px-7 pb-7 ">
+      <div className="px-7 pb-7 max-md:px-0">
         <div className="relative">
-          <div className="w-[1783px] grid grid-cols-3 gap-[17px] min-h-[400px] max-md:w-[calc(100vw-56px)] max-md:grid-cols-1 max-md:gap-4">
+          <div className="w-[1783px] grid grid-cols-3 gap-[17px] min-h-[400px] max-md:w-full max-md:grid-cols-1 max-md:gap-4">
             {isLoading ? (
               // 로딩 중일 때 스피너 표시
               <div className="col-span-3 flex items-center justify-center h-[400px] max-md:col-span-1">
@@ -404,11 +408,11 @@ const AllBenefitsLayout: React.FC = () => {
               benefits.map((benefit) => (
                 <div
                   key={benefit.benefitId}
-                  className="w-[583px] h-[227px] bg-white rounded-[18px] drop-shadow-basic p-8 flex justify-between relative cursor-pointer hover:drop-shadow-hover transition-shadow max-md:w-full max-md:h-auto max-md:flex-col max-md:gap-2"
+                  className="w-[583px] h-[227px] bg-white rounded-[18px] drop-shadow-basic p-8 flex justify-between relative cursor-pointer hover:drop-shadow-hover transition-shadow max-md:w-full max-md:h-[180px]"
                   onClick={() => handleCardClick(benefit)}
                 >
                   {/* 왼쪽 콘텐츠 */}
-                  <div className="flex flex-col flex-1 mr-4 overflow-hidden max-md:mr-0">
+                  <div className="flex flex-col flex-1 mr-4 overflow-hidden">
                     <h3 className="text-title-4 text-black mb-2 truncate max-md:text-title-6">
                       {benefit.benefitName}
                     </h3>
@@ -428,14 +432,14 @@ const AllBenefitsLayout: React.FC = () => {
                   </div>
 
                   {/* 오른쪽 로고 및 즐겨찾기 */}
-                  <div className="flex flex-col items-end max-md:flex-row max-md:items-center max-md:justify-between max-md:mt-2">
+                  <div className="flex flex-col items-end">
                     {/* 즐겨찾기 버튼 */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation(); // 카드 클릭 이벤트 중단
                         toggleFavorite(benefit.benefitId);
                       }}
-                      className="mb-4 text-orange03 hover:scale-110 transition-transform max-md:mb-0 max-md:mr-2"
+                      className="mb-4 text-orange03 hover:scale-110 transition-transform"
                     >
                       {benefit.isFavorite || favorites.includes(benefit.benefitId) ? (
                         <TbStarFilled className="w-6 h-6" />
