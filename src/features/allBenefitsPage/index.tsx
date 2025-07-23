@@ -371,9 +371,9 @@ const AllBenefitsLayout: React.FC = () => {
       </div>
 
       {/* 카테고리 필터 */}
-      <div className="px-8 pb-7 max-xl:w-full max-xl:pl-5 max-xl:pr-8  max-xl:pb-5 max-md:-mx-5 max-md:px-0">
+      <div className="px-8 pb-7 max-xl:w-full max-xl:pl-5 max-xl:pr-8 max-xl:pb-5 max-md:-mx-5 max-md:px-0">
         {/* PC: 기존 고정형, 노트북: 축소, 모바일: 가로 스크롤 */}
-        <div className="bg-grey01 rounded-[10px] w-[1783px] max-xl:w-full h-[70px] max-xl:h-[52px] flex items-center px-6 max-xl:px-4 gap-[60px] max-xl:gap-[32px] max-md:w-full max-md:h-[70px]  max-md:px-6 max-md:overflow-x-auto max-md:gap-4 max-md:pr-4">
+        <div className="bg-grey01 rounded-[10px] w-[1783px] max-xl:w-full h-[70px] max-xl:h-[52px] flex items-center px-6 max-xl:px-4 gap-[60px] max-xl:gap-[32px] max-md:w-screen max-md:h-[70px] max-md:px-6 max-md:overflow-x-auto max-md:gap-4 max-md:pr-4">
           <div className="flex items-center gap-[60px] max-xl:gap-[32px] max-md:gap-10 max-md:flex-nowrap max-md:min-w-max">
             {categories.map((category) => (
               <span
