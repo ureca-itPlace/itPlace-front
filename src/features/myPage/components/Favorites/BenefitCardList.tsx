@@ -1,6 +1,6 @@
 // src/features/myPage/components/BenefitCardList.tsx
 import { TbStarFilled } from 'react-icons/tb';
-import { FavoriteItem } from '../../hooks/useFavorites';
+import { FavoriteItem } from '../../../../types/favorites';
 
 interface BenefitCardListProps {
   items: FavoriteItem[]; // 현재 페이지에 보여줄 아이템들
@@ -91,7 +91,7 @@ export default function BenefitCardList({
 
           {/* 카드 이미지 및 제목 */}
           <img
-            src={item.image}
+            src={item.partnerImage}
             alt={item.benefitName}
             className="h-[108px] w-auto object-contain mx-auto mt-6"
           />

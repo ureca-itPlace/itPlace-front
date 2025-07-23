@@ -9,17 +9,25 @@ import api from '../../../../apis/axiosInstance';
 interface UplusLinkModalProps {
   isOpen: boolean;
   phone: string;
+  name: string;
   onClose: () => void;
   onVerified: () => void;
 }
 
-const UplusLinkModal: React.FC<UplusLinkModalProps> = ({ isOpen, phone, onClose, onVerified }) => {
+const UplusLinkModal: React.FC<UplusLinkModalProps> = ({
+  isOpen,
+  name,
+  phone,
+  onClose,
+  onVerified,
+}) => {
   const [loading, setLoading] = useState(false);
 
   const handleLink = async () => {
     setLoading(true);
     try {
-      const res: AxiosResponse<UplusSuccessResponse> = await api.post('/auth/loadUplusData', {
+      const res: AxiosResponse<UplusSuccessResponse> = await api.post('api/v1/auth/loadUplusData', {
+        name,
         phoneNumber: phone,
       });
       if (res.data.code === 'UPLUS_DATA_FOUND') {
@@ -36,7 +44,8 @@ const UplusLinkModal: React.FC<UplusLinkModalProps> = ({ isOpen, phone, onClose,
         (err as { response?: { data?: UplusErrorResponse } }).response?.data
       ) {
         const data = (err as { response: { data: UplusErrorResponse } }).response.data;
-        showToast(data.message, 'error');
+        console.log(data.message);
+        showToast('유플러스 회원이 아니신가요? 정보를 불러오지 못했습니다.', 'error');
       } else {
         showToast('유플러스 정보 연동 중 알 수 없는 오류가 발생했습니다.', 'error');
       }

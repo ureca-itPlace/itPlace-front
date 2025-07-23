@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store';
+import api from '../../apis/axiosInstance';
+import dayjs from 'dayjs';
+
 import MyPageContentLayout from '../../features/myPage/layout/MyPageContentLayout';
 import Pagination from '../../components/Pagination';
 import SearchBar from '../../components/SearchBar';
 import NoResult from '../../components/NoResult';
-import { mockHistory } from '../../features/myPage/mock/mockHistory';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RiResetRightFill } from 'react-icons/ri';
-// import { useSelector } from 'react-redux';
-// import { RootState } from '../../store';
+import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 
 interface HistoryItem {
   image: string;
@@ -18,60 +21,84 @@ interface HistoryItem {
 }
 
 export default function MyHistoryPage() {
-  // const user = useSelector((state: RootState) => state.auth.user);
-  // const membershipGrade = user?.membershipGrade; // 없으면 null
-  const membershipGrade = 'vvip'; //임시 데이터
+  // 🔥 Redux 상태에서 사용자 정보 가져오기
+  const user = useSelector((state: RootState) => state.auth.user);
+  const membershipGrade = user?.membershipGrade ?? null;
 
-  // 검색, 필터, 페이지네이션 상태
+  // 🔎 검색/필터/페이지네이션 상태
   const [keyword, setKeyword] = useState('');
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(0); // 0-based
   const [size] = useState(5);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  // 데이터 상태
+  // 📦 API 데이터 상태
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [filtered, setFiltered] = useState<HistoryItem[]>([]);
-  const [currentItems, setCurrentItems] = useState<HistoryItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
 
-  // 초기 목데이터 로드
+  // ✅ 혜택 사용 이력 API 호출 (페이지/필터 변화 시 재호출)
   useEffect(() => {
-    setHistory(mockHistory);
-  }, []);
+    if (!membershipGrade) return; // 멤버십 없으면 호출 X
 
-  // 검색과 날짜 필터 적용
+    const fetchHistory = async () => {
+      try {
+        const res = await api.get('/api/v1/membership-history', {
+          params: {
+            keyword: keyword || undefined,
+            startDate: startDate ? dayjs(startDate).format('YYYY-MM-DD') : undefined,
+            endDate: endDate ? dayjs(endDate).format('YYYY-MM-DD') : undefined,
+            page,
+            size,
+          },
+        });
+
+        const data = res.data?.data;
+        if (data && Array.isArray(data.content)) {
+          setHistory(data.content);
+          setCurrentPage(data.currentPage ?? 0);
+          setTotalElements(data.totalElements ?? 0);
+        } else {
+          console.warn('⚠️ API 응답 구조가 예상과 다릅니다:', res.data);
+          setHistory([]);
+          setCurrentPage(0);
+          setTotalElements(0);
+        }
+      } catch (err) {
+        console.error('멤버십 이력 API 오류:', err);
+        setHistory([]);
+        setCurrentPage(0);
+        setTotalElements(0);
+      }
+    };
+
+    fetchHistory();
+  }, [keyword, startDate, endDate, page, size, membershipGrade]);
+
+  // ✅ 이번 달 총 할인 금액 API 호출 (mount 시 1회)
   useEffect(() => {
-    let list = [...history];
+    if (!membershipGrade) return;
 
-    if (keyword.trim()) {
-      list = list.filter((item) => item.benefitName.toLowerCase().includes(keyword.toLowerCase()));
-    }
+    const fetchSummary = async () => {
+      try {
+        const res = await api.get('/api/v1/membership-history/summary');
+        console.log('📌 총 할인 금액 응답:', res.data);
+        const data = res.data?.data;
+        setTotalAmount(data?.totalDiscountAmount ?? 0);
+      } catch (err) {
+        console.error('멤버십 요약 API 오류:', err);
+        setTotalAmount(0);
+      }
+    };
 
-    if (startDate) {
-      list = list.filter((item) => new Date(item.usedAt) >= startDate);
-    }
+    fetchSummary();
+  }, [membershipGrade]);
 
-    if (endDate) {
-      list = list.filter((item) => new Date(item.usedAt) <= endDate);
-    }
-
-    setFiltered(list);
+  // 🔥 keyword, startDate, endDate가 바뀔 때마다 페이지를 0으로 초기화
+  useEffect(() => {
     setPage(0);
-  }, [keyword, startDate, endDate, history]);
-
-  // 페이지네이션 처리
-  useEffect(() => {
-    const start = page * size;
-    const end = start + size;
-    setCurrentItems(filtered.slice(start, end));
-  }, [filtered, page, size]);
-
-  // history 전체 기준으로 계산: api연결 후에는 이번 달 계산값만 알아서 나옴
-  useEffect(() => {
-    const amount = history.reduce((acc, cur) => acc + cur.discountAmount, 0);
-    setTotalAmount(amount);
-  }, [history]);
+  }, [keyword, startDate, endDate]);
 
   return (
     <MyPageContentLayout
@@ -79,7 +106,7 @@ export default function MyHistoryPage() {
         <div className="flex flex-col h-full">
           <h1 className="text-title-2 text-black mb-7">혜택 사용 이력</h1>
 
-          {/* 검색바 + 날짜필터 */}
+          {/* 🔎 검색바 + 날짜필터 */}
           <div className="flex justify-between mb-8 gap-2">
             <SearchBar
               placeholder="혜택명으로 검색하기"
@@ -118,7 +145,7 @@ export default function MyHistoryPage() {
             </div>
           </div>
 
-          {/* 혜택 사용 이력 리스트 or NoResult */}
+          {/* 📋 혜택 사용 이력 리스트 */}
           <div className="flex-grow">
             {membershipGrade == null ? (
               <div className="mt-28">
@@ -138,21 +165,13 @@ export default function MyHistoryPage() {
                   buttonRoute="/benefits"
                 />
               </div>
-            ) : filtered.length === 0 ? (
-              <div className="mt-28">
-                <NoResult
-                  message1="앗! 일치하는 결과를 찾을 수 없어요!"
-                  message2="다른 키워드나 조건으로 다시 찾아보세요."
-                />
-              </div>
             ) : (
               <div className="flex flex-col gap-5 pt-1">
-                {currentItems.map((item, idx) => (
+                {history.map((item, idx) => (
                   <div
                     key={idx}
                     className="flex items-center border border-purple02 rounded-[10px] p-2"
                   >
-                    {/* 왼쪽: 이미지 + 이름 */}
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                       <img
                         src={item.image}
@@ -160,23 +179,19 @@ export default function MyHistoryPage() {
                         className="h-[70px] w-auto object-contain flex-shrink-0"
                       />
                       <span
-                        className="ml-2 
-        text-purple05 text-title-5 font-semibold
-        overflow-hidden text-ellipsis whitespace-nowrap
-        block
-      "
+                        className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block"
                         title={item.benefitName}
                       >
                         {item.benefitName}
                       </span>
                     </div>
-
-                    {/* 오른쪽: 가격 + 날짜를 묶음 */}
                     <div className="flex items-center gap-4 flex-shrink-0">
                       <span className="text-black text-title-5 font-semibold w-[120px] text-right">
                         {item.discountAmount.toLocaleString()}원
                       </span>
-                      <span className="text-grey05 text-body-1 px-4">{item.usedAt}</span>
+                      <span className="text-grey05 text-body-1 px-4">
+                        {dayjs(item.usedAt).format('YYYY-MM-DD')}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -185,44 +200,41 @@ export default function MyHistoryPage() {
           </div>
 
           {/* 페이지네이션 */}
-          {membershipGrade !== null && history.length > size && (
+          {
             <div className="mt-auto flex justify-center">
               <Pagination
-                currentPage={page + 1} // 보정
+                currentPage={currentPage + 1} // 0-based → 1-based
                 itemsPerPage={size}
-                totalItems={filtered.length}
+                totalItems={totalElements}
                 onPageChange={(p) => setPage(p - 1)}
                 width={37}
               />
             </div>
-          )}
+          }
         </div>
       }
       aside={
-        <div className="text-center">
-          <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
-          <div className="flex flex-col items-center justify-center mt-6">
-            <img
-              src="/images/myPage/icon-money.webp"
-              alt="혜택 사용 이력 아이콘"
-              className="w-[250px] h-auto"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                target.src = '/images/myPage/icon-money.png';
-              }}
-            />
-
-            <p className="text-[36px] font-semibold text-grey05 pt-10">
-              <span className="text-orange04">
-                {membershipGrade !== null && history.length > 0
-                  ? totalAmount.toLocaleString()
-                  : '0'}
-              </span>
-              원 <br /> 할인 받았어요!
-            </p>
+        <FadeWrapper changeKey={totalAmount.toLocaleString()}>
+          <div className="text-center">
+            <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
+            <div className="flex flex-col items-center justify-center mt-6">
+              <img
+                src="/images/myPage/icon-money.webp"
+                alt="혜택 사용 이력 아이콘"
+                className="w-[250px] h-auto"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = '/images/myPage/icon-money.png';
+                }}
+              />
+              <p className="text-[36px] font-semibold text-grey05 pt-10">
+                <span className="text-orange04">{totalAmount.toLocaleString()}</span>
+                원 <br /> 할인 받았어요!
+              </p>
+            </div>
           </div>
-        </div>
+        </FadeWrapper>
       }
       bottomImage="/images/myPage/bunny-history.webp"
       bottomImageAlt="혜택 사용 이력 토끼"
