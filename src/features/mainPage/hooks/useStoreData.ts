@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Platform } from '../types';
 import {
   getStoreList,
@@ -23,6 +23,9 @@ export const useStoreData = () => {
   // 위치 관련 상태
   const [currentLocation, setCurrentLocation] = useState<string>('위치 정보 로딩 중...');
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+
+  // userCoords의 최신 값을 참조하기 위한 ref
+  const userCoordsRef = useRef<{ lat: number; lng: number } | null>(null);
 
   // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -49,7 +52,9 @@ export const useStoreData = () => {
    * 좌표 업데이트 및 주소 변환 공통 함수
    */
   const updateLocationInfo = useCallback(async (lat: number, lng: number) => {
-    setUserCoords({ lat, lng });
+    const coords = { lat, lng };
+    setUserCoords(coords);
+    userCoordsRef.current = coords; // ref도 업데이트
     try {
       const address = await getAddressFromCoordinates(lat, lng);
       setCurrentLocation(address);
@@ -77,36 +82,38 @@ export const useStoreData = () => {
     };
 
     execute(initializeData);
-  }, []); // 빈 배열 - 초기 마운트에만 실행
+  }, [execute, loadStoresByCategory, updateLocationInfo]); // 필요한 의존성 추가
 
-  // 카테고리 변경 시 재로드 (현재 지도 위치 기준)
+  // 카테고리 변경 시에만 반응하는 useEffect (초기 로드 제외)
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  // 초기 로드 완료 감지
   useEffect(() => {
-    if (!userCoords) return; // 위치 정보가 없으면 대기
-    if (isInitialLoad) {
+    if (userCoords && isInitialLoad) {
       setIsInitialLoad(false);
-      return; // 초기 로드는 위의 useEffect에서 처리
+    }
+  }, [userCoords, isInitialLoad]);
+
+  // 카테고리나 맵레벨 변경 시에만 실행 (초기 로드 제외)
+  useEffect(() => {
+    if (isInitialLoad || !userCoordsRef.current) {
+      return; // 초기 로드 중이거나 좌표가 없으면 스킵
     }
 
+    // 카테고리 변경 시에만 실행되는 재로드
     const reloadByCategory = async () => {
-      // 현재 userCoords 값을 직접 가져와서 사용
-      const currentCoords = userCoords;
-      if (!currentCoords) return [];
-
+      const coords = userCoordsRef.current!; // ref에서 최신 값 사용
       const platforms = await loadStoresByCategory(
-        currentCoords.lat,
-        currentCoords.lng,
-        getRadiusByMapLevel(currentMapLevelInHook), // DEFAULT_RADIUS 대신 현재 맵 레벨 반경 사용
+        coords.lat,
+        coords.lng,
+        getRadiusByMapLevel(currentMapLevelInHook),
         selectedCategory
       );
-
       return platforms;
     };
 
     execute(reloadByCategory);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory, execute, loadStoresByCategory, currentMapLevelInHook, isInitialLoad]);
+  }, [selectedCategory, currentMapLevelInHook, isInitialLoad, loadStoresByCategory, execute]);
 
   /**
    * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
@@ -200,7 +207,6 @@ export const useStoreData = () => {
       await execute(keywordSearch);
     },
     // userCoords 의존성 제거 - 지도 드래그 시 재검색 방지
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selectedCategory, execute]
   );
 
