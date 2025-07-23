@@ -105,7 +105,8 @@ export const useStoreData = () => {
     };
 
     execute(reloadByCategory);
-  }, [selectedCategory, execute, loadStoresByCategory, currentMapLevelInHook]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, execute, loadStoresByCategory, currentMapLevelInHook, isInitialLoad]);
 
   /**
    * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
