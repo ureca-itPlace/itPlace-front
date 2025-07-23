@@ -21,22 +21,25 @@ interface HistoryItem {
 }
 
 export default function MyHistoryPage() {
-  // 🔥 Redux 상태에서 사용자 정보 가져오기
+  // Redux 상태에서 사용자 정보 가져오기
   const user = useSelector((state: RootState) => state.auth.user);
   const membershipGrade = user?.membershipGrade ?? null;
 
-  // 🔎 검색/필터/페이지네이션 상태
+  // 검색/필터/페이지네이션 상태
   const [keyword, setKeyword] = useState('');
   const [page, setPage] = useState(0); // 0-based
   const [size] = useState(5);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  // 📦 API 데이터 상태
+  // API 데이터 상태
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
+
+  // 로딩 상태
+  const [loading, setLoading] = useState(false);
 
   // ✅ 혜택 사용 이력 API 호출 (페이지/필터 변화 시 재호출)
   useEffect(() => {
@@ -83,7 +86,6 @@ export default function MyHistoryPage() {
     const fetchSummary = async () => {
       try {
         const res = await api.get('/api/v1/membership-history/summary');
-        console.log('📌 총 할인 금액 응답:', res.data);
         const data = res.data?.data;
         setTotalAmount(data?.totalDiscountAmount ?? 0);
       } catch (err) {
