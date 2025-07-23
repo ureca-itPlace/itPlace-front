@@ -1,55 +1,73 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setLoginSuccess } from '../../../store/authSlice';
+import { kakaoOAuthLogin } from '../apis/auth';
 
 const OAuthRedirectHandler = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const isNewUser = searchParams.get('isNewUser') === 'true';
-    const hasLocalAccount = searchParams.get('hasLocalAccount') === 'true';
-    const token = searchParams.get('token');
-    const code = searchParams.get('code');
-    const registrationId = searchParams.get('registrationId');
-    const user = {
-      name: searchParams.get('name') ?? '',
-      phone: searchParams.get('phone') ?? '',
-      birthday: searchParams.get('birthday') ?? '',
-      gender: searchParams.get('gender') ?? '',
-      membershipId: searchParams.get('membershipId') ?? '',
+    const handleKakaoCallback = async () => {
+      const code = searchParams.get('code');
+      const error = searchParams.get('error');
+
+      console.log('🟡 카카오 콜백 처리 시작');
+      console.log('🟡 받은 파라미터:', { code, error });
+
+      if (error) {
+        console.error('🔴 카카오 인증 에러:', error);
+        navigate('/login');
+        return;
+      }
+
+      if (!code) {
+        console.error('🔴 인증 코드가 없습니다.');
+        navigate('/login');
+        return;
+      }
+
+      try {
+        console.log('🟡 백엔드로 인증 코드 전송 중...');
+        const response = await kakaoOAuthLogin(code);
+        const { code: responseCode } = response.data;
+
+        console.log('🟢 백엔드 응답:', response.data);
+        console.log('🟢 응답 코드:', responseCode);
+
+        if (responseCode === 'PRE_AUTHENTICATION_SUCCESS') {
+          console.log('🟡 추가 정보 입력 필요 → PhoneAuthForm으로 이동');
+          navigate('/login?step=phoneAuth&verifiedType=oauth');
+        } else if (responseCode === 'LOGIN_SUCCESS') {
+          console.log('🟢 로그인 성공 → 메인 페이지로 이동');
+
+          // Redux에 로그인 정보 저장
+          const userData = response.data?.data;
+          if (userData) {
+            dispatch(
+              setLoginSuccess({
+                name: userData.name,
+                membershipGrade: userData.membershipGrade || 'NORMAL',
+              })
+            );
+            console.log('🟢 Redux에 OAuth 로그인 정보 저장 완료:', userData);
+          }
+
+          navigate('/main');
+        } else {
+          console.log('🟡 알 수 없는 응답 → 로그인 페이지로 이동');
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('🔴 카카오 로그인 처리 실패:', error);
+        navigate('/login');
+      }
     };
 
-    if (code === 'SIGNUP_REQUIRED' && registrationId) {
-      console.log('🆕 신규 OAuth 유저, itPlace 계정 없음 → 전화번호 인증으로 이동');
-      navigate(`/login?step=phoneAuth&verifiedType=oauth&registrationId=${registrationId}`);
-      return;
-    }
-
-    if (!isNewUser && token) {
-      console.log(' 기존 OAuth 유저 로그인 성공, 토큰 저장 후 메인 이동');
-      localStorage.setItem('accessToken', token);
-      navigate('/');
-      return;
-    }
-
-    if (isNewUser && hasLocalAccount) {
-      console.log('신규 OAuth 유저 + itPlace 계정 있음 → 통합 폼 이동');
-      const query = new URLSearchParams({
-        step: 'oauthIntegration',
-        verifiedType: 'oauth',
-        name: user.name,
-        phone: user.phone,
-        birthday: user.birthday,
-        gender: user.gender,
-        membershipId: user.membershipId,
-        registrationId: registrationId ?? '',
-      }).toString();
-      navigate(`/login?${query}`);
-      return;
-    }
-
-    navigate('/login');
-  }, [navigate, searchParams]);
+    handleKakaoCallback();
+  }, [dispatch, navigate, searchParams]);
 
   return <div>카카오 로그인 처리 중입니다...</div>;
 };

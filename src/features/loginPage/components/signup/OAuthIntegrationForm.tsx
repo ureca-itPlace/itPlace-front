@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
@@ -9,18 +10,25 @@ type OAuthIntegrationFormProps = {
   gender: string; // 'MALE' | 'FEMALE'
   membershipId: string;
   onGoToLogin: () => void;
-  onNext: () => void; // 다음 단계로 넘어가기
+  onNext: (data: { birthday: string; gender: string }) => void; // 다음 단계로 넘어가기
+  isOAuthNew?: boolean; // oauth-new일 때 생년월일/성별 입력 가능
 };
 
 const OAuthIntegrationForm = ({
   name,
   phone,
-  birthday,
-  gender,
+  birthday: initialBirthday,
+  gender: initialGender,
   membershipId,
   onGoToLogin,
   onNext,
+  isOAuthNew = false,
 }: OAuthIntegrationFormProps) => {
+  const [birthday, setBirthday] = useState(initialBirthday);
+  const [gender, setGender] = useState(initialGender);
+
+  console.log('🟡 OAuthIntegrationForm props:', { isOAuthNew, birthday, gender });
+
   return (
     <div className="w-full flex flex-col items-center">
       {/* 제목 */}
@@ -46,7 +54,8 @@ const OAuthIntegrationForm = ({
           type="date"
           name="birth"
           value={birthday}
-          disabled
+          onChange={(e) => setBirthday(e.target.value)}
+          disabled={!isOAuthNew}
           className="w-[320px] h-[48px] px-[16px] rounded-[18px] border border-grey02 text-body-2 text-grey05"
         />
       </div>
@@ -55,23 +64,25 @@ const OAuthIntegrationForm = ({
       <div className="mb-[20px] w-full flex justify-center gap-[16px]">
         <button
           type="button"
+          onClick={() => setGender('MALE')}
           className={`w-[150px] h-[48px] rounded-[18px] border text-body-2 transition ${
             gender === 'MALE'
               ? 'bg-purple04 text-white border-purple04'
               : 'bg-white text-grey04 border-grey02'
           }`}
-          disabled
+          disabled={!isOAuthNew}
         >
           남자
         </button>
         <button
           type="button"
+          onClick={() => setGender('FEMALE')}
           className={`w-[150px] h-[48px] rounded-[18px] border text-body-2 transition ${
             gender === 'FEMALE'
               ? 'bg-purple04 text-white border-purple04'
               : 'bg-white text-grey04 border-grey02'
           }`}
-          disabled
+          disabled={!isOAuthNew}
         >
           여자
         </button>
@@ -88,7 +99,12 @@ const OAuthIntegrationForm = ({
       </div>
 
       {/* 가입하기 버튼 */}
-      <AuthButton label="가입하기" onClick={onNext} variant="default" className="w-[320px]" />
+      <AuthButton
+        label="가입하기"
+        onClick={() => onNext({ birthday, gender })}
+        variant="default"
+        className="w-[320px]"
+      />
 
       {/* 하단 링크 */}
       <AuthFooter

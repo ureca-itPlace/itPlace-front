@@ -2,9 +2,12 @@ import { Outlet } from 'react-router-dom';
 import SideMenu from '../features/myPage/components/SideMenu';
 import { useState } from 'react';
 import LoginRequiredModal from '../features/myPage/components/MyInfo/LoginRequiredModal';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
 
 export default function MyPageLayout() {
-  const [isLoggedIn] = useState(true); // 임시로 true값 설정: 실제로는 전역 상태나 context에서 가져오기
+  // ✅ Redux에서 로그인 상태 가져오기
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const [showLoginModal, setShowLoginModal] = useState(true);
 
   if (!isLoggedIn) {
