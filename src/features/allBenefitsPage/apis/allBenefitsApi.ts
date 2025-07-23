@@ -42,6 +42,11 @@ export interface FavoriteRequest {
   benefitId: number;
 }
 
+// 즐겨찾기 삭제 요청 타입 (새로운 API 스펙)
+export interface RemoveFavoritesRequest {
+  benefitId: number;
+}
+
 // 혜택 상세 정보 타입
 export interface BenefitDetailResponse {
   benefitId: number;
@@ -53,6 +58,20 @@ export interface BenefitDetailResponse {
   partnerName: string;
   image: string;
   tierBenefits: TierBenefit[];
+}
+
+// 제휴처 검색 순위 관련 타입
+export interface PartnerSearchRankingItem {
+  partnerName: string;
+  searchCount: number;
+  rank: number;
+  previousRank: number | null;
+  rankChange: number | null;
+  changeDerection: 'UP' | 'DOWN' | 'SAME' | 'NEW';
+}
+
+export interface PartnerSearchRankingResponse {
+  searchRanking: PartnerSearchRankingItem[];
 }
 
 // API 응답 타입
@@ -100,8 +119,14 @@ export const addFavorite = async (benefitId: number): Promise<void> => {
 // 즐겨찾기 삭제 API
 export const removeFavorite = async (benefitId: number): Promise<void> => {
   try {
-    const requestBody: FavoriteRequest = { benefitId };
-    await axiosInstance.delete('/api/v1/favorites', { data: requestBody });
+    const requestBody = { benefitIds: [benefitId] };
+    console.log('DELETE /api/v1/favorites', requestBody);
+    await axiosInstance.delete('/api/v1/favorites', {
+      data: requestBody,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     console.error('즐겨찾기 삭제 실패:', error);
     throw error;
@@ -115,6 +140,25 @@ export const getBenefitDetail = async (benefitId: number): Promise<BenefitDetail
     return response.data.data;
   } catch (error) {
     console.error('혜택 상세 정보 로드 실패:', error);
+    throw error;
+  }
+};
+
+// 제휴처 검색 순위 조회 API
+export const getPartnersSearchRanking = async (
+  period: '12h' | '1d' | '7d' = '1d',
+  limit: number = 5
+): Promise<ApiResponse<PartnerSearchRankingResponse>> => {
+  try {
+    const params = new URLSearchParams({
+      period,
+      limit: limit.toString(),
+    });
+
+    const response = await axiosInstance.get(`/api/v1/partners/search-ranking?${params}`);
+    return response.data;
+  } catch (error) {
+    console.error('제휴처 검색 순위 조회 실패:', error);
     throw error;
   }
 };

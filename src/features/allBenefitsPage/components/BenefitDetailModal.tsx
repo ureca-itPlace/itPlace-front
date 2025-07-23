@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Modal from '../../../components/common/AdminModal';
+import Modal from '../../../components/AllBenefitsModal';
 import {
   BenefitItem,
   BenefitDetailResponse,

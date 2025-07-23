@@ -14,7 +14,7 @@ type Props = {
   onGoToLogin: () => void;
   onAuthComplete: (data: { name: string; phone: string }) => void;
   onVerified: (
-    verifiedType: 'new' | 'uplus' | 'local' | 'oauth',
+    verifiedType: 'new' | 'uplus' | 'local' | 'oauth' | 'oauth-new',
     user: {
       name: string;
       phone: string;
@@ -118,7 +118,17 @@ const PhoneAuthForm = ({
       <VerificationCodeForm
         mode={mode}
         onGoToLogin={onGoToLogin}
-        onVerified={handleVerified}
+        onVerified={(verifiedType, user) => {
+          console.log('🟡 PhoneAuthForm: onVerified received:', { verifiedType, user });
+          setName(user.name);
+          setPhone(user.phone);
+          setBirthday(user.birthday);
+          setGender(user.gender);
+          setMembershipId(user.membershipId);
+          
+          // Pass the correct parameters to parent
+          onVerified(verifiedType, user);
+        }}
         name={nameFromPhoneAuth}
         phone={phoneFromPhoneAuth}
       />

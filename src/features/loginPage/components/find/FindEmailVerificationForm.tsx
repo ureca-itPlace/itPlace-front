@@ -6,7 +6,7 @@ import AuthButton from '../common/AuthButton';
 import { TbClock } from 'react-icons/tb';
 import { confirmFindEmail, sendFindEmailCode } from '../../apis/user';
 import { showToast } from '../../../../utils/toast';
-import LoadingSpinner from '../../../../components/common/LoadingSpinner'; // LoadingSpinner 가져오기
+import LoadingSpinner from '../../../../components/LoadingSpinner'; // LoadingSpinner 가져오기
 
 type Props = {
   name: string;

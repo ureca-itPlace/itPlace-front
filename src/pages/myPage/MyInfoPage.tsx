@@ -4,14 +4,15 @@ import MyPageContentLayout from '../../features/myPage/layout/MyPageContentLayou
 import UserInfoForm from '../../features/myPage/components/MyInfo/UserInfoForm';
 import MembershipInfo from '../../features/myPage/components/MyInfo/MembershipInfo';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
-import { mockUser } from '../../features/myPage/mock/mockData';
 import PasswordChangeModal from '../../features/myPage/components/MyInfo/PasswordChangeModal';
 import UserDeleteModal from '../../features/myPage/components/MyInfo/UserDeleteModal';
 import UplusLinkModal from '../../features/myPage/components/MyInfo/UplusLinkModal';
-import { loadUplusData } from '../../features/myPage/apis/uplus';
+import api from '../../apis/axiosInstance';
+import LoadingSpinner from '../../components/LoadingSpinner';
+import { showToast } from '../../utils/toast';
 
-interface User {
-  userId: number;
+interface UserInfo {
+  id: number;
   name: string;
   email: string;
   phoneNumber: string;
@@ -22,34 +23,68 @@ interface User {
 }
 
 export default function MyInfoPage() {
-  // 실제로는 전역 상태에서 로그인 여부를 가져오면 됨
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+
   const [isPwModalOpen, setIsPwModalOpen] = useState(false);
   const [currentPw, setCurrentPw] = useState('');
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
+
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [password, setPassword] = useState('');
+
   const [showUplusModal, setShowUplusModal] = useState(false);
-  const [grade, setGrade] = useState<string | undefined>(user?.membershipGrade); // 초기 grade
+
+  // ✅ 사용자 정보 조회
+  const fetchUser = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get<{ data: UserInfo }>('api/v1/users');
+      setUser(res.data.data);
+    } catch (err) {
+      console.error('사용자 정보 조회 실패', err);
+      showToast('사용자 정보 조회에 실패했습니다.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // API 미연결로 mockData 사용
-    setUser(mockUser);
+    fetchUser();
   }, []);
 
-  // 데이터 로딩 중일 때 MainContentWrapper를 유지하면서 로딩 메시지 노출
+  // ✅ 로딩중일 경우
+  if (loading) {
+    return (
+      <MyPageContentLayout
+        main={
+          <div className="flex justify-center items-center h-full">
+            <LoadingSpinner />
+          </div>
+        }
+        aside={<></>}
+        bottomImage="/images/myPage/bunny-info.webp"
+        bottomImageFallback="/images/myPage/bunny-info.png"
+        bottomImageAlt="회원 정보 토끼"
+      />
+    );
+  }
+
+  // ✅ user가 없을 경우
   if (!user) {
     return (
-      <div className="flex flex-row gap-[24px] w-full h-full">
-        <MyPageContentLayout
-          main={<div className="text-center mt-10 text-lg text-gray-500">Loading...</div>}
-          aside={<></>}
-          bottomImage="/images/myPage/bunny-info.webp"
-          bottomImageFallback="/images/myPage/bunny-info.png"
-          bottomImageAlt="회원 정보 토끼"
-        />
-      </div>
+      <MyPageContentLayout
+        main={
+          <div className="text-center mt-10 text-lg text-grey05">
+            사용자 정보를 불러올 수 없습니다.
+          </div>
+        }
+        aside={<></>}
+        bottomImage="/images/myPage/bunny-info.webp"
+        bottomImageFallback="/images/myPage/bunny-info.png"
+        bottomImageAlt="회원 정보 토끼"
+      />
     );
   }
 
@@ -74,7 +109,7 @@ export default function MyInfoPage() {
           <FadeWrapper changeKey={user.membershipGrade}>
             <MembershipInfo
               name={user.name}
-              grade={grade} //user.grade로 바꾸면 mockData상에서 멤버십등급을 가져와 변경된 UI 보기 가능
+              grade={user.membershipGrade}
               onClickLink={() => setShowUplusModal(true)}
             />
           </FadeWrapper>
@@ -83,15 +118,15 @@ export default function MyInfoPage() {
         bottomImageFallback="/images/myPage/bunny-info.png"
         bottomImageAlt="회원 정보 토끼"
       />
-
+      {/* 유플러스 연동 모달 */}
       <UplusLinkModal
         isOpen={showUplusModal}
         phone={user.phoneNumber}
+        name={user.name}
         onClose={() => setShowUplusModal(false)}
-        onVerified={(newGrade) => setGrade(newGrade)}
-        loadUplusData={loadUplusData}
+        onVerified={fetchUser} // 성공 후 사용자 정보 다시 조회
       />
-
+      {/* 비밀번호 변경 */}
       <PasswordChangeModal
         isOpen={isPwModalOpen}
         currentPassword={currentPw}
@@ -106,16 +141,27 @@ export default function MyInfoPage() {
           setNewPw('');
           setConfirmPw('');
         }}
-        onSubmit={() => {
-          // 🚨 여기서 비밀번호 변경 API 호출
-          console.log('비밀번호 변경 요청', { currentPw, newPw, confirmPw });
-          setIsPwModalOpen(false);
-          setCurrentPw('');
-          setNewPw('');
-          setConfirmPw('');
+        onSubmit={async () => {
+          try {
+            await api.post('api/v1/users/resetPassword', {
+              // resetPasswordToken은 필요 없다면 제거
+              email: user.email,
+              newPassword: newPw,
+              newPasswordConfirm: confirmPw,
+            });
+            showToast('비밀번호가 변경되었습니다.', 'success');
+          } catch (err) {
+            console.error('비밀번호 변경 실패:', err);
+            showToast('현재 비밀번호가 일치하지 않아 변경에 실패했습니다.', 'error');
+          } finally {
+            setIsPwModalOpen(false);
+            setCurrentPw('');
+            setNewPw('');
+            setConfirmPw('');
+          }
         }}
       />
-
+      {/* 회원탈퇴 */}
       <UserDeleteModal
         isOpen={deleteModalOpen}
         password={password}
