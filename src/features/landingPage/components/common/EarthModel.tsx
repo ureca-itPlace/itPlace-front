@@ -34,7 +34,7 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger,
-        start: 'center center',
+        start: 'top top',
         end: '+=1500',
         scrub: 0.5,
         pin: true,
