@@ -8,9 +8,7 @@ import Cloud from '../common/Cloud';
 gsap.registerPlugin(ScrollTrigger);
 
 const MapSection = () => {
-  const cloud1Ref = useRef<HTMLImageElement>(null);
-  const cloud2Ref = useRef<HTMLImageElement>(null);
-  const cloud3Ref = useRef<HTMLImageElement>(null);
+  const cloudRef = useRef<HTMLImageElement>(null);
 
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const blackSquareRef = useRef<HTMLDivElement>(null);
@@ -26,7 +24,8 @@ const MapSection = () => {
       !firstMapImageRef.current ||
       !secondMapImageRef.current ||
       !thirdMapImageRef.current ||
-      !fourthMapImageRef.current
+      !fourthMapImageRef.current ||
+      !cloudRef.current
     )
       return;
 
@@ -46,6 +45,8 @@ const MapSection = () => {
       }
     );
 
+    gsap.set(cloudRef.current, { opacity: 1, x: '100%', scale: 1.5 });
+
     gsap.set(blackSquareRef.current, {
       x: '-100%',
     });
@@ -54,7 +55,7 @@ const MapSection = () => {
       scrollTrigger: {
         trigger: mapSectionRef.current,
         start: 'top top',
-        end: '+=2000',
+        end: '+=2400',
         pin: true,
         scrub: 0.5,
         anticipatePin: 1,
@@ -67,36 +68,49 @@ const MapSection = () => {
       },
     });
 
+    // 1. 구름 등장
+    tl.to(
+      cloudRef.current,
+      {
+        x: '-150%',
+        scale: 2,
+        opacity: 1,
+        duration: 5,
+        ease: 'none',
+      },
+      0
+    );
+
     // 첫 번째 이미지: 나타나기 -> 커지기 -> 블러 처리하기
     tl.to(
       firstMapImageRef.current,
       {
         opacity: 1,
         filter: 'blur(0px)',
-        ease: 'power2.out',
+        ease: 'none',
         duration: 0.5,
       },
-      0
+      2
     )
       .to(
         firstMapImageRef.current,
         {
-          scale: 3,
+          scale: 2,
           x: 50,
           opacity: 0,
           ease: 'power2.in',
           duration: 1.5,
         },
-        0.5
+        4.5
       )
       .to(
         firstMapImageRef.current,
         {
-          filter: 'blur(30px)',
-          duration: 1.2,
+          filter: 'blur(15px)',
+          duration: 1,
           ease: 'none',
         },
-        1.5
+        5.5
       );
 
     // 두 번째 이미지
@@ -108,27 +122,27 @@ const MapSection = () => {
         ease: 'power2.out',
         duration: 0.5,
       },
-      1.5
+      6
     )
       .to(
         secondMapImageRef.current,
         {
-          scale: 3,
+          scale: 2,
           x: 100,
           opacity: 0,
           ease: 'power2.in',
           duration: 1.5,
         },
-        2
+        6.5
       )
       .to(
         secondMapImageRef.current,
         {
-          filter: 'blur(30px)',
+          filter: 'blur(15px)',
           duration: 1,
           ease: 'none',
         },
-        2.5
+        7.5
       );
 
     // 세 번째 이미지
@@ -140,7 +154,7 @@ const MapSection = () => {
         ease: 'power2.out',
         duration: 0.5,
       },
-      3
+      8
     )
       .to(
         thirdMapImageRef.current,
@@ -151,16 +165,16 @@ const MapSection = () => {
           ease: 'power2.in',
           duration: 1.5,
         },
-        3.5
+        8.5
       )
       .to(
         thirdMapImageRef.current,
         {
-          filter: 'blur(30px)',
+          filter: 'blur(15px)',
           duration: 1,
           ease: 'none',
         },
-        4.5
+        10
       );
 
     // 네 번째 이미지
@@ -172,7 +186,7 @@ const MapSection = () => {
         ease: 'power2.out',
         duration: 0.5,
       },
-      5
+      10.5
     );
 
     // BlackSquare 이동 (맨 마지막)
@@ -180,11 +194,13 @@ const MapSection = () => {
       blackSquareRef.current,
       {
         x: '0%',
-        ease: 'power2.inOut',
+        ease: 'power1.Out',
         duration: 1.5,
       },
-      5.5
+      11.5
     );
+
+    tl.to({}, { duration: 1 });
 
     return () => {
       tl.kill();
@@ -194,11 +210,9 @@ const MapSection = () => {
   return (
     <section
       ref={mapSectionRef}
-      className="relative w-full h-screen flex justify-center items-center overflow-hidden border border-purple-700"
+      className="relative w-full h-screen flex justify-center items-center overflow-hidden"
     >
-      <Cloud ref={cloud1Ref} className="left-[-60%] top-[-20%]" />
-      <Cloud ref={cloud2Ref} className="right-[-10%] top-[30%]" />
-      <Cloud ref={cloud3Ref} className="left-[-10%] top-[40%]" />
+      <Cloud className="right-[-20%] top-[-20%]" ref={cloudRef} />
       <img
         ref={firstMapImageRef}
         src="/images/landing/map-1.webp"
