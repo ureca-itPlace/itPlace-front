@@ -5,6 +5,7 @@ import {
   getStoreListByCategory,
   getCurrentLocation,
   getAddressFromCoordinates,
+  searchStores,
 } from '../api/storeApi';
 import { transformStoreDataToPlatforms } from '../utils/dataTransform';
 import { getRadiusByMapLevel } from '../utils/mapUtils';
@@ -154,6 +155,35 @@ export const useStoreData = () => {
     [selectedCategory, execute, loadStoresByCategory, updateLocationInfo]
   );
 
+  /**
+   * 키워드 검색
+   * 현재 위치와 맵레벨을 기준으로 검색
+   */
+  const searchByKeyword = useCallback(
+    async (keyword: string, mapLevel: number) => {
+      if (!userCoords || !keyword.trim()) return;
+
+      const keywordSearch = async () => {
+        // 맵 레벨에 따른 반경 계산
+        const radius = getRadiusByMapLevel(mapLevel);
+
+        // 키워드 검색 API 호출
+        const storeResponse = await searchStores({
+          lat: userCoords.lat,
+          lng: userCoords.lng,
+          radiusMeters: radius,
+          category: selectedCategory || undefined,
+          keyword: keyword.trim(),
+        });
+
+        return transformStoreDataToPlatforms(storeResponse.data, userCoords.lat, userCoords.lng);
+      };
+
+      await execute(keywordSearch);
+    },
+    [userCoords, selectedCategory, execute]
+  );
+
   return {
     platforms: platforms || [], // null 방어
     currentLocation,
@@ -164,6 +194,7 @@ export const useStoreData = () => {
     updateLocationFromMap,
     filterByCategory,
     searchInCurrentMap,
+    searchByKeyword,
     currentMapLevelInHook,
   };
 };

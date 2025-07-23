@@ -27,6 +27,8 @@ interface SidebarSectionProps {
   onSearchChange?: (query: string) => void;
   activeTab: string;
   onActiveTabChange: (tab: string) => void;
+  onKeywordSearch?: (keyword: string) => void;
+  searchQuery?: string;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -39,6 +41,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onSearchChange,
   activeTab,
   onActiveTabChange,
+  onKeywordSearch,
+  searchQuery,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -126,7 +130,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
           {/* 검색 영역 */}
           <div className="pb-8 flex-shrink-0">
-            <SearchSection onSearchChange={handleSearchChange} />
+            <SearchSection
+              onSearchChange={handleSearchChange}
+              onKeywordSearch={onKeywordSearch}
+              initialQuery={searchQuery}
+            />
 
             <div className="mb-4">
               <NavigationTabsSection

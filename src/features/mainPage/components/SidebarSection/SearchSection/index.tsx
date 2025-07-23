@@ -1,36 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import SearchBar from '../../../../../components/SearchBar';
+import { useDebounce } from '../../../hooks/useDebounce';
 
 interface SearchSectionProps {
   onSearchChange?: (query: string) => void;
+  onKeywordSearch?: (keyword: string) => void;
+  initialQuery?: string;
 }
 
-const SearchSection: React.FC<SearchSectionProps> = ({ onSearchChange }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const SearchSection: React.FC<SearchSectionProps> = React.memo(
+  ({ onSearchChange, onKeywordSearch, initialQuery }) => {
+    const [searchQuery, setSearchQuery] = useState(initialQuery || '');
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    onSearchChange?.(query);
-  };
+    // 1초 디바운스 적용
+    const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
-  const handleSearchClear = () => {
-    setSearchQuery('');
-    onSearchChange?.('');
-  };
+    // initialQuery가 변경되면 searchQuery도 업데이트
+    useEffect(() => {
+      setSearchQuery(initialQuery || '');
+    }, [initialQuery]);
 
-  return (
-    <div className="mb-4">
-      <SearchBar
-        placeholder="장소 검색"
-        value={searchQuery}
-        onChange={handleSearchChange}
-        onClear={handleSearchClear}
-        backgroundColor="bg-grey01"
-        width={330}
-      />
-    </div>
-  );
-};
+    // 디바운스된 검색어로 자동 검색
+    useEffect(() => {
+      if (debouncedSearchQuery.trim() && debouncedSearchQuery !== initialQuery) {
+        onKeywordSearch?.(debouncedSearchQuery.trim());
+      }
+    }, [debouncedSearchQuery, onKeywordSearch, initialQuery]);
+
+    const handleSearchChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        onSearchChange?.(query);
+      },
+      [onSearchChange]
+    );
+
+    const handleSearchClear = useCallback(() => {
+      setSearchQuery('');
+      onSearchChange?.('');
+    }, [onSearchChange]);
+
+    const handleSearchSubmit = useCallback(
+      (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+          onKeywordSearch?.(searchQuery.trim());
+        }
+      },
+      [searchQuery, onKeywordSearch]
+    );
+
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && searchQuery.trim()) {
+          onKeywordSearch?.(searchQuery.trim());
+        }
+      },
+      [searchQuery, onKeywordSearch]
+    );
+
+    return (
+      <div className="mb-4">
+        <form onSubmit={handleSearchSubmit}>
+          <SearchBar
+            placeholder="장소 검색"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            onClear={handleSearchClear}
+            backgroundColor="bg-grey01"
+            width={330}
+            onKeyDown={handleKeyDown}
+          />
+        </form>
+      </div>
+    );
+  }
+);
 
 export default SearchSection;

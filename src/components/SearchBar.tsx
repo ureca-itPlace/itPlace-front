@@ -9,6 +9,7 @@ interface SearchBarProps {
   width?: number;
   height?: number;
   backgroundColor?: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -19,6 +20,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   width = 344,
   height = 50,
   backgroundColor,
+  onKeyDown,
 }) => {
   return (
     <div className="relative" style={{ width, height }}>
@@ -30,6 +32,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         className={`w-full h-full pl-12 pr-10 rounded-[10px] text-black placeholder-grey03 placeholder:text-body-2 focus:outline-none focus:ring-0 focus:border-gray-300 ${backgroundColor || ''}`}
       />
       {value && (

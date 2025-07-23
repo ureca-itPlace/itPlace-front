@@ -15,6 +15,7 @@ const MainPageLayout: React.FC = () => {
   const [selectedPlatform, setSelectedPlatform] = useState<Platform | null>(null); // 선택된 가맹점
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]); // 검색 결과 가맹점 목록
   const [activeTab, setActiveTab] = useState<string>('nearby'); // 사이드바 활성 탭 ('주변 혜택', '관심 혜택', '잏AI 추천')
+  const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태
 
   // 지도 관련 상태
   const [currentMapLevel, setCurrentMapLevel] = useState<number>(2); // 지도 확대/축소 레벨
@@ -32,6 +33,7 @@ const MainPageLayout: React.FC = () => {
     updateLocationFromMap, // 지도에서 위치 이동 시 주소 업데이트
     filterByCategory, // 카테고리 필터링
     searchInCurrentMap, // 현재 지도 영역에서 검색
+    searchByKeyword, // 키워드 검색
   } = useStoreData();
 
   /**
@@ -94,6 +96,19 @@ const MainPageLayout: React.FC = () => {
     setCurrentMapLevel(mapLevel);
   }, []);
 
+  // 키워드 검색 핸들러
+  const handleKeywordSearch = useCallback(
+    (keyword: string) => {
+      if (keyword.trim()) {
+        setSelectedPlatform(null); // 선택된 가맹점 초기화
+        setFilteredPlatforms([]); // 검색 결과 초기화
+        setSearchQuery(keyword); // 검색어 저장
+        searchByKeyword(keyword, currentMapLevel);
+      }
+    },
+    [searchByKeyword, currentMapLevel]
+  );
+
   return (
     <div className="h-screen flex gap-6 bg-grey01 p-6 relative">
       <div
@@ -112,6 +127,8 @@ const MainPageLayout: React.FC = () => {
           error={error}
           activeTab={activeTab}
           onActiveTabChange={setActiveTab}
+          onKeywordSearch={handleKeywordSearch}
+          searchQuery={searchQuery}
         />
       </div>
 
