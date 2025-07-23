@@ -14,9 +14,9 @@ export const addFavorite = async (benefitId: number): Promise<FavoriteResponse> 
 };
 
 // 즐겨찾기 삭제 API
-export const removeFavorite = async (benefitId: number): Promise<FavoriteResponse> => {
+export const removeFavorite = async (benefitIds: number[]): Promise<FavoriteResponse> => {
   try {
-    const requestBody: FavoriteRequest = { benefitId };
+    const requestBody = { benefitIds };
     const response = await axiosInstance.delete('/api/v1/favorites', { data: requestBody });
     return response.data;
   } catch (error) {

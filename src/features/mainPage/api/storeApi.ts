@@ -1,5 +1,5 @@
 import api from '../../../apis/axiosInstance';
-import { StoreApiResponse, StoreListParams, KakaoAddressResponse } from '../types/api';
+import { StoreApiResponse, StoreListParams, KakaoAddressResponse, SearchStoresParams } from '../types/api';
 
 const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY; // Vite 환경변수에서 카카오 REST API 키 가져오기
 
@@ -30,6 +30,23 @@ export const getStoreListByCategory = async (
       lng: params.lng,
       radiusMeters: params.radiusMeters,
       category: params.category,
+    },
+  });
+
+  return response.data;
+};
+
+/**
+ * 키워드 검색을 통한 지점 목록 조회
+ */
+export const searchStores = async (params: SearchStoresParams): Promise<StoreApiResponse> => {
+  const response = await api.get('/api/v1/maps/nearby/search', {
+    params: {
+      lat: params.lat,
+      lng: params.lng,
+      radiusMeters: params.radiusMeters,
+      category: params.category,
+      keyword: params.keyword,
     },
   });
 

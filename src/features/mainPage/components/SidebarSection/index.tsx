@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
+import { FavoriteBenefit } from '../../types/api';
+import { CATEGORIES } from '../../constants';
 import LoadingSpinner from '../../../../components/LoadingSpinner';
 import SearchSection from './SearchSection';
 import InfoBannerSection from './InfoBannerSection';
@@ -7,16 +9,12 @@ import NavigationTabsSection from './NavigationTabsSection';
 import StoreCardsSection from './AllBenefit';
 import FavoriteStoreList from './FavoriteStoreList';
 import StoreDetailCard from './StoreDetail';
+import CategoryTabsSection from './CategoryTabsSection';
+import { useFavoritesList } from '../../hooks/useFavoritesList';
 
 interface Tab {
   id: string;
   label: string;
-}
-
-interface Store {
-  id: string;
-  name: string;
-  category: string;
 }
 
 interface SidebarSectionProps {
@@ -27,6 +25,11 @@ interface SidebarSectionProps {
   isLoading: boolean;
   error?: string | null;
   onSearchChange?: (query: string) => void;
+  activeTab: string;
+  onActiveTabChange: (tab: string) => void;
+  onKeywordSearch?: (keyword: string) => void;
+  searchQuery?: string;
+  onMapCenterMove?: (latitude: number, longitude: number) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -37,14 +40,26 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   isLoading,
   error,
   onSearchChange,
+  activeTab,
+  onActiveTabChange,
+  onKeywordSearch,
+  searchQuery,
+  onMapCenterMove,
 }) => {
-  const [activeTab, setActiveTab] = useState('nearby');
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
+  const [selectedCategory, setSelectedCategory] = useState('전체');
 
-  // 카드 클릭 시 상세보기로 전환
+  // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
+  const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
+    activeTab === 'favorites' ? selectedCategory : undefined
+  );
+
+  // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
     onPlatformSelect(platform);
     setViewMode('detail');
+    // 해당 가맹점 위치로 지도 중심 이동
+    onMapCenterMove?.(platform.latitude, platform.longitude);
   };
 
   // 상세보기에서 닫기
@@ -73,34 +88,43 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     { id: 'ai', label: '잇플AI 추천' },
   ];
 
-  // Mock stores for favorites tab (기존 SidebarList에서 가져옴)
-  const mockStores: Store[] = [
-    { id: '1', name: '파리바게뜨', category: '베이커리' },
-    { id: '2', name: '스카이라운지', category: '카페' },
-    { id: '3', name: '오가네 파프리카의 점검', category: '음식점' },
-    { id: '4', name: 'GS THE FRESH', category: '편의점' },
-    { id: '5', name: 'GS25', category: '편의점' },
-  ];
-
   const handleSearchChange = (query: string) => {
     onSearchChange?.(query);
   };
 
-  const handleStoreClick = (store: Store) => {
-    console.log('Store clicked:', store);
+  const handleFavoriteClick = (favorite: FavoriteBenefit) => {
+    // 파트너명으로 검색 실행
+    onKeywordSearch?.(favorite.partnerName);
   };
 
-  // 탭별 다른 InfoBanner 메시지
-  const getInfoBannerMessage = () => {
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    // 카테고리 변경은 useFavoritesList 내부의 useEffect에서 자동 처리됨
+  };
+
+  // 탭별 다른 InfoBanner 메시지와 강조 텍스트
+  const getBannerConfig = () => {
     switch (activeTab) {
       case 'nearby':
-        return '근처 제휴처만 안내해드릴게요 !';
+        return {
+          message: '근처 제휴처만 안내해드릴게요 !',
+          highlightText: '근처 제휴처',
+        };
       case 'favorites':
-        return '잇플픽이 찜한 혜택을 보여드릴게요!';
+        return {
+          message: '잇플픽이 관심 혜택을 보여드릴게요!',
+          highlightText: '관심 혜택',
+        };
       case 'ai':
-        return 'AI가 추천하는 맞춤 혜택입니다!';
+        return {
+          message: '잇플님의 맞춤 잇플AI 추천을 보여드릴게요!',
+          highlightText: '맞춤 잇플AI 추천',
+        };
       default:
-        return '근처 제휴처만 안내해드릴게요 !';
+        return {
+          message: '근처 제휴처만 안내해드릴게요 !',
+          highlightText: '근처 제휴처만만',
+        };
     }
   };
 
@@ -122,17 +146,25 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
           {/* 검색 영역 */}
           <div className="pb-8 flex-shrink-0">
-            <SearchSection onSearchChange={handleSearchChange} />
+            <SearchSection
+              onSearchChange={handleSearchChange}
+              onKeywordSearch={onKeywordSearch}
+              initialQuery={searchQuery}
+            />
 
             <div className="mb-4">
               <NavigationTabsSection
                 tabs={mainTabs}
                 activeTab={activeTab}
-                onTabChange={setActiveTab}
+                onTabChange={onActiveTabChange}
               />
             </div>
 
-            <InfoBannerSection message={getInfoBannerMessage()} variant="primary" />
+            <InfoBannerSection
+              message={getBannerConfig().message}
+              highlightText={getBannerConfig().highlightText}
+              variant="primary"
+            />
           </div>
 
           {/* 컨텐츠 영역 - 탭에 따라 다른 컴포넌트 렌더링 */}
@@ -149,20 +181,52 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'favorites' && (
             <>
+              {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
+              <div className="mb-6">
+                <CategoryTabsSection
+                  categories={CATEGORIES}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={handleCategorySelect}
+                  mode="sidebar"
+                />
+              </div>
+
               {/* 즐겨찾기 스토어 리스트 */}
-              <div className="flex-1 overflow-y-auto pt-4">
-                <FavoriteStoreList stores={mockStores} onStoreClick={handleStoreClick} />
+              <div
+                className="-mx-5 overflow-y-auto overflow-x-hidden"
+                style={{ height: 'calc(100vh - 360px)' }}
+              >
+                <FavoriteStoreList
+                  favorites={favorites}
+                  onItemClick={handleFavoriteClick}
+                  isLoading={isFavoritesLoading}
+                />
               </div>
             </>
           )}
 
           {activeTab === 'ai' && (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-grey04 text-center">
-                <div className="text-lg mb-2">🤖</div>
-                <div>AI 추천 기능 준비중입니다</div>
+            <>
+              {/* 카테고리 탭 (AI 추천용 - 사이드바 모드) */}
+              <div className="mb-4">
+                <CategoryTabsSection
+                  categories={CATEGORIES}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={(categoryId) => {
+                    // TODO: AI 추천 카테고리 기능 구현
+                    console.log('AI 추천 카테고리 선택:', categoryId);
+                  }}
+                  mode="sidebar"
+                />
               </div>
-            </div>
+
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-grey04 text-center">
+                  <div className="text-lg mb-2">🤖</div>
+                  <div>AI 추천 기능 준비중입니다</div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       ) : (
