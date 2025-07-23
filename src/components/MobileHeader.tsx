@@ -137,13 +137,16 @@ const MobileHeader = ({ title, backgroundColor = 'bg-white', onMenuClick }: Mobi
                   로그아웃
                 </button>
               ) : (
-                <Link
-                  to="/login"
+                <button
+                  onClick={() => {
+                    sessionStorage.setItem('resetToLogin', 'true');
+                    navigate('/login');
+                    closeSidebar();
+                  }}
                   className="text-body-0 text-purple04 hover:text-purple05 transition-colors text-left"
-                  onClick={closeSidebar}
                 >
                   로그인
-                </Link>
+                </button>
               )}
             </li>
           </ul>
