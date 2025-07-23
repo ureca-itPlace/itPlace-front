@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, RefObject } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader, Mesh, AdditiveBlending, Group, Color } from 'three';
 import { gsap } from 'gsap';
@@ -7,60 +7,83 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const EarthModel = ({ trigger }: { trigger: HTMLElement | null }) => {
+type EarthModelProps = {
+  trigger: HTMLElement | null;
+  canvasWrapperRef: RefObject<HTMLDivElement | null>;
+  earthCloud1Ref: RefObject<HTMLImageElement | null>;
+};
+
+const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelProps) => {
   const earthTexture = useLoader(TextureLoader, '/images/landing/textures/earth-map.png');
   const cloudsTexture = useLoader(TextureLoader, '/images/landing/textures/earth-cloud.png');
 
   const groupRef = useRef<Group>(null);
-  const cloudsRef = useRef<Mesh>(null);
+  const earthCloudRef = useRef<Mesh>(null);
   const earthRef = useRef<Mesh>(null);
   const glowRef = useRef<Mesh>(null);
   const outerGlowRef = useRef<Mesh>(null);
   const auraRef = useRef<Mesh>(null);
 
-  useEffect(() => {
-    if (groupRef.current) {
-      gsap.set(groupRef.current.scale, { x: 0, y: 0, z: 0 });
-
-      gsap.to(groupRef.current.scale, {
-        x: 1,
-        y: 1,
-        z: 1,
-        duration: 2,
-        ease: 'power2.out',
-      });
-    }
-  }, []);
-
   useGSAP(() => {
-    if (!groupRef.current || !trigger) return;
+    if (!groupRef.current || !trigger || !canvasWrapperRef.current || !earthCloud1Ref.current)
+      return;
 
-    const animation = gsap.to(groupRef.current.scale, {
-      x: 2.5,
-      y: 2.5,
-      z: 2.5,
+    gsap.set(earthCloud1Ref.current, { opacity: 0, x: '-100%', scale: 1 });
+
+    // 타임라인 생성
+    const tl = gsap.timeline({
       scrollTrigger: {
         trigger,
         start: 'center center',
-        end: '+=600',
+        end: '+=1500',
         scrub: 0.5,
         pin: true,
         anticipatePin: 1,
         refreshPriority: 1, // 지구 애니메이션이 최우선
-        markers: true,
       },
+    });
+
+    // 1. 지구 확대
+    tl.to(groupRef.current.scale, {
+      x: 2.5,
+      y: 2.5,
+      z: 2.5,
       duration: 2,
       ease: 'none',
     });
 
+    // 2. 캔버스 페이드 아웃 (지구 확대가 끝난 후 시작)
+    tl.to(
+      canvasWrapperRef.current,
+      {
+        opacity: 0,
+        duration: 2,
+        ease: 'power1.out',
+      },
+      '-=0.2'
+    );
+
+    // 3. 구름 등장 (페이드아웃 중간 시점에 시작)
+    tl.to(
+      earthCloud1Ref.current,
+      {
+        x: '0%',
+        scale: 2,
+        opacity: 1,
+        duration: 5,
+        ease: 'power2.out',
+      },
+      '-=2.5'
+    );
+
     return () => {
-      animation.kill();
+      tl.kill();
     };
   }, [trigger]);
 
   useFrame(() => {
-    if (cloudsRef.current) {
-      cloudsRef.current.rotation.y += 0.0005;
+    if (earthCloudRef.current) {
+      earthCloudRef.current.rotation.y += 0.0005;
     }
     if (earthRef.current) {
       earthRef.current.rotation.y += 0.0002;
@@ -93,7 +116,7 @@ const EarthModel = ({ trigger }: { trigger: HTMLElement | null }) => {
       </mesh>
 
       {/* 구름 */}
-      <mesh ref={cloudsRef}>
+      <mesh ref={earthCloudRef}>
         <sphereGeometry args={[1.51, 64, 64]} />
         <meshStandardMaterial
           map={cloudsTexture}
