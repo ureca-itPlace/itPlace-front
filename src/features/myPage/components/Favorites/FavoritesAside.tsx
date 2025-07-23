@@ -1,6 +1,7 @@
 import FadeWrapper from '../FadeWrapper';
 import BenefitDetailTabs from './BenefitDetailTabs';
 import { FavoriteItem } from '../../../../types/favorites';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
 
 interface FavoritesAsideProps {
   favorites: FavoriteItem[];
@@ -8,6 +9,7 @@ interface FavoritesAsideProps {
   selectedItems: number[];
   selectedId: number | null;
   userGrade?: string;
+  loading: boolean;
 }
 
 export default function FavoritesAside({
@@ -16,7 +18,15 @@ export default function FavoritesAside({
   selectedItems,
   selectedId,
   userGrade,
+  loading,
 }: FavoritesAsideProps) {
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
+      </div>
+    );
+  }
   // 찜한 혜택이 아예 없을 때
   if (favorites.length === 0) {
     return (

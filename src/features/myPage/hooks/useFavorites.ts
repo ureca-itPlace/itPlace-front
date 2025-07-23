@@ -17,11 +17,15 @@ export function useFavorites(itemsPerPageInit = 6) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(itemsPerPageInit);
 
+  // 로딩 상태
+  const [loading, setLoading] = useState(false);
+
   // ✅ 전체 데이터 기반으로 totalElements 관리
   const totalElements = allFavorites.length;
 
   // ✅ 한 번에 전체 데이터를 불러오기
   const loadFavorites = useCallback(async () => {
+    setLoading(true);
     try {
       const category = benefitFilter === 'vipkok' ? 'VIP 콕' : '기본 혜택';
       // size를 충분히 크게 해서 전체 데이터를 한 번에 불러옴
@@ -30,6 +34,8 @@ export function useFavorites(itemsPerPageInit = 6) {
     } catch (err) {
       console.error('즐겨찾기 목록 불러오기 실패', err);
       setAllFavorites([]);
+    } finally {
+      setLoading(false);
     }
   }, [benefitFilter]);
 
@@ -98,6 +104,7 @@ export function useFavorites(itemsPerPageInit = 6) {
   };
 
   return {
+    loading,
     allFavorites,
     currentItems,
     totalElements,

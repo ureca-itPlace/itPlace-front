@@ -1,5 +1,5 @@
 import { useFavorites } from '../../features/myPage/hooks/useFavorites';
-import { Pagination } from '../../components';
+import { LoadingSpinner, Pagination } from '../../components';
 import BenefitFilterToggle from '../../components/BenefitFilterToggle';
 import SearchBar from '../../components/SearchBar';
 import NoResult from '../../components/NoResult';
@@ -13,6 +13,7 @@ import { RootState } from '../../store';
 
 export default function MyFavoritesPage() {
   const {
+    loading,
     allFavorites,
     totalElements,
     currentItems,
@@ -61,9 +62,8 @@ export default function MyFavoritesPage() {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onClear={() => setKeyword('')}
-                width={280}
-                height={50}
                 backgroundColor="bg-grey01"
+                className="w-[280px] h-[50px]"
               />
             </div>
             {/* 편집/전체선택 컨트롤 */}
@@ -96,7 +96,12 @@ export default function MyFavoritesPage() {
             {/* 카드 리스트 */}
             {/* 검색 결과가 없을 때는 "검색 결과 없음" 표시
             검색어가 없고 목록도 없을 때는 "찜한 혜택이 없음" 표시 */}
-            {keyword.trim() ? (
+            {loading ? (
+              // 로딩 중
+              <div className="flex justify-center items-center h-full">
+                <LoadingSpinner />
+              </div>
+            ) : keyword.trim() ? (
               currentItems.length === 0 ? (
                 <div className="mt-28">
                   <NoResult message1="검색 결과가 없어요." message2="다른 키워드로 검색해보세요." />
@@ -140,7 +145,7 @@ export default function MyFavoritesPage() {
                 }}
               />
             )}
-            {/* 페이지네이션 */}
+
             {/* 페이지네이션 */}
             {!(
               (keyword.trim() && currentItems.length === 0) || // 검색 중이고 결과가 0
@@ -188,6 +193,7 @@ export default function MyFavoritesPage() {
             selectedItems={selectedItems}
             selectedId={selectedId}
             userGrade={userGrade}
+            loading={loading}
           />
         }
         bottomImage="/images/myPage/bunny-favorites.webp"

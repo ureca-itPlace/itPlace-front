@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { fetchFavoriteDetail } from '../../apis/favorites';
 import { FavoriteDetail } from './../../../../types/favorites';
+import LoadingSpinner from '../../../../components/LoadingSpinner';
 interface Props {
   benefitId: number;
   image: string;
@@ -13,10 +14,19 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
   const [detail, setDetail] = useState<FavoriteDetail | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
 
+  // 로딩 상태
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    let isMounted = true; // ✅ 이번 effect에서 발생하는 요청만 반영하겠다는 플래그
+    setLoading(true);
+
     (async () => {
       try {
         const res = await fetchFavoriteDetail(benefitId);
+        // 👇 아래 조건을 추가: 이 effect가 아직 유효할 때만 setState
+        if (!isMounted) return;
+
         setDetail(res.data);
 
         const tiers = res.data.tiers;
@@ -33,13 +43,36 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
           setSelectedGrade('BASIC');
         }
       } catch (e) {
-        console.error('상세 조회 실패', e);
+        if (isMounted) {
+          console.error('상세 조회 실패', e);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     })();
+
+    // ✅ cleanup 함수: benefitId가 바뀌거나 컴포넌트가 언마운트될 때 실행
+    return () => {
+      isMounted = false;
+    };
   }, [benefitId, userGrade]);
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   if (!detail) {
-    return <p className="text-center mt-4 text-grey05">상세정보를 불러오는 중입니다...</p>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   const allBenefit = detail.tiers.find((t) => t.isAll);

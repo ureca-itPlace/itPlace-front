@@ -12,6 +12,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RiResetRightFill } from 'react-icons/ri';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface HistoryItem {
   image: string;
@@ -21,28 +22,32 @@ interface HistoryItem {
 }
 
 export default function MyHistoryPage() {
-  // 🔥 Redux 상태에서 사용자 정보 가져오기
+  // Redux 상태에서 사용자 정보 가져오기
   const user = useSelector((state: RootState) => state.auth.user);
   const membershipGrade = user?.membershipGrade ?? null;
 
-  // 🔎 검색/필터/페이지네이션 상태
+  // 검색/필터/페이지네이션 상태
   const [keyword, setKeyword] = useState('');
   const [page, setPage] = useState(0); // 0-based
   const [size] = useState(5);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  // 📦 API 데이터 상태
+  // API 데이터 상태
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
+
+  // 로딩 상태
+  const [loading, setLoading] = useState(false);
 
   // ✅ 혜택 사용 이력 API 호출 (페이지/필터 변화 시 재호출)
   useEffect(() => {
     if (!membershipGrade) return; // 멤버십 없으면 호출 X
 
     const fetchHistory = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/api/v1/membership-history', {
           params: {
@@ -70,6 +75,8 @@ export default function MyHistoryPage() {
         setHistory([]);
         setCurrentPage(0);
         setTotalElements(0);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -81,14 +88,16 @@ export default function MyHistoryPage() {
     if (!membershipGrade) return;
 
     const fetchSummary = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/api/v1/membership-history/summary');
-        console.log('📌 총 할인 금액 응답:', res.data);
         const data = res.data?.data;
         setTotalAmount(data?.totalDiscountAmount ?? 0);
       } catch (err) {
         console.error('멤버십 요약 API 오류:', err);
         setTotalAmount(0);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -113,9 +122,8 @@ export default function MyHistoryPage() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onClear={() => setKeyword('')}
-              width={280}
-              height={50}
               backgroundColor="bg-grey01"
+              className="w-[280px] h-[50px]"
             />
             <div className="flex gap-2 items-center">
               <button
@@ -147,7 +155,12 @@ export default function MyHistoryPage() {
 
           {/* 📋 혜택 사용 이력 리스트 */}
           <div className="flex-grow">
-            {membershipGrade == null ? (
+            {loading ? (
+              // 로딩 중
+              <div className="flex justify-center items-center h-full">
+                <LoadingSpinner />
+              </div>
+            ) : membershipGrade == null ? (
               <div className="mt-28">
                 <NoResult
                   message1="앗! 멤버십 등급이 없어 결과를 조회할 수 없어요"
@@ -176,7 +189,7 @@ export default function MyHistoryPage() {
                       <img
                         src={item.image}
                         alt={item.benefitName}
-                        className="h-[70px] w-auto object-contain flex-shrink-0"
+                        className="h-[70px] w-auto object-contain flex-shrink-0 ml-3"
                       />
                       <span
                         className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block"
@@ -189,8 +202,8 @@ export default function MyHistoryPage() {
                       <span className="text-black text-title-5 font-semibold w-[120px] text-right">
                         {item.discountAmount.toLocaleString()}원
                       </span>
-                      <span className="text-grey05 text-body-1 px-4">
-                        {dayjs(item.usedAt).format('YYYY-MM-DD')}
+                      <span className="text-grey05 text-body-1 px-4 font-light">
+                        {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
                       </span>
                     </div>
                   </div>
@@ -215,25 +228,32 @@ export default function MyHistoryPage() {
       }
       aside={
         <FadeWrapper changeKey={totalAmount.toLocaleString()}>
-          <div className="text-center">
-            <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
-            <div className="flex flex-col items-center justify-center mt-6">
-              <img
-                src="/images/myPage/icon-money.webp"
-                alt="혜택 사용 이력 아이콘"
-                className="w-[250px] h-auto"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = '/images/myPage/icon-money.png';
-                }}
-              />
-              <p className="text-[36px] font-semibold text-grey05 pt-10">
-                <span className="text-orange04">{totalAmount.toLocaleString()}</span>
-                원 <br /> 할인 받았어요!
-              </p>
+          {loading ? (
+            // 로딩 중
+            <div className="flex justify-center items-center mt-20 h-full">
+              <LoadingSpinner />
             </div>
-          </div>
+          ) : (
+            <div className="text-center">
+              <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
+              <div className="flex flex-col items-center justify-center mt-6">
+                <img
+                  src="/images/myPage/icon-money.webp"
+                  alt="혜택 사용 이력 아이콘"
+                  className="w-[250px] h-auto"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = '/images/myPage/icon-money.png';
+                  }}
+                />
+                <p className="text-[36px] font-semibold text-grey05 pt-10">
+                  <span className="text-orange04">{totalAmount.toLocaleString()}</span>
+                  원 <br /> 할인 받았어요!
+                </p>
+              </div>
+            </div>
+          )}
         </FadeWrapper>
       }
       bottomImage="/images/myPage/bunny-history.webp"

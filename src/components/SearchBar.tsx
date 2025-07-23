@@ -1,27 +1,23 @@
 import React from 'react';
 import { TbSearch, TbX } from 'react-icons/tb';
-
 interface SearchBarProps {
   placeholder: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;
-  width?: number;
-  height?: number;
+  className?: string;
   backgroundColor?: string;
 }
-
 const SearchBar: React.FC<SearchBarProps> = ({
   placeholder,
   value,
   onChange,
   onClear,
-  width = 344,
-  height = 50,
+  className = '',
   backgroundColor,
 }) => {
   return (
-    <div className="relative" style={{ width, height }}>
+    <div className={`relative ${className}`}>
       <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
         <TbSearch size={18} className="text-purple04" />
       </div>
@@ -45,5 +41,4 @@ const SearchBar: React.FC<SearchBarProps> = ({
     </div>
   );
 };
-
 export default SearchBar;
