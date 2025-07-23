@@ -34,7 +34,6 @@ const FeatureSection = () => {
         scrub: 0.3,
         pin: true,
         anticipatePin: 1,
-        markers: true,
       },
     });
 
@@ -74,12 +73,6 @@ const FeatureSection = () => {
           if (self.isActive) {
             setActiveIdx(idx);
           }
-        },
-        markers: {
-          startColor: 'purple',
-          endColor: 'orange',
-          fontSize: '14px',
-          indent: 20,
         },
       });
     });
