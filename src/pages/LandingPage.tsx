@@ -4,7 +4,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useState, useEffect, lazy } from 'react';
 
-import LoadLanding from '../features/landingPage/components/LoadLanding';
 const EarthSection = lazy(() => import('../features/landingPage/components/sections/EarthSection'));
 const MapSection = lazy(() => import('../features/landingPage/components/sections/MapSection'));
 const FeatureSection = lazy(
@@ -18,16 +17,7 @@ const StartCTASection = lazy(
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
 const LandingPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [videoEnded, setVideoEnded] = useState(false);
-
-  // 컴포넌트 마운트 시 로딩 완료
-  useEffect(() => {
-    // 4초 후 로딩 완료
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 4000);
-  }, []);
 
   // 새로 고침 시 최상단으로 이동
   useEffect(() => {
@@ -47,10 +37,6 @@ const LandingPage = () => {
       });
     }
   }, [videoEnded]);
-
-  if (isLoading) {
-    return <LoadLanding />;
-  }
 
   return (
     <div className="relative h-full w-full overflow-x-hidden bg-white">

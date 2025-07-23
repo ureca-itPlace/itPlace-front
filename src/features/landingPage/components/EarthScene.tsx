@@ -41,7 +41,6 @@ const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
           <OrbitControls enableZoom={false} enablePan={true} />
         </Canvas>
       </div>
-      )
     </>
   );
 };
