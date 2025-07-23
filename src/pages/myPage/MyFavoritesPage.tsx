@@ -62,9 +62,8 @@ export default function MyFavoritesPage() {
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onClear={() => setKeyword('')}
-                width={280}
-                height={50}
                 backgroundColor="bg-grey01"
+                className="w-[280px] h-[50px]"
               />
             </div>
             {/* 편집/전체선택 컨트롤 */}
