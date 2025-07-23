@@ -6,9 +6,7 @@ interface CloudProps {
 
 const Cloud = forwardRef<HTMLImageElement, CloudProps>(({ className = '' }, ref) => {
   return (
-    <div
-      className={`absolute w-[120vw] h-[120vh] z-20 ${className} pointer-events-none z-50 border border-red-500`}
-    >
+    <div className={`absolute w-[120vw] h-[120vh] z-20 ${className} pointer-events-none z-50`}>
       <img
         ref={ref}
         src="/images/landing/cloud.webp"
