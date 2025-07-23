@@ -8,6 +8,7 @@ import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthFooter from '../common/AuthFooter';
 import useValidation from '../../hooks/UseValidation';
 import { signUpFinal } from '../../apis/user';
+import { signUpWithOAuthLink } from '../../apis/auth';
 import PasswordInputForm from '../common/PasswordInputForm';
 
 type SignUpFinalFormProps = {
@@ -17,6 +18,7 @@ type SignUpFinalFormProps = {
   birthday: string;
   gender: string;
   membershipId: string;
+  verifiedType?: 'new' | 'uplus' | 'local-oauth-merge';
 };
 
 const SignUpFinalForm = ({
@@ -26,6 +28,7 @@ const SignUpFinalForm = ({
   birthday,
   gender,
   membershipId,
+  verifiedType = 'new',
 }: SignUpFinalFormProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -69,8 +72,15 @@ const SignUpFinalForm = ({
           membershipId,
         };
 
-        await signUpFinal(payload);
-        showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
+        // API 분기 처리
+        if (verifiedType === 'local-oauth-merge') {
+          const response = await signUpWithOAuthLink(payload);
+          const message = response.data?.message || '계정 통합 회원가입이 완료되었습니다.';
+          showToast(message, 'success');
+        } else {
+          await signUpFinal(payload);
+          showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
+        }
         setTimeout(() => onGoToLogin(), 0);
       } catch (error) {
         const axiosError = error as AxiosError<{ code: string; message: string }>;

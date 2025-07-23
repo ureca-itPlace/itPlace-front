@@ -18,6 +18,7 @@ type SignUpFormProps = {
     gender: string;
     membershipId: string;
   }) => void;
+  verifiedType?: 'new' | 'uplus' | 'local-oauth-merge';
 };
 
 const SignUpForm = ({
@@ -28,6 +29,7 @@ const SignUpForm = ({
   membershipIdFromPhoneAuth,
   onGoToLogin,
   onNext,
+  verifiedType = 'new',
 }: SignUpFormProps) => {
   const [formData, setFormData] = useState({
     name: nameFromPhoneAuth,
@@ -50,9 +52,9 @@ const SignUpForm = ({
   const [disabledFields] = useState({
     name: true,
     phone: true,
-    birth: !!birthdayFromPhoneAuth,
-    gender: !!genderFromPhoneAuth,
-    membershipNumber: true,
+    birth: verifiedType === 'local-oauth-merge' ? !!birthdayFromPhoneAuth : !!birthdayFromPhoneAuth,
+    gender: verifiedType === 'local-oauth-merge' ? !!genderFromPhoneAuth : !!genderFromPhoneAuth,
+    membershipNumber: verifiedType === 'local-oauth-merge' ? !!membershipIdFromPhoneAuth : true,
   });
 
   // 입력값 핸들링

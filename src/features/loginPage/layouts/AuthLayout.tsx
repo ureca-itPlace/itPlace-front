@@ -241,6 +241,17 @@ const AuthLayout = () => {
                         setFormStep('findEmail');
                       } else if (verifiedType === 'new' || verifiedType === 'uplus') {
                         goToSignUp();
+                      } else if (verifiedType === 'local-oauth-merge') {
+                        // local-oauth-merge는 OAuth 데이터와 함께 일반 회원가입 폼으로 이동
+                        setUserData({
+                          name: user.name,
+                          phone: user.phone,
+                          birthday: user.birthday,
+                          gender: user.gender,
+                          membershipId: user.membershipId,
+                          verifiedType: verifiedType,
+                        });
+                        goToSignUp();
                       } else if (verifiedType === 'oauth') {
                         setOAuthUserData({
                           name: user.name,

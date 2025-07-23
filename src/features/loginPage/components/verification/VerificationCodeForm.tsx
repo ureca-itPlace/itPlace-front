@@ -9,7 +9,7 @@ import { checkVerificationCode, sendVerificationCode } from '../../apis/verifica
 import Modal from '../../../../components/Modal';
 import { modalPresets } from '../../constants/modalPresets';
 import { showToast } from '../../../../utils/toast';
-import { loadUplusData, oauthAccountLink } from '../../apis/auth';
+import { loadUplusData, oauthAccountLink, loadOAuthData } from '../../apis/auth';
 import { useDispatch } from 'react-redux';
 import { setLoginSuccess } from '../../../../store/authSlice';
 
@@ -173,8 +173,10 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
       // 분기 처리
       if (userStatus === 'EXISTING_USER' && isLocalUser === true && !isOAuthFlow) {
         verifiedTypeRef.current = 'local'; // 일반 플로우에서만 local 처리
-      } else if (userStatus === 'EXISTING_USER') {
-        verifiedTypeRef.current = 'oauth'; // OAuth 플로우이거나 OAuth 사용자
+      } else if (userStatus === 'EXISTING_USER' && !isLocalUser && isOAuthFlow) {
+        verifiedTypeRef.current = 'oauth'; // OAuth 플로우에서 기존 OAuth 사용자
+      } else if (userStatus === 'EXISTING_USER' && !isLocalUser && !isOAuthFlow) {
+        verifiedTypeRef.current = 'local-oauth-merge'; // OAuth 회원인데 로컬 가입 시도
       } else if (userStatus === 'NEW_USER' && isOAuthFlow) {
         if (uplusDataExists === true || uplusDataExists === 'true') {
           verifiedTypeRef.current = 'uplus'; // 케이스 8: 카톡신규 + U+ → U+ 모달
@@ -350,7 +352,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                     () => {
                       closeModal();
                       onGoToLogin();
-                    }
+                    },
+                    false // 기존 OAuth 사용자 통합
                   )
                 );
                 break;
@@ -419,25 +422,25 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                       // "예" 선택 시: OAuth API에서 정보 받아와서 회원가입 폼으로
                       closeModal();
                       try {
-                        console.log('🟡 OAuth 계정 연동 API 호출 중...');
-                        const response = await oauthAccountLink(phone);
+                        console.log('🟡 OAuth 데이터 로드 API 호출 중...');
+                        const response = await loadOAuthData(phone);
 
                         console.log('🟢 OAuth 계정 연동 성공:', response.data);
 
                         const userData = response.data?.data;
                         onVerified('local-oauth-merge', {
-                          name: user.name,
-                          phone: user.phone,
+                          name: userData?.name || user.name,
+                          phone: userData?.phoneNumber || user.phone,
                           birthday: userData?.birthday || '',
                           gender: userData?.gender || '',
                           membershipId: userData?.membershipId || '',
                         });
                       } catch (error) {
-                        console.error('🔴 OAuth 계정 연동 실패:', error);
+                        console.error('🔴 OAuth 데이터 로드 실패:', error);
 
                         const axiosError = error as AxiosError<{ message?: string }>;
                         const errorMessage =
-                          axiosError.response?.data?.message || 'OAuth 계정 연동에 실패했습니다.';
+                          axiosError.response?.data?.message || 'OAuth 데이터 로드에 실패했습니다.';
                         showToast(errorMessage, 'error');
 
                         // 연동 실패 시 일반 신규 회원가입으로 fallback
@@ -460,7 +463,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                         gender: user.gender,
                         membershipId: user.membershipId,
                       });
-                    }
+                    },
+                    true // local 신규 + OAuth 계정 통합
                   )
                 );
                 break;

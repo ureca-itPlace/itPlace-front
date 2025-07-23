@@ -14,7 +14,7 @@ type Props = {
   onGoToLogin: () => void;
   onAuthComplete: (data: { name: string; phone: string }) => void;
   onVerified: (
-    verifiedType: 'new' | 'uplus' | 'local' | 'oauth' | 'oauth-new',
+    verifiedType: 'new' | 'uplus' | 'local' | 'oauth' | 'oauth-new' | 'local-oauth-merge',
     user: {
       name: string;
       phone: string;
@@ -28,15 +28,6 @@ type Props = {
   nameFromPhoneAuth: string;
   phoneFromPhoneAuth: string;
   showTab?: boolean;
-  title?: string;
-};
-
-type VerifiedUserData = {
-  name: string;
-  phone: string;
-  birthday: string;
-  gender: string;
-  membershipId: string;
   title?: string;
 };
 
@@ -58,22 +49,9 @@ const PhoneAuthForm = ({
   const [gender, setGender] = useState('');
   const [membershipId, setMembershipId] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verifiedType, setVerifiedType] = useState<'new' | 'uplus' | 'local-oauth-merge'>('new');
 
   const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
-
-  const handleVerified = ({ name, phone, birthday, gender, membershipId }: VerifiedUserData) => {
-    setName(name);
-    setPhone(phone);
-    setBirthday(birthday);
-    setGender(gender);
-    setMembershipId(membershipId);
-
-    if (mode === 'find') {
-      onVerified('new', { name, phone, birthday, gender, membershipId });
-    } else {
-      onVerified('uplus', { name, phone, birthday, gender, membershipId });
-    }
-  };
 
   const handleNext = async () => {
     if (!isReadyToValidate) return;
@@ -118,16 +96,23 @@ const PhoneAuthForm = ({
       <VerificationCodeForm
         mode={mode}
         onGoToLogin={onGoToLogin}
-        onVerified={(verifiedType, user) => {
-          console.log('🟡 PhoneAuthForm: onVerified received:', { verifiedType, user });
+        onVerified={(receivedVerifiedType, user) => {
+          console.log('🟡 PhoneAuthForm: onVerified received:', { receivedVerifiedType, user });
           setName(user.name);
           setPhone(user.phone);
           setBirthday(user.birthday);
           setGender(user.gender);
           setMembershipId(user.membershipId);
           
+          // verifiedType 상태 업데이트
+          if (receivedVerifiedType === 'local-oauth-merge' || receivedVerifiedType === 'uplus') {
+            setVerifiedType(receivedVerifiedType);
+          } else {
+            setVerifiedType('new');
+          }
+
           // Pass the correct parameters to parent
-          onVerified(verifiedType, user);
+          onVerified(receivedVerifiedType, user);
         }}
         name={nameFromPhoneAuth}
         phone={phoneFromPhoneAuth}
@@ -144,6 +129,7 @@ const PhoneAuthForm = ({
         genderFromPhoneAuth={gender}
         membershipIdFromPhoneAuth={membershipId}
         onGoToLogin={onGoToLogin}
+        verifiedType={verifiedType}
         onNext={({ birthday, gender, membershipId }) => {
           setBirthday(birthday);
           setGender(gender);
@@ -163,6 +149,7 @@ const PhoneAuthForm = ({
         birthday={birthday}
         gender={gender}
         membershipId={membershipId}
+        verifiedType={verifiedType}
       />
     );
   }
