@@ -33,7 +33,7 @@ type Props = {
   mode: 'signup' | 'find';
   onGoToLogin: () => void;
   onVerified: (
-    verifiedType: 'new' | 'uplus' | 'local' | 'oauth' | 'oauth-new',
+    verifiedType: 'new' | 'uplus' | 'local' | 'oauth' | 'oauth-new' | 'local-oauth-merge',
     user: {
       name: string;
       phone: string;
@@ -53,7 +53,9 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
   const [isVerified, setIsVerified] = useState(false);
 
   // 인증 성공 후 사용자 상태 저장
-  const verifiedTypeRef = useRef<'local' | 'oauth' | 'uplus' | 'new' | 'oauth-new' | null>(null);
+  const verifiedTypeRef = useRef<
+    'local' | 'oauth' | 'uplus' | 'new' | 'oauth-new' | 'local-oauth-merge' | null
+  >(null);
   const userInfoRef = useRef<{
     name: string;
     phone: string;
@@ -179,6 +181,9 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
         } else {
           verifiedTypeRef.current = 'oauth-new'; // 케이스 7: 카톡신규 → 바로 OAuthIntegration
         }
+      } else if (userStatus === 'NEW_USER' && isLocalUser === true && !isOAuthFlow) {
+        // local 신규 가입인데 OAuth 계정이 있는 경우 → 통합 모달
+        verifiedTypeRef.current = 'local-oauth-merge';
       } else if (
         userStatus === 'NEW_USER' &&
         (uplusDataExists === true || uplusDataExists === 'true')
@@ -404,6 +409,60 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                   gender: user.gender,
                   membershipId: user.membershipId,
                 });
+                break;
+
+              case 'local-oauth-merge':
+                console.log('🟢 local-oauth-merge 케이스 실행');
+                setModal(
+                  modalPresets.mergeAccount(
+                    async () => {
+                      // "예" 선택 시: OAuth API에서 정보 받아와서 회원가입 폼으로
+                      closeModal();
+                      try {
+                        console.log('🟡 OAuth 계정 연동 API 호출 중...');
+                        const response = await oauthAccountLink(phone);
+
+                        console.log('🟢 OAuth 계정 연동 성공:', response.data);
+
+                        const userData = response.data?.data;
+                        onVerified('local-oauth-merge', {
+                          name: user.name,
+                          phone: user.phone,
+                          birthday: userData?.birthday || '',
+                          gender: userData?.gender || '',
+                          membershipId: userData?.membershipId || '',
+                        });
+                      } catch (error) {
+                        console.error('🔴 OAuth 계정 연동 실패:', error);
+
+                        const axiosError = error as AxiosError<{ message?: string }>;
+                        const errorMessage =
+                          axiosError.response?.data?.message || 'OAuth 계정 연동에 실패했습니다.';
+                        showToast(errorMessage, 'error');
+
+                        // 연동 실패 시 일반 신규 회원가입으로 fallback
+                        onVerified('new', {
+                          name: user.name,
+                          phone: user.phone,
+                          birthday: user.birthday,
+                          gender: user.gender,
+                          membershipId: user.membershipId,
+                        });
+                      }
+                    },
+                    () => {
+                      // "아니요" 선택 시: 일반 신규 회원가입
+                      closeModal();
+                      onVerified('new', {
+                        name: user.name,
+                        phone: user.phone,
+                        birthday: user.birthday,
+                        gender: user.gender,
+                        membershipId: user.membershipId,
+                      });
+                    }
+                  )
+                );
                 break;
 
               case 'new':
