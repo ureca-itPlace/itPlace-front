@@ -123,7 +123,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
       default:
         return {
           message: '근처 제휴처만 안내해드릴게요 !',
-          highlightText: '근처 제휴처',
+          highlightText: '근처 제휴처만만',
         };
     }
   };
@@ -192,7 +192,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               </div>
 
               {/* 즐겨찾기 스토어 리스트 */}
-              <div className="flex-1 overflow-y-auto w-[370px]">
+              <div
+                className="-mx-5 overflow-y-auto overflow-x-hidden"
+                style={{ height: 'calc(100vh - 360px)' }}
+              >
                 <FavoriteStoreList
                   favorites={favorites}
                   onItemClick={handleFavoriteClick}
