@@ -4,8 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useState, useEffect, lazy } from 'react';
 
-import LoadLanding from '../features/landingPage/components/common/LoadLanding';
-import IntroSection from '../features/landingPage/components/sections/IntroSection';
+import LoadLanding from '../features/landingPage/components/LoadLanding';
 const EarthSection = lazy(() => import('../features/landingPage/components/sections/EarthSection'));
 const MapSection = lazy(() => import('../features/landingPage/components/sections/MapSection'));
 const FeatureSection = lazy(
@@ -20,13 +19,14 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 
 const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [introEnded, setIntroEnded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
 
   // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
-    setIsLoading(false);
-    console.log('로딩 끄읕');
+    // 4초 후 로딩 완료
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 4000);
   }, []);
 
   // 새로 고침 시 최상단으로 이동
@@ -54,18 +54,12 @@ const LandingPage = () => {
 
   return (
     <div className="relative h-full w-full overflow-x-hidden bg-white">
-      {introEnded ? (
-        <>
-          <EarthSection />
-          <MapSection />
-          <FeatureSection />
-          <VideoSection setVideoEnded={setVideoEnded} />
-          {/* 비디오가 끝났을 때만 표시 */}
-          {videoEnded && <StartCTASection />}
-        </>
-      ) : (
-        <IntroSection onComplete={() => setIntroEnded(true)} />
-      )}
+      <EarthSection />
+      <MapSection />
+      <FeatureSection />
+      <VideoSection setVideoEnded={setVideoEnded} />
+      {/* 비디오가 끝났을 때만 표시 */}
+      {videoEnded && <StartCTASection />}
     </div>
   );
 };
