@@ -12,6 +12,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { RiResetRightFill } from 'react-icons/ri';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 interface HistoryItem {
   image: string;
@@ -46,6 +47,7 @@ export default function MyHistoryPage() {
     if (!membershipGrade) return; // 멤버십 없으면 호출 X
 
     const fetchHistory = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/api/v1/membership-history', {
           params: {
@@ -73,6 +75,8 @@ export default function MyHistoryPage() {
         setHistory([]);
         setCurrentPage(0);
         setTotalElements(0);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -84,6 +88,7 @@ export default function MyHistoryPage() {
     if (!membershipGrade) return;
 
     const fetchSummary = async () => {
+      setLoading(true);
       try {
         const res = await api.get('/api/v1/membership-history/summary');
         const data = res.data?.data;
@@ -91,6 +96,8 @@ export default function MyHistoryPage() {
       } catch (err) {
         console.error('멤버십 요약 API 오류:', err);
         setTotalAmount(0);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -149,7 +156,12 @@ export default function MyHistoryPage() {
 
           {/* 📋 혜택 사용 이력 리스트 */}
           <div className="flex-grow">
-            {membershipGrade == null ? (
+            {loading ? (
+              // 로딩 중
+              <div className="flex justify-center items-center h-full">
+                <LoadingSpinner />
+              </div>
+            ) : membershipGrade == null ? (
               <div className="mt-28">
                 <NoResult
                   message1="앗! 멤버십 등급이 없어 결과를 조회할 수 없어요"
@@ -217,25 +229,32 @@ export default function MyHistoryPage() {
       }
       aside={
         <FadeWrapper changeKey={totalAmount.toLocaleString()}>
-          <div className="text-center">
-            <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
-            <div className="flex flex-col items-center justify-center mt-6">
-              <img
-                src="/images/myPage/icon-money.webp"
-                alt="혜택 사용 이력 아이콘"
-                className="w-[250px] h-auto"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = '/images/myPage/icon-money.png';
-                }}
-              />
-              <p className="text-[36px] font-semibold text-grey05 pt-10">
-                <span className="text-orange04">{totalAmount.toLocaleString()}</span>
-                원 <br /> 할인 받았어요!
-              </p>
+          {loading ? (
+            // 로딩 중
+            <div className="flex justify-center items-center mt-20 h-full">
+              <LoadingSpinner />
             </div>
-          </div>
+          ) : (
+            <div className="text-center">
+              <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
+              <div className="flex flex-col items-center justify-center mt-6">
+                <img
+                  src="/images/myPage/icon-money.webp"
+                  alt="혜택 사용 이력 아이콘"
+                  className="w-[250px] h-auto"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = '/images/myPage/icon-money.png';
+                  }}
+                />
+                <p className="text-[36px] font-semibold text-grey05 pt-10">
+                  <span className="text-orange04">{totalAmount.toLocaleString()}</span>
+                  원 <br /> 할인 받았어요!
+                </p>
+              </div>
+            </div>
+          )}
         </FadeWrapper>
       }
       bottomImage="/images/myPage/bunny-history.webp"
