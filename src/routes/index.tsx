@@ -1,6 +1,6 @@
 // src/routes/index.tsx
 import { createBrowserRouter } from 'react-router-dom';
-import DefaultLayout from '../layouts/DefaultLayout';
+import ResponsiveLayout from '../layouts/ResponsiveLayout';
 import LandingPage from '../pages/LandingPage';
 import MainPage from '../pages/MainPage';
 import MyPageLayout from '../layouts/MyPageLayout';
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> }, // 기본 라우터
   { path: '/oauth/callback/kakao', element: <OAuthRedirectHandler /> }, // 카카오 콜백 (독립 라우트)
   {
-    element: <DefaultLayout />,
+    element: <ResponsiveLayout />, // DefaultLayout 대신 ResponsiveLayout 사용
     children: [
       { path: '/', element: <LandingPage /> }, // 기본 라우터
       {

@@ -39,11 +39,14 @@ const convertToRankingItem = (apiData: PartnerSearchRankingItem[]): RankingItem[
   });
 };
 
-const SimpleRanking: React.FC = () => {
+interface SimpleRankingProps {
+  className?: string;
+}
+
+const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
   const [data, setData] = useState<RankingItem[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0); // 모바일 슬라이드용
   const title = '지금 많이 검색되고 있어요 !';
-  const width = 555;
-  const height = 250;
 
   useEffect(() => {
     const fetchRankingData = async () => {
@@ -62,10 +65,27 @@ const SimpleRanking: React.FC = () => {
 
     fetchRankingData();
   }, []);
+
+  // 모바일에서만 슬라이드(롤링) 동작
+  useEffect(() => {
+    if (data.length <= 1) return;
+    // matchMedia로 모바일(max-md) 여부 체크
+    const mq = window.matchMedia('(max-width: 768px)');
+    if (!mq.matches) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % data.length);
+    }, 2500); // 2.5초마다 변경
+    return () => clearInterval(interval);
+  }, [data]);
+
   return (
-    <div className="bg-orange01 rounded-[18px] drop-shadow-basic p-6" style={{ width, height }}>
-      <h3 className="text-title-3 text-black mb-6">{title}</h3>
-      <div className="space-y-6">
+    <div
+      className={`bg-orange01 rounded-[18px] drop-shadow-basic p-6 max-md:pt-4 w-[555px] h-[250px] max-md:w-[100%] max-md:h-[100px] ${className}`}
+    >
+      {/* PC: 전체 리스트, 모바일: 슬라이드 */}
+      <h3 className="text-title-3 text-black mb-6 max-md:text-title-6 max-md:mb-4">{title}</h3>
+      {/* PC (md 이상) */}
+      <div className="space-y-6 max-md:hidden">
         {data.map((item, index) => (
           <div key={index} className="flex items-center justify-between ">
             <div className="flex items-center gap-4">
@@ -98,6 +118,45 @@ const SimpleRanking: React.FC = () => {
             </div>
           </div>
         ))}
+      </div>
+      {/* 모바일 (md 이하): 슬라이드로 1개씩 */}
+      <div className="hidden max-md:block">
+        {data.length > 0 && (
+          <div className="flex items-center justify-between ">
+            <div className="flex items-center gap-4">
+              <span className="text-title-8 text-orange04">{currentIndex + 1}</span>
+              <span className="text-body-2 text-black">{data[currentIndex].partnerName}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span
+                className={`text-body-2  w-4 text-center transition-all duration-200 ${
+                  data[currentIndex].trend === 'up'
+                    ? 'text-orange04'
+                    : data[currentIndex].trend === 'down'
+                      ? 'text-grey03'
+                      : 'text-grey03'
+                }`}
+              >
+                {data[currentIndex].trend === 'up'
+                  ? '▲'
+                  : data[currentIndex].trend === 'down'
+                    ? '▼'
+                    : '-'}
+              </span>
+              <span
+                className={`text-body-2  w-8 text-right  transition-all duration-200 ${
+                  data[currentIndex].trend === 'up'
+                    ? 'text-orange04'
+                    : data[currentIndex].trend === 'down'
+                      ? 'text-grey03'
+                      : 'text-grey03'
+                }`}
+              >
+                {data[currentIndex].rankChange ? Math.abs(data[currentIndex].rankChange) : '-'}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

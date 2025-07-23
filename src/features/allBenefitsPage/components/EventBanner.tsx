@@ -7,10 +7,7 @@ const images = ['/images/allBenefits/event1.png', '/images/allBenefits/event2.pn
 
 const EventBanner: React.FC = () => {
   return (
-    <div
-      className="bg-pink01 rounded-[18px] drop-shadow-basic flex items-center justify-center "
-      style={{ width: 1200, height: 250 }}
-    >
+    <div className="rounded-[18px] drop-shadow-basic flex items-center justify-center w-[1200px] h-[250px] max-md:w-full max-md:h-[100px] max-md:rounded-none max-md:drop-shadow-none">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={30}
@@ -24,8 +21,7 @@ const EventBanner: React.FC = () => {
           delay: 5000,
           disableOnInteraction: false,
         }}
-        style={{ width: 1200, height: 250 }}
-        className="rounded-[12px]"
+        className="rounded-[12px] w-full h-full max-md:rounded-none"
       >
         {images.map((src, idx) => (
           <SwiperSlide key={idx}>
@@ -35,20 +31,19 @@ const EventBanner: React.FC = () => {
               }
               target="_blank"
               rel="noopener noreferrer"
-              style={{ display: 'block', width: '100%', height: '100%' }}
+              className="block w-full h-full"
             >
               <img
                 src={src}
                 alt={`benefit-${idx + 1}`}
-                className="object-cover rounded-[12px]"
-                style={{ width: 1200, height: 250 }}
+                className="object-fill rounded-[12px] w-full h-full max-md:rounded-none"
               />
             </a>
           </SwiperSlide>
         ))}
 
         {/* 페이지네이션 */}
-        <div className="swiper-pagination !bottom-2"></div>
+        <div className="swiper-pagination !bottom-2 max-md:hidden"></div>
       </Swiper>
     </div>
   );
