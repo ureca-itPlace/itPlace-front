@@ -29,7 +29,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       const benefitIdNumber = parseInt(benefitId);
 
       if (isFavorite) {
-        const response = await removeFavorite(benefitId);
+        const response = await removeFavorite([benefitIdNumber]);
         showToast(response.message, 'success');
         onFavoriteChange(false);
       } else {
