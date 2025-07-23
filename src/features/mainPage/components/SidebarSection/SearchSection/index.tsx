@@ -72,7 +72,7 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
             onChange={handleSearchChange}
             onClear={handleSearchClear}
             backgroundColor="bg-grey01"
-            width={330}
+            className="w-[330px] h-[50px]"
             onKeyDown={handleKeyDown}
           />
         </form>
