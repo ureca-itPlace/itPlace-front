@@ -29,7 +29,6 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
         end: '+=800',
         scrub: 0.5,
         pin: true,
-        markers: true,
       },
     });
 

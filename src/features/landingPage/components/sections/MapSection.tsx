@@ -3,10 +3,15 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import BlackSquare from '../common/BlackSquare';
 import { useGSAP } from '@gsap/react';
+import Cloud from '../common/Cloud';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MapSection = () => {
+  const cloud1Ref = useRef<HTMLImageElement>(null);
+  const cloud2Ref = useRef<HTMLImageElement>(null);
+  const cloud3Ref = useRef<HTMLImageElement>(null);
+
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const blackSquareRef = useRef<HTMLDivElement>(null);
   const firstMapImageRef = useRef<HTMLImageElement>(null);
@@ -189,8 +194,11 @@ const MapSection = () => {
   return (
     <section
       ref={mapSectionRef}
-      className="relative w-full h-screen flex justify-center items-center bg-white overflow-hidden"
+      className="relative w-full h-screen flex justify-center items-center overflow-hidden border border-purple-700"
     >
+      <Cloud ref={cloud1Ref} className="left-[-60%] top-[-20%]" />
+      <Cloud ref={cloud2Ref} className="right-[-10%] top-[30%]" />
+      <Cloud ref={cloud3Ref} className="left-[-10%] top-[40%]" />
       <img
         ref={firstMapImageRef}
         src="/images/landing/map-1.webp"

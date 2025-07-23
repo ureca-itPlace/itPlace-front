@@ -23,7 +23,7 @@ const LoadingScreen = () => {
   return (
     <div
       ref={loadingContainerRef}
-      className="custom-font fixed top-0 left-0 w-full h-screen bg-black flex flex-col justify-center items-center z-[999] opacity-100 transition-opacity"
+      className="custom-font fixed top-0 left-0 w-full h-screen bg-black flex flex-col justify-center items-center z-[999]"
     >
       <h1 className="text-title-1 m-0 text-white">IT:PLACE</h1>
       {progress > 0 && <p className="text-body-0 my-4 text-white">{Math.round(progress)}%</p>}

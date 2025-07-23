@@ -2,7 +2,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { useState, useRef, useEffect, lazy } from 'react';
+import { useState, useEffect, lazy } from 'react';
 
 import LoadLanding from '../features/landingPage/components/common/LoadLanding';
 import IntroSection from '../features/landingPage/components/sections/IntroSection';
@@ -22,8 +22,6 @@ const LandingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [introEnded, setIntroEnded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
-
-  const mapSectionRef = useRef<HTMLDivElement>(null);
 
   // 컴포넌트 마운트 시 로딩 완료
   useEffect(() => {
@@ -55,11 +53,11 @@ const LandingPage = () => {
   }
 
   return (
-    <div className="relative overflow-x-hidden">
+    <div className="relative h-full w-full overflow-x-hidden bg-white">
       {introEnded ? (
         <>
           <EarthSection />
-          <MapSection ref={mapSectionRef} />
+          <MapSection />
           <FeatureSection />
           <VideoSection setVideoEnded={setVideoEnded} />
           {/* 비디오가 끝났을 때만 표시 */}
