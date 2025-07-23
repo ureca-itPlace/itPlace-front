@@ -24,6 +24,9 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
     useEffect(() => {
       if (debouncedSearchQuery.trim() && debouncedSearchQuery !== initialQuery) {
         onKeywordSearch?.(debouncedSearchQuery.trim());
+      } else if (!debouncedSearchQuery.trim() && initialQuery) {
+        // 검색어가 비어있고 이전에 검색어가 있었다면 전체 혜택 다시 로드
+        onKeywordSearch?.('');
       }
     }, [debouncedSearchQuery, onKeywordSearch, initialQuery]);
 

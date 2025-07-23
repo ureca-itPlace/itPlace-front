@@ -104,13 +104,11 @@ const MainPageLayout: React.FC = () => {
   // 키워드 검색 핸들러
   const handleKeywordSearch = useCallback(
     (keyword: string) => {
-      if (keyword.trim()) {
-        setSelectedPlatform(null); // 선택된 가맹점 초기화
-        setFilteredPlatforms([]); // 검색 결과 초기화
-        setSearchQuery(keyword); // 검색어 저장
-        setActiveTab('nearby'); // 주변 혜택 탭으로 전환
-        searchByKeyword(keyword, currentMapLevel);
-      }
+      setSelectedPlatform(null); // 선택된 가맹점 초기화
+      setFilteredPlatforms([]); // 검색 결과 초기화
+      setSearchQuery(keyword); // 검색어 저장 (빈 문자열도 포함)
+      setActiveTab('nearby'); // 주변 혜택 탭으로 전환
+      searchByKeyword(keyword, currentMapLevel);
     },
     [searchByKeyword, currentMapLevel]
   );

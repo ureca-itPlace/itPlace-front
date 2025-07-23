@@ -161,11 +161,30 @@ export const useStoreData = () => {
    */
   const searchByKeyword = useCallback(
     async (keyword: string, mapLevel: number) => {
-      if (!userCoords || !keyword.trim()) return;
+      if (!userCoords) return;
 
       const keywordSearch = async () => {
         // 맵 레벨에 따른 반경 계산
         const radius = getRadiusByMapLevel(mapLevel);
+
+        // 검색어가 비어있으면 전체 가맹점 조회
+        if (!keyword.trim()) {
+          const storeResponse =
+            selectedCategory && selectedCategory !== '전체'
+              ? await getStoreListByCategory({
+                  lat: userCoords.lat,
+                  lng: userCoords.lng,
+                  radiusMeters: radius,
+                  category: selectedCategory,
+                })
+              : await getStoreList({
+                  lat: userCoords.lat,
+                  lng: userCoords.lng,
+                  radiusMeters: radius,
+                });
+
+          return transformStoreDataToPlatforms(storeResponse.data, userCoords.lat, userCoords.lng);
+        }
 
         // 키워드 검색 API 호출
         const storeResponse = await searchStores({
@@ -181,7 +200,14 @@ export const useStoreData = () => {
 
       await execute(keywordSearch);
     },
-    [userCoords, selectedCategory, execute]
+    [
+      userCoords,
+      selectedCategory,
+      execute,
+      getStoreList,
+      getStoreListByCategory,
+      transformStoreDataToPlatforms,
+    ]
   );
 
   return {
