@@ -190,7 +190,7 @@ export default function MyHistoryPage() {
                       <img
                         src={item.image}
                         alt={item.benefitName}
-                        className="h-[70px] w-auto object-contain flex-shrink-0"
+                        className="h-[70px] w-auto object-contain flex-shrink-0 ml-3"
                       />
                       <span
                         className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block"
@@ -203,8 +203,8 @@ export default function MyHistoryPage() {
                       <span className="text-black text-title-5 font-semibold w-[120px] text-right">
                         {item.discountAmount.toLocaleString()}원
                       </span>
-                      <span className="text-grey05 text-body-1 px-4">
-                        {dayjs(item.usedAt).format('YYYY-MM-DD')}
+                      <span className="text-grey05 text-body-1 px-4 font-light">
+                        {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
                       </span>
                     </div>
                   </div>
