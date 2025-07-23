@@ -15,6 +15,7 @@ import api from '../apis/axiosInstance';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { logout } from '../store/authSlice';
+import { persistor } from '../store';
 import Modal from './Modal';
 import { showToast } from '../utils/toast';
 
@@ -40,6 +41,8 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
       await api.post('api/v1/auth/logout');
       // 상태 초기화
       dispatch(logout());
+      // redux-persist 초기화
+      persistor.purge();
       // 성공 토스트 표시
       showToast('로그아웃 되었습니다.', 'success');
       // 페이지 이동
