@@ -1,7 +1,9 @@
 import { useRef, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 
 export const AuthTransition = () => {
+  const navigate = useNavigate();
   const formCardRef = useRef<HTMLDivElement>(null);
   const sideCardRef = useRef<HTMLDivElement>(null);
 
@@ -55,6 +57,9 @@ export const AuthTransition = () => {
 
   // 왼쪽으로 슬라이드 → 로그인 복귀용
   const goToLogin = () => {
+    // URL 파라미터 정리
+    navigate('/login', { replace: true });
+    
     const tl = gsap.timeline();
 
     tl.to(formCardRef.current, {
@@ -84,7 +89,10 @@ export const AuthTransition = () => {
   const goToPhoneAuth = () => animateToRight('phoneAuth');
 
   // 인증번호 입력 단계 (같은 카드 내 내부 전환)
-  const goToVerification = () => setFormStep('verification');
+  const goToVerification = () => {
+    console.log('🟡 AuthTransition: formStep을 verification으로 변경');
+    setFormStep('verification');
+  };
 
   // 회원가입 입력 단계 (같은 카드 내 내부 전환)
   const goToSignUp = () => setFormStep('signUp');
