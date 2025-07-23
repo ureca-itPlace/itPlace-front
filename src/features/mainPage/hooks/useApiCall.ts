@@ -13,7 +13,7 @@ interface UseApiCallReturn<T> {
   clearError: () => void;
 }
 
-export const useApiCall = <T = any>(initialData: T | null = null): UseApiCallReturn<T> => {
+export const useApiCall = <T = unknown>(initialData: T | null = null): UseApiCallReturn<T> => {
   const [data, setData] = useState<T | null>(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

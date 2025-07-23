@@ -105,7 +105,7 @@ export const useStoreData = () => {
     };
 
     execute(reloadByCategory);
-  }, [selectedCategory]); // userCoords 의존성 제거 - 카테고리 변경 시에만 실행
+  }, [selectedCategory, execute, loadStoresByCategory, currentMapLevelInHook]);
 
   /**
    * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
@@ -157,12 +157,10 @@ export const useStoreData = () => {
 
   /**
    * 키워드 검색
-   * 현재 위치와 맵레벨을 기준으로 검색
+   * 지정된 좌표와 맵레벨을 기준으로 검색
    */
   const searchByKeyword = useCallback(
-    async (keyword: string, mapLevel: number) => {
-      if (!userCoords) return;
-
+    async (keyword: string, mapLevel: number, searchLat: number, searchLng: number) => {
       const keywordSearch = async () => {
         // 맵 레벨에 따른 반경 계산
         const radius = getRadiusByMapLevel(mapLevel);
@@ -172,42 +170,37 @@ export const useStoreData = () => {
           const storeResponse =
             selectedCategory && selectedCategory !== '전체'
               ? await getStoreListByCategory({
-                  lat: userCoords.lat,
-                  lng: userCoords.lng,
+                  lat: searchLat,
+                  lng: searchLng,
                   radiusMeters: radius,
                   category: selectedCategory,
                 })
               : await getStoreList({
-                  lat: userCoords.lat,
-                  lng: userCoords.lng,
+                  lat: searchLat,
+                  lng: searchLng,
                   radiusMeters: radius,
                 });
 
-          return transformStoreDataToPlatforms(storeResponse.data, userCoords.lat, userCoords.lng);
+          return transformStoreDataToPlatforms(storeResponse.data, searchLat, searchLng);
         }
 
         // 키워드 검색 API 호출
         const storeResponse = await searchStores({
-          lat: userCoords.lat,
-          lng: userCoords.lng,
+          lat: searchLat,
+          lng: searchLng,
           radiusMeters: radius,
           category: selectedCategory || undefined,
           keyword: keyword.trim(),
         });
 
-        return transformStoreDataToPlatforms(storeResponse.data, userCoords.lat, userCoords.lng);
+        return transformStoreDataToPlatforms(storeResponse.data, searchLat, searchLng);
       };
 
       await execute(keywordSearch);
     },
-    [
-      userCoords,
-      selectedCategory,
-      execute,
-      getStoreList,
-      getStoreListByCategory,
-      transformStoreDataToPlatforms,
-    ]
+    // userCoords 의존성 제거 - 지도 드래그 시 재검색 방지
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [selectedCategory, execute]
   );
 
   return {
