@@ -22,9 +22,11 @@ const MainPageLayout: React.FC = () => {
   const [speechBubble, setSpeechBubble] = useState<{
     isVisible: boolean;
     message: string;
+    partnerName: string;
   }>({
     isVisible: false,
     message: '',
+    partnerName: '',
   });
 
   // 지도 관련 상태
@@ -125,6 +127,7 @@ const MainPageLayout: React.FC = () => {
         setSpeechBubble({
           isVisible: true,
           message: reason,
+          partnerName: keyword,
         });
       }
 
@@ -143,6 +146,7 @@ const MainPageLayout: React.FC = () => {
     setSpeechBubble({
       isVisible: false,
       message: '',
+      partnerName: '',
     });
   }, []);
 
@@ -214,13 +218,14 @@ const MainPageLayout: React.FC = () => {
       <div
         className="absolute z-20"
         style={{
-          left: '400px',
-          bottom: '160px', // 캐릭터 머리 위쪽
+          left: '460px',
+          bottom: '200px', // 캐릭터 머리 위쪽
           transform: 'translateX(-20%)',
         }}
       >
         <SpeechBubble
           message={speechBubble.message}
+          partnerName={speechBubble.partnerName}
           isVisible={speechBubble.isVisible}
           onClose={handleSpeechBubbleClose}
         />
