@@ -50,7 +50,7 @@ const MainPageLayout: React.FC = () => {
       const categoryValue = categoryId === '전체' ? null : categoryId;
       filterByCategory(categoryValue, currentMapLevel);
     },
-    [filterByCategory]
+    [filterByCategory, currentMapLevel]
   );
 
   // 플랫폼 선택 핸들러
@@ -109,7 +109,7 @@ const MainPageLayout: React.FC = () => {
       setFilteredPlatforms([]); // 검색 결과 초기화
       setSearchQuery(keyword); // 검색어 저장 (빈 문자열도 포함)
       setActiveTab('nearby'); // 주변 혜택 탭으로 전환
-      
+
       // 현재 지도 중심이 있으면 사용, 없으면 사용자 초기 위치 사용
       if (currentMapCenter) {
         searchByKeyword(keyword, currentMapLevel, currentMapCenter.lat, currentMapCenter.lng);

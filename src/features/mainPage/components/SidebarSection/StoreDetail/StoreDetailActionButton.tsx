@@ -5,7 +5,7 @@ import { addFavorite, removeFavorite } from '../../../api/favoriteApi';
 import { showToast } from '../../../../../utils/toast';
 
 interface StoreDetailActionButtonProps {
-  benefitId: string;
+  benefitId?: string;
   isFavorite: boolean;
   onFavoriteChange: (newIsFavorite: boolean) => void;
 }
@@ -21,6 +21,11 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   const handleFavoriteToggle = async () => {
     if (!isLoggedIn) {
       showToast('로그인이 필요한 서비스입니다.', 'error');
+      return;
+    }
+
+    if (!benefitId) {
+      showToast('혜택 정보가 없어 관심 혜택으로 추가할 수 없습니다.', 'error');
       return;
     }
 
@@ -75,7 +80,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     const baseClass =
       'w-full py-3 mt-3 text-body-2-bold rounded-[10px] transition-colors duration-200';
 
-    if (!isLoggedIn) {
+    if (!isLoggedIn || !benefitId) {
       return `${baseClass} bg-grey03 text-grey04 cursor-not-allowed`;
     }
 
@@ -87,7 +92,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     <button
       className={getButtonClass()}
       onClick={handleFavoriteToggle}
-      disabled={!isLoggedIn || isLoading}
+      disabled={!isLoggedIn || !benefitId || isLoading}
     >
       {getButtonText()}
     </button>
