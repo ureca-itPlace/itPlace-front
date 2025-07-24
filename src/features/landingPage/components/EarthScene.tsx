@@ -20,7 +20,7 @@ const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
       <LoadingScreen />
       <div
         ref={canvasWrapperRef}
-        className="relative w-full h-screen max-sm:h-[100dvh] overflow-hidden"
+        className="relative w-full h-screen max-sm:h-[100dvh] overflow-hidden flex justify-center items-center"
       >
         <Cloud className="right-[20%] top-[-20%]" ref={cloud1Ref} />
         <Canvas camera={{ position: [0, 0, 5], fov: 50 }} gl={{ antialias: false }}>
