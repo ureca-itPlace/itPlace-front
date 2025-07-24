@@ -33,7 +33,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
       <div className="flex flex-col items-center justify-center py-12">
         <NoResult
           message1="로그인이 필요해요!"
-          message2="관심 혜택은 로그인 후 이용 가능해요!"
+          message2="로그인 후 관심 혜택을 이용해 보세요"
           buttonText="로그인하러 가기"
           buttonRoute="/login"
           isLoginRequired={true}
