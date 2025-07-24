@@ -19,7 +19,7 @@ export default function EditControls({
   return (
     <div className="flex items-center justify-end gap-3 mr-1 mb-1">
       {isEditing ? (
-        <label className="flex items-center text-grey05 text-body-0-bold">
+        <label className="flex items-center text-grey05 text-body-0-bold max-xl:text-body-2-bold">
           <input
             type="checkbox"
             className="mr-1 w-4 h-4 accent-purple04 appearance-none rounded-[4px] border border-grey03 checked:bg-[url('/images/myPage/icon-check.png')] bg-no-repeat bg-center checked:border-purple04"
@@ -50,7 +50,7 @@ export default function EditControls({
             setIsEditing(true);
             setSelectedItems([]);
           }}
-          className="text-grey05 text-body-0-bold"
+          className="text-grey05 text-body-0-bold max-xl:text-body-2-bold"
         >
           편집
         </button>

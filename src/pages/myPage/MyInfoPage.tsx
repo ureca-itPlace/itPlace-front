@@ -89,11 +89,13 @@ export default function MyInfoPage() {
   }
 
   return (
-    <div className="flex flex-row gap-[24px] w-full h-full">
+    <div className="flex flex-row gap-[28px] w-full h-full">
       <MyPageContentLayout
         main={
           <div>
-            <h1 className="text-title-2 text-black mb-8">회원 정보</h1>
+            <h1 className="text-title-2 text-black mb-8 max-xl:text-title-4 max-xl:font-semibold max-xl:mb-4">
+              회원 정보
+            </h1>
             <UserInfoForm
               name={user.name}
               gender={user.gender}

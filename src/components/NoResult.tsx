@@ -46,16 +46,16 @@ const NoResult: React.FC<NoResultProps> = ({
     <div className="flex flex-col items-center justify-center p-6 text-center">
       <picture>
         <source srcSet={imageWebp} type="image/webp" />
-        <img src={imagePng} alt="no-result" className="w-36 h-auto mb-4" />
+        <img src={imagePng} alt="no-result" className="w-36 h-auto mb-4 max-xl:w-28" />
       </picture>
 
-      <h2 className={`${message1FontSize} text-title-4 text-grey05 mb-2`}>{message1}</h2>
-      <p className={`${message2FontSize} text-body-1 text-grey04 mb-4`}>{message2}</p>
+      <h2 className={`${message1FontSize}  text-grey05 mb-2`}>{message1}</h2>
+      <p className={`${message2FontSize}  text-grey04 mb-4`}>{message2}</p>
 
       {buttonText && buttonRoute && (
         <button
           onClick={handleClick}
-          className="px-9 py-2 rounded-full bg-purple04 text-white text-body-3  hover:bg-purple05"
+          className="px-9 py-2 rounded-full bg-purple04 text-white text-body-3  hover:bg-purple05 max-xl:text-body-4 max-md:text-body-5"
         >
           {buttonText}
         </button>

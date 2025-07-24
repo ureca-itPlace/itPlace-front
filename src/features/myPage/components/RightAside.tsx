@@ -16,7 +16,7 @@ export default function RightAside({
   const [imgSrc, setImgSrc] = useState(bottomImage); // 현재 이미지 소스
 
   return (
-    <aside className="w-[476px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col">
+    <aside className="w-[476px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:w-[390px] max-xl:pt-[56px]">
       {/* 위쪽 내용 */}
       <div className="flex-1">{children}</div>
 
@@ -26,7 +26,7 @@ export default function RightAside({
           <img
             src={imgSrc}
             alt={bottomImageAlt ?? '하단 이미지'}
-            className="w-[310px] h-auto object-contain"
+            className="w-[310px] h-auto object-contain max-xl:w-[230px]"
             onError={() => {
               // webp 로드 실패 시 fallback으로 교체
               if (bottomImageFallback) {
