@@ -142,28 +142,32 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
 
       <div className="space-y-3 px-5">
         {!isLoggedIn ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center">
             <NoResult
               message1="로그인이 필요합니다!"
               message2="AI 추천을 받으려면 로그인해 주세요"
+              message1FontSize="text-title-5"
+              message2FontSize="text-body-2"
               isLoginRequired={true}
               buttonText="로그인하러 가기"
               buttonRoute="/login"
             />
           </div>
         ) : isLoading ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center">
             <LoadingSpinner />
           </div>
         ) : error ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center">
             <NoResult message1={error} message2={getErrorSummary(error)} isLoginRequired={false} />
           </div>
         ) : !stores || stores.length === 0 ? (
-          <div className="flex items-center justify-center py-12">
+          <div className="flex items-center justify-center">
             <NoResult
               message1="추천 결과가 없어요!"
-              message2="ItPlace 이용 정보가 부족해요요"
+              message2="ItPlace 이용 정보가 부족해요"
+              message1FontSize="text-title-5"
+              message2FontSize="text-body-2"
               isLoginRequired={false}
             />
           </div>

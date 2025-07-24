@@ -34,6 +34,8 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
         <NoResult
           message1="로그인이 필요해요!"
           message2="로그인 후 관심 혜택을 이용해 보세요"
+          message1FontSize="text-title-5"
+          message2FontSize="text-body-2"
           buttonText="로그인하러 가기"
           buttonRoute="/login"
           isLoginRequired={true}
@@ -49,6 +51,8 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
         <NoResult
           message1="아직 관심 혜택이 없어요!"
           message2="마음에 드는 혜택을 담아보세요"
+          message1FontSize="text-title-5"
+          message2FontSize="text-body-2"
           isLoginRequired={false}
         />
       </div>

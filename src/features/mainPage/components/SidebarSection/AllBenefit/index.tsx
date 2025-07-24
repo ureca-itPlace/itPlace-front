@@ -41,6 +41,8 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
         <NoResult
           message1="오류가 발생했어요!"
           message2="잠시 후 다시 시도해 주세요"
+          message1FontSize="text-title-5"
+          message2FontSize="text-body-2"
           isLoginRequired={false}
         />
       </div>
@@ -58,6 +60,8 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
           <NoResult
             message1="검색 결과가 없어요!"
             message2="다른 키워드나 지역에서 검색해보세요!"
+            message1FontSize="text-title-5"
+            message2FontSize="text-body-2"
             isLoginRequired={false}
           />
         </div>
