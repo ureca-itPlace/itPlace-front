@@ -70,6 +70,9 @@ const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
       1.2
     );
 
+    // 1초 지연 후 지도 섹션으로 이동
+    tl.to({}, { duration: 1 });
+
     return () => {
       if (tl.scrollTrigger) tl.scrollTrigger.kill();
       tl.kill();

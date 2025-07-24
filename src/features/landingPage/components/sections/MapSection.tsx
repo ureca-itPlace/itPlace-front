@@ -49,16 +49,10 @@ const MapSection = () => {
       scrollTrigger: {
         trigger: mapSectionRef.current,
         start: 'top top',
-        end: '+=2800',
+        end: '+=2400',
         pin: true,
         scrub: 0.5,
         anticipatePin: 1,
-        markers: {
-          startColor: 'blue',
-          endColor: 'pink',
-          fontSize: '20px',
-          indent: 20,
-        },
       },
     });
 
