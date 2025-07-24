@@ -103,7 +103,7 @@ const PhoneAuthForm = ({
           setBirthday(user.birthday);
           setGender(user.gender);
           setMembershipId(user.membershipId);
-          
+
           // verifiedType 상태 업데이트
           if (receivedVerifiedType === 'local-oauth-merge' || receivedVerifiedType === 'uplus') {
             setVerifiedType(receivedVerifiedType);

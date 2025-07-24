@@ -45,6 +45,10 @@ const AuthLayout = () => {
   const [userData, setUserData] = useState({
     name: '',
     phone: '',
+    birthday: '',
+    gender: '',
+    membershipId: '',
+    verifiedType: '',
   });
 
   const [oauthUserData, setOAuthUserData] = useState({
@@ -207,7 +211,14 @@ const AuthLayout = () => {
                   onGoToLogin={goToLogin}
                   onAuthComplete={({ name, phone }) => {
                     console.log('🟡 AuthLayout: onAuthComplete 호출됨', { name, phone });
-                    setUserData({ name, phone });
+                    setUserData({
+                      name,
+                      phone,
+                      birthday: '',
+                      gender: '',
+                      membershipId: '',
+                      verifiedType: '',
+                    });
                     console.log('🟡 AuthLayout: goToVerification() 호출');
                     goToVerification();
                   }}
