@@ -19,6 +19,7 @@ export default function UserDeleteModal({
   return (
     <Modal
       isOpen={isOpen}
+      inputType="password"
       title="정말 탈퇴하시겠습니까?"
       message="탈퇴를 위해 현재 비밀번호를 입력해주세요."
       input
