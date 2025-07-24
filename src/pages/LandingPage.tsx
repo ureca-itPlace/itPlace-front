@@ -4,15 +4,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useState, useEffect, lazy } from 'react';
 
-const EarthSection = lazy(() => import('../features/landingPage/components/sections/EarthSection'));
-const MapSection = lazy(() => import('../features/landingPage/components/sections/MapSection'));
-const FeatureSection = lazy(
-  () => import('../features/landingPage/components/sections/FeatureSection')
-);
-const VideoSection = lazy(() => import('../features/landingPage/components/sections/VideoSection'));
-const StartCTASection = lazy(
-  () => import('../features/landingPage/components/sections/StartCTASection')
-);
+const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
+const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
+const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
+const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
+const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
 

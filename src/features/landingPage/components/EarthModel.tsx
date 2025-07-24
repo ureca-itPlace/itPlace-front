@@ -5,7 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { EarthModelProps } from '../types/landing.types';
-import { useMediaQuery } from 'react-responsive';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,8 +20,10 @@ const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
   const outerGlowRef = useRef<Mesh>(null);
   const auraRef = useRef<Mesh>(null);
 
-  const isMobile = useMediaQuery({ query: '(max-width: 640px)' });
-  const isTablet = useMediaQuery({ query: '(max-width: 1024px)' });
+  const { isMobile, isTablet } = useResponsive();
+
+  // 반응형을 고려한 지구 확대
+  const earthZoomIn = isMobile ? '2.5' : isTablet ? '2.8' : '3.7';
 
   useEffect(() => {
     if (groupRef.current) {
@@ -50,9 +52,9 @@ const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
     tl.to(
       groupRef.current.scale,
       {
-        x: 3.7,
-        y: 3.7,
-        z: 3.7,
+        x: earthZoomIn,
+        y: earthZoomIn,
+        z: earthZoomIn,
         duration: 3,
         ease: 'power1.out',
       },

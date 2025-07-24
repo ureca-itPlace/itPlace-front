@@ -2,7 +2,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useRef, useState } from 'react';
-import { featureData } from '../../data/featuresData.ts';
+import { featureData } from '../data/featuresData.ts';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -99,7 +99,7 @@ const FeatureSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen bg-[#000000] flex items-center justify-center overflow-hidden"
+      className="relative w-full h-[100dvh] bg-[#000000] flex items-center justify-center overflow-hidden"
     >
       <div className="w-full h-full flex items-center justify-center max-sm:flex-col">
         <nav ref={featureListRef}>

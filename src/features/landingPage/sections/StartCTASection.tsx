@@ -1,14 +1,14 @@
 import { useSelector } from 'react-redux';
-import Button from '../Button';
+import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '../../../../store';
+import { RootState } from '../../../store';
 
 const StartCTASection = () => {
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
+    <div className="relative w-full h-[100dvh] overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
       <div className="absolute left-[-10%] top-[5%] max-xl:hidden">
         <img
           src="/images/landing/cta-rabbit.webp"
