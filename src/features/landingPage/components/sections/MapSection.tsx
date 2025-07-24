@@ -55,7 +55,7 @@ const MapSection = () => {
       scrollTrigger: {
         trigger: mapSectionRef.current,
         start: 'top top',
-        end: '+=2400',
+        end: '+=2800',
         pin: true,
         scrub: 0.5,
         anticipatePin: 1,
@@ -95,22 +95,21 @@ const MapSection = () => {
       .to(
         firstMapImageRef.current,
         {
-          scale: 2,
-          x: 50,
+          scale: 1.5,
           opacity: 0,
-          ease: 'power2.in',
-          duration: 1.5,
+          ease: 'power2.out',
+          duration: 4,
         },
-        4.5
+        5
       )
       .to(
         firstMapImageRef.current,
         {
           filter: 'blur(15px)',
-          duration: 1,
+          duration: 0.7,
           ease: 'none',
         },
-        5.5
+        6.5
       );
 
     // 두 번째 이미지
@@ -120,29 +119,30 @@ const MapSection = () => {
         opacity: 1,
         filter: 'blur(0px)',
         ease: 'power2.out',
-        duration: 0.5,
+        duration: 1,
       },
-      6
+      6.5
     )
       .to(
         secondMapImageRef.current,
         {
           scale: 2,
-          x: 100,
+          x: 80,
           opacity: 0,
-          ease: 'power2.in',
-          duration: 1.5,
+          ease: 'power2.out',
+          duration: 4,
+          delay: 1,
         },
-        6.5
+        7.5
       )
       .to(
         secondMapImageRef.current,
         {
           filter: 'blur(15px)',
-          duration: 1,
+          duration: 0.7,
           ease: 'none',
         },
-        7.5
+        10
       );
 
     // 세 번째 이미지
@@ -152,29 +152,31 @@ const MapSection = () => {
         opacity: 1,
         filter: 'blur(0px)',
         ease: 'power2.out',
-        duration: 0.5,
+        duration: 1,
       },
-      8
+      10
     )
       .to(
         thirdMapImageRef.current,
         {
-          scale: 1.5,
-          y: 100,
+          scale: 2,
+          x: 400,
+          y: 50,
           opacity: 0,
-          ease: 'power2.in',
-          duration: 1.5,
+          ease: 'power2.out',
+          duration: 4,
+          delay: 1,
         },
-        8.5
+        11
       )
       .to(
         thirdMapImageRef.current,
         {
           filter: 'blur(15px)',
-          duration: 1,
+          duration: 0.7,
           ease: 'none',
         },
-        10
+        13.5
       );
 
     // 네 번째 이미지
@@ -184,9 +186,9 @@ const MapSection = () => {
         opacity: 1,
         filter: 'blur(0px)',
         ease: 'power2.out',
-        duration: 1,
+        duration: 3,
       },
-      10.5
+      14.5
     );
 
     // BlackSquare 이동 (맨 마지막)
@@ -194,10 +196,10 @@ const MapSection = () => {
       blackSquareRef.current,
       {
         x: '0%',
-        ease: 'power1.Out',
-        duration: 1.5,
+        ease: 'none',
+        duration: 4,
       },
-      12
+      17
     );
 
     tl.to({}, { duration: 1 });
