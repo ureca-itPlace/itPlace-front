@@ -11,7 +11,7 @@ type EarthSceneProps = {
 };
 
 const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
-  const backgroundTexture = useLoader(TextureLoader, '/images/landing/bg-earth.png');
+  const backgroundTexture = useLoader(TextureLoader, '/images/landing/earth-bg.webp');
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
   const cloud1Ref = useRef<HTMLImageElement>(null);
 

@@ -14,8 +14,8 @@ type EarthModelProps = {
 };
 
 const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelProps) => {
-  const earthTexture = useLoader(TextureLoader, '/images/landing/textures/earth-map.png');
-  const cloudsTexture = useLoader(TextureLoader, '/images/landing/textures/earth-cloud.png');
+  const earthTexture = useLoader(TextureLoader, '/images/landing/textures/earth-map.webp');
+  const cloudsTexture = useLoader(TextureLoader, '/images/landing/textures/earth-cloud.webp');
 
   const groupRef = useRef<Group>(null);
   const earthCloudRef = useRef<Mesh>(null);
