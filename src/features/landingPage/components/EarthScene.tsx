@@ -35,7 +35,7 @@ const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
               earthCloud1Ref={cloud1Ref}
             />
           </Suspense>
-          <OrbitControls enableZoom={false} enablePan={true} />
+          <OrbitControls enableZoom={false} enablePan={true} autoRotate autoRotateSpeed={0.5} />
         </Canvas>
       </div>
     </>
