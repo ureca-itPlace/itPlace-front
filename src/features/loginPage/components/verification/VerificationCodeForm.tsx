@@ -33,7 +33,14 @@ type Props = {
   mode: 'signup' | 'find';
   onGoToLogin: () => void;
   onVerified: (
-    verifiedType: 'new' | 'uplus' | 'local' | 'oauth' | 'oauth-new' | 'local-oauth-merge',
+    verifiedType:
+      | 'new'
+      | 'uplus'
+      | 'local'
+      | 'oauth'
+      | 'oauth-new'
+      | 'oauth-to-local-merge'
+      | 'local-to-oauth-merge',
     user: {
       name: string;
       phone: string;
@@ -54,7 +61,14 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
 
   // 인증 성공 후 사용자 상태 저장
   const verifiedTypeRef = useRef<
-    'local' | 'oauth' | 'uplus' | 'new' | 'oauth-new' | 'local-oauth-merge' | null
+    | 'local'
+    | 'oauth'
+    | 'uplus'
+    | 'new'
+    | 'oauth-new'
+    | 'oauth-to-local-merge'
+    | 'local-to-oauth-merge'
+    | null
   >(null);
   const userInfoRef = useRef<{
     name: string;
@@ -174,11 +188,11 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
       if (userStatus === 'EXISTING_USER' && isLocalUser === true && !isOAuthFlow) {
         verifiedTypeRef.current = 'local'; // 일반 플로우에서만 local 처리
       } else if (userStatus === 'EXISTING_USER' && isLocalUser === true && isOAuthFlow) {
-        verifiedTypeRef.current = 'local-oauth-merge'; // 로컬 회원인데 OAuth 로그인 시도 → 통합 모달
+        verifiedTypeRef.current = 'oauth-to-local-merge'; // OAuth → 로컬 통합 (번호만으로 통합)
       } else if (userStatus === 'EXISTING_USER' && !isLocalUser && isOAuthFlow) {
         verifiedTypeRef.current = 'oauth'; // OAuth 플로우에서 기존 OAuth 사용자
       } else if (userStatus === 'EXISTING_USER' && !isLocalUser && !isOAuthFlow) {
-        verifiedTypeRef.current = 'local-oauth-merge'; // OAuth 회원인데 로컬 가입 시도
+        verifiedTypeRef.current = 'local-to-oauth-merge'; // OAuth 회원인데 로컬 가입 시도
       } else if (userStatus === 'NEW_USER' && isOAuthFlow) {
         if (uplusDataExists === true || uplusDataExists === 'true') {
           verifiedTypeRef.current = 'uplus'; // 케이스 8: 카톡신규 + U+ → U+ 모달
@@ -187,7 +201,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
         }
       } else if (userStatus === 'NEW_USER' && isLocalUser === true && !isOAuthFlow) {
         // local 신규 가입인데 OAuth 계정이 있는 경우 → 통합 모달
-        verifiedTypeRef.current = 'local-oauth-merge';
+        verifiedTypeRef.current = 'local-to-oauth-merge';
       } else if (
         userStatus === 'NEW_USER' &&
         (uplusDataExists === true || uplusDataExists === 'true')
@@ -416,7 +430,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 });
                 break;
 
-              case 'local-oauth-merge':
+              case 'local-to-oauth-merge':
                 console.log('🟢 local-oauth-merge 케이스 실행');
                 setModal(
                   modalPresets.mergeAccount(
@@ -430,7 +444,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                         console.log('🟢 OAuth 계정 연동 성공:', response.data);
 
                         const userData = response.data?.data;
-                        onVerified('local-oauth-merge', {
+                        onVerified('local-to-oauth-merge', {
                           name: userData?.name || user.name,
                           phone: userData?.phoneNumber || user.phone,
                           birthday: userData?.birthday || '',

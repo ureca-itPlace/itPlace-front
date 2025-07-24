@@ -14,7 +14,14 @@ type Props = {
   onGoToLogin: () => void;
   onAuthComplete: (data: { name: string; phone: string }) => void;
   onVerified: (
-    verifiedType: 'new' | 'uplus' | 'local' | 'oauth' | 'oauth-new' | 'local-oauth-merge',
+    verifiedType:
+      | 'new'
+      | 'uplus'
+      | 'local'
+      | 'oauth'
+      | 'oauth-new'
+      | 'oauth-to-local-merge'
+      | 'local-to-oauth-merge',
     user: {
       name: string;
       phone: string;
@@ -49,7 +56,9 @@ const PhoneAuthForm = ({
   const [gender, setGender] = useState('');
   const [membershipId, setMembershipId] = useState('');
   const [loading, setLoading] = useState(false);
-  const [verifiedType, setVerifiedType] = useState<'new' | 'uplus' | 'local-oauth-merge'>('new');
+  const [verifiedType, setVerifiedType] = useState<
+    'new' | 'uplus' | 'oauth-to-local-merge' | 'local-to-oauth-merge'
+  >('new');
 
   const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
 
@@ -105,7 +114,11 @@ const PhoneAuthForm = ({
           setMembershipId(user.membershipId);
 
           // verifiedType 상태 업데이트
-          if (receivedVerifiedType === 'local-oauth-merge' || receivedVerifiedType === 'uplus') {
+          if (
+            receivedVerifiedType === 'oauth-to-local-merge' ||
+            receivedVerifiedType === 'local-to-oauth-merge' ||
+            receivedVerifiedType === 'uplus'
+          ) {
             setVerifiedType(receivedVerifiedType);
           } else {
             setVerifiedType('new');

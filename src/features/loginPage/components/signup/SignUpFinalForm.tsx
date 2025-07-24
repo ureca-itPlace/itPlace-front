@@ -18,7 +18,7 @@ type SignUpFinalFormProps = {
   birthday: string;
   gender: string;
   membershipId: string;
-  verifiedType?: 'new' | 'uplus' | 'local-oauth-merge';
+  verifiedType?: 'new' | 'uplus' | 'oauth-to-local-merge' | 'local-to-oauth-merge';
 };
 
 const SignUpFinalForm = ({
@@ -73,7 +73,7 @@ const SignUpFinalForm = ({
         };
 
         // API 분기 처리
-        if (verifiedType === 'local-oauth-merge') {
+        if (verifiedType === 'local-to-oauth-merge') {
           const response = await signUpWithOAuthLink(payload);
           const message = response.data?.message || '계정 통합 회원가입이 완료되었습니다.';
           showToast(message, 'success');

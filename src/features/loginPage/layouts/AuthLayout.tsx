@@ -16,7 +16,7 @@ import OAuthIntegrationForm from '../components/signup/OAuthIntegrationForm';
 
 // API
 import { oauthSignUp } from '../apis/user';
-import { getOAuthResult } from '../apis/auth';
+import { getOAuthResult, oauthAccountLink } from '../apis/auth';
 
 // 상태 전환 관련 훅
 import { AuthTransition } from '../hooks/AuthTransition';
@@ -125,6 +125,35 @@ const AuthLayout = () => {
       setShowOAuthModal(false);
     }
   }, [dispatch, navigate, goToPhoneAuth, setMode, setShowTab]);
+
+  const handleOAuthToLocalMerge = async (phoneNumber: string) => {
+    try {
+      console.log('🟡 OAuth → 로컬 계정 통합 시작:', phoneNumber);
+      const response = await oauthAccountLink(phoneNumber);
+
+      console.log('🟢 계정 통합 성공:', response.data);
+      showToast('계정이 성공적으로 통합되었습니다!', 'success');
+
+      // 통합 완료 후 로그인 성공 처리 (필요시)
+      if (response.data?.data) {
+        const userData = response.data.data;
+        dispatch(
+          setLoginSuccess({
+            name: userData.name,
+            membershipGrade: userData.membershipGrade || 'NORMAL',
+          })
+        );
+        navigate('/main');
+      } else {
+        // 통합만 완료, 로그인은 별도로
+        showToast('이제 카카오 로그인을 사용하실 수 있습니다!', 'success');
+        goToLogin();
+      }
+    } catch (error) {
+      console.error('🔴 계정 통합 실패:', error);
+      showToast('계정 통합에 실패했습니다. 다시 시도해주세요.', 'error');
+    }
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -325,8 +354,11 @@ const AuthLayout = () => {
                         setFormStep('findEmail');
                       } else if (verifiedType === 'new' || verifiedType === 'uplus') {
                         goToSignUp();
-                      } else if (verifiedType === 'local-oauth-merge') {
-                        // local-oauth-merge는 OAuth 데이터와 함께 일반 회원가입 폼으로 이동
+                      } else if (verifiedType === 'oauth-to-local-merge') {
+                        // OAuth → 로컬 통합: 바로 계정 연결 API 호출
+                        handleOAuthToLocalMerge(user.phone);
+                      } else if (verifiedType === 'local-to-oauth-merge') {
+                        // 로컬 → OAuth 통합: 회원가입 폼으로 이동
                         setUserData({
                           name: user.name,
                           phone: user.phone,
