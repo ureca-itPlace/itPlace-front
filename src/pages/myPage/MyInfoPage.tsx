@@ -10,6 +10,10 @@ import UplusLinkModal from '../../features/myPage/components/MyInfo/UplusLinkMod
 import api from '../../apis/axiosInstance';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { showToast } from '../../utils/toast';
+import { AxiosError } from 'axios';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../store/authSlice';
+import { useNavigate } from 'react-router-dom';
 
 interface UserInfo {
   id: number;
@@ -35,6 +39,9 @@ export default function MyInfoPage() {
   const [password, setPassword] = useState('');
 
   const [showUplusModal, setShowUplusModal] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // ✅ 사용자 정보 조회
   const fetchUser = async () => {
@@ -145,16 +152,24 @@ export default function MyInfoPage() {
         }}
         onSubmit={async () => {
           try {
-            await api.post('api/v1/users/resetPassword', {
-              // resetPasswordToken은 필요 없다면 제거
-              email: user.email,
+            await api.patch('api/v1/users/changePassword', {
+              oldPassword: currentPw,
               newPassword: newPw,
               newPasswordConfirm: confirmPw,
             });
-            showToast('비밀번호가 변경되었습니다.', 'success');
+            showToast('비밀번호가 성공적으로 변경되었습니다.', 'success');
           } catch (err) {
             console.error('비밀번호 변경 실패:', err);
-            showToast('현재 비밀번호가 일치하지 않아 변경에 실패했습니다.', 'error');
+            // 👉 에러 코드별 토스트 처리
+            const axiosErr = err as AxiosError<{ code: string }>;
+            const code = axiosErr.response?.data?.code;
+            if (code === 'PASSWORD_MISMATCH') {
+              showToast('현재 비밀번호가 일치하지 않습니다.', 'error');
+            } else if (code === 'UNAUTHORIZED_ACCESS') {
+              showToast('인증이 유효하지 않습니다. 다시 로그인해 주세요.', 'error');
+            } else {
+              showToast('비밀번호 변경에 실패했습니다.', 'error');
+            }
           } finally {
             setIsPwModalOpen(false);
             setCurrentPw('');
@@ -169,9 +184,35 @@ export default function MyInfoPage() {
         password={password}
         onPasswordChange={setPassword}
         onCancel={() => setDeleteModalOpen(false)}
-        onDelete={() => {
-          // 🚨 탈퇴 API 호출
-          setDeleteModalOpen(false);
+        onDelete={async () => {
+          try {
+            await api.delete('api/v1/users', {
+              data: { password },
+            });
+
+            showToast('회원 탈퇴가 완료되었습니다.', 'success');
+
+            // 로그인 상태 초기화
+            dispatch(logout());
+
+            // 로그인 페이지로 이동
+            navigate('/login');
+          } catch (err) {
+            console.error('회원탈퇴 실패:', err);
+            const axiosErr = err as AxiosError<{ code?: string }>;
+            const code = axiosErr.response?.data?.code;
+
+            if (code === 'PASSWORD_MISMATCH') {
+              showToast('비밀번호가 일치하지 않습니다.', 'error');
+            } else if (code === 'USER_NOT_FOUND') {
+              showToast('사용자 정보를 찾을 수 없습니다.', 'error');
+            } else {
+              showToast('회원 탈퇴에 실패했습니다.', 'error');
+            }
+          } finally {
+            setDeleteModalOpen(false);
+            setPassword('');
+          }
         }}
       />
     </div>
