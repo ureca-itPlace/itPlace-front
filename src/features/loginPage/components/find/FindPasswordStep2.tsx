@@ -76,13 +76,13 @@ const FindPasswordStep2 = ({ onGoToLogin, email, resetPasswordToken }: Props) =>
 
   return (
     <div ref={wrapperRef} className="flex flex-col items-center">
-      <div className="text-title-4 text-left w-[320px]">
+      <div className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 text-left w-[320px] max-xl:w-[274px] max-lg:w-[205px]">
         <p>
           <span className="font-bold">새 비밀번호</span>를 입력해주세요
         </p>
       </div>
 
-      <div className="mt-[50px]">
+      <div className="mt-[50px] max-xl:mt-[43px] max-lg:mt-[34px]">
         <PasswordInputForm
           password={password}
           passwordConfirm={passwordConfirm}

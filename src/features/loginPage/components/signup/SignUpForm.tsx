@@ -78,8 +78,8 @@ const SignUpForm = ({
   return (
     <div ref={wrapperRef} className="w-full flex flex-col items-center">
       {/* 제목 */}
-      <div className="w-[320px] text-left mb-[51px]">
-        <p className="text-title-4">
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] text-left mb-[51px] max-xl:mb-[44px] max-lg:mb-[34px]">
+        <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6">
           <span className="font-semibold">개인정보</span>를 입력해주세요
         </p>
       </div>
@@ -112,15 +112,15 @@ const SignUpForm = ({
           value={formData.birth}
           onChange={(e) => handleChange('birth', e.target.value)}
           disabled={disabledFields.birth}
-          className="w-[320px] h-[48px] px-[16px] rounded-[18px] border border-grey02 text-body-2 text-grey05"
+          className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] px-[16px] max-xl:px-[14px] max-lg:px-[11px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] border border-grey02 text-body-2 max-xl:text-body-3 max-lg:text-body-4 text-grey05"
         />
       </div>
 
       {/* 성별 */}
-      <div className="mb-[20px] w-full flex justify-center gap-[16px]">
+      <div className="mb-[20px] max-xl:mb-[17px] max-lg:mb-[13px] w-full flex justify-center gap-[16px] max-xl:gap-[14px] max-lg:gap-[11px]">
         <button
           type="button"
-          className={`w-[150px] h-[48px] rounded-[18px] border text-body-2 transition ${
+          className={`w-[150px] max-xl:w-[128px] max-lg:w-[96px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] border text-body-2 max-xl:text-body-3 max-lg:text-body-4 transition ${
             formData.gender === 'MALE'
               ? 'bg-purple04 text-white border-purple04'
               : 'bg-white text-grey04 border-grey02'
@@ -132,7 +132,7 @@ const SignUpForm = ({
         </button>
         <button
           type="button"
-          className={`w-[150px] h-[48px] rounded-[18px] border text-body-2 transition ${
+          className={`w-[150px] max-xl:w-[128px] max-lg:w-[96px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] border text-body-2 max-xl:text-body-3 max-lg:text-body-4 transition ${
             formData.gender === 'FEMALE'
               ? 'bg-purple04 text-white border-purple04'
               : 'bg-white text-grey04 border-grey02'

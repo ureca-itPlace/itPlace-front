@@ -276,12 +276,11 @@ const AuthLayout = () => {
         </div>
       </Modal>
 
-      <div className="relative w-full max-w-[1400px] h-[700px] overflow-hidden mx-auto">
+      <div className="relative w-full max-w-[1400px] max-xl:max-w-[1200px] max-lg:max-w-[900px] h-[700px] max-xl:h-[600px] max-lg:h-[500px] overflow-hidden mx-auto">
         {/* 좌측 카드 */}
         <div
           ref={formCardRef}
-          className="absolute top-1/2 translate-y-[-50%] w-[583px] h-[639px]"
-          style={{ left: 'calc(50% - 520px)' }}
+          className="absolute top-1/2 translate-y-[-50%] w-[583px] max-xl:w-[500px] max-lg:w-[375px] h-[639px] max-xl:h-[548px] max-lg:h-[430px] left-[calc(50%-520px)] max-xl:left-[calc(50%-446px)] max-lg:left-[calc(50%-335px)]"
         >
           <AuthFormCard radius={formStep === 'login' ? 'left' : 'right'}>
             <>
@@ -432,8 +431,7 @@ const AuthLayout = () => {
         {/* 우측 카드 */}
         <div
           ref={sideCardRef}
-          className="absolute top-1/2 translate-y-[-50%] w-[431px] h-[639px] z-0"
-          style={{ left: 'calc(50% + 30.5px)' }}
+          className="absolute top-1/2 translate-y-[-50%] w-[431px] max-xl:w-[370px] max-lg:w-[277px] h-[639px] max-xl:h-[548px] max-lg:h-[430px] z-0 left-[calc(50%+30.5px)] max-xl:left-[calc(50%+26px)] max-lg:left-[calc(50%+20px)]"
         >
           <AuthSideCard />
         </div>

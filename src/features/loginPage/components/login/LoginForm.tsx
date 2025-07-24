@@ -49,7 +49,9 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
   return (
     <div>
-      <h2 className="text-title-1 mb-[40px]">로그인</h2>
+      <h2 className="text-title-1 max-xl:text-title-2 max-lg:text-title-3 mb-[40px] max-xl:mb-[34px] max-lg:mb-[27px]">
+        로그인
+      </h2>
 
       <div className="flex flex-col gap-0 w-full items-center">
         {/* 이메일 입력 */}

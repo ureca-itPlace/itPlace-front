@@ -245,15 +245,15 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
     <>
       <div ref={wrapperRef} className="w-full flex flex-col items-center">
         {/* 제목 */}
-        <div className="text-left w-[320px]">
-          <p className="text-title-4">
+        <div className="text-left w-[320px] max-xl:w-[274px] max-lg:w-[205px]">
+          <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6">
             보내드린 <span className="font-semibold">인증번호 6자리</span>를
           </p>
-          <p className="text-title-4">입력해주세요</p>
+          <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6">입력해주세요</p>
         </div>
 
         {/* 인증번호 입력 */}
-        <div className="w-[320px] mt-[48px]">
+        <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] mt-[48px] max-xl:mt-[41px] max-lg:mt-[32px]">
           <div className="flex items-center relative">
             <AuthInput
               name="code"
@@ -263,33 +263,37 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 setCode(e.target.value);
                 setCodeError('');
               }}
-              className="pr-[110px]"
+              className="pr-[110px] max-xl:pr-[94px] max-lg:pr-[71px]"
             />
             <button
               type="button"
               onClick={handleCheckCode}
-              className="absolute right-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px]"
+              className="absolute right-[12px] max-xl:right-[10px] max-lg:right-[8px] w-[69px] max-xl:w-[59px] max-lg:w-[44px] h-[26px] max-xl:h-[22px] max-lg:h-[17px] bg-purple04 text-white text-body-4 max-xl:text-body-5 max-lg:text-body-5 rounded-[10px] max-xl:rounded-[9px] max-lg:rounded-[7px]"
             >
               확인
             </button>
           </div>
-          {codeError && <p className="w-[320px] text-danger text-body-3 mt-[6px]">{codeError}</p>}
+          {codeError && (
+            <p className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] text-danger text-body-3 max-xl:text-body-4 max-lg:text-body-5 mt-[6px] max-xl:mt-[5px] max-lg:mt-[4px]">
+              {codeError}
+            </p>
+          )}
         </div>
 
         {/* 타이머 */}
-        <div className="text-body-3 text-grey03 mt-[20px] w-[320px] flex items-center gap-[4px]">
+        <div className="text-body-3 max-xl:text-body-4 max-lg:text-body-5 text-grey03 mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] flex items-center gap-[4px] max-xl:gap-[3px] max-lg:gap-[3px]">
           <TbClock size={16} className="text-grey03" />
           <span>남은 시간</span>
           <span className="text-danger font-medium">{formatTime(timeLeft)}</span>
         </div>
 
         {/* 재전송 */}
-        <div className="text-body-3 text-grey03 mt-[13px] w-[320px]">
+        <div className="text-body-3 max-xl:text-body-4 max-lg:text-body-5 text-grey03 mt-[13px] max-xl:mt-[11px] max-lg:mt-[9px] w-[320px] max-xl:w-[274px] max-lg:w-[205px]">
           인증 번호를 받지 못하셨나요?{' '}
           <button
             onClick={handleResend}
             disabled={timeLeft > 0}
-            className={`font-medium ml-[4px] ${
+            className={`font-medium ml-[4px] max-xl:ml-[3px] max-lg:ml-[3px] ${
               timeLeft > 0 ? 'text-grey03 cursor-not-allowed' : 'text-purple04 cursor-pointer'
             }`}
           >
@@ -563,7 +567,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
             }
           }}
           variant={isVerified ? 'default' : 'disabled'}
-          className="mt-[180px]"
+          className="mt-[180px] max-xl:mt-[154px] max-lg:mt-[122px]"
         />
 
         {/* 로그인 링크 */}

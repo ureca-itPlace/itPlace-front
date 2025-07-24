@@ -116,11 +116,13 @@ const SignUpFinalForm = ({
 
   return (
     <div ref={wrapperRef} className="w-full flex flex-col items-center">
-      <div className="w-[320px] text-left">
-        <p className="text-title-4">개인정보를 입력해주세요</p>
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] text-left">
+        <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6">
+          개인정보를 입력해주세요
+        </p>
       </div>
 
-      <div className="w-full max-w-[320px] mt-[51px]">
+      <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] mt-[51px] max-xl:mt-[44px] max-lg:mt-[34px]">
         <EmailVerificationBox
           email={formData.email}
           onChangeEmail={(val) => handleChange('email', val)}
@@ -129,7 +131,7 @@ const SignUpFinalForm = ({
         />
       </div>
 
-      <div className="mt-[15px]">
+      <div className="mt-[15px] max-xl:mt-[13px] max-lg:mt-[10px]">
         <PasswordInputForm
           password={formData.password}
           passwordConfirm={formData.passwordConfirm}

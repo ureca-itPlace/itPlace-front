@@ -30,7 +30,7 @@ const PasswordInputForm = ({
   return (
     <>
       {/* 비밀번호 입력 필드 */}
-      <div className="w-full max-w-[320px]">
+      <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px]">
         <div className="relative">
           <AuthInput
             name="password"
@@ -45,16 +45,20 @@ const PasswordInputForm = ({
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-[12px] top-[12px] text-grey04"
+            className="absolute right-[12px] max-xl:right-[10px] max-lg:right-[8px] top-[12px] max-xl:top-[10px] max-lg:top-[8px] text-grey04"
           >
-            {showPassword ? <TbEyeOff size={20} /> : <TbEye size={20} />}
+            {showPassword ? (
+              <TbEyeOff size={20} className="max-xl:text-[17px] max-lg:text-[14px]" />
+            ) : (
+              <TbEye size={20} className="max-xl:text-[17px] max-lg:text-[14px]" />
+            )}
           </button>
         </div>
         {touched.password && passwordError && <ErrorMessage message={passwordError} />}
       </div>
 
       {/* 비밀번호 확인 입력 필드 */}
-      <div className="mt-[20px] w-full max-w-[320px]">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px]">
         <div className="relative">
           <AuthInput
             name="passwordConfirm"
@@ -69,9 +73,13 @@ const PasswordInputForm = ({
           <button
             type="button"
             onClick={() => setShowPasswordConfirm((prev) => !prev)}
-            className="absolute right-[12px] top-[12px] text-grey04"
+            className="absolute right-[12px] max-xl:right-[10px] max-lg:right-[8px] top-[12px] max-xl:top-[10px] max-lg:top-[8px] text-grey04"
           >
-            {showPasswordConfirm ? <TbEyeOff size={20} /> : <TbEye size={20} />}
+            {showPasswordConfirm ? (
+              <TbEyeOff size={20} className="max-xl:text-[17px] max-lg:text-[14px]" />
+            ) : (
+              <TbEye size={20} className="max-xl:text-[17px] max-lg:text-[14px]" />
+            )}
           </button>
         </div>
         {touched.passwordConfirm && passwordConfirmError && (

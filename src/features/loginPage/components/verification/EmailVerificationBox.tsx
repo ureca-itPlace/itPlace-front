@@ -46,7 +46,7 @@ const EmailVerificationBox = ({
   };
 
   return (
-    <div className="w-full max-w-[320px]">
+    <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px]">
       {/* 이메일 입력 */}
       <div className="relative">
         <AuthInput
@@ -61,7 +61,7 @@ const EmailVerificationBox = ({
             type="button"
             onClick={handleSendCode}
             disabled={!email || manualLoading}
-            className={`absolute right-[12px] top-[12px] w-[69px] h-[26px] rounded-[10px] text-body-4 transition flex items-center justify-center
+            className={`absolute right-[12px] max-xl:right-[10px] max-lg:right-[8px] top-[12px] max-xl:top-[10px] max-lg:top-[8px] w-[69px] max-xl:w-[59px] max-lg:w-[44px] h-[26px] max-xl:h-[22px] max-lg:h-[17px] rounded-[10px] max-xl:rounded-[9px] max-lg:rounded-[7px] text-body-4 max-xl:text-body-5 max-lg:text-body-5 transition flex items-center justify-center
               ${!email ? 'bg-grey02 text-grey04' : 'bg-purple04 text-white'}`}
           >
             {manualLoading ? (
@@ -78,7 +78,7 @@ const EmailVerificationBox = ({
 
       {/* 인증번호 입력 (모드와 상관없이 emailSent가 true이면 렌더링) */}
       {emailSent && !emailVerified && (
-        <div className="relative mt-[15px]">
+        <div className="relative mt-[15px] max-xl:mt-[13px] max-lg:mt-[10px]">
           <AuthInput
             name="verificationCode"
             placeholder="인증번호 입력"
@@ -88,7 +88,7 @@ const EmailVerificationBox = ({
           <button
             type="button"
             onClick={() => verifyCode(code)}
-            className="absolute right-[12px] top-[12px] w-[69px] h-[26px] bg-purple04 text-white text-body-4 rounded-[10px]"
+            className="absolute right-[12px] max-xl:right-[10px] max-lg:right-[8px] top-[12px] max-xl:top-[10px] max-lg:top-[8px] w-[69px] max-xl:w-[59px] max-lg:w-[44px] h-[26px] max-xl:h-[22px] max-lg:h-[17px] bg-purple04 text-white text-body-4 max-xl:text-body-5 max-lg:text-body-5 rounded-[10px] max-xl:rounded-[9px] max-lg:rounded-[7px]"
           >
             확인
           </button>
@@ -98,7 +98,7 @@ const EmailVerificationBox = ({
       {/* 로딩 모달 */}
       {loading && (
         <Modal isOpen={loading} title="인증 메일을 전송 중입니다." onClose={() => {}}>
-          <div className="w-full flex justify-center mt-[16px]">
+          <div className="w-full flex justify-center mt-[16px] max-xl:mt-[14px] max-lg:mt-[11px]">
             <LoadingSpinner />
           </div>
         </Modal>

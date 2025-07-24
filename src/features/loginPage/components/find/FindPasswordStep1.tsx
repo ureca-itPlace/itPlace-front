@@ -48,14 +48,17 @@ const FindPasswordStep1 = ({
   };
 
   return (
-    <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
+    <div
+      ref={wrapperRef}
+      className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] mx-auto flex flex-col items-center"
+    >
       <ToggleTab active="password" onClickEmail={onClickTabEmail} onClickPassword={() => {}} />
 
-      <p className="text-title-6 text-grey05 mt-[40px]">
+      <p className="text-title-6 max-xl:text-title-7 max-lg:text-title-8 text-grey05 mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px]">
         인증을 위해 <strong>가입된 이메일을</strong> 입력해주세요.
       </p>
 
-      <div className="mt-[20px]">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px]">
         <EmailVerificationBox
           email={email}
           onChangeEmail={onChangeEmail}

@@ -27,14 +27,19 @@ const FindEmailStep2 = ({
   }, []);
 
   return (
-    <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
+    <div
+      ref={wrapperRef}
+      className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] mx-auto flex flex-col items-center"
+    >
       <ToggleTab active="email" onClickEmail={() => {}} onClickPassword={onClickTabPassword} />
 
       {/* 안내 문구 */}
-      <p className="text-title-6 text-grey05 mt-[40px]">휴대폰 번호와 일치하는 아이디입니다.</p>
+      <p className="text-title-6 max-xl:text-title-7 max-lg:text-title-8 text-grey05 mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px]">
+        휴대폰 번호와 일치하는 아이디입니다.
+      </p>
 
       {/* 이메일 및 가입일 박스 */}
-      <div className="w-[320px] h-[90px] bg-white border border-grey03 rounded-[18px] px-[20px] py-[16px] text-left mt-[20px] flex flex-col justify-center">
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] h-[90px] max-xl:h-[77px] max-lg:h-[61px] bg-white border border-grey03 rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] px-[20px] max-xl:px-[17px] max-lg:px-[13px] py-[16px] max-xl:py-[14px] max-lg:py-[11px] text-left mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] flex flex-col justify-center">
         <p className="text-body-2 text-black">
           아이디 : <span className="text-purple04 break-all">{email}</span>
         </p>
