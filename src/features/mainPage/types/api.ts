@@ -134,3 +134,15 @@ export interface FavoriteBenefit {
   partnerName: string;
   partnerImage: string;
 }
+
+// AI 추천 API 타입
+export interface RecommendationResponse {
+  data: RecommendationItem[];
+}
+
+export interface RecommendationItem {
+  rank: number;
+  partnerName: string;
+  reason: string;
+  imgUrl?: string;
+}
