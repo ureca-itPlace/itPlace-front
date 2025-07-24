@@ -234,10 +234,10 @@ const AuthLayout = () => {
 
       // 회원가입 성공 - 로그인 화면으로 이동
       showToast('회원가입에 성공하셨습니다!', 'success');
-      
+
       // 즉시 애니메이션 실행 후 상태 초기화
       goToLogin();
-      
+
       // 상태 초기화
       setTimeout(() => {
         setOAuthUserData({
