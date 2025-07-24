@@ -47,8 +47,8 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <NoResult
-          message1="아직 찜한 혜택이 없어요!"
-          message2="마음에 드는 혜택을 찜해보세요"
+          message1="아직 관심 혜택이 없어요!"
+          message2="마음에 드는 혜택을 담아보세요"
           isLoginRequired={false}
         />
       </div>
