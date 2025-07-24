@@ -4,6 +4,7 @@ import { useState } from 'react';
 import LoginRequiredModal from '../features/myPage/components/MyInfo/LoginRequiredModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import MobileHeader from '../components/MobileHeader';
 
 export default function MyPageLayout() {
   // ✅ Redux에서 로그인 상태 가져오기
@@ -25,13 +26,18 @@ export default function MyPageLayout() {
 
   // ✅ 로그인된 경우에는 마이페이지 레이아웃 정상 렌더
   return (
-    <div className="min-h-screen max-h-screen bg-grey01 p-[28px] flex gap-[28px]">
-      {/* 좌측 메뉴 */}
-      <SideMenu />
+    <div>
+      <div className="fixed top-0 left-0 w-full z-[9999] max-md:block hidden">
+        <MobileHeader title="마이잇플" />
+      </div>
+      <div className="min-h-screen max-h-screen bg-grey01 p-[28px] flex gap-[28px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0">
+        {/* 좌측 메뉴 */}
+        <SideMenu />
 
-      {/* 중앙+우측을 자식 페이지에서 구성 */}
-      <div className="flex flex-1 gap-[28px]">
-        <Outlet />
+        {/* 중앙+우측을 자식 페이지에서 구성 */}
+        <div className="flex flex-1 gap-[28px]">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

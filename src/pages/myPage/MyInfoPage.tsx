@@ -96,7 +96,7 @@ export default function MyInfoPage() {
   }
 
   return (
-    <div className="flex flex-row gap-[28px] w-full h-full">
+    <div className="flex flex-row gap-[28px] w-full h-full max-md:flex-col-reverse">
       <MyPageContentLayout
         main={
           <div>

@@ -22,7 +22,7 @@ export default function RightAside({
 
       {/* 아래쪽 토끼 이미지 영역 */}
       {imgSrc && (
-        <div className="mt-auto flex justify-center mb-[-30px]">
+        <div className="mt-auto flex justify-center mb-[-30px] max-md:hidden">
           <img
             src={imgSrc}
             alt={bottomImageAlt ?? '하단 이미지'}
