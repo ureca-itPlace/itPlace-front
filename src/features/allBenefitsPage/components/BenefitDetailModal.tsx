@@ -15,11 +15,17 @@ interface InfoSectionProps {
 }
 
 const InfoSection: React.FC<InfoSectionProps> = ({ label, value, className = '' }) => (
-  <div className="flex mb-8 ml-[16px]">
-    <h5 className="text-title-5 text-black mb-4 w-[100px] flex-shrink-0">{label}</h5>
-    <div className="pl-[24px] flex-1">
-      <div className="space-y-3">
-        <div className={`text-body-0 text-grey05 whitespace-pre-line ${className}`}>{value}</div>
+  <div className="flex mb-8 max-md:mb-6 ml-[16px] max-md:ml-0 max-md:flex-col">
+    <h5 className="text-title-5 max-md:text-title-8 text-black mb-4 max-md:mb-2 w-[100px] max-md:w-full flex-shrink-0">
+      {label}
+    </h5>
+    <div className="pl-[24px] max-md:pl-0 flex-1">
+      <div className="space-y-3 max-md:space-y-2">
+        <div
+          className={`text-body-0 max-md:text-body-4 text-grey05 whitespace-pre-line ${className}`}
+        >
+          {value}
+        </div>
       </div>
     </div>
   </div>
@@ -126,26 +132,28 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
     <Modal isOpen={isOpen} onClose={onClose} title="제휴처 상세정보">
       <div className="relative h-full flex flex-col">
         {/* 내용 스크롤 영역 */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 max-md:p-4">
           {isLoading ? (
-            <div className="flex items-center justify-center h-[400px]">
-              <div className="text-grey03">상세 정보를 불러오는 중...</div>
+            <div className="flex items-center justify-center h-[400px] max-md:h-[300px]">
+              <div className="text-grey03 max-md:text-sm">상세 정보를 불러오는 중...</div>
             </div>
           ) : (
             <>
               {/* 브랜드 정보 */}
-              <div className="flex items-center justify-between mb-[28px]">
-                <div className="flex items-center ml-[16px]">
-                  <div>
-                    <h4 className="text-title-2 text-black mb-1">{displayName}</h4>
-                    <p className="text-body-0 text-grey05 mt-1">{displayDescription}</p>
-                  </div>
+              <div className="flex items-center justify-between mb-[28px] max-md:mb-4 max-md:flex-row max-md:items-start max-md:mt-2">
+                <div className="flex flex-col justify-center ml-[16px] max-md:ml-0 max-md:mr-2 flex-1 max-md:mb-4">
+                  <h4 className="text-title-2 max-md:text-title-5 max-md:font-bold text-black mb-1">
+                    {displayName}
+                  </h4>
+                  <p className="text-body-0 max-md:text-body-4 text-grey05 mt-1">
+                    {displayDescription}
+                  </p>
                 </div>
-                <div className="w-[120px] h-[120px] bg-white flex items-center justify-center">
+                <div className="w-[120px] h-[120px] max-md:w-[80px] max-md:h-[80px] bg-white flex items-center justify-center ml-4 max-md:ml-0">
                   <img
                     src={displayImage}
                     alt={`${displayName} 로고`}
-                    className="w-[120px] h-[120px] object-contain"
+                    className="w-[120px] h-[120px] max-md:w-[80px] max-md:h-[80px] object-contain"
                   />
                 </div>
               </div>
@@ -170,7 +178,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
         </div>
 
         {/* 하단 고정 버튼 */}
-        <div className="flex justify-center py-2 mt-2 gap-3">
+        <div className="flex justify-center py-2 mt-2 gap-3 max-md:flex-row max-md:gap-2 max-md:px-0 max-md:pb-3">
           <button
             onClick={() => {
               if (benefitDetail?.url) {
@@ -179,13 +187,13 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
                 showToast('홈페이지 URL이 제공되지 않습니다', 'info');
               }
             }}
-            className="w-[218px] h-[52px] bg-white text-grey05 rounded-[30px] text-body-0 font-medium border border-grey03"
+            className="w-[218px] h-[52px] bg-white text-grey05 rounded-[30px] text-body-0 font-medium border border-grey03 max-md:w-[140px] max-md:h-10 max-md:text-[15px] max-md:rounded-2xl"
           >
             홈페이지
           </button>
           <button
             onClick={onClose}
-            className="w-[218px] h-[52px] bg-purple04 text-white rounded-[30px] text-body-0 font-medium"
+            className="w-[218px] h-[52px] bg-purple04 text-white rounded-[30px] text-body-0 font-medium max-md:w-[140px] max-md:h-10 max-md:text-[15px] max-md:rounded-2xl"
           >
             지도로 가기
           </button>

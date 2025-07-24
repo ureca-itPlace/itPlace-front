@@ -80,21 +80,23 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
 
   return (
     <div
-      className={`bg-orange01 rounded-[18px] drop-shadow-basic p-6 max-md:pt-4 w-[555px] h-[250px] max-md:w-[100%] max-md:h-[100px] ${className}`}
+      className={`bg-orange01 rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic p-6 max-xl:p-4 max-md:pt-4 w-[555px] max-xl:w-[444px] h-[250px] max-xl:h-[200px] max-md:w-[100%] max-md:h-[100px] pr-8 max-xl:pr-6 max-md:pr-4 ${className}`}
     >
       {/* PC: 전체 리스트, 모바일: 슬라이드 */}
-      <h3 className="text-title-3 text-black mb-6 max-md:text-title-6 max-md:mb-4">{title}</h3>
+      <h3 className="text-title-3 max-xl:text-title-4 text-black mb-6 max-xl:mb-4 max-md:text-title-6 max-md:mb-4">
+        {title}
+      </h3>
       {/* PC (md 이상) */}
-      <div className="space-y-6 max-md:hidden">
+      <div className="space-y-6 max-xl:space-y-4 max-md:hidden">
         {data.map((item, index) => (
           <div key={index} className="flex items-center justify-between ">
-            <div className="flex items-center gap-4">
-              <span className="text-title-5 text-orange04">{index + 1}</span>
-              <span className="text-body-0 text-black">{item.partnerName}</span>
+            <div className="flex items-center gap-4 max-xl:gap-2">
+              <span className="text-title-5 max-xl:text-title-6 text-orange04">{index + 1}</span>
+              <span className="text-body-0 max-xl:text-body-1 text-black">{item.partnerName}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 max-xl:gap-1">
               <span
-                className={`text-body-2  w-4 text-center transition-all duration-200 ${
+                className={`text-body-2 max-xl:text-body-3 w-4 max-xl:w-3 text-center transition-all duration-200 ${
                   item.trend === 'up'
                     ? 'text-orange04'
                     : item.trend === 'down'
@@ -105,7 +107,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
                 {item.trend === 'up' ? '▲' : item.trend === 'down' ? '▼' : '-'}
               </span>
               <span
-                className={`text-body-2  w-8 text-right  transition-all duration-200 ${
+                className={`text-body-2 max-xl:text-body-3 w-8 max-xl:w-6 text-right  transition-all duration-200 ${
                   item.trend === 'up'
                     ? 'text-orange04'
                     : item.trend === 'down'
@@ -113,23 +115,27 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
                       : 'text-grey03'
                 }`}
               >
-                {item.rankChange ? Math.abs(item.rankChange) : '-'}
+                {item.rankChange !== null ? Math.abs(item.rankChange) : '-'}
               </span>
             </div>
           </div>
         ))}
       </div>
-      {/* 모바일 (md 이하): 슬라이드로 1개씩 */}
+      {/* 모바일 (md 이하) */}
       <div className="hidden max-md:block">
         {data.length > 0 && (
           <div className="flex items-center justify-between ">
-            <div className="flex items-center gap-4">
-              <span className="text-title-8 text-orange04">{currentIndex + 1}</span>
-              <span className="text-body-2 text-black">{data[currentIndex].partnerName}</span>
+            <div className="flex items-center gap-4 max-xl:gap-2">
+              <span className="text-title-8 max-xl:text-title-9 text-orange04">
+                {currentIndex + 1}
+              </span>
+              <span className="text-body-2 max-xl:text-body-3 text-black">
+                {data[currentIndex].partnerName}
+              </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 max-xl:gap-1">
               <span
-                className={`text-body-2  w-4 text-center transition-all duration-200 ${
+                className={`text-body-2 max-xl:text-body-3 w-4 max-xl:w-3 text-center transition-all duration-200 ${
                   data[currentIndex].trend === 'up'
                     ? 'text-orange04'
                     : data[currentIndex].trend === 'down'
@@ -144,7 +150,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
                     : '-'}
               </span>
               <span
-                className={`text-body-2  w-8 text-right  transition-all duration-200 ${
+                className={`text-body-2 max-xl:text-body-3 w-8 max-xl:w-6 text-right  transition-all duration-200 ${
                   data[currentIndex].trend === 'up'
                     ? 'text-orange04'
                     : data[currentIndex].trend === 'down'
