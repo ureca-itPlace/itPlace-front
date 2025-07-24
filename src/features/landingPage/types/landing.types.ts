@@ -31,8 +31,3 @@ export type ButtonProps = {
   variant?: 'primary' | 'outline';
   onClick?: () => void;
 };
-
-// 구름 컴포넌트 타입 정의
-export interface CloudProps {
-  className?: string;
-}
