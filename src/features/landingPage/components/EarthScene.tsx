@@ -12,6 +12,7 @@ const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
 
   return (
     <>
+      {/* three.js 로딩 */}
       <LoadingScreen />
       <div
         ref={canvasWrapperRef}
@@ -26,11 +27,13 @@ const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
               <sphereGeometry args={[80, 64, 64]} />
               <meshBasicMaterial map={backgroundTexture} side={BackSide} />
             </mesh>
+            {/* 지구 모델 */}
             <EarthModel
               trigger={earthAnimationTrigger.current}
               canvasWrapperRef={canvasWrapperRef}
             />
           </Suspense>
+          {/* 3D 요소 통제 (자체 확대 X -> 스크롤 시 확대) */}
           <OrbitControls enableZoom={false} enablePan={true} />
         </Canvas>
       </div>

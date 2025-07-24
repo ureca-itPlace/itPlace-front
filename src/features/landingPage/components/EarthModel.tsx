@@ -107,7 +107,6 @@ const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
 
   return (
     <>
-      {' '}
       <group ref={groupRef}>
         {/* 실제 지구 */}
         <mesh ref={earthRef}>

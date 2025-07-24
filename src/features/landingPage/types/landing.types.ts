@@ -21,13 +21,13 @@ export interface EarthModelProps {
   canvasWrapperRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export type EarthSceneProps = {
+export interface EarthSceneProps {
   earthAnimationTrigger: React.RefObject<HTMLElement | null>;
-};
+}
 
 // 버튼 컴포넌트 타입 정의
-export type ButtonProps = {
+export interface ButtonProps {
   children: string;
   variant?: 'primary' | 'outline';
   onClick?: () => void;
-};
+}

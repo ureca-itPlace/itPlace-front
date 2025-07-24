@@ -17,8 +17,9 @@ const CurveText = forwardRef<Group, CurvedTextProps>(
     return (
       <group ref={ref}>
         {letters.map((char, i) => {
-          const theta = ((i - total / 2) / total) * Math.PI * 0.5;
+          const theta = ((i - total / 2) / total) * Math.PI * 0.5; // 글자 각도
 
+          // 글자 위치
           const x = Math.cos(theta) * radius;
           const z = Math.sin(theta) * radius;
           const y = 0;
@@ -32,7 +33,7 @@ const CurveText = forwardRef<Group, CurvedTextProps>(
               color={color}
               anchorX="center"
               anchorY="middle"
-              rotation={[0, -theta + Math.PI / 2, 0]}
+              rotation={[0, -theta + Math.PI / 2, 0]} // 중심을 바라보도록 회전
             >
               {char}
             </Text>
