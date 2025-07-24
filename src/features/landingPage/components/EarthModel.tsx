@@ -1,10 +1,11 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader, Mesh, AdditiveBlending, Group, Color } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { EarthModelProps } from '../types/landing.types';
+import { useMediaQuery } from 'react-responsive';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,6 +19,16 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
   const glowRef = useRef<Mesh>(null);
   const outerGlowRef = useRef<Mesh>(null);
   const auraRef = useRef<Mesh>(null);
+
+  const isMobile = useMediaQuery({ query: '(max-width: 640px)' });
+  const isTablet = useMediaQuery({ query: '(max-width: 1024px)' });
+
+  useEffect(() => {
+    if (groupRef.current) {
+      const scale = isMobile ? 0.7 : isTablet ? 1 : 1.5;
+      groupRef.current.scale.set(scale, scale, scale);
+    }
+  }, [isMobile, isTablet]);
 
   useGSAP(() => {
     if (!groupRef.current || !trigger || !canvasWrapperRef.current || !earthCloud1Ref.current)
@@ -42,9 +53,9 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
     tl.to(
       groupRef.current.scale,
       {
-        x: 2.5,
-        y: 2.5,
-        z: 2.5,
+        x: 3.7,
+        y: 3.7,
+        z: 3.7,
         duration: 3,
         ease: 'power1.out',
       },
@@ -106,7 +117,7 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
     <group ref={groupRef}>
       {/* 실제 지구 */}
       <mesh ref={earthRef}>
-        <sphereGeometry args={[1.5, 64, 64]} />
+        <sphereGeometry args={[1, 64, 64]} />
         <meshStandardMaterial
           map={earthTexture}
           emissive={new Color(0x001133)}
@@ -117,7 +128,7 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
 
       {/* 구름 */}
       <mesh ref={earthCloudRef}>
-        <sphereGeometry args={[1.51, 64, 64]} />
+        <sphereGeometry args={[1.01, 64, 64]} />
         <meshStandardMaterial
           map={cloudsTexture}
           transparent={true}
@@ -131,7 +142,7 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
 
       {/* 메인 글로우 */}
       <mesh ref={glowRef}>
-        <sphereGeometry args={[1.53, 64, 64]} />
+        <sphereGeometry args={[1.03, 64, 64]} />
         <meshBasicMaterial
           color={new Color(0x00ffff)}
           transparent={true}
@@ -143,7 +154,7 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
 
       {/* 외부 글로우 */}
       <mesh ref={outerGlowRef}>
-        <sphereGeometry args={[1.55, 32, 32]} />
+        <sphereGeometry args={[1.05, 32, 32]} />
         <meshBasicMaterial
           color={new Color(0x0088ff)}
           transparent={true}
@@ -155,7 +166,7 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
 
       {/* 아우라 */}
       <mesh ref={auraRef}>
-        <sphereGeometry args={[1.58, 16, 16]} />
+        <sphereGeometry args={[1.08, 16, 16]} />
         <meshBasicMaterial
           color={new Color(0x0066ff)}
           transparent={true}
