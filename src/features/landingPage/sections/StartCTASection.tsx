@@ -9,7 +9,7 @@ const StartCTASection = () => {
 
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
-      <div className="absolute left-[-10%] top-[5%] max-xl:hidden">
+      <div className="absolute left-[-11%] top-[5%] max-xl:hidden">
         <img
           src="/images/landing/cta-rabbit.webp"
           alt="CTA토끼"
