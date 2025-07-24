@@ -322,7 +322,7 @@ const AllBenefitsLayout: React.FC = () => {
           <BenefitFilterToggle
             value={filter}
             onChange={setFilter}
-            width="w-[300px] max-xl:w-[220px] max-md:w-full"
+            width="w-[300px] max-xl:w-[220px] max-md:w-full max-md:mb-0"
           />
           <div className="flex gap-2 max-xl:gap-1 max-md:mb-6 max-md:w-full ">
             <SearchBar
