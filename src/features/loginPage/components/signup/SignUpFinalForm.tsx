@@ -116,13 +116,13 @@ const SignUpFinalForm = ({
 
   return (
     <div ref={wrapperRef} className="w-full flex flex-col items-center">
-      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] text-left">
-        <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6">
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full text-left">
+        <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 max-md:text-title-6 max-sm:text-title-5">
           개인정보를 입력해주세요
         </p>
       </div>
 
-      <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] mt-[51px] max-xl:mt-[44px] max-lg:mt-[34px]">
+      <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] max-md:max-w-[280px] max-sm:w-full mt-[51px] max-xl:mt-[44px] max-lg:mt-[34px] max-md:mt-[38px] max-sm:mt-[40px]">
         <EmailVerificationBox
           email={formData.email}
           onChangeEmail={(val) => handleChange('email', val)}
@@ -131,7 +131,7 @@ const SignUpFinalForm = ({
         />
       </div>
 
-      <div className="mt-[15px] max-xl:mt-[13px] max-lg:mt-[10px]">
+      <div className="mt-[15px] max-xl:mt-[13px] max-lg:mt-[10px] max-md:mt-[12px] max-sm:mt-[14px]">
         <PasswordInputForm
           password={formData.password}
           passwordConfirm={formData.passwordConfirm}
@@ -146,7 +146,7 @@ const SignUpFinalForm = ({
         label="회원가입"
         onClick={handleNext}
         variant={isValid ? 'default' : 'disabled'}
-        className="w-[320px] mt-[100px] max-lg:w-full"
+        className="mt-[100px] max-md:mt-[85px] max-sm:mt-[80px]"
       />
 
       <AuthFooter

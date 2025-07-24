@@ -264,7 +264,7 @@ const AuthLayout = () => {
   console.log('🟡 AuthLayout 렌더링:', { showOAuthModal });
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white">
+    <div className="flex items-center justify-center min-h-screen bg-white max-md:overflow-hidden max-md:h-screen max-md:fixed max-md:inset-0 max-sm:overflow-hidden max-sm:h-screen max-sm:fixed max-sm:inset-0">
       {/* OAuth 로딩 모달 */}
       <Modal
         isOpen={showOAuthModal}
@@ -276,7 +276,147 @@ const AuthLayout = () => {
         </div>
       </Modal>
 
-      <div className="relative w-full max-w-[1400px] max-xl:max-w-[1200px] max-lg:max-w-[900px] h-[700px] max-xl:h-[600px] max-lg:h-[500px] overflow-hidden mx-auto">
+      {/* 모바일 레이아웃 (max-md: ~767px) */}
+      <div className="max-md:block hidden w-full h-screen relative overflow-hidden fixed max-md:fixed max-md:inset-0 max-sm:block max-sm:fixed max-sm:inset-0">
+        {/* 배경 SideCard - 전체 화면 */}
+        <div className="absolute top-0 left-0 w-full h-2/3">
+          <AuthSideCard />
+        </div>
+
+        {/* 하단에서 올라오는 오버레이 폼 카드 - 전체 너비 */}
+        <div className="absolute bottom-0 left-0 w-full" style={{ bottom: '-0rem' }}>
+          <div className="bg-white rounded-t-[24px] px-6 pt-8 pb-8 w-full shadow-2xl overflow-hidden">
+            {/* 로그인 */}
+            {formStep === 'login' && (
+              <LoginForm
+                onGoToPhoneAuth={() => {
+                  console.log('🟡 AuthLayout: "계정이 없으신가요?" 클릭');
+                  setMode('signup');
+                  setShowTab(false);
+                  goToPhoneAuth();
+                }}
+                onGoToFindEmail={() => {
+                  console.log('🟡 AuthLayout: "아이디/비밀번호 찾기" 클릭');
+                  setMode('find');
+                  setShowTab(true);
+                  goToFindEmail();
+                }}
+              />
+            )}
+
+            {/* 인증 / 회원가입 / 아이디/비번 찾기 진입 */}
+            {(formStep === 'phoneAuth' ||
+              formStep === 'verification' ||
+              formStep === 'signUp' ||
+              formStep === 'signUpFinal') && (
+              <PhoneAuthForm
+                mode={mode}
+                title={mode === 'find' ? '' : '번호 인증을 위한\n개인 정보를 입력해주세요'}
+                currentStep={formStep}
+                showTab={showTab}
+                onGoToLogin={goToLogin}
+                onAuthComplete={({ name, phone }) => {
+                  console.log('🟡 AuthLayout: onAuthComplete 호출됨', { name, phone });
+                  setUserData({
+                    name,
+                    phone,
+                    birthday: '',
+                    gender: '',
+                    membershipId: '',
+                    verifiedType: '',
+                  });
+                  console.log('🟡 AuthLayout: goToVerification() 호출');
+                  goToVerification();
+                }}
+                onVerified={(verifiedType, user) => {
+                  const urlParams = new URLSearchParams(location.search);
+                  const isOAuthFlow = urlParams.get('verifiedType') === 'oauth';
+
+                  if (isOAuthFlow || verifiedType === 'oauth-new') {
+                    setOAuthUserData({
+                      name: user.name,
+                      phone: user.phone,
+                      birthday: user.birthday,
+                      gender: user.gender,
+                      membershipId: user.membershipId,
+                      verifiedType: verifiedType,
+                    });
+                    setFormStep('oauthIntegration');
+                  } else {
+                    if (verifiedType === 'new' && mode === 'find') {
+                      setFormStep('findEmail');
+                    } else if (verifiedType === 'new' || verifiedType === 'uplus') {
+                      goToSignUp();
+                    } else if (verifiedType === 'oauth-to-local-merge') {
+                      handleOAuthToLocalMerge(user.phone);
+                    } else if (verifiedType === 'local-to-oauth-merge') {
+                      setUserData({
+                        name: user.name,
+                        phone: user.phone,
+                        birthday: user.birthday,
+                        gender: user.gender,
+                        membershipId: user.membershipId,
+                        verifiedType: verifiedType,
+                      });
+                      goToSignUp();
+                    } else if (verifiedType === 'oauth') {
+                      setOAuthUserData({
+                        name: user.name,
+                        phone: user.phone,
+                        birthday: user.birthday,
+                        gender: user.gender,
+                        membershipId: user.membershipId,
+                        verifiedType: verifiedType,
+                      });
+                      setFormStep('oauthIntegration');
+                    } else {
+                      goToLogin();
+                    }
+                  }
+                }}
+                onSignUpComplete={goToSignUpFinal}
+                nameFromPhoneAuth={userData.name}
+                phoneFromPhoneAuth={userData.phone}
+              />
+            )}
+
+            {/* OAuth 통합 */}
+            {formStep === 'oauthIntegration' && (
+              <OAuthIntegrationForm
+                name={oauthUserData.name}
+                phone={oauthUserData.phone}
+                birthday={oauthUserData.birthday}
+                gender={oauthUserData.gender}
+                membershipId={oauthUserData.membershipId}
+                onGoToLogin={goToLogin}
+                onNext={({ birthday, gender }) => {
+                  handleOAuthSignup(birthday, gender);
+                }}
+                isOAuthNew={oauthUserData.verifiedType === 'oauth-new'}
+              />
+            )}
+
+            {/* 아이디 찾기 */}
+            {formStep === 'findEmail' && (
+              <FindEmailForm
+                onGoToLogin={goToLogin}
+                onClickTabPassword={() => setFormStep('findPassword')}
+              />
+            )}
+
+            {/* 비밀번호 찾기 */}
+            {formStep === 'findPassword' && (
+              <FindPasswordForm
+                onGoToLogin={goToLogin}
+                onClickTabEmail={() => setFormStep('findEmail')}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 데스크톱/태블릿 레이아웃 (md 이상: 768px~) - 기존 그대로 유지 */}
+      <div className="max-md:hidden relative w-full max-w-[1400px] max-xl:max-w-[1200px] max-lg:max-w-[900px] max-md:max-w-[768px] h-[700px] max-xl:h-[600px] max-lg:h-[500px] max-md:h-[450px] overflow-hidden mx-auto">
         {/* 좌측 카드 */}
         <div
           ref={formCardRef}

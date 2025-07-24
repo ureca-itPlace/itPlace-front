@@ -4,7 +4,6 @@ import VerificationCodeForm from './VerificationCodeForm';
 import SignUpForm from '../signup/SignUpForm';
 import SignUpFinalForm from '../signup/SignUpFinalForm';
 import { showToast } from '../../../../utils/toast';
-import { validateCaptcha } from 'react-simple-captcha';
 import { sendVerificationCode } from '../../apis/verification';
 import PhoneAuth from '../common/PhoneAuth';
 
@@ -51,7 +50,7 @@ const PhoneAuthForm = ({
 }: Props) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [userCaptchaInput, setUserCaptchaInput] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
   const [membershipId, setMembershipId] = useState('');
@@ -60,14 +59,13 @@ const PhoneAuthForm = ({
     'new' | 'uplus' | 'oauth-to-local-merge' | 'local-to-oauth-merge'
   >('new');
 
-  const isReadyToValidate = name.trim() && phone.trim() && userCaptchaInput.trim();
+  const isReadyToValidate = name.trim() && phone.trim() && recaptchaToken;
 
   const handleNext = async () => {
     if (!isReadyToValidate) return;
 
-    const isCaptchaValid = validateCaptcha(userCaptchaInput.trim());
-    if (!isCaptchaValid) {
-      showToast('입력하신 보안문자가 이미지와 일치하지 않습니다.', 'error');
+    if (!recaptchaToken) {
+      showToast('reCAPTCHA 인증을 완료해주세요.', 'error');
       return;
     }
 
@@ -171,8 +169,8 @@ const PhoneAuthForm = ({
     <PhoneAuth
       headerSlot={
         title ? (
-          <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] text-left mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px]">
-            <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 whitespace-pre-line">
+          <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full text-left mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[15px] max-sm:mt-[16px]">
+            <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 max-md:text-title-6 max-sm:text-title-5 whitespace-pre-line">
               {title}
             </p>
           </div>
@@ -180,10 +178,9 @@ const PhoneAuthForm = ({
       }
       name={name}
       phone={phone}
-      captcha={userCaptchaInput}
       onChangeName={(e) => setName(e.target.value)}
       onChangePhone={(e) => setPhone(e.target.value)}
-      onChangeCaptcha={(e) => setUserCaptchaInput(e.target.value)}
+      onRecaptchaChange={setRecaptchaToken}
       onSubmit={handleNext}
       showCaptcha={true}
       showFooter={true}

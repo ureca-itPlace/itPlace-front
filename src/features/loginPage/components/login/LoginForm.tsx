@@ -49,13 +49,13 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
   return (
     <div>
-      <h2 className="text-title-1 max-xl:text-title-2 max-lg:text-title-3 mb-[40px] max-xl:mb-[34px] max-lg:mb-[27px]">
+      <h2 className="text-title-1 max-xl:text-title-2 max-lg:text-title-3 max-md:text-title-3 max-sm:text-title-2 mb-[40px] max-xl:mb-[34px] max-lg:mb-[27px] max-md:mb-[30px] max-sm:mb-[32px]">
         로그인
       </h2>
 
       <div className="flex flex-col gap-0 w-full items-center">
         {/* 이메일 입력 */}
-        <div className="mb-[20px]">
+        <div className="mb-[20px] max-md:mb-[18px] max-sm:mb-[16px] w-full">
           <AuthInput
             name="email"
             placeholder="이메일"
@@ -65,7 +65,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
         </div>
 
         {/* 비밀번호 입력 */}
-        <div className="mb-[40px]">
+        <div className="mb-[40px] max-md:mb-[36px] max-sm:mb-[32px] w-full">
           <AuthInput
             name="password"
             type="password"

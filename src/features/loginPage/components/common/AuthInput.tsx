@@ -41,7 +41,7 @@ const AuthInput = ({
       onChange={disabled ? undefined : onChange}
       disabled={disabled}
       className={clsx(
-        'w-[320px] max-xl:w-[274px] max-lg:w-[205px] h-[50px] max-xl:h-[43px] max-lg:h-[34px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] px-[16px] max-xl:px-[14px] max-lg:px-[11px] text-body-2 max-xl:text-body-3 max-lg:text-body-4 placeholder:text-body-2 placeholder:max-xl:text-body-3 placeholder:max-lg:text-body-4',
+        'w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full h-[50px] max-xl:h-[43px] max-lg:h-[34px] max-md:h-[46px] max-sm:h-[48px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] max-md:rounded-[14px] max-sm:rounded-[16px] px-[16px] max-xl:px-[14px] max-lg:px-[11px] max-md:px-[13px] max-sm:px-[16px] text-body-2 max-xl:text-body-3 max-lg:text-body-4 max-md:text-body-3 max-sm:text-body-3 placeholder:text-body-2 placeholder:max-xl:text-body-3 placeholder:max-lg:text-body-4 placeholder:max-md:text-body-3 placeholder:max-sm:text-body-3',
         bgColor,
         textColor,
         placeholderColor,

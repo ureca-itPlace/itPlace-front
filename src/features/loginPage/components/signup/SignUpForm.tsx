@@ -78,14 +78,14 @@ const SignUpForm = ({
   return (
     <div ref={wrapperRef} className="w-full flex flex-col items-center">
       {/* 제목 */}
-      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] text-left mb-[51px] max-xl:mb-[44px] max-lg:mb-[34px]">
-        <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6">
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full text-left mb-[51px] max-xl:mb-[44px] max-lg:mb-[34px] max-md:mb-[38px] max-sm:mb-[40px]">
+        <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 max-md:text-title-6 max-sm:text-title-5">
           <span className="font-semibold">개인정보</span>를 입력해주세요
         </p>
       </div>
 
       {/* 이름 */}
-      <div className="mb-[20px] w-full flex justify-center">
+      <div className="mb-[20px] max-md:mb-[18px] max-sm:mb-[16px] w-full flex justify-center">
         <AuthInput
           name="name"
           placeholder="이름"
@@ -95,7 +95,7 @@ const SignUpForm = ({
       </div>
 
       {/* 휴대폰 번호 */}
-      <div className="mb-[20px] w-full flex justify-center">
+      <div className="mb-[20px] max-md:mb-[18px] max-sm:mb-[16px] w-full flex justify-center">
         <AuthInput
           name="phone"
           placeholder="휴대폰 번호"
@@ -105,22 +105,22 @@ const SignUpForm = ({
       </div>
 
       {/* 생년월일 */}
-      <div className="mb-[20px] w-full flex justify-center">
+      <div className="mb-[20px] max-md:mb-[18px] max-sm:mb-[16px] w-full flex justify-center">
         <input
           type="date"
           name="birth"
           value={formData.birth}
           onChange={(e) => handleChange('birth', e.target.value)}
           disabled={disabledFields.birth}
-          className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] px-[16px] max-xl:px-[14px] max-lg:px-[11px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] border border-grey02 text-body-2 max-xl:text-body-3 max-lg:text-body-4 text-grey05"
+          className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full h-[48px] max-xl:h-[41px] max-lg:h-[32px] max-md:h-[44px] max-sm:h-[50px] px-[16px] max-xl:px-[14px] max-lg:px-[11px] max-md:px-[13px] max-sm:px-[16px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] max-md:rounded-[14px] max-sm:rounded-[16px] border border-grey02 text-body-2 max-xl:text-body-3 max-lg:text-body-4 max-md:text-body-3 max-sm:text-body-3 text-grey05"
         />
       </div>
 
       {/* 성별 */}
-      <div className="mb-[20px] max-xl:mb-[17px] max-lg:mb-[13px] w-full flex justify-center gap-[16px] max-xl:gap-[14px] max-lg:gap-[11px]">
+      <div className="mb-[20px] max-xl:mb-[17px] max-lg:mb-[13px] max-md:mb-[15px] max-sm:mb-[16px] w-full flex justify-center gap-[16px] max-xl:gap-[14px] max-lg:gap-[11px] max-md:gap-[12px] max-sm:gap-[14px]">
         <button
           type="button"
-          className={`w-[150px] max-xl:w-[128px] max-lg:w-[96px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] border text-body-2 max-xl:text-body-3 max-lg:text-body-4 transition ${
+          className={`w-[150px] max-xl:w-[128px] max-lg:w-[96px] max-md:w-[135px] max-sm:w-[140px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] max-md:h-[44px] max-sm:h-[46px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] max-md:rounded-[14px] max-sm:rounded-[16px] border text-body-2 max-xl:text-body-3 max-lg:text-body-4 max-md:text-body-3 max-sm:text-body-3 transition ${
             formData.gender === 'MALE'
               ? 'bg-purple04 text-white border-purple04'
               : 'bg-white text-grey04 border-grey02'
@@ -132,7 +132,7 @@ const SignUpForm = ({
         </button>
         <button
           type="button"
-          className={`w-[150px] max-xl:w-[128px] max-lg:w-[96px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] border text-body-2 max-xl:text-body-3 max-lg:text-body-4 transition ${
+          className={`w-[150px] max-xl:w-[128px] max-lg:w-[96px] max-md:w-[135px] max-sm:w-[140px] h-[48px] max-xl:h-[41px] max-lg:h-[32px] max-md:h-[44px] max-sm:h-[46px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] max-md:rounded-[14px] max-sm:rounded-[16px] border text-body-2 max-xl:text-body-3 max-lg:text-body-4 max-md:text-body-3 max-sm:text-body-3 transition ${
             formData.gender === 'FEMALE'
               ? 'bg-purple04 text-white border-purple04'
               : 'bg-white text-grey04 border-grey02'
@@ -145,7 +145,7 @@ const SignUpForm = ({
       </div>
 
       {/* 멤버십 번호 */}
-      <div className="mb-[20px] w-full flex justify-center">
+      <div className="mb-[20px] max-md:mb-[18px] max-sm:mb-[16px] w-full flex justify-center">
         <AuthInput
           name="membershipNumber"
           placeholder="U+ 멤버십 번호"

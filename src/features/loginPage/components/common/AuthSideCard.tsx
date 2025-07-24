@@ -2,7 +2,7 @@ import astronautImage from '../../../../assets/loginPage/loginPage.png';
 
 const AuthSideCard = () => {
   return (
-    <div className="w-[26.9375rem] max-xl:w-[23.125rem] max-lg:w-[17.3125rem] h-[39.9375rem] max-xl:h-[34.25rem] max-lg:h-[26.875rem] rounded-[1.875rem] max-xl:rounded-[1.625rem] max-lg:rounded-[1.25rem] overflow-hidden">
+    <div className="w-[431px] max-xl:w-[370px] max-lg:w-[277px] max-md:w-[320px] max-sm:w-full h-[639px] max-xl:h-[548px] max-lg:h-[430px] max-md:h-[380px] max-sm:h-full rounded-[30px] max-xl:rounded-[26px] max-lg:rounded-[20px] max-md:rounded-[18px] max-sm:rounded-none overflow-hidden">
       <img src={astronautImage} alt="astronaut" className="w-full h-full object-cover" />
     </div>
   );
