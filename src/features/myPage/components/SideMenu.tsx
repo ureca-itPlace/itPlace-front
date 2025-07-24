@@ -31,7 +31,7 @@ const menuItems = [
 
 export default function SideMenu() {
   return (
-    <aside className="w-[370px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-3 max-xl:w-[310px] ">
+    <aside className="w-[370px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-3 max-xl:w-[310px] max-xl:pt-[56px]">
       <h1 className="text-title-1 text-purple06 pl-[34px] pb-[80px] max-xl:text-title-2 max-xl:pb-[60px]">
         MY PAGE
       </h1>
