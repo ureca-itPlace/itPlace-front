@@ -5,7 +5,6 @@ export const DEFAULT_RADIUS = 1000; // 기본 반경 1km
 // 카테고리 정의
 export const CATEGORIES = [
   { id: '전체', name: '전체' },
-  { id: 'APP/기기', name: 'APP/기기' },
   { id: '액티비티', name: '액티비티' },
   { id: '뷰티/건강', name: '뷰티/건강' },
   { id: '쇼핑', name: '쇼핑' },

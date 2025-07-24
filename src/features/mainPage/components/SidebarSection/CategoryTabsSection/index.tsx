@@ -4,7 +4,7 @@ import { FreeMode } from 'swiper/modules';
 import { Category } from '../../../types';
 import { LAYOUT } from '../../../constants';
 import {
-  TbDeviceTv,
+  TbActivity,
   TbHeart,
   TbShoppingBag,
   TbHome,
@@ -26,15 +26,14 @@ interface CategoryTabsSectionProps {
 
 // 카테고리 색상 매핑
 const CATEGORY_COLOR_MAP: Record<string, string> = {
-  'APP/기기': 'text-purple04',
-  액티비티: 'text-orange04',
-  '뷰티/건강': 'text-pink04',
-  쇼핑: 'text-purple04',
-  '생활/편의': 'text-orange04',
-  푸드: 'text-pink04',
-  '문화/여가': 'text-purple04',
-  교육: 'text-orange04',
-  '여행/교통': 'text-pink04',
+  액티비티: 'text-purple04',
+  '뷰티/건강': 'text-orange04',
+  쇼핑: 'text-pink04',
+  '생활/편의': 'text-purple04',
+  푸드: 'text-orange04',
+  '문화/여가': 'text-pink04',
+  교육: 'text-purple04',
+  '여행/교통': 'text-orange04',
 };
 
 const getCategoryIcon = (
@@ -45,8 +44,7 @@ const getCategoryIcon = (
   const iconSize = 20;
 
   const iconMap: Record<string, React.ReactElement> = {
-    'APP/기기': <TbDeviceTv size={iconSize} className={iconColor} />,
-    액티비티: <TbHeart size={iconSize} className={iconColor} />,
+    액티비티: <TbActivity size={iconSize} className={iconColor} />,
     '뷰티/건강': <TbHeart size={iconSize} className={iconColor} />,
     쇼핑: <TbShoppingBag size={iconSize} className={iconColor} />,
     '생활/편의': <TbHome size={iconSize} className={iconColor} />,
