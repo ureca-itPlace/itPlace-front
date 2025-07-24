@@ -34,7 +34,7 @@ const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
             />
           </Suspense>
           {/* 3D 요소 통제 (자체 확대 X -> 스크롤 시 확대) */}
-          <OrbitControls enableZoom={false} enablePan={true} />
+          <OrbitControls enableZoom={false} enablePan={true} autoRotate autoRotateSpeed={0.5} />
         </Canvas>
       </div>
     </>

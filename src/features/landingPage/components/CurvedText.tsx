@@ -10,14 +10,14 @@ interface CurvedTextProps {
 }
 
 const CurveText = forwardRef<Group, CurvedTextProps>(
-  ({ text, radius = 1.2, fontSize = 0.2, color = 'white' }, ref) => {
+  ({ text, radius = 1.2, fontSize = 0.5, color = 'white' }, ref) => {
     const letters = text.split('').reverse();
     const total = letters.length;
 
     return (
       <group ref={ref}>
         {letters.map((char, i) => {
-          const theta = ((i - total / 2) / total) * Math.PI * 0.5; // 글자 각도
+          const theta = ((i - total / 2) / total) * Math.PI * 0.6; // 글자 각도
 
           // 글자 위치
           const x = Math.cos(theta) * radius;

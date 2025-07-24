@@ -102,7 +102,7 @@ const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
       auraRef.current.layers.set(1);
       auraRef.current.rotation.z += 0.0003;
     }
-    if (textRef.current) textRef.current.rotation.y += 0.01;
+    if (textRef.current) textRef.current.rotation.y -= 0.01;
   });
 
   return (

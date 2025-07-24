@@ -37,7 +37,6 @@ const LandingPage = () => {
 
   return (
     <div className="relative h-full w-full overflow-x-hidden bg-white">
-      <Header variant="glass" />
       <EarthSection />
       <MapSection />
       <FeatureSection />
