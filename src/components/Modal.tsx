@@ -21,6 +21,7 @@ interface ModalProps {
   onClose: () => void;
   buttons?: ButtonType[];
   children?: React.ReactNode;
+  inputType?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -30,6 +31,7 @@ const Modal: React.FC<ModalProps> = ({
   subMessage = '',
   subMessageClass = '',
   input = false,
+  inputType = 'text',
   inputValue = '',
   inputPlaceholder = '',
   onInputChange,
@@ -87,7 +89,7 @@ const Modal: React.FC<ModalProps> = ({
         {/* 입력창 */}
         {input && (
           <input
-            type="text"
+            type={inputType}
             className="w-full max-w-[436px] h-[50px] mt-[20px] px-[20px] bg-grey01 rounded-[10px] text-body-2 text-grey05 placeholder-grey03 max-sm:text-body-3"
             placeholder={inputPlaceholder}
             value={inputValue}
