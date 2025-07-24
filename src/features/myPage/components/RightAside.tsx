@@ -16,7 +16,7 @@ export default function RightAside({
   const [imgSrc, setImgSrc] = useState(bottomImage); // 현재 이미지 소스
 
   return (
-    <aside className="w-[476px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:w-[390px] max-xl:pt-[56px]">
+    <aside className="w-[476px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:w-[390px] max-xl:pt-[56px] max-md:w-full max-md:p-6">
       {/* 위쪽 내용 */}
       <div className="flex-1">{children}</div>
 

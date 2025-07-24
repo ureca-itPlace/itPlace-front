@@ -93,8 +93,8 @@ export default function SideMenu() {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex-1 flex items-center justify-center py-3 text-sm font-medium
-              ${isActive ? 'text-purple04 border-b-2 border-purple04' : 'text-grey05'}`
+              `flex-1 flex items-center justify-center py-3 text-body-3 font-medium
+              ${isActive ? 'text-purple04 border-b-2 border-purple04 font-semibold' : 'text-grey05'}`
             }
           >
             {item.label}

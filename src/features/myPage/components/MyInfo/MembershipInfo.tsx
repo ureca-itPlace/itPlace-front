@@ -17,7 +17,7 @@ const MembershipInfo: React.FC<Props> = ({ name, grade, onClickLink }) => {
     <div className="flex flex-col gap-4">
       {grade ? (
         <>
-          <p className="text-black text-title-2 mb-8 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+          <p className="text-black text-title-2 mb-8 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-sm:mb-0 max-md:text-grey05">
             안녕하세요{' '}
             <span className="text-purple04 text-title-2 max-xl:text-title-4 max-xl:font-semibold">
               {name.slice(1)}
@@ -32,13 +32,13 @@ const MembershipInfo: React.FC<Props> = ({ name, grade, onClickLink }) => {
             입니다.
             <br /> 놓치기 아까운 혜택이 가득해요!
           </p>
-          <div className="bg-gradient-myPage text-white text-[96px] font-bold text-center rounded-[18px] px-6 pb-0 pt-4 mt-10 max-xl:text-[70px] max-xl:px-3 max-xl:mt-4">
+          <div className="bg-gradient-myPage text-white text-[96px] font-bold text-center rounded-[18px] px-6 pb-0 pt-4 mt-10 max-xl:text-[70px] max-xl:px-3 max-xl:mt-4 max-md:text-body-1-bold max-md:mt-0 max-md:py-3 max-md:rounded-xl">
             {displayGrade}
           </div>
         </>
       ) : (
         <>
-          <p className="text-black text-title-2 mb-8 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+          <p className="text-black text-title-2 mb-8 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-sm:mb-0 max-md:text-grey05">
             안녕하세요{' '}
             <span className="text-purple04 text-title-2 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
               {name.slice(1)}
@@ -57,7 +57,7 @@ const MembershipInfo: React.FC<Props> = ({ name, grade, onClickLink }) => {
           </p>
           <button
             onClick={onClickLink}
-            className="bg-purple04 text-white rounded-[10px] px-2 py-3 mt-10 text-body-0-bold hover:bg-purple05 max-xl:text-body-2-bold max-xl:mt-6"
+            className="bg-purple04 text-white rounded-[10px] px-2 py-3 mt-10 text-body-0-bold hover:bg-purple05 max-xl:text-body-2-bold max-xl:mt-6 max-md:text-body-1-bold max-md:mt-0 max-md:py-3 max-md:rounded-xl"
           >
             연동하기
           </button>

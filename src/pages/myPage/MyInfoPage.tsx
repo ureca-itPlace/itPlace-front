@@ -96,11 +96,11 @@ export default function MyInfoPage() {
   }
 
   return (
-    <div className="flex flex-row gap-[28px] w-full h-full max-md:flex-col-reverse">
+    <div className="flex flex-row gap-[28px] w-full h-full max-md:flex-col-reverse max-md:px-5 max-md:pb-7">
       <MyPageContentLayout
         main={
           <div>
-            <h1 className="text-title-2 text-black mb-8 max-xl:text-title-4 max-xl:font-semibold max-xl:mb-4">
+            <h1 className="text-title-2 text-black mb-8 max-xl:text-title-4 max-xl:font-semibold max-xl:mb-4 max-md:hidden">
               회원 정보
             </h1>
             <UserInfoForm
