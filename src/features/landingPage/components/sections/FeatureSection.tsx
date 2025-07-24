@@ -99,7 +99,7 @@ const FeatureSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-screen bg-black flex items-center justify-center overflow-hidden"
+      className="relative w-full h-screen bg-[#000000] flex items-center justify-center overflow-hidden"
     >
       <div className="w-full h-full flex items-center justify-center max-sm:flex-col">
         <nav ref={featureListRef}>
@@ -117,7 +117,7 @@ const FeatureSection = () => {
           </ul>
         </nav>
 
-        <ul className="relative flex flex-col w-[57%] h-full ml-auto text-black">
+        <ul className="relative flex flex-col w-[57%] h-full ml-auto text-[#000000]">
           {featureData.map((feature, i) => (
             <li
               key={feature.title}

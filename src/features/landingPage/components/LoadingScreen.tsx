@@ -46,12 +46,12 @@ const LoadingScreen = () => {
   return (
     <div
       ref={bgRef}
-      className="fixed top-0 left-0 w-full h-screen bg-white flex flex-col justify-center items-center z-[9999]"
+      className="fixed top-0 left-0 w-full h-screen bg-white text-[#000000] flex flex-col justify-center items-center z-[9999]"
     >
-      <h1 ref={logoRef} className="custom-font text-[194px] max-sm:text-8xl text-black">
+      <h1 ref={logoRef} className="custom-font text-[194px] max-sm:text-8xl">
         IT:PLACE
       </h1>
-      <p ref={descRef} className="text-5xl text-center max-sm:text-body-1 text-black">
+      <p ref={descRef} className="text-5xl text-center max-sm:text-body-1">
         혜택을 지도에서, 빠르고 간편하게
       </p>
     </div>
