@@ -17,7 +17,7 @@ const menuItems = [
   },
   {
     to: '/mypage/favorites',
-    label: '내가 찜한 혜택',
+    label: '나의 관심 혜택',
     icon: TbStar,
     activeIcon: TbStarFilled,
   },

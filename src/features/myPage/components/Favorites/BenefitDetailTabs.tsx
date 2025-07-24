@@ -18,13 +18,13 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let isMounted = true; // ✅ 이번 effect에서 발생하는 요청만 반영하겠다는 플래그
+    let isMounted = true; // 이번 effect에서 발생하는 요청만 반영하겠다는 플래그
     setLoading(true);
 
     (async () => {
       try {
         const res = await fetchFavoriteDetail(benefitId);
-        // 👇 아래 조건을 추가: 이 effect가 아직 유효할 때만 setState
+        // 아래 조건을 추가: 이 effect가 아직 유효할 때만 setState
         if (!isMounted) return;
 
         setDetail(res.data);
@@ -79,8 +79,8 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
   const isVipKok = detail.tiers.every((t) => t.grade === 'VIP콕');
 
   const LogoBox = ({ image, alt }: { image: string; alt: string }) => (
-    <div className="w-full h-[142px] flex items-center justify-center border border-grey02 rounded-[10px] mb-5">
-      <img src={image} alt={alt} className="h-[108px] object-contain" />
+    <div className="w-full h-[142px] flex items-center justify-center border border-grey02 rounded-[10px] mb-5 max-xl:h-[112px] max-xl:mb-3">
+      <img src={image} alt={alt} className="h-[108px] object-contain max-xl:h-[98px]" />
     </div>
   );
 
@@ -89,10 +89,12 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
     return (
       <div className="w-full">
         <LogoBox image={image} alt={name} />
-        <div className="flex items-center justify-center h-[50px] rounded-[12px] bg-orange04 text-white text-center text-body-0 font-medium w-full mb-4">
+        <div className="flex items-center justify-center h-[50px] rounded-[12px] bg-orange04 text-white text-center text-body-0 font-medium w-full mb-4 max-xl:h-[44px] max-xl:text-body-2">
           모든 등급
         </div>
-        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05">{allBenefit.context}</p>
+        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2">
+          {allBenefit.context}
+        </p>
       </div>
     );
   }
@@ -105,13 +107,15 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
       <div className="w-full">
         <LogoBox image={image} alt={name} />
         <div
-          className={`flex items-center justify-center h-[50px] rounded-[12px] text-body-0 text-center font-medium mb-4 w-full ${
+          className={`flex items-center justify-center h-[50px] rounded-[12px] text-body-0 text-center font-medium mb-4 w-full max-xl:h-[44px] max-xl:text-body-2 ${
             active ? 'bg-gradient-myPage text-white' : 'bg-grey01 text-grey03'
           }`}
         >
           VIP콕
         </div>
-        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05">{vipContent?.context}</p>
+        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2">
+          {vipContent?.context}
+        </p>
       </div>
     );
   }
@@ -128,7 +132,7 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
           <button
             key={g}
             onClick={() => setSelectedGrade(g)}
-            className={`h-[42px] flex-1 text-body-0 font-medium transition-colors rounded-[8px] ${
+            className={`h-[42px] flex-1 text-body-0 font-medium transition-colors rounded-[8px] max-xl:h-[38px] max-xl:text-body-2 ${
               selectedGrade === g
                 ? 'bg-white text-orange04 shadow-sm'
                 : 'bg-transparent text-grey03'
@@ -138,7 +142,9 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
           </button>
         ))}
       </div>
-      <p className="mt-4 whitespace-pre-line text-body-0 text-grey05">{content?.context}</p>
+      <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2">
+        {content?.context}
+      </p>
     </div>
   );
 }

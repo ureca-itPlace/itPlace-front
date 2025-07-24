@@ -38,7 +38,7 @@ export default function BenefitCardList({
   };
 
   return (
-    <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px]">
+    <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px] max-xl:min-h-[300px] max-xl:gap-x-6">
       {items.map((item) => (
         <div
           key={item.benefitId}
@@ -49,7 +49,7 @@ export default function BenefitCardList({
               setSelectedId(item.benefitId); // 상세보기
             }
           }}
-          className={`relative p-4 border rounded-[18px] w-[220px] h-[240px] cursor-pointer border-none shadow-[0px_3px_12px_rgba(0,0,0,0.15)] ${
+          className={`relative p-4 border rounded-[18px] w-[220px] h-[240px] max-xl:w-[160px] max-xl:h-[180px] cursor-pointer border-none shadow-[0px_3px_12px_rgba(0,0,0,0.15)] ${
             isEditing
               ? selectedItems.includes(item.benefitId)
                 ? 'ring-2 ring-purple04'
@@ -71,7 +71,7 @@ export default function BenefitCardList({
                   setSelectedItems(selectedItems.filter((id) => id !== item.benefitId));
                 }
               }}
-              className="absolute top-5 right-5 w-5 h-5 accent-purple04 appearance-none rounded-md border border-grey03 checked:bg-[url('/images/myPage/icon-check.png')] bg-no-repeat bg-center checked:border-purple04"
+              className="absolute top-5 right-5 w-5 h-5 max-xl:w-4 max-xl:h-4 accent-purple04 appearance-none rounded-md max-xl:rounded-[4px] border border-grey03 checked:bg-[url('/images/myPage/icon-check.png')] bg-no-repeat bg-center checked:border-purple04"
             />
           )}
 
@@ -82,7 +82,7 @@ export default function BenefitCardList({
                 e.stopPropagation();
                 onRequestDelete(item.benefitId); // 모달 열기
               }}
-              className="absolute top-5 right-5 text-orange03 hover:scale-110 transition-transform"
+              className="absolute top-5 right-5 max-xl:top-4 max-xl:right-4 text-orange03 hover:scale-110 transition-transform"
               title="즐겨찾기 해제"
             >
               <TbStarFilled size={22} />
@@ -93,9 +93,11 @@ export default function BenefitCardList({
           <img
             src={item.partnerImage}
             alt={item.benefitName}
-            className="h-[108px] w-auto object-contain mx-auto mt-6"
+            className="h-[108px] w-auto object-contain mx-auto mt-6 max-xl:h-[68px]"
           />
-          <p className="text-grey05 text-title-5 text-center mt-4">{item.benefitName}</p>
+          <p className="text-grey05 text-title-5 text-center mt-4 max-xl:text-title-7">
+            {item.benefitName}
+          </p>
         </div>
       ))}
     </div>

@@ -6,7 +6,7 @@ interface MainContentWrapperProps {
 
 export default function MainContentWrapper({ children }: MainContentWrapperProps) {
   return (
-    <main className="flex flex-1 flex-col h-full bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] pl-[56px] pr-[56px] max-xl:pt-[56px]">
+    <main className="flex flex-1 flex-col h-full bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] pl-[56px] pr-[56px] max-xl:pt-[56px] max-xl:pb-[40px]">
       {children}
     </main>
   );

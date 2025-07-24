@@ -48,14 +48,16 @@ export default function MyFavoritesPage() {
         main={
           <div className="flex flex-col flex-1 h-full">
             {/* 상단 타이틀 */}
-            <h1 className="text-title-2 text-black mb-7">찜한 혜택</h1>
+            <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+              관심 혜택
+            </h1>
             {/* 토글 + 검색 */}
             <div className="flex justify-between mb-[-10px]">
               <BenefitFilterToggle
                 value={benefitFilter}
                 onChange={setBenefitFilter}
-                width="w-[300px]"
-                fontSize="text-title-7"
+                width="w-[300px] max-xl:w-[220px]"
+                fontSize="text-title-7 max-xl:text-body-3"
               />
               <SearchBar
                 placeholder="제휴처명으로 검색하기"
@@ -63,7 +65,7 @@ export default function MyFavoritesPage() {
                 onChange={(e) => setKeyword(e.target.value)}
                 onClear={() => setKeyword('')}
                 backgroundColor="bg-grey01"
-                className="w-[280px] h-[50px]"
+                className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px]"
               />
             </div>
             {/* 편집/전체선택 컨트롤 */}
@@ -103,8 +105,13 @@ export default function MyFavoritesPage() {
               </div>
             ) : keyword.trim() ? (
               currentItems.length === 0 ? (
-                <div className="mt-28">
-                  <NoResult message1="검색 결과가 없어요." message2="다른 키워드로 검색해보세요." />
+                <div className="mt-28 max-xl:mt-20">
+                  <NoResult
+                    message1="검색 결과가 없어요."
+                    message2="다른 키워드로 검색해보세요."
+                    message1FontSize="max-xl:text-title-6"
+                    message2FontSize="max-xl:text-body-3"
+                  />
                 </div>
               ) : (
                 <BenefitCardList
@@ -122,12 +129,14 @@ export default function MyFavoritesPage() {
                 />
               )
             ) : allFavorites.length === 0 ? (
-              <div className="mt-28">
+              <div className="mt-28 max-xl:mt-20">
                 <NoResult
                   message1="찜 보관함이 텅 비었어요!"
                   message2="마음에 드는 혜택을 찜해보세요."
                   buttonText="전체 혜택 보러가기"
                   buttonRoute="/benefits"
+                  message1FontSize="max-xl:text-title-6"
+                  message2FontSize="max-xl:text-body-3"
                 />
               </div>
             ) : (
@@ -160,13 +169,13 @@ export default function MyFavoritesPage() {
                   width={37}
                 />
                 {isEditing && (
-                  <div className="absolute right-[56px] flex gap-3">
+                  <div className="absolute right-[8px] top-[20px] flex gap-3 max-xl:gap-1 max-xl:top-[18px]">
                     <button
                       onClick={() => {
                         setIsEditing(false);
                         setSelectedItems([]);
                       }}
-                      className="px-4 py-2 rounded-[16px] bg-grey01 hover:bg-grey02 text-title-8 text-grey04"
+                      className="px-4 py-2 rounded-[16px] bg-grey01 hover:bg-grey02 text-title-8 text-grey04 max-xl:text-body-5"
                     >
                       편집 취소
                     </button>
@@ -175,7 +184,7 @@ export default function MyFavoritesPage() {
                         setPendingDeleteId(null);
                         setIsDeleteModalOpen(true);
                       }}
-                      className="px-4 py-2 rounded-[16px] bg-purple04 hover:bg-purple05 text-title-8 text-white"
+                      className="px-4 py-2 rounded-[16px] bg-purple04 hover:bg-purple05 text-title-8 text-white max-xl:text-body-5"
                     >
                       삭제하기
                     </button>

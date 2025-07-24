@@ -31,19 +31,23 @@ export default function FavoritesAside({
   if (favorites.length === 0) {
     return (
       <>
-        <h1 className="text-title-2 text-black mb-4 text-center">선택한 혜택</h1>
-        <div className="flex flex-col items-center justify-center mt-20">
+        <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+          선택한 혜택
+        </h1>
+        <div className="flex flex-col items-center justify-center mt-20 max-xl:mt-10">
           <img
             src="/images/myPage/icon-nothing.webp"
             alt="텅빈 찜 보관함"
-            className="w-[300px] h-auto"
+            className="w-[300px] h-auto max-xl:w-[260px]"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
               target.src = '/images/myPage/icon-nothing.png';
             }}
           />
-          <p className="text-grey05 text-body-0 mt-5">찜 보관함이 텅 비었어요!</p>
+          <p className="text-grey05 text-body-0 mt-5 max-xl:text-body-1">
+            찜 보관함이 텅 비었어요!
+          </p>
         </div>
       </>
     );
@@ -53,12 +57,14 @@ export default function FavoritesAside({
   if (isEditing) {
     return (
       <FadeWrapper changeKey={selectedItems.length}>
-        <h1 className="text-title-2 text-black mb-4 text-center">선택한 혜택</h1>
+        <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+          선택한 혜택
+        </h1>
         <div className="flex flex-col items-center justify-center mt-7">
           <img
             src="/images/myPage/icon-file.webp"
             alt="폴더"
-            className="w-[185px] h-auto"
+            className="w-[185px] h-auto max-xl:w-[160px]"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null; // 무한 루프 방지
@@ -66,8 +72,10 @@ export default function FavoritesAside({
             }}
           />
           <div className="flex justify-center items-baseline">
-            <p className="text-[96px] font-bold text-orange04 mt-3">{selectedItems.length}</p>
-            <p className="text-title-1 text-grey05 ml-2">개</p>
+            <p className="text-[96px] font-bold text-orange04 mt-3 max-xl:text-[76px]">
+              {selectedItems.length}
+            </p>
+            <p className="text-title-1 text-grey05 ml-2 max-xl:text-title-2">개</p>
           </div>
         </div>
       </FadeWrapper>
@@ -79,7 +87,9 @@ export default function FavoritesAside({
     <FadeWrapper changeKey={selectedId}>
       {selectedId ? (
         <>
-          <h1 className="text-title-2 text-black mb-5 text-center">상세 혜택</h1>
+          <h1 className="text-title-2 text-black mb-5 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+            상세 혜택
+          </h1>
           <BenefitDetailTabs
             benefitId={selectedId}
             image={favorites.find((f) => f.benefitId === selectedId)?.partnerImage ?? ''}
