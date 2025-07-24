@@ -59,7 +59,7 @@ export const AuthTransition = () => {
   const goToLogin = () => {
     // URL 파라미터 정리
     navigate('/login', { replace: true });
-    
+
     const tl = gsap.timeline();
 
     tl.to(formCardRef.current, {
