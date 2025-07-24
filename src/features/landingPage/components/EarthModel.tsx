@@ -88,10 +88,10 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
 
   useFrame(() => {
     if (earthCloudRef.current) {
-      earthCloudRef.current.rotation.y += 0.0005;
+      earthCloudRef.current.rotation.y += 0.0015;
     }
     if (earthRef.current) {
-      earthRef.current.rotation.y += 0.0002;
+      earthRef.current.rotation.y += 0.0008;
     }
 
     // 글로우 레이어 설정
