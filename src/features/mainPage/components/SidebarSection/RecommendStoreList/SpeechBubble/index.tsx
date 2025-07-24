@@ -22,7 +22,7 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
       <div className="bg-white border-2 border-purple04 rounded-[20px] px-5 py-4 relative">
         {/* 제목과 닫기 버튼 */}
         <div className="flex justify-between items-start mb-2">
-          <p className="text-body-3 text-black font-bold flex-1 pr-2 whitespace-nowrap">
+          <p className="text-body-2 text-black font-bold flex-1 pr-2 whitespace-nowrap">
             잇플AI는 다음과 같은 이유로{' '}
             <span className="text-purple04 font-bold">{partnerName}</span>를 추천드려요!
           </p>
@@ -37,11 +37,11 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
         </div>
 
         {/* 메시지 텍스트 */}
-        <p className="text-body-3 text-black pr-2 max-w-[330px]">{message}</p>
+        <p className="text-body-3 text-black pr-2 max-w-[325px]">{message}</p>
       </div>
 
       {/* 말풍선 꼬리 - 회전된 사각형 */}
-      <div className="absolute bottom-[-6px] left-10">
+      <div className="absolute bottom-[-6px] left-5">
         <div
           className="w-3 h-3 bg-white border-l-2 border-b-2 border-purple04"
           style={{
