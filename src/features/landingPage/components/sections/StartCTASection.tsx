@@ -5,8 +5,13 @@ const StartCTASection = () => {
   const navigate = useNavigate();
   return (
     <div className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
-      <div className="absolute left-[-20px] top-5 max-xl:hidden">
-        <img src="/images/landing/CTARabbit.svg" alt="CTA토끼" loading="lazy" />
+      <div className="absolute left-[-10%] top-[5%] max-xl:hidden">
+        <img
+          src="/images/landing/cta-rabbit.webp"
+          alt="CTA토끼"
+          loading="lazy"
+          className="object-cover"
+        />
       </div>
 
       <div className="text-center z-10">
