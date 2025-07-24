@@ -17,15 +17,18 @@ const App = () => {
   useEffect(() => {
     const validateToken = async () => {
       if (isLoggedIn) {
-        try {
-          // refreshToken API로 토큰 유효성 검증
-          await refreshToken();
-        } catch (err) {
-          // 토큰이 유효하지 않으면 persist 삭제 및 로그아웃
-          console.log('Token validation failed, clearing persist', err);
-          dispatch(logout());
-          persistor.purge();
-        }
+        // OAuth 로그인 직후 토큰 설정을 위해 잠시 대기
+        setTimeout(async () => {
+          try {
+            // refreshToken API로 토큰 유효성 검증
+            await refreshToken();
+          } catch (err) {
+            // 토큰이 유효하지 않으면 persist 삭제 및 로그아웃
+            console.log('Token validation failed, clearing persist', err);
+            dispatch(logout());
+            persistor.purge();
+          }
+        }, 1000); // 1초 대기
       }
     };
 

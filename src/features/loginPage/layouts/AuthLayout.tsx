@@ -1,8 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
-import { useDispatch } from 'react-redux';
-import { setLoginSuccess } from '../../../store/authSlice';
 
 // 공통 컴포넌트
 import AuthFormCard from '../components/common/AuthFormCard';
@@ -18,12 +16,18 @@ import OAuthIntegrationForm from '../components/signup/OAuthIntegrationForm';
 
 // API
 import { oauthSignUp } from '../apis/user';
+import { getOAuthResult } from '../apis/auth';
 
 // 상태 전환 관련 훅
 import { AuthTransition } from '../hooks/AuthTransition';
+import { useDispatch } from 'react-redux';
+import { setLoginSuccess } from '../../../store/authSlice';
+import LoadingSpinner from '../../../components/LoadingSpinner';
+import Modal from '../../../components/Modal';
 
 const AuthLayout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     formStep,
     setFormStep,
@@ -60,12 +64,84 @@ const AuthLayout = () => {
     verifiedType: '',
   });
 
+  const [showOAuthModal, setShowOAuthModal] = useState(false);
+
   const hasInitialized = useRef(false);
+
+  const checkOAuthResult = useCallback(async () => {
+    try {
+      console.log('🟡 OAuth 결과 확인 중...');
+
+      // 최소 1초는 모달을 표시하기 위해 Promise.all 사용
+      const [response] = await Promise.all([
+        getOAuthResult(),
+        new Promise((resolve) => setTimeout(resolve, 1000)), // 1초 대기
+      ]);
+
+      const { code, data } = response.data;
+
+      console.log('🟢 OAuth 결과:', response.data);
+
+      if (code === 'OAUTH_INFO_FOUND') {
+        const userData = data;
+        if (userData) {
+          dispatch(
+            setLoginSuccess({
+              name: userData.name,
+              membershipGrade: userData.membershipGrade || 'NORMAL',
+            })
+          );
+          console.log('🟢 Redux에 OAuth 로그인 정보 저장 완료:', userData);
+        }
+
+        showToast('로그인에 성공하셨습니다!', 'success');
+
+        // URL에서 oauth 파라미터 제거
+        window.history.replaceState({}, '', '/login');
+
+        navigate('/main');
+      } else if (code === 'PRE_AUTHENTICATION_SUCCESS') {
+        console.log('🟡 추가 정보 입력 필요 → PhoneAuthForm으로 이동');
+
+        // URL에서 oauth 파라미터 제거
+        window.history.replaceState({}, '', '/login?step=phoneAuth&verifiedType=oauth');
+
+        setMode('signup');
+        setShowTab(false);
+        goToPhoneAuth();
+      } else {
+        showToast('로그인에 실패했습니다.', 'error');
+
+        // URL에서 oauth 파라미터 제거
+        window.history.replaceState({}, '', '/login');
+      }
+    } catch (error) {
+      console.error('🔴 OAuth 결과 확인 실패:', error);
+      showToast('로그인에 실패했습니다.', 'error');
+
+      // URL에서 oauth 파라미터 제거
+      window.history.replaceState({}, '', '/login');
+    } finally {
+      setShowOAuthModal(false);
+    }
+  }, [dispatch, navigate, goToPhoneAuth, setMode, setShowTab]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const step = params.get('step');
     const verifiedType = params.get('verifiedType');
+    const oauth = params.get('oauth');
+
+    console.log('🟡 AuthLayout useEffect 실행:', { step, verifiedType, oauth, showOAuthModal });
+    console.log('🟡 현재 URL:', location.search);
+
+    // OAuth 처리 중 파라미터가 있으면 모달 표시하고 결과 확인
+    if (oauth === 'processing' && !showOAuthModal) {
+      console.log('🟡 OAuth 모달 표시 조건 충족');
+      setShowOAuthModal(true);
+      checkOAuthResult();
+      return;
+    }
 
     // OAuth 관련 URL 파라미터가 있을 때만 처리
     // 일반적인 로그인 리셋은 별도 useEffect에서 처리
@@ -91,7 +167,7 @@ const AuthLayout = () => {
       setFormStep('oauthIntegration');
       hasInitialized.current = true; // 초기화 완료 표시
     }
-  }, [location.search, goToPhoneAuth, setFormStep, formStep]);
+  }, [location.search, goToPhoneAuth, setFormStep, formStep, checkOAuthResult, showOAuthModal]);
 
   // sessionStorage 플래그를 통한 로그인 리셋 처리
   useEffect(() => {
@@ -127,26 +203,10 @@ const AuthLayout = () => {
       // 회원가입 성공 후 반환된 사용자 정보 확인
       console.log('🟢 OAuth 회원가입 성공:', response.data);
 
-      const userData = response.data?.data;
-      if (userData) {
-        // Redux에 로그인 정보 저장 (기존 로그인과 동일한 형식)
-        dispatch(
-          setLoginSuccess({
-            name: userData.name || payload.name,
-            membershipGrade: userData.membershipGrade || 'NORMAL', // 기본값 설정
-          })
-        );
-
-        showToast('회원가입이 완료되었습니다!', 'success');
-
-        // 메인 페이지로 이동
-        window.location.href = '/main';
-      } else {
-        // 사용자 데이터가 없으면 로그인 화면으로
-        showToast('회원가입이 완료되었습니다. 로그인 해주세요.', 'success');
-        sessionStorage.setItem('resetToLogin', 'true');
-        setFormStep('login');
-      }
+      // 회원가입 성공 - 로그인 화면으로 이동
+      showToast('회원가입에 성공하셨습니다!', 'success');
+      sessionStorage.setItem('resetToLogin', 'true');
+      setFormStep('login');
 
       // 상태 초기화
       setOAuthUserData({
@@ -169,8 +229,21 @@ const AuthLayout = () => {
     }
   };
 
+  console.log('🟡 AuthLayout 렌더링:', { showOAuthModal });
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
+      {/* OAuth 로딩 모달 */}
+      <Modal
+        isOpen={showOAuthModal}
+        onClose={() => {}} // 사용자가 직접 닫을 수 없도록 빈 함수
+      >
+        <div className="flex flex-col items-center py-4">
+          <LoadingSpinner />
+          <p className="mt-4 text-body-2 text-grey04">카카오 로그인 처리 중입니다...</p>
+        </div>
+      </Modal>
+
       <div className="relative w-full max-w-[1400px] h-[700px] overflow-hidden mx-auto">
         {/* 좌측 카드 */}
         <div

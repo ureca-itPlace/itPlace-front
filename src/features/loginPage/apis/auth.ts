@@ -69,3 +69,8 @@ export const signUpWithOAuthLink = (data: {
 }) => {
   return api.post('/api/v1/auth/link', data);
 };
+
+// OAuth 결과 조회
+export const getOAuthResult = () => {
+  return api.get('/api/v1/auth/oauth/result');
+};
