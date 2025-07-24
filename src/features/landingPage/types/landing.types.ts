@@ -1,12 +1,8 @@
-export type IntroSectionProps = {
-  onComplete: () => void;
-};
-
-export type IntroAnimationProps = {
-  logoRef: React.RefObject<HTMLElement | null>;
-  descRef: React.RefObject<HTMLElement | null>;
+// 로딩 애니메이션
+export type LoadLandingProps = {
+  logoRef: React.RefObject<HTMLHeadingElement | null>;
+  descRef: React.RefObject<HTMLParagraphElement | null>;
   bgRef: React.RefObject<HTMLElement | null>;
-  onComplete: () => void;
 };
 
 export type VideoProps = {
