@@ -430,6 +430,68 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 });
                 break;
 
+              case 'oauth-to-local-merge':
+                console.log('🟢 oauth-to-local-merge 케이스 실행');
+                setModal(
+                  modalPresets.mergeAccount(
+                    async () => {
+                      try {
+                        console.log('🟡 OAuth → 로컬 계정 통합 API 호출 중...');
+                        const response = await oauthAccountLink(phone);
+
+                        console.log('🟢 OAuth → 로컬 계정 통합 성공:', response.data);
+
+                        // API 응답의 메시지를 토스트로 표시
+                        const message = response.data?.message || '계정 통합이 완료되었습니다.';
+                        showToast(message, 'success');
+
+                        // 계정 통합 성공 시 Redux에 로그인 정보 저장
+                        const userData = response.data?.data;
+                        if (userData) {
+                          dispatch(
+                            setLoginSuccess({
+                              name: userData.name,
+                              membershipGrade: userData.membershipGrade || 'NORMAL',
+                            })
+                          );
+                          console.log(
+                            '🟢 Redux에 OAuth → 로컬 통합 로그인 정보 저장 완료:',
+                            userData
+                          );
+
+                          // 통합 성공 시 메인 페이지로 직접 이동
+                          closeModal();
+                          window.location.href = '/main';
+                          return;
+                        }
+
+                        closeModal();
+                        setModal(
+                          modalPresets.integrationSuccess(() => {
+                            closeModal();
+                            onGoToLogin();
+                          })
+                        );
+                      } catch (error) {
+                        console.error('🔴 OAuth → 로컬 계정 통합 실패:', error);
+
+                        const axiosError = error as AxiosError<{ message?: string }>;
+                        const errorMessage =
+                          axiosError.response?.data?.message || '계정 통합에 실패했습니다.';
+                        showToast(errorMessage, 'error');
+
+                        closeModal();
+                      }
+                    },
+                    () => {
+                      closeModal();
+                      onGoToLogin();
+                    },
+                    false // OAuth → 로컬 통합
+                  )
+                );
+                break;
+
               case 'local-to-oauth-merge':
                 console.log('🟢 local-oauth-merge 케이스 실행');
                 setModal(
