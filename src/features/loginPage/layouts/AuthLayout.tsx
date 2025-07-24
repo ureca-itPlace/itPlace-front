@@ -234,18 +234,21 @@ const AuthLayout = () => {
 
       // 회원가입 성공 - 로그인 화면으로 이동
       showToast('회원가입에 성공하셨습니다!', 'success');
-      sessionStorage.setItem('resetToLogin', 'true');
-      setFormStep('login');
-
+      
+      // 즉시 애니메이션 실행 후 상태 초기화
+      goToLogin();
+      
       // 상태 초기화
-      setOAuthUserData({
-        name: '',
-        phone: '',
-        birthday: '',
-        gender: '',
-        membershipId: '',
-        verifiedType: '',
-      });
+      setTimeout(() => {
+        setOAuthUserData({
+          name: '',
+          phone: '',
+          birthday: '',
+          gender: '',
+          membershipId: '',
+          verifiedType: '',
+        });
+      }, 500); // 애니메이션 완료 후 초기화
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
 
