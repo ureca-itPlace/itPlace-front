@@ -173,6 +173,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
       // 분기 처리
       if (userStatus === 'EXISTING_USER' && isLocalUser === true && !isOAuthFlow) {
         verifiedTypeRef.current = 'local'; // 일반 플로우에서만 local 처리
+      } else if (userStatus === 'EXISTING_USER' && isLocalUser === true && isOAuthFlow) {
+        verifiedTypeRef.current = 'local-oauth-merge'; // 로컬 회원인데 OAuth 로그인 시도 → 통합 모달
       } else if (userStatus === 'EXISTING_USER' && !isLocalUser && isOAuthFlow) {
         verifiedTypeRef.current = 'oauth'; // OAuth 플로우에서 기존 OAuth 사용자
       } else if (userStatus === 'EXISTING_USER' && !isLocalUser && !isOAuthFlow) {
