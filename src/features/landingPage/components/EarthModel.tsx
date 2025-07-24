@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { EarthModelProps } from '../types/landing.types';
 import { useResponsive } from '../../../hooks/useResponsive';
+import CurvedText from './CurvedText';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,6 +20,7 @@ const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
   const glowRef = useRef<Mesh>(null);
   const outerGlowRef = useRef<Mesh>(null);
   const auraRef = useRef<Mesh>(null);
+  const textRef = useRef<Group>(null);
 
   const { isMobile, isTablet } = useResponsive();
 
@@ -100,71 +102,76 @@ const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
       auraRef.current.layers.set(1);
       auraRef.current.rotation.z += 0.0003;
     }
+    if (textRef.current) textRef.current.rotation.y += 0.01;
   });
 
   return (
-    <group ref={groupRef}>
-      {/* 실제 지구 */}
-      <mesh ref={earthRef}>
-        <sphereGeometry args={[1, 64, 64]} />
-        <meshStandardMaterial
-          map={earthTexture}
-          emissive={new Color(0x001133)}
-          emissiveIntensity={0.3}
-          roughness={0.6}
-        />
-      </mesh>
+    <>
+      {' '}
+      <group ref={groupRef}>
+        {/* 실제 지구 */}
+        <mesh ref={earthRef}>
+          <sphereGeometry args={[1, 64, 64]} />
+          <meshStandardMaterial
+            map={earthTexture}
+            emissive={new Color(0x001133)}
+            emissiveIntensity={0.3}
+            roughness={0.6}
+          />
+        </mesh>
 
-      {/* 구름 */}
-      <mesh ref={earthCloudRef}>
-        <sphereGeometry args={[1.01, 64, 64]} />
-        <meshStandardMaterial
-          map={cloudsTexture}
-          transparent={true}
-          opacity={1}
-          blending={AdditiveBlending}
-          depthWrite={false}
-          emissive={new Color(0x003366)}
-          emissiveIntensity={0.2}
-        />
-      </mesh>
+        {/* 구름 */}
+        <mesh ref={earthCloudRef}>
+          <sphereGeometry args={[1.01, 64, 64]} />
+          <meshStandardMaterial
+            map={cloudsTexture}
+            transparent={true}
+            opacity={1}
+            blending={AdditiveBlending}
+            depthWrite={false}
+            emissive={new Color(0x003366)}
+            emissiveIntensity={0.2}
+          />
+        </mesh>
 
-      {/* 메인 글로우 */}
-      <mesh ref={glowRef}>
-        <sphereGeometry args={[1.03, 64, 64]} />
-        <meshBasicMaterial
-          color={new Color(0x00ffff)}
-          transparent={true}
-          opacity={0.5}
-          blending={AdditiveBlending}
-          depthWrite={false}
-        />
-      </mesh>
+        {/* 메인 글로우 */}
+        <mesh ref={glowRef}>
+          <sphereGeometry args={[1.03, 64, 64]} />
+          <meshBasicMaterial
+            color={new Color(0x00ffff)}
+            transparent={true}
+            opacity={0.5}
+            blending={AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
 
-      {/* 외부 글로우 */}
-      <mesh ref={outerGlowRef}>
-        <sphereGeometry args={[1.05, 32, 32]} />
-        <meshBasicMaterial
-          color={new Color(0x0088ff)}
-          transparent={true}
-          opacity={0.3}
-          blending={AdditiveBlending}
-          depthWrite={false}
-        />
-      </mesh>
+        {/* 외부 글로우 */}
+        <mesh ref={outerGlowRef}>
+          <sphereGeometry args={[1.05, 32, 32]} />
+          <meshBasicMaterial
+            color={new Color(0x0088ff)}
+            transparent={true}
+            opacity={0.3}
+            blending={AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
 
-      {/* 아우라 */}
-      <mesh ref={auraRef}>
-        <sphereGeometry args={[1.08, 16, 16]} />
-        <meshBasicMaterial
-          color={new Color(0x0066ff)}
-          transparent={true}
-          opacity={0.2}
-          blending={AdditiveBlending}
-          depthWrite={false}
-        />
-      </mesh>
-    </group>
+        {/* 아우라 */}
+        <mesh ref={auraRef}>
+          <sphereGeometry args={[1.08, 16, 16]} />
+          <meshBasicMaterial
+            color={new Color(0x0066ff)}
+            transparent={true}
+            opacity={0.2}
+            blending={AdditiveBlending}
+            depthWrite={false}
+          />
+        </mesh>
+        <CurvedText text="IT:PLACE" ref={textRef} />
+      </group>
+    </>
   );
 };
 
