@@ -1,6 +1,9 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { TbChevronRight } from 'react-icons/tb';
 import { FavoriteBenefit } from '../../../types/api';
+import { RootState } from '../../../../../store';
+import NoResult from '../../../../../components/NoResult';
 
 interface FavoriteStoreListProps {
   favorites: FavoriteBenefit[];
@@ -13,6 +16,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   onItemClick,
   isLoading = false,
 }) => {
+  const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
   if (isLoading) {
     return (
       <div className="space-y-2">
@@ -23,11 +27,30 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
     );
   }
 
+  // 로그인하지 않은 경우
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12">
+        <NoResult
+          message1="로그인이 필요해요!"
+          message2="로그인 후 관심 혜택을 이용해 보세요"
+          buttonText="로그인하러 가기"
+          buttonRoute="/login"
+          isLoginRequired={true}
+        />
+      </div>
+    );
+  }
+
+  // 로그인했지만 즐겨찾기가 없는 경우
   if (!favorites || favorites.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <div className="text-grey04 text-body-2 mb-2">아직 찜한 혜택이 없어요</div>
-        <div className="text-grey03 text-body-4">마음에 드는 혜택을 찜해보세요!</div>
+        <NoResult
+          message1="아직 관심 혜택이 없어요!"
+          message2="마음에 드는 혜택을 담아보세요"
+          isLoginRequired={false}
+        />
       </div>
     );
   }
