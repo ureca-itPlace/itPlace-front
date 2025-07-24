@@ -1,8 +1,12 @@
+import { useSelector } from 'react-redux';
 import Button from '../Button';
 import { useNavigate } from 'react-router-dom';
+import { RootState } from '../../../../store';
 
 const StartCTASection = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
   return (
     <div className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
       <div className="absolute left-[-10%] top-[5%] max-xl:hidden">
@@ -22,9 +26,11 @@ const StartCTASection = () => {
         </h1>
 
         <div className="mt-10 flex justify-center items-center gap-6 max-md:flex-col">
-          <Button variant="outline" onClick={() => navigate('/login')}>
-            로그인하기
-          </Button>
+          {!isLoggedIn && (
+            <Button variant="outline" onClick={() => navigate('/login')}>
+              로그인하기
+            </Button>
+          )}
           <Button variant="primary" onClick={() => navigate('/main')}>
             잇플레이스로 가기
           </Button>
