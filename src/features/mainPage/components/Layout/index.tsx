@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import SidebarSection from '../SidebarSection';
 import MapSection from '../MapSection';
+import SpeechBubble from '../SidebarSection/RecommendStoreList/SpeechBubble';
 import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
@@ -16,6 +17,15 @@ const MainPageLayout: React.FC = () => {
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]); // 검색 결과 가맹점 목록
   const [activeTab, setActiveTab] = useState<string>('nearby'); // 사이드바 활성 탭 ('주변 혜택', '관심 혜택', '잏AI 추천')
   const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태
+
+  // 말풍선 상태
+  const [speechBubble, setSpeechBubble] = useState<{
+    isVisible: boolean;
+    message: string;
+  }>({
+    isVisible: false,
+    message: '',
+  });
 
   // 지도 관련 상태
   const [currentMapLevel, setCurrentMapLevel] = useState<number>(2); // 지도 확대/축소 레벨
@@ -102,13 +112,21 @@ const MainPageLayout: React.FC = () => {
     setCurrentMapLevel(mapLevel);
   }, []);
 
-  // 키워드 검색 핸들러
+  // 키워드 검색 핸들러 (AI 추천에서 reason과 함께 호출되는 경우 포함)
   const handleKeywordSearch = useCallback(
-    (keyword: string) => {
+    (keyword: string, reason?: string) => {
       setSelectedPlatform(null); // 선택된 가맹점 초기화
       setFilteredPlatforms([]); // 검색 결과 초기화
       setSearchQuery(keyword); // 검색어 저장 (빈 문자열도 포함)
       setActiveTab('nearby'); // 주변 혜택 탭으로 전환
+
+      // AI 추천의 reason이 있으면 말풍선 표시
+      if (reason) {
+        setSpeechBubble({
+          isVisible: true,
+          message: reason,
+        });
+      }
 
       // 현재 지도 중심이 있으면 사용, 없으면 사용자 초기 위치 사용
       if (currentMapCenter) {
@@ -119,6 +137,14 @@ const MainPageLayout: React.FC = () => {
     },
     [searchByKeyword, currentMapLevel, currentMapCenter, userCoords]
   );
+
+  // 말풍선 닫기 핸들러
+  const handleSpeechBubbleClose = useCallback(() => {
+    setSpeechBubble({
+      isVisible: false,
+      message: '',
+    });
+  }, []);
 
   return (
     <div className="h-screen flex gap-6 bg-grey01 p-6 relative">
@@ -181,6 +207,22 @@ const MainPageLayout: React.FC = () => {
           alt="잇플 캐릭터"
           className="w-full h-auto object-contain object-bottom"
           style={{ width: '190px', height: '190px' }}
+        />
+      </div>
+
+      {/* 말풍선 - 캐릭터 위에 위치 */}
+      <div
+        className="absolute z-20"
+        style={{
+          left: '400px',
+          bottom: '160px', // 캐릭터 머리 위쪽
+          transform: 'translateX(-20%)',
+        }}
+      >
+        <SpeechBubble
+          message={speechBubble.message}
+          isVisible={speechBubble.isVisible}
+          onClose={handleSpeechBubbleClose}
         />
       </div>
     </div>

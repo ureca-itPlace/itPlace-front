@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Platform } from '../../types';
-import { FavoriteBenefit } from '../../types/api';
+import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
 import LoadingSpinner from '../../../../components/LoadingSpinner';
 import SearchSection from './SearchSection';
@@ -12,13 +12,7 @@ import RecommendStoreList from './RecommendStoreList';
 import StoreDetailCard from './StoreDetail';
 import CategoryTabsSection from './CategoryTabsSection';
 import { useFavoritesList } from '../../hooks/useFavoritesList';
-
-const recommendStores = Array.from({ length: 10 }).map((_, i) => ({
-  benefitId: i + 1,
-  partnerName: `추천 제휴처 ${i + 1}`,
-  partnerImage: '', // 없으면 이니셜만 뜸
-  rank: i + 1,
-}));
+import { getRecommendations } from '../../api/recommendationApi';
 
 interface Tab {
   id: string;
@@ -35,7 +29,7 @@ interface SidebarSectionProps {
   onSearchChange?: (query: string) => void;
   activeTab: string;
   onActiveTabChange: (tab: string) => void;
-  onKeywordSearch?: (keyword: string) => void;
+  onKeywordSearch?: (keyword: string, reason?: string) => void;
   searchQuery?: string;
   onMapCenterMove?: (latitude: number, longitude: number) => void;
 }
@@ -57,10 +51,42 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
+  // AI 추천 상태
+  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
+  const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(false);
+  const [recommendationsError, setRecommendationsError] = useState<string | null>(null);
+
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
     activeTab === 'favorites' ? selectedCategory : undefined
   );
+
+  // AI 추천 데이터 로드
+  useEffect(() => {
+    if (activeTab === 'ai') {
+      const fetchRecommendations = async () => {
+        setIsRecommendationsLoading(true);
+        setRecommendationsError(null);
+        try {
+          const response = await getRecommendations();
+          setRecommendations(response.data);
+        } catch (error) {
+          console.error('AI 추천 데이터 로드 실패:', error);
+          // API 에러 메시지를 그대로 전달
+          const errorMessage =
+            (error as { response?: { data?: { message?: string } }; message?: string })?.response
+              ?.data?.message ||
+            (error as { message?: string })?.message ||
+            'AI 추천을 불러오는데 실패했습니다.';
+          setRecommendationsError(errorMessage);
+        } finally {
+          setIsRecommendationsLoading(false);
+        }
+      };
+
+      fetchRecommendations();
+    }
+  }, [activeTab]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
@@ -219,11 +245,12 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               style={{ height: 'calc(100vh - 48px)' }}
             >
               <RecommendStoreList
-                stores={recommendStores}
+                stores={recommendations}
                 onItemClick={(store) => {
-                  onKeywordSearch?.(store.partnerName);
+                  onKeywordSearch?.(store.partnerName, store.reason);
                 }}
-                isLoading={false} // 추후 로딩 상태 연동
+                isLoading={isRecommendationsLoading}
+                error={recommendationsError}
               />
             </div>
           )}
