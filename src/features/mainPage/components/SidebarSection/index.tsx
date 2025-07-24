@@ -214,31 +214,18 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           )}
 
           {activeTab === 'ai' && (
-            <>
-              <div className="mb-4">
-                <CategoryTabsSection
-                  categories={CATEGORIES}
-                  selectedCategory={selectedCategory}
-                  onCategorySelect={(categoryId) => {
-                    console.log('AI 추천 카테고리 선택:', categoryId);
-                  }}
-                  mode="sidebar"
-                />
-              </div>
-
-              <div
-                className="-mx-5 overflow-y-auto overflow-x-hidden"
-                style={{ height: 'calc(100vh - 360px)' }}
-              >
-                <RecommendStoreList
-                  stores={recommendStores}
-                  onItemClick={(store) => {
-                    onKeywordSearch?.(store.partnerName);
-                  }}
-                  isLoading={false} // 추후 로딩 상태 연동
-                />
-              </div>
-            </>
+            <div
+              className="-mx-5 overflow-y-auto overflow-x-hidden"
+              style={{ height: 'calc(100vh - 48px)' }}
+            >
+              <RecommendStoreList
+                stores={recommendStores}
+                onItemClick={(store) => {
+                  onKeywordSearch?.(store.partnerName);
+                }}
+                isLoading={false} // 추후 로딩 상태 연동
+              />
+            </div>
           )}
         </div>
       ) : (

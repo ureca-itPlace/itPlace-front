@@ -19,7 +19,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   isLoading = false,
 }) => {
   const getBadgeClass = (rank: number) => {
-    const base = 'ml-2 px-6 py-1 rounded-full text-body-3 font-bold text-white shimmer-gradient';
+    const base = 'ml-2 px-6 py-1 rounded-full text-body-4 text-black shimmer-gradient';
     switch (rank) {
       case 1:
         return `${base} badge-gold`;
@@ -28,7 +28,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       case 3:
         return `${base} badge-bronze`;
       default:
-        return 'ml-2 px-6 py-1 rounded-full text-body-3 bg-grey02 text-grey05';
+        return 'ml-2 px-6 py-1 rounded-full text-body-4 bg-grey02 text-grey05';
     }
   };
 
@@ -37,10 +37,9 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       <style>{`
         /* 공통 shimmer */
         .shimmer-gradient {
-          background-size: 300% 300%;
-          background-repeat: no-repeat;
-          background-position: 0% 0%;
-          animation: moveGradient 8s linear infinite;
+          background-size: 200% 200%;
+          background-repeat: repeat;
+          animation: moveGradient 3s linear infinite;
         }
 
         @keyframes moveGradient {
@@ -54,41 +53,63 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
 
         /* 금색 */
         .badge-gold {
-  background-image: linear-gradient(
-    135deg,
-    #f7e27c 0%,
-    #ffe97a 25%,
-    #fff8c3 50%,
-    #ffdf59 75%,
-    #ddb945 100%
-  );
-}
+          background-image: linear-gradient(
+            135deg,
+            #ffe97a 0%,
+            #fff8c3 10%,
+            #f0d060 20%,
+            #ddb945 25%,
+            #f0d060 30%,
+            #fff8c3 40%,
+            #ffe97a 50%,
+            #fff8c3 60%,
+            #f0d060 70%,
+            #ddb945 75%,
+            #f0d060 80%,
+            #fff8c3 90%,
+            #ffe97a 100%
+          );
+        }
 
         /* 은색 */
         .badge-silver {
           background-image: linear-gradient(
             135deg,
-            #7a96ac 0%,
-            #eaeff3 18%,
-            #c2d4e1 31%,
-            #ffffff 49%,
-            #d4dee5 62%,
-            #abbdc8 79%,
-            #bccad7 95%
+            #ffffff 0%,
+            #e0eaf0 10%,
+            #a8bcc9 20%,
+            #7a96ac 25%,
+            #a8bcc9 30%,
+            #e0eaf0 40%,
+            #ffffff 50%,
+            #e0eaf0 60%,
+            #a8bcc9 70%,
+            #7a96ac 75%,
+            #a8bcc9 80%,
+            #e0eaf0 90%,
+            #ffffff 100%
           );
         }
 
         /* 동색 (브론즈) */
         .badge-bronze {
-  background-image: linear-gradient(
-    135deg,
-    #c97b48 0%,
-    #e5a477 25%,
-    #f5c6a0 50%,
-    #d58b5e 75%,
-    #a7623d 100%
-  );
-}
+          background-image: linear-gradient(
+            135deg,
+            #a7623d 0%,
+            #c17a47 10%,
+            #eab088 20%,
+            #f5c6a0 25%,
+            #eab088 30%,
+            #c17a47 40%,
+            #a7623d 50%,
+            #c17a47 60%,
+            #eab088 70%,
+            #f5c6a0 75%,
+            #eab088 80%,
+            #c17a47 90%,
+            #a7623d 100%
+          );
+        }
       `}</style>
 
       <div className="space-y-3 px-5">
