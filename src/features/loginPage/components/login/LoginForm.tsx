@@ -28,6 +28,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
       if (code === 'LOGIN_SUCCESS') {
         dispatch(setLoginSuccess(data));
+        showToast('로그인에 성공하셨습니다!', 'success');
         navigate('/main');
       } else {
         showToast('로그인에 실패하셨습니다.', 'error');
@@ -40,9 +41,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
   const handleKakaoLogin = () => {
     console.log('🟡 카카오 로그인 버튼 클릭');
 
-    const kakaoRedirectUrl = import.meta.env.VITE_KAKAO_REDIRECT_URI;
-    const kakaoClientId = import.meta.env.VITE_KAKAO_CLIENT_ID;
-    const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${kakaoRedirectUrl}&response_type=code`;
+    const kakaoLoginUrl = import.meta.env.VITE_KAKAO_REDIRECT_URI;
 
     console.log('🟡 카카오 인증 URL로 이동:', kakaoLoginUrl);
     window.location.href = kakaoLoginUrl;

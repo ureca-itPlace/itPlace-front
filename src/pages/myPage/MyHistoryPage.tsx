@@ -113,7 +113,9 @@ export default function MyHistoryPage() {
     <MyPageContentLayout
       main={
         <div className="flex flex-col h-full">
-          <h1 className="text-title-2 text-black mb-7">혜택 사용 이력</h1>
+          <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+            혜택 사용 이력
+          </h1>
 
           {/* 🔎 검색바 + 날짜필터 */}
           <div className="flex justify-between mb-8 gap-2">
@@ -123,7 +125,7 @@ export default function MyHistoryPage() {
               onChange={(e) => setKeyword(e.target.value)}
               onClear={() => setKeyword('')}
               backgroundColor="bg-grey01"
-              className="w-[280px] h-[50px]"
+              className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px]"
             />
             <div className="flex gap-2 items-center">
               <button
@@ -131,7 +133,7 @@ export default function MyHistoryPage() {
                   setStartDate(null);
                   setEndDate(null);
                 }}
-                className="text-purple04 hover:text-purple05 text-body-0"
+                className="text-purple04 hover:text-purple05 text-body-0 max-xl:text-body-2"
               >
                 <RiResetRightFill />
               </button>
@@ -140,7 +142,7 @@ export default function MyHistoryPage() {
                 onChange={(date) => setStartDate(date)}
                 dateFormat="yyyy-MM-dd"
                 placeholderText="시작 날짜"
-                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[100px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
               />
               <span className="text-grey05">~</span>
               <DatePicker
@@ -148,7 +150,7 @@ export default function MyHistoryPage() {
                 onChange={(date) => setEndDate(date)}
                 dateFormat="yyyy-MM-dd"
                 placeholderText="종료 날짜"
-                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[100px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
               />
             </div>
           </div>
@@ -161,25 +163,29 @@ export default function MyHistoryPage() {
                 <LoadingSpinner />
               </div>
             ) : membershipGrade == null ? (
-              <div className="mt-28">
+              <div className="mt-28 max-xl:mt-20">
                 <NoResult
                   message1="앗! 멤버십 등급이 없어 결과를 조회할 수 없어요"
                   message2="유플러스 회원이시라면 회원 정보 연동 후 이용할 수 있어요."
+                  message1FontSize="max-xl:text-title-6"
+                  message2FontSize="max-xl:text-body-3"
                   buttonText="회원 정보 연동하러가기"
                   buttonRoute="/myPage/info"
                 />
               </div>
             ) : history.length === 0 ? (
-              <div className="mt-28">
+              <div className="mt-28 max-xl:mt-20">
                 <NoResult
                   message1="아직 받은 혜택이 없어요!"
                   message2="가까운 제휴처의 혜택을 찾아보세요."
+                  message1FontSize="max-xl:text-title-6"
+                  message2FontSize="max-xl:text-body-3"
                   buttonText="근처 혜택 보러가기"
                   buttonRoute="/benefits"
                 />
               </div>
             ) : (
-              <div className="flex flex-col gap-5 pt-1">
+              <div className="flex flex-col gap-5 pt-1 max-xl:gap-3">
                 {history.map((item, idx) => (
                   <div
                     key={idx}
@@ -189,20 +195,20 @@ export default function MyHistoryPage() {
                       <img
                         src={item.image}
                         alt={item.benefitName}
-                        className="h-[70px] w-auto object-contain flex-shrink-0 ml-3"
+                        className="h-[70px] w-auto object-contain flex-shrink-0 ml-3 max-xl:h-[50px]"
                       />
                       <span
-                        className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block"
+                        className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block max-xl:text-title-7 max-xl:font-semibold"
                         title={item.benefitName}
                       >
                         {item.benefitName}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 flex-shrink-0">
-                      <span className="text-black text-title-5 font-semibold w-[120px] text-right">
+                      <span className="text-black text-title-5 font-semibold w-[120px] text-right max-xl:text-title-7 max-xl:font-semibold">
                         {item.discountAmount.toLocaleString()}원
                       </span>
-                      <span className="text-grey05 text-body-1 px-4 font-light">
+                      <span className="text-grey05 text-body-1 px-4 font-light max-xl:text-body-3 max-xl:font-light max-xl:px-3">
                         {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
                       </span>
                     </div>
@@ -235,19 +241,21 @@ export default function MyHistoryPage() {
             </div>
           ) : (
             <div className="text-center">
-              <h1 className="text-title-2 text-black mb-4 text-center">이번 달에 받은 혜택 금액</h1>
+              <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+                이번 달에 받은 혜택 금액
+              </h1>
               <div className="flex flex-col items-center justify-center mt-6">
                 <img
                   src="/images/myPage/icon-money.webp"
                   alt="혜택 사용 이력 아이콘"
-                  className="w-[250px] h-auto"
+                  className="w-[250px] h-auto max-xl:w-[160px]"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.onerror = null;
                     target.src = '/images/myPage/icon-money.png';
                   }}
                 />
-                <p className="text-[36px] font-semibold text-grey05 pt-10">
+                <p className="text-[36px] font-semibold text-grey05 pt-10 max-xl:text-[28px] max-xl:pt-6">
                   <span className="text-orange04">{totalAmount.toLocaleString()}</span>
                   원 <br /> 할인 받았어요!
                 </p>

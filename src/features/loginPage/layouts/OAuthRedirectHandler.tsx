@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLoginSuccess } from '../../../store/authSlice';
 import { kakaoOAuthLogin } from '../apis/auth';
+import { showToast } from '../../../utils/toast';
 
 const OAuthRedirectHandler = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,11 @@ const OAuthRedirectHandler = () => {
 
         if (responseCode === 'PRE_AUTHENTICATION_SUCCESS') {
           console.log('🟡 추가 정보 입력 필요 → PhoneAuthForm으로 이동');
+
+          // PRE_AUTHENTICATION_SUCCESS에서도 기본 사용자 정보가 있는지 확인
+          const userData = response.data?.data;
+          console.log('🟡 PRE_AUTHENTICATION_SUCCESS userData:', userData);
+
           navigate('/login?step=phoneAuth&verifiedType=oauth');
         } else if (responseCode === 'LOGIN_SUCCESS') {
           console.log('🟢 로그인 성공 → 메인 페이지로 이동');
@@ -55,6 +61,8 @@ const OAuthRedirectHandler = () => {
             console.log('🟢 Redux에 OAuth 로그인 정보 저장 완료:', userData);
           }
 
+          // 로그인 성공 토스트
+          showToast('로그인에 성공하셨습니다!', 'success');
           navigate('/main');
         } else {
           console.log('🟡 알 수 없는 응답 → 로그인 페이지로 이동');

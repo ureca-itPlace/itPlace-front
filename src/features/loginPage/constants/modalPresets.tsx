@@ -12,13 +12,16 @@ export const modalPresets = {
       onClose: _close, // _close 함수를 onClose prop에 연결
     }) as ModalState,
 
-  mergeAccount: (onMerge: () => void, onCancel: () => void) =>
+  mergeAccount: (onMerge: () => void, onCancel: () => void, isLocalSignup: boolean = false) =>
     ({
       open: true,
       title: '계정 통합 안내',
-      message: '입력하신 정보로 기존 가입 내역이 확인되었습니다.',
-      subMessage:
-        '통합을 진행하면 기존 계정의 정보가 유지되며 앞으로는 \n 현재 로그인 방식으로 편리하게 서비스를 이용하실 수 있습니다.',
+      message: isLocalSignup
+        ? '입력하신 정보로 기존 소셜 계정이 확인되었습니다.'
+        : '입력하신 정보로 기존 가입 내역이 확인되었습니다.',
+      subMessage: isLocalSignup
+        ? '통합을 진행하면 소셜 계정의 정보를 활용하여 \n 빠르게 회원가입을 완료하실 수 있습니다.'
+        : '통합을 진행하면 기존 계정의 정보가 유지되며 앞으로는 \n 현재 로그인 방식으로 편리하게 서비스를 이용하실 수 있습니다.',
       subMessageClass: 'text-body-2 text-grey04 mt-[12px]',
       buttons: [
         {

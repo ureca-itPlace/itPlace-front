@@ -14,7 +14,7 @@ export default function BenefitFilterToggle({
   fontSize = 'text-title-7',
 }: BenefitFilterToggleProps) {
   return (
-    <div className={`flex ${width} h-[50px] mb-6 bg-grey01 rounded-[10px] p-[4px]`}>
+    <div className={`flex ${width} h-[50px] mb-6 bg-grey01 rounded-[10px] p-[4px] max-xl:h-[44px]`}>
       <button
         onClick={() => onChange('default')}
         className={`flex-1 rounded-[8px] ${fontSize} transition-colors ${

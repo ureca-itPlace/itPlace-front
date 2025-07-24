@@ -21,8 +21,8 @@ const UserInfoForm: React.FC<Props> = ({
   onDeleteClick,
 }) => {
   return (
-    <div className="flex justify-center mt-[100px]">
-      <div className="flex flex-col gap-4 w-[690px]">
+    <div className="flex justify-center mt-[100px] max-xl:mt-[60px]">
+      <div className="flex flex-col gap-4 w-[690px] max-xl:w-[490px]">
         <InfoRow label="이름" value={name} />
         <InfoRow label="성별" value={gender === 'MALE' ? '남성' : '여성'} />
         <InfoRow label="생년월일" value={birthday.replace(/-/g, '.')} />
@@ -31,10 +31,15 @@ const UserInfoForm: React.FC<Props> = ({
 
         {/* 비밀번호 row */}
         <div className="flex items-center">
-          <div className="w-[140px] text-title-4 text-black font-bold">비밀번호</div>
-          <div className="flex-1 flex items-center justify-between bg-grey01 rounded-[18px] px-6 py-4">
+          <div className="w-[140px] text-title-4 text-black font-bold max-xl:text-title-6 max-xl:w-[120px] max-xl:font-bold">
+            비밀번호
+          </div>
+          <div className="flex-1 flex items-center justify-between bg-grey01 rounded-[18px] px-6 py-4 max-xl:py-3">
             <span className="tracking-widest select-none">●●●●●●●●</span>
-            <button className="text-purple04 text-body-0" onClick={onChangePasswordClick}>
+            <button
+              className="text-purple04 text-body-0 max-xl:text-body-2"
+              onClick={onChangePasswordClick}
+            >
               변경하기
             </button>
           </div>
@@ -43,7 +48,7 @@ const UserInfoForm: React.FC<Props> = ({
         {/* 회원탈퇴 버튼 */}
         <div className="flex justify-end mt-4">
           <button
-            className="bg-purple06 hover:bg-purple04 text-white rounded-[18px] px-6 py-3 text-title-5"
+            className="bg-purple06 hover:bg-purple04 text-white rounded-[18px] px-6 py-3 text-title-5 max-xl:text-title-8 max-xl:px-5 max-xl:py-2"
             onClick={onDeleteClick}
           >
             회원탈퇴
@@ -57,9 +62,13 @@ const UserInfoForm: React.FC<Props> = ({
 const InfoRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="flex items-center">
     {/* 왼쪽 라벨 */}
-    <div className="w-[140px] text-title-4 text-black font-bold">{label}</div>
+    <div className="w-[140px] text-title-4 text-black font-bold max-xl:text-title-6 max-xl:w-[120px] max-xl:font-bold">
+      {label}
+    </div>
     {/* 오른쪽 값 박스 */}
-    <div className="flex-1 bg-grey01 rounded-[18px] px-6 py-4 text-body-0 text-grey05">{value}</div>
+    <div className="flex-1 bg-grey01 rounded-[18px] px-6 py-4 text-body-0 text-grey05 max-xl:text-body-2 max-xl:py-3">
+      {value}
+    </div>
   </div>
 );
 
