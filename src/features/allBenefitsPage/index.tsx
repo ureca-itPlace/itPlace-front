@@ -259,7 +259,6 @@ const AllBenefitsLayout: React.FC = () => {
   const sortOptions = ['전체', '오프라인', '온라인'];
   const categories = [
     '전체',
-    'APP/기기',
     '액티비티',
     '뷰티/건강',
     '쇼핑',
