@@ -2,9 +2,6 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useRef, useState } from 'react';
-
-// import FeatureMenu from '../common/FeatureMenu.tsx';
-// import FeatureCard from '../common/FeatureCard.tsx';
 import { featureData } from '../../data/featuresData.ts';
 
 gsap.registerPlugin(ScrollTrigger);

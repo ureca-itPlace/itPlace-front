@@ -1,14 +1,11 @@
-import { Canvas, useLoader } from '@react-three/fiber';
-import EarthModel from './EarthModel';
-import { OrbitControls } from '@react-three/drei';
 import { TextureLoader, BackSide } from 'three';
+import { Canvas, useLoader } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import { Suspense, useRef } from 'react';
+import { EarthSceneProps } from '../types/landing.types';
 import LoadingScreen from './LoadingScreen';
-import React, { Suspense, useRef } from 'react';
+import EarthModel from './EarthModel';
 import Cloud from './Cloud';
-
-type EarthSceneProps = {
-  earthAnimationTrigger: React.RefObject<HTMLElement | null>;
-};
 
 const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
   const backgroundTexture = useLoader(TextureLoader, '/images/landing/earth-bg.webp');

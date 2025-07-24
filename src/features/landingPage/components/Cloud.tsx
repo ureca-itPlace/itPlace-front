@@ -1,8 +1,5 @@
 import { forwardRef } from 'react';
-
-interface CloudProps {
-  className?: string;
-}
+import { CloudProps } from '../types/landing.types';
 
 const Cloud = forwardRef<HTMLImageElement, CloudProps>(({ className = '' }, ref) => {
   return (

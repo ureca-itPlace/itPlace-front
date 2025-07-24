@@ -8,7 +8,7 @@ const EarthSection = () => {
   useEffect(() => {
     if (earthSectionRef.current) {
       setTriggerReady(true);
-      console.log('지구 섹션 렌더링 완료');
+      console.log('지구 섹션 준비 완료');
     }
   }, []);
 

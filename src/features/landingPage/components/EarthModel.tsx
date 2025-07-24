@@ -1,17 +1,12 @@
-import { useRef, RefObject } from 'react';
+import { useRef } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { TextureLoader, Mesh, AdditiveBlending, Group, Color } from 'three';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { EarthModelProps } from '../types/landing.types';
 
 gsap.registerPlugin(ScrollTrigger);
-
-type EarthModelProps = {
-  trigger: HTMLElement | null;
-  canvasWrapperRef: RefObject<HTMLDivElement | null>;
-  earthCloud1Ref: RefObject<HTMLImageElement | null>;
-};
 
 const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelProps) => {
   const earthTexture = useLoader(TextureLoader, '/images/landing/textures/earth-map.webp');
