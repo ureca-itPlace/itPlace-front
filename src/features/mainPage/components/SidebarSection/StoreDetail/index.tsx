@@ -73,17 +73,11 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
 
       {/* 고정 버튼 */}
       <div className="px-6 pb-4 flex-shrink-0">
-        {detailData?.data?.benefitId ? (
-          <StoreDetailActionButton
-            benefitId={detailData.data.benefitId}
-            isFavorite={isFavorite}
-            onFavoriteChange={handleFavoriteChange}
-          />
-        ) : (
-          <div className="w-full py-3 mt-3 bg-grey03 text-grey04 text-center rounded-[10px]">
-            혜택 정보를 불러오는 중...
-          </div>
-        )}
+        <StoreDetailActionButton
+          benefitId={detailData?.data?.benefitId}
+          isFavorite={isFavorite}
+          onFavoriteChange={handleFavoriteChange}
+        />
       </div>
     </div>
   );

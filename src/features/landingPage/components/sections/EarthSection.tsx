@@ -1,48 +1,22 @@
-import { useRef, forwardRef, useImperativeHandle } from 'react';
-import { gsap } from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef, useEffect, useState } from 'react';
+import EarthScene from '../EarthScene';
 
-import PurpleCircle from '../common/PurpleCircle';
-import bgImage from '/images/landing/bg-earth.webp';
-
-gsap.registerPlugin(ScrollTrigger);
-
-const EarthSection = forwardRef<HTMLDivElement>((_, ref) => {
+const EarthSection = () => {
   const earthSectionRef = useRef<HTMLDivElement>(null);
-  const circleRef = useRef<HTMLDivElement>(null);
+  const [triggerReady, setTriggerReady] = useState(false);
 
-  useImperativeHandle(ref, () => earthSectionRef.current as HTMLDivElement);
-
-  useGSAP(() => {
-    if (!earthSectionRef.current || !circleRef.current) return;
-
-    gsap.fromTo(
-      circleRef.current,
-      { scale: 0.3 },
-      {
-        scale: 30,
-        scrollTrigger: {
-          trigger: earthSectionRef.current,
-          start: 'center center',
-          end: '+=500',
-          scrub: 0.5,
-          pin: true,
-          markers: true, // 개발 후 삭제하기
-        },
-        ease: 'none',
-      }
-    );
+  useEffect(() => {
+    if (earthSectionRef.current) {
+      setTriggerReady(true);
+      console.log('지구 섹션 렌더링 완료');
+    }
   }, []);
+
   return (
-    <div
-      ref={earthSectionRef}
-      className=" relative w-full h-screen bg-cover bg-center flex items-center justify-center text-9xl text-white"
-      style={{ backgroundImage: `url(${bgImage})` }}
-    >
-      <PurpleCircle ref={circleRef} />
+    <div ref={earthSectionRef} className="h-screen w-full bg-white overflow-hidden relative">
+      {triggerReady && <EarthScene earthAnimationTrigger={earthSectionRef} />}
     </div>
   );
-});
+};
 
 export default EarthSection;
