@@ -9,7 +9,7 @@ import { useMediaQuery } from 'react-responsive';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelProps) => {
+const EarthModel = ({ trigger, canvasWrapperRef }: EarthModelProps) => {
   const earthTexture = useLoader(TextureLoader, '/images/landing/textures/earth-map.webp');
   const cloudsTexture = useLoader(TextureLoader, '/images/landing/textures/earth-cloud.webp');
 
@@ -31,17 +31,14 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
   }, [isMobile, isTablet]);
 
   useGSAP(() => {
-    if (!groupRef.current || !trigger || !canvasWrapperRef.current || !earthCloud1Ref.current)
-      return;
-
-    gsap.set(earthCloud1Ref.current, { opacity: 0.8, x: '-100%', scale: 1 });
+    if (!groupRef.current || !trigger || !canvasWrapperRef.current) return;
 
     // 타임라인 생성
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger,
         start: 'top top',
-        end: '+=1500',
+        end: '+=1200',
         scrub: 0.5,
         pin: true,
         anticipatePin: 1,
@@ -67,23 +64,10 @@ const EarthModel = ({ trigger, canvasWrapperRef, earthCloud1Ref }: EarthModelPro
       canvasWrapperRef.current,
       {
         opacity: 0,
-        duration: 7,
+        duration: 5,
         ease: 'none',
       },
       1.2
-    );
-
-    // 3. 구름 등장 (페이드아웃 중간 시점에 시작)
-    tl.to(
-      earthCloud1Ref.current,
-      {
-        x: '0%',
-        scale: 2.4,
-        opacity: 1,
-        duration: 5,
-        ease: 'power2.out',
-      },
-      2.7
     );
 
     return () => {

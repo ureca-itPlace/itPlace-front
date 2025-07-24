@@ -3,13 +3,10 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import BlackSquare from '../BlackSquare';
 import { useGSAP } from '@gsap/react';
-import Cloud from '../Cloud';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MapSection = () => {
-  const cloudRef = useRef<HTMLImageElement>(null);
-
   const mapSectionRef = useRef<HTMLDivElement>(null);
   const blackSquareRef = useRef<HTMLDivElement>(null);
   const firstMapImageRef = useRef<HTMLImageElement>(null);
@@ -24,8 +21,7 @@ const MapSection = () => {
       !firstMapImageRef.current ||
       !secondMapImageRef.current ||
       !thirdMapImageRef.current ||
-      !fourthMapImageRef.current ||
-      !cloudRef.current
+      !fourthMapImageRef.current
     )
       return;
 
@@ -44,8 +40,6 @@ const MapSection = () => {
         zIndex: 0, // 각 이미지가 겹치지 않도록 z-index 설정
       }
     );
-
-    gsap.set(cloudRef.current, { opacity: 1, x: '100%', scale: 1.5 });
 
     gsap.set(blackSquareRef.current, {
       x: '-100%',
@@ -68,19 +62,6 @@ const MapSection = () => {
       },
     });
 
-    // 1. 구름 등장
-    tl.to(
-      cloudRef.current,
-      {
-        x: '-150%',
-        scale: 2,
-        opacity: 1,
-        duration: 5,
-        ease: 'none',
-      },
-      0
-    );
-
     // 첫 번째 이미지: 나타나기 -> 커지기 -> 블러 처리하기
     tl.to(
       firstMapImageRef.current,
@@ -88,7 +69,7 @@ const MapSection = () => {
         opacity: 1,
         filter: 'blur(0px)',
         ease: 'none',
-        duration: 0.5,
+        duration: 2,
       },
       2
     )
@@ -214,7 +195,6 @@ const MapSection = () => {
       ref={mapSectionRef}
       className="relative w-full h-screen flex justify-center items-center overflow-hidden"
     >
-      <Cloud className="right-[-20%] top-[-20%]" ref={cloudRef} />
       <img
         ref={firstMapImageRef}
         src="/images/landing/map-1.webp"

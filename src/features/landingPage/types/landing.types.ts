@@ -19,7 +19,6 @@ export interface VideoSectionProps {
 export interface EarthModelProps {
   trigger: HTMLElement | null;
   canvasWrapperRef: React.RefObject<HTMLDivElement | null>;
-  earthCloud1Ref: React.RefObject<HTMLImageElement | null>;
 }
 
 export type EarthSceneProps = {
