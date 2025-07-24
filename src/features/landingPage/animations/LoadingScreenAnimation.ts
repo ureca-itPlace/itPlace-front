@@ -1,7 +1,7 @@
 import gsap from 'gsap';
-import { LoadLandingProps } from '../types/landing.types';
+import { LoadingScreenProps } from '../types/landing.types';
 
-export const LoadLandingAnimation = ({ logoRef, descRef, bgRef }: LoadLandingProps) => {
+export const LoadingScreenAnimation = ({ logoRef, descRef, bgRef }: LoadingScreenProps) => {
   const tl = gsap.timeline();
 
   if (logoRef.current && descRef.current && bgRef.current) {

@@ -1,5 +1,5 @@
 // 로딩 애니메이션
-export type LoadLandingProps = {
+export type LoadingScreenProps = {
   logoRef: React.RefObject<HTMLHeadingElement | null>;
   descRef: React.RefObject<HTMLParagraphElement | null>;
   bgRef: React.RefObject<HTMLElement | null>;

@@ -2,7 +2,7 @@ import { gsap } from 'gsap';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { useProgress } from '@react-three/drei';
 import { useGSAP } from '@gsap/react';
-import { LoadLandingAnimation } from '../animations/LoadLandingAnimation';
+import { LoadingScreenAnimation } from '../animations/LoadingScreenAnimation';
 
 const LoadingScreen = () => {
   const { progress, active } = useProgress();
@@ -26,7 +26,7 @@ const LoadingScreen = () => {
             }
           },
         });
-      }, 4000);
+      }, 5000);
 
       return () => clearTimeout(timeout);
     }
@@ -36,7 +36,7 @@ const LoadingScreen = () => {
     () => {
       if (!logoRef.current || !descRef.current || !bgRef.current) return;
 
-      LoadLandingAnimation({ logoRef, descRef, bgRef });
+      LoadingScreenAnimation({ logoRef, descRef, bgRef });
     },
     { scope: bgRef }
   );
