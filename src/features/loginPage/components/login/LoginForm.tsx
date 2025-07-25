@@ -39,21 +39,19 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
   };
 
   const handleKakaoLogin = () => {
-    console.log('🟡 카카오 로그인 버튼 클릭');
-
     const kakaoLoginUrl = import.meta.env.VITE_KAKAO_REDIRECT_URI;
-
-    console.log('🟡 카카오 인증 URL로 이동:', kakaoLoginUrl);
     window.location.href = kakaoLoginUrl;
   };
 
   return (
     <div>
-      <h2 className="text-title-1 mb-[40px]">로그인</h2>
+      <h2 className="text-title-1 max-xl:text-title-2 max-lg:text-title-3 max-md:text-title-2 max-sm:text-title-2 mb-[40px] max-xl:mb-[34px] max-lg:mb-[27px] max-md:mb-[32px] max-sm:mb-[32px]">
+        로그인
+      </h2>
 
       <div className="flex flex-col gap-0 w-full items-center">
         {/* 이메일 입력 */}
-        <div className="mb-[20px]">
+        <div className="mb-[20px] max-md:mb-[16px] max-sm:mb-[16px] w-full">
           <AuthInput
             name="email"
             placeholder="이메일"
@@ -63,7 +61,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
         </div>
 
         {/* 비밀번호 입력 */}
-        <div className="mb-[40px]">
+        <div className="mb-[40px] max-md:mb-[32px] max-sm:mb-[32px] w-full">
           <AuthInput
             name="password"
             type="password"

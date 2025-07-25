@@ -34,10 +34,8 @@ const useEmailVerification = ({
       setLoading(true);
       if (mode === 'signup') {
         await sendEmailVerificationCode({ email });
-        console.log('signup모드');
       } else {
         await sendFindPasswordEmail(email);
-        console.log('FindPassword 모드');
       }
 
       setEmailSent(true);
@@ -76,7 +74,7 @@ const useEmailVerification = ({
         if (onResetTokenChange) {
           onResetTokenChange(res.data.data.resetPasswordToken); // 부모에게 토큰 전달
         } else {
-          console.error('onResetTokenChange 함수가 없습니다.');
+          showToast('비밀번호 변경 실패', 'error');
         }
       }
 

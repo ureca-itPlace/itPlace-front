@@ -27,22 +27,33 @@ const FindEmailStep2 = ({
   }, []);
 
   return (
-    <div ref={wrapperRef} className="w-[320px] mx-auto flex flex-col items-center">
+    <div
+      ref={wrapperRef}
+      className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full mx-auto flex flex-col items-center"
+    >
       <ToggleTab active="email" onClickEmail={() => {}} onClickPassword={onClickTabPassword} />
 
       {/* 안내 문구 */}
-      <p className="text-title-6 text-grey05 mt-[40px]">휴대폰 번호와 일치하는 아이디입니다.</p>
+      <p className="text-title-6 max-xl:text-title-7 max-lg:text-title-8 max-md:text-body-2 max-sm:text-body-3 text-grey05 mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px] max-md:mt-[24px] max-sm:mt-[24px]">
+        휴대폰 번호와 일치하는 아이디입니다.
+      </p>
 
       {/* 이메일 및 가입일 박스 */}
-      <div className="w-[320px] h-[90px] bg-white border border-grey03 rounded-[18px] px-[20px] py-[16px] text-left mt-[20px] flex flex-col justify-center">
-        <p className="text-body-2 text-black">
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full h-[90px] max-xl:h-[77px] max-lg:h-[61px] max-md:h-[80px] max-sm:h-[80px] bg-white border border-grey03 rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] max-md:rounded-[16px] max-sm:rounded-[16px] px-[20px] max-xl:px-[17px] max-lg:px-[13px] max-md:px-[16px] max-sm:px-[16px] py-[16px] max-xl:py-[14px] max-lg:py-[11px] max-md:py-[14px] max-sm:py-[14px] text-left mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] flex flex-col justify-center">
+        <p className="text-body-2 max-lg:text-body-3 max-md:text-body-3 max-sm:text-body-3 text-black">
           아이디 : <span className="text-purple04 break-all">{email}</span>
         </p>
-        <p className="text-body-2 text-grey04 mt-[4px]">가입일 : {createdAt ? createdAt : '-'}</p>
+        <p className="text-body-2 max-lg:text-body-3 max-md:text-body-3 max-sm:text-body-3 text-grey04 mt-[4px]">
+          가입일 : {createdAt ? createdAt : '-'}
+        </p>
       </div>
 
       {/* 비밀번호 재설정 버튼 */}
-      <AuthButton className="mt-[150px]" label="비밀번호 재설정" onClick={onClickResetPassword} />
+      <AuthButton
+        className="mt-[150px] max-xl:mt-[130px] max-lg:mt-[100px] max-md:mt-[60px] max-sm:mt-[60px]"
+        label="비밀번호 재설정"
+        onClick={onClickResetPassword}
+      />
 
       {/* 로그인 링크 */}
       <div className="mt-[8px] flex justify-center">

@@ -115,12 +115,14 @@ const SignUpFinalForm = ({
     emailVerified;
 
   return (
-    <div ref={wrapperRef} className="w-full flex flex-col items-center">
-      <div className="w-[320px] text-left">
-        <p className="text-title-4">개인정보를 입력해주세요</p>
+    <div ref={wrapperRef} className="w-full flex flex-col">
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full text-left mx-auto">
+        <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 max-md:text-title-5 max-sm:text-title-5">
+          개인정보를 입력해주세요
+        </p>
       </div>
 
-      <div className="w-full max-w-[320px] mt-[51px]">
+      <div className="w-full mt-[51px] max-xl:mt-[44px] max-lg:mt-[34px] max-md:mt-[40px] max-sm:mt-[40px] flex justify-center">
         <EmailVerificationBox
           email={formData.email}
           onChangeEmail={(val) => handleChange('email', val)}
@@ -129,7 +131,7 @@ const SignUpFinalForm = ({
         />
       </div>
 
-      <div className="mt-[15px]">
+      <div className="mt-[15px] max-xl:mt-[13px] max-lg:mt-[10px] max-md:mt-[14px] max-sm:mt-[14px] w-full">
         <PasswordInputForm
           password={formData.password}
           passwordConfirm={formData.passwordConfirm}
@@ -140,18 +142,22 @@ const SignUpFinalForm = ({
         />
       </div>
 
-      <AuthButton
-        label="회원가입"
-        onClick={handleNext}
-        variant={isValid ? 'default' : 'disabled'}
-        className="w-[320px] mt-[100px] max-lg:w-full"
-      />
+      <div className="flex justify-center">
+        <AuthButton
+          label="회원가입"
+          onClick={handleNext}
+          variant={isValid ? 'default' : 'disabled'}
+          className="mt-[100px] max-md:mt-[80px] max-sm:mt-[80px]"
+        />
+      </div>
 
-      <AuthFooter
-        leftText="이미 회원이신가요?"
-        rightText="로그인 하러 가기"
-        onRightClick={onGoToLogin}
-      />
+      <div className="flex justify-center">
+        <AuthFooter
+          leftText="이미 회원이신가요?"
+          rightText="로그인 하러 가기"
+          onRightClick={onGoToLogin}
+        />
+      </div>
 
       <Modal
         isOpen={modal.open}

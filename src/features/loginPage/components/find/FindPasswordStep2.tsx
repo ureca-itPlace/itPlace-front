@@ -76,13 +76,13 @@ const FindPasswordStep2 = ({ onGoToLogin, email, resetPasswordToken }: Props) =>
 
   return (
     <div ref={wrapperRef} className="flex flex-col items-center">
-      <div className="text-title-4 text-left w-[320px]">
+      <div className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 max-md:text-title-6 max-sm:text-title-7 text-left w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
         <p>
           <span className="font-bold">새 비밀번호</span>를 입력해주세요
         </p>
       </div>
 
-      <div className="mt-[50px]">
+      <div className="mt-[50px] max-xl:mt-[43px] max-lg:mt-[34px] max-md:mt-[30px] max-sm:mt-[30px]">
         <PasswordInputForm
           password={password}
           passwordConfirm={passwordConfirm}
@@ -96,7 +96,7 @@ const FindPasswordStep2 = ({ onGoToLogin, email, resetPasswordToken }: Props) =>
       {serverError && <ErrorMessage message={serverError} />}
 
       <AuthButton
-        className="w-[320px] mt-[100px] max-lg:w-full"
+        className="mt-[100px] max-xl:mt-[85px] max-lg:mt-[70px] max-md:mt-[50px] max-sm:mt-[50px]"
         label="비밀번호 변경"
         onClick={handleSubmit}
         variant={isValid ? 'default' : 'disabled'}

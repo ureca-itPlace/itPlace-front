@@ -1,15 +1,33 @@
-// 로딩 애니메이션
-export type LoadLandingProps = {
+// 로딩 타입 정의
+export interface LoadingScreenProps {
   logoRef: React.RefObject<HTMLHeadingElement | null>;
   descRef: React.RefObject<HTMLParagraphElement | null>;
   bgRef: React.RefObject<HTMLElement | null>;
-};
+}
 
-export type VideoProps = {
+// 비디오 섹션 타입 정의
+export interface VideoProps {
   onVideoEnd: () => void;
   videoBoxRef: React.RefObject<HTMLDivElement | null>;
-};
+}
 
-export type VideoSectionProps = {
+export interface VideoSectionProps {
   setVideoEnded: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
+
+// 지구 섹션 타입 정의
+export interface EarthModelProps {
+  trigger: HTMLElement | null;
+  canvasWrapperRef: React.RefObject<HTMLDivElement | null>;
+}
+
+export interface EarthSceneProps {
+  earthAnimationTrigger: React.RefObject<HTMLElement | null>;
+}
+
+// 버튼 컴포넌트 타입 정의
+export interface ButtonProps {
+  children: string;
+  variant?: 'primary' | 'outline';
+  onClick?: () => void;
+}

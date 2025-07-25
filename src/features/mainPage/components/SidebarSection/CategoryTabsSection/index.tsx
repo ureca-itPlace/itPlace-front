@@ -4,7 +4,6 @@ import { FreeMode } from 'swiper/modules';
 import { Category } from '../../../types';
 import { LAYOUT } from '../../../constants';
 import {
-  TbActivity,
   TbHeart,
   TbShoppingBag,
   TbHome,
@@ -12,6 +11,7 @@ import {
   TbMovie,
   TbBook,
   TbPlane,
+  TbBuildingCarousel,
 } from 'react-icons/tb';
 import 'swiper/swiper-bundle.css';
 
@@ -26,7 +26,7 @@ interface CategoryTabsSectionProps {
 
 // 카테고리 색상 매핑
 const CATEGORY_COLOR_MAP: Record<string, string> = {
-  액티비티: 'text-purple04',
+  엑티비티: 'text-purple04',
   '뷰티/건강': 'text-orange04',
   쇼핑: 'text-pink04',
   '생활/편의': 'text-purple04',
@@ -44,7 +44,7 @@ const getCategoryIcon = (
   const iconSize = 20;
 
   const iconMap: Record<string, React.ReactElement> = {
-    액티비티: <TbActivity size={iconSize} className={iconColor} />,
+    엑티비티: <TbBuildingCarousel size={iconSize} className={iconColor} />,
     '뷰티/건강': <TbHeart size={iconSize} className={iconColor} />,
     쇼핑: <TbShoppingBag size={iconSize} className={iconColor} />,
     '생활/편의': <TbHome size={iconSize} className={iconColor} />,
