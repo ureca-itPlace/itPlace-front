@@ -40,11 +40,11 @@ const PhoneAuth = ({
     <div className="w-full flex flex-col items-center">
       {headerSlot}
 
-      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[15px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
         <AuthInput name="name" placeholder="이름" value={name} onChange={onChangeName} />
       </div>
 
-      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[15px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
         <AuthInput
           name="phone"
           placeholder="휴대폰 번호 (Ex: 01012345678)"
@@ -55,13 +55,13 @@ const PhoneAuth = ({
 
       {showCaptcha && (
         <>
-          <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[15px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full">
+          <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
             <CaptchaBox onCaptchaChange={onRecaptchaChange} />
           </div>
         </>
       )}
 
-      <div className="mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px] max-md:mt-[30px] max-sm:mt-[32px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full">
+      <div className="mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px] max-md:mt-[32px] max-sm:mt-[32px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
         <AuthButton
           label={submitLabel}
           onClick={onSubmit}

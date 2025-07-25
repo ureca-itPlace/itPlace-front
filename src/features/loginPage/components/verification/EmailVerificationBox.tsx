@@ -46,7 +46,7 @@ const EmailVerificationBox = ({
   };
 
   return (
-    <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] max-md:max-w-[280px] max-sm:w-full">
+    <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] max-md:max-w-none max-sm:max-w-none">
       {/* 이메일 입력 */}
       <div className="relative">
         <AuthInput
@@ -78,7 +78,7 @@ const EmailVerificationBox = ({
 
       {/* 인증번호 입력 (모드와 상관없이 emailSent가 true이면 렌더링) */}
       {emailSent && !emailVerified && (
-        <div className="relative mt-[15px] max-xl:mt-[13px] max-lg:mt-[10px] max-md:mt-[12px] max-sm:mt-[14px]">
+        <div className="relative mt-[15px] max-xl:mt-[13px] max-lg:mt-[10px] max-md:mt-[14px] max-sm:mt-[14px]">
           <AuthInput
             name="verificationCode"
             placeholder="인증번호 입력"

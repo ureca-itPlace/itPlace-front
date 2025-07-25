@@ -48,17 +48,18 @@ const FindPasswordStep1 = ({
   };
 
   return (
-    <div
-      ref={wrapperRef}
-      className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full mx-auto flex flex-col items-center"
-    >
-      <ToggleTab active="password" onClickEmail={onClickTabEmail} onClickPassword={() => {}} />
+    <div ref={wrapperRef} className="w-full flex flex-col">
+      <div className="flex justify-center">
+        <ToggleTab active="password" onClickEmail={onClickTabEmail} onClickPassword={() => {}} />
+      </div>
 
-      <p className="text-title-6 max-xl:text-title-7 max-lg:text-title-8 max-md:text-body-2 max-sm:text-body-3 text-grey05 mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px] max-md:mt-[30px] max-sm:mt-[24px]">
-        인증을 위해 <strong>가입된 이메일을</strong> 입력해주세요.
-      </p>
+      <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full mx-auto">
+        <p className="text-title-6 max-xl:text-title-7 max-lg:text-title-8 max-md:text-body-2 max-sm:text-body-3 text-grey05 mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px] max-md:mt-[24px] max-sm:mt-[24px]">
+          인증을 위해 <strong>가입된 이메일을</strong> 입력해주세요.
+        </p>
+      </div>
 
-      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[15px] max-sm:mt-[16px]">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-full flex justify-center">
         <EmailVerificationBox
           email={email}
           onChangeEmail={onChangeEmail}
@@ -68,14 +69,16 @@ const FindPasswordStep1 = ({
         />
       </div>
 
-      <AuthButton
-        label="다음"
-        onClick={handleNextClick}
-        variant={emailVerified && resetToken ? 'default' : 'disabled'}
-        className="mt-[150px] max-xl:mt-[130px] max-lg:mt-[100px] max-md:mt-[80px] max-sm:mt-[60px]"
-      />
+      <div className="flex justify-center">
+        <AuthButton
+          label="다음"
+          onClick={handleNextClick}
+          variant={emailVerified && resetToken ? 'default' : 'disabled'}
+          className="mt-[150px] max-xl:mt-[130px] max-lg:mt-[100px] max-md:mt-[60px] max-sm:mt-[60px]"
+        />
+      </div>
 
-      <div className="mt-[8px] max-md:mt-[6px] max-sm:mt-[8px] w-full">
+      <div className="mt-[8px] max-md:mt-[6px] max-sm:mt-[8px] w-full flex justify-center">
         <AuthFooter
           leftText="이미 회원이신가요?"
           rightText="로그인 하러 가기"

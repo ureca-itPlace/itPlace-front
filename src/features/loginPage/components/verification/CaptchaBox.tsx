@@ -35,14 +35,14 @@ const CaptchaBox = ({ onCaptchaChange }: Props) => {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="relative w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full flex justify-center">
+      <div className="relative w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full flex justify-center">
         <ReCAPTCHA
           ref={recaptchaRef}
           sitekey="6LcrTo4rAAAAAFQY8LXtuT0vRXs1QJTnbHStuKQC"
           onChange={handleCaptchaChange}
           size="normal"
           theme="light"
-          className="transform origin-center scale-100 max-xl:scale-90 max-lg:scale-75 max-md:scale-90 max-sm:scale-95"
+          className="transform origin-center scale-100 max-xl:scale-90 max-lg:scale-75 max-md:scale-95 max-sm:scale-95"
         />
         {loading && (
           <div className="absolute inset-0 bg-white bg-opacity-50 flex items-center justify-center rounded">

@@ -245,7 +245,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
     <>
       <div ref={wrapperRef} className="w-full flex flex-col items-center">
         {/* 제목 */}
-        <div className="text-left w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full">
+        <div className="text-left w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
           <p className="text-title-4 max-xl:text-title-5 max-lg:text-title-6 max-md:text-title-6 max-sm:text-title-5">
             보내드린 <span className="font-semibold">인증번호 6자리</span>를
           </p>
@@ -255,7 +255,7 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
         </div>
 
         {/* 인증번호 입력 */}
-        <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full mt-[48px] max-xl:mt-[41px] max-lg:mt-[32px] max-md:mt-[36px] max-sm:mt-[40px]">
+        <div className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full mt-[48px] max-xl:mt-[41px] max-lg:mt-[32px] max-md:mt-[40px] max-sm:mt-[40px]">
           <div className="flex items-center relative">
             <AuthInput
               name="code"
@@ -276,21 +276,21 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
             </button>
           </div>
           {codeError && (
-            <p className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full text-danger text-body-3 max-xl:text-body-4 max-lg:text-body-5 max-md:text-body-4 max-sm:text-body-4 mt-[6px] max-xl:mt-[5px] max-lg:mt-[4px] max-md:mt-[5px] max-sm:mt-[5px]">
+            <p className="w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full text-danger text-body-3 max-xl:text-body-4 max-lg:text-body-5 max-md:text-body-4 max-sm:text-body-4 mt-[6px] max-xl:mt-[5px] max-lg:mt-[4px] max-md:mt-[5px] max-sm:mt-[5px]">
               {codeError}
             </p>
           )}
         </div>
 
         {/* 타이머 */}
-        <div className="text-body-3 max-xl:text-body-4 max-lg:text-body-5 max-md:text-body-4 max-sm:text-body-4 text-grey03 mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[15px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full flex items-center gap-[4px] max-xl:gap-[3px] max-lg:gap-[3px] max-md:gap-[3px] max-sm:gap-[3px]">
+        <div className="text-body-3 max-xl:text-body-4 max-lg:text-body-5 max-md:text-body-4 max-sm:text-body-4 text-grey03 mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full flex items-center gap-[4px] max-xl:gap-[3px] max-lg:gap-[3px] max-md:gap-[3px] max-sm:gap-[3px]">
           <TbClock size={16} className="text-grey03" />
           <span>남은 시간</span>
           <span className="text-danger font-medium">{formatTime(timeLeft)}</span>
         </div>
 
         {/* 재전송 */}
-        <div className="text-body-3 max-xl:text-body-4 max-lg:text-body-5 max-md:text-body-4 max-sm:text-body-4 text-grey03 mt-[13px] max-xl:mt-[11px] max-lg:mt-[9px] max-md:mt-[10px] max-sm:mt-[10px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-[280px] max-sm:w-full">
+        <div className="text-body-3 max-xl:text-body-4 max-lg:text-body-5 max-md:text-body-4 max-sm:text-body-4 text-grey03 mt-[13px] max-xl:mt-[11px] max-lg:mt-[9px] max-md:mt-[10px] max-sm:mt-[10px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
           인증 번호를 받지 못하셨나요?{' '}
           <button
             onClick={handleResend}

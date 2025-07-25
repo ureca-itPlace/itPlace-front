@@ -28,9 +28,9 @@ const PasswordInputForm = ({
   });
 
   return (
-    <>
+    <div className="w-full flex flex-col items-center">
       {/* 비밀번호 입력 필드 */}
-      <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] max-md:max-w-[280px] max-sm:w-full">
+      <div className="w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] max-md:max-w-none max-sm:max-w-none">
         <div className="relative">
           <AuthInput
             name="password"
@@ -64,7 +64,7 @@ const PasswordInputForm = ({
       </div>
 
       {/* 비밀번호 확인 입력 필드 */}
-      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[15px] max-sm:mt-[16px] w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] max-md:max-w-[280px] max-sm:w-full">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-full max-w-[320px] max-xl:max-w-[274px] max-lg:max-w-[205px] max-md:max-w-none max-sm:max-w-none">
         <div className="relative">
           <AuthInput
             name="passwordConfirm"
@@ -98,7 +98,7 @@ const PasswordInputForm = ({
           <ErrorMessage message={passwordConfirmError} />
         )}
       </div>
-    </>
+    </div>
   );
 };
 

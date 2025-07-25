@@ -26,7 +26,7 @@ const AuthFormCard = ({ children, radius = 'all' }: Props) => {
 
   return (
     <div
-      className={`w-[583px] max-xl:w-[500px] max-lg:w-[375px] max-md:w-[320px] max-sm:w-full h-[639px] max-xl:h-[548px] max-lg:h-[430px] max-md:h-[380px] max-sm:h-[350px] bg-white drop-shadow-basic flex flex-col items-center justify-center ${radiusClass}`}
+      className={`w-[583px] max-xl:w-[500px] max-lg:w-[375px] max-md:w-full max-sm:w-full h-[639px] max-xl:h-[548px] max-lg:h-[430px] max-md:h-auto max-sm:h-auto bg-white drop-shadow-basic flex flex-col items-center justify-center ${radiusClass}`}
     >
       {children}
     </div>
