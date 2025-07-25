@@ -40,7 +40,6 @@ export const loadUplusData = (phoneNumber: string) => {
 };
 
 export const kakaoOAuthLogin = (code: string) => {
-  console.log('🟡 카카오 OAuth 코드를 백엔드로 전송:', code);
   return api.post('/api/v1/auth/oauth/kakao', { code });
 };
 

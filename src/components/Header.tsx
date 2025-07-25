@@ -8,7 +8,6 @@ import {
   TbLayoutList,
 } from 'react-icons/tb';
 import clsx from 'clsx';
-import { useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import api from '../apis/axiosInstance';
@@ -16,7 +15,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { logout } from '../store/authSlice';
 import { persistor } from '../store';
-import Modal from './Modal';
 import { showToast } from '../utils/toast';
 
 const menus = [
@@ -27,8 +25,6 @@ const menus = [
 ];
 
 export default function Header({ variant = 'default' }: { variant?: 'default' | 'glass' }) {
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -51,8 +47,6 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
       console.error('로그아웃 실패:', err);
       // 실패 토스트 표시
       showToast('로그아웃에 실패했습니다.', 'error');
-    } finally {
-      setShowLogoutModal(false); // 모달 닫기
     }
   };
 
@@ -106,8 +100,8 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
         <div className="mb-1">
           {isLoggedIn ? (
             <button
-              onClick={() => setShowLogoutModal(true)}
               className="flex flex-col items-center text-white text-sm hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.6)]"
+              onClick={handleLogout}
             >
               <TbLogout className="text-3xl" strokeWidth={1.3} />
               <span className="mt-1 text-title-8">로그아웃</span>
@@ -126,26 +120,6 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
           )}
         </div>
       </aside>
-
-      {/* ✅ 로그아웃 확인 모달 */}
-      <Modal
-        isOpen={showLogoutModal}
-        title="로그아웃"
-        message="로그아웃 하시겠습니까?"
-        onClose={() => setShowLogoutModal(false)}
-        buttons={[
-          {
-            label: '아니오',
-            type: 'secondary',
-            onClick: () => setShowLogoutModal(false),
-          },
-          {
-            label: '예',
-            type: 'primary',
-            onClick: handleLogout,
-          },
-        ]}
-      />
     </>
   );
 }

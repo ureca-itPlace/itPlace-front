@@ -4,51 +4,47 @@ import AuthInput from './AuthInput';
 import AuthButton from './AuthButton';
 import AuthFooter from './AuthFooter';
 import CaptchaBox from '../verification/CaptchaBox';
-import { loadCaptchaEnginge } from 'react-simple-captcha';
 
 type Props = {
   headerSlot?: React.ReactNode;
   name: string;
   phone: string;
-  captcha?: string;
   onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangePhone: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onChangeCaptcha?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRecaptchaChange?: (isValid: boolean) => void;
   onSubmit: () => void;
   showCaptcha?: boolean;
   submitLabel?: string;
   showFooter?: boolean;
   onClickLogin?: () => void;
   loading?: boolean;
+  recaptchaValid?: boolean;
 };
 
 const PhoneAuth = ({
   headerSlot,
   name,
   phone,
-  captcha = '',
   onChangeName,
   onChangePhone,
-  onChangeCaptcha,
+  onRecaptchaChange,
   onSubmit,
   showCaptcha = true,
   submitLabel = '다음',
   showFooter = false,
   onClickLogin,
   loading = false,
+  recaptchaValid = false,
 }: Props) => {
-  const handleCaptchaRefresh = () => {
-    loadCaptchaEnginge(6);
-  };
   return (
     <div className="w-full flex flex-col items-center">
       {headerSlot}
 
-      <div className="mt-[20px] w-[320px]">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
         <AuthInput name="name" placeholder="이름" value={name} onChange={onChangeName} />
       </div>
 
-      <div className="mt-[20px] w-[320px]">
+      <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
         <AuthInput
           name="phone"
           placeholder="휴대폰 번호 (Ex: 01012345678)"
@@ -59,25 +55,17 @@ const PhoneAuth = ({
 
       {showCaptcha && (
         <>
-          <div className="mt-[20px] w-[320px]">
-            <CaptchaBox onRefresh={handleCaptchaRefresh} />
-          </div>
-          <div className="mt-[20px] w-[320px]">
-            <AuthInput
-              name="captcha"
-              placeholder="보안문자 입력"
-              value={captcha}
-              onChange={onChangeCaptcha}
-            />
+          <div className="mt-[20px] max-xl:mt-[17px] max-lg:mt-[13px] max-md:mt-[16px] max-sm:mt-[16px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
+            <CaptchaBox onCaptchaChange={onRecaptchaChange} />
           </div>
         </>
       )}
 
-      <div className="mt-[40px] w-[320px]">
+      <div className="mt-[40px] max-xl:mt-[34px] max-lg:mt-[27px] max-md:mt-[32px] max-sm:mt-[32px] w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full">
         <AuthButton
           label={submitLabel}
           onClick={onSubmit}
-          variant={loading ? 'disabled' : 'default'}
+          variant={loading || (showCaptcha && !recaptchaValid) ? 'disabled' : 'default'}
         />
       </div>
 

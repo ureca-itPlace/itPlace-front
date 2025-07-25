@@ -87,7 +87,7 @@ export default {
       'max-xl': { max: '1536px' }, // 노트북 FHD 125% 배율 대비
       'max-lg': { max: '1023px' }, // 태블릿 가로 1023px 이하
       'max-md': { max: '767px' }, // 태블릿 세로
-      'max-sm': { max: '639px' }, // 모바일 세로
+      'max-sm': { max: '500px' }, // 모바일 세로
     },
   },
   plugins: [
