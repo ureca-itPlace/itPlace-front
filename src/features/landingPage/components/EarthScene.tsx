@@ -1,14 +1,24 @@
 import { TextureLoader, BackSide } from 'three';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { Suspense, useRef } from 'react';
+import { Suspense, useMemo, useRef } from 'react';
 import { EarthSceneProps } from '../types/landing.types';
 import LoadingScreen from './LoadingScreen';
 import EarthModel from './EarthModel';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
   const backgroundTexture = useLoader(TextureLoader, '/images/landing/earth-bg.webp');
   const canvasWrapperRef = useRef<HTMLDivElement>(null);
+
+  const { isMobile, isTablet } = useResponsive();
+
+  const memoizedEarthModel = useMemo(
+    () => (
+      <EarthModel trigger={earthAnimationTrigger.current} canvasWrapperRef={canvasWrapperRef} />
+    ),
+    [earthAnimationTrigger]
+  );
 
   return (
     <>
@@ -28,13 +38,16 @@ const EarthScene = ({ earthAnimationTrigger }: EarthSceneProps) => {
               <meshBasicMaterial map={backgroundTexture} side={BackSide} />
             </mesh>
             {/* 지구 모델 */}
-            <EarthModel
-              trigger={earthAnimationTrigger.current}
-              canvasWrapperRef={canvasWrapperRef}
-            />
+            {memoizedEarthModel}
           </Suspense>
           {/* 3D 요소 통제 (자체 확대 X -> 스크롤 시 확대) */}
-          <OrbitControls enableZoom={false} enablePan={true} autoRotate autoRotateSpeed={0.5} />
+          <OrbitControls
+            enableZoom={false}
+            enablePan={true}
+            autoRotate
+            autoRotateSpeed={0.5}
+            enableRotate={!(isMobile || isTablet)}
+          />
         </Canvas>
       </div>
     </>
