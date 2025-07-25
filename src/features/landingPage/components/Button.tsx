@@ -1,10 +1,4 @@
-import { ButtonHTMLAttributes } from 'react';
-
-type ButtonProps = {
-  children: string;
-  variant?: 'primary' | 'outline';
-  onClick?: () => void;
-} & ButtonHTMLAttributes<HTMLButtonElement>;
+import { ButtonProps } from '../types/landing.types';
 
 const Button = ({ children, variant = 'primary', onClick }: ButtonProps) => {
   const baseClass =
