@@ -80,10 +80,10 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
 
   return (
     <div
-      className={`bg-orange01 rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic p-6 max-xl:p-4 max-md:pt-4 w-[555px] max-xl:w-[444px] h-[250px] max-xl:h-[200px] max-md:w-[100%] max-md:h-[100px] pr-8 max-xl:pr-6 max-md:pr-4 ${className}`}
+      className={`bg-orange01 rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic p-6 max-xl:p-6 max-md:pt-4 w-[555px] max-xl:w-[444px] h-[250px] max-xl:h-[200px] max-md:drop-shadow-none max-md:w-full max-md:h-[100px] pr-8 max-xl:pr-6 max-md:px-0 max-md:-mt-2 max-md:-mb-5 max-md:bg-white ${className}`}
     >
       {/* PC: 전체 리스트, 모바일: 슬라이드 */}
-      <h3 className="text-title-3 max-xl:text-title-4 text-black mb-6 max-xl:mb-4 max-md:text-title-6 max-md:mb-4">
+      <h3 className="text-title-3 max-xl:text-title-5 text-black mb-6 max-xl:mb-4 max-md:text-title-6 max-md:mb-4">
         {title}
       </h3>
       {/* PC (md 이상) */}
@@ -124,7 +124,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
       {/* 모바일 (md 이하) */}
       <div className="hidden max-md:block">
         {data.length > 0 && (
-          <div className="flex items-center justify-between ">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 max-xl:gap-2">
               <span className="text-title-8 max-xl:text-title-9 text-orange04">
                 {currentIndex + 1}
@@ -150,7 +150,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
                     : '-'}
               </span>
               <span
-                className={`text-body-2 max-xl:text-body-3 w-8 max-xl:w-6 text-right  transition-all duration-200 ${
+                className={`text-body-2 max-xl:text-body-3 w-8 max-xl:w-6 text-right transition-all duration-200 ${
                   data[currentIndex].trend === 'up'
                     ? 'text-orange04'
                     : data[currentIndex].trend === 'down'
