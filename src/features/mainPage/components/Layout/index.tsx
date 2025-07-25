@@ -373,7 +373,7 @@ const MainPageLayout: React.FC = () => {
             style={{
               height: `${bottomSheetHeight}px`,
               bottom: 0,
-              minHeight: '100px',
+              minHeight: '90px',
             }}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}

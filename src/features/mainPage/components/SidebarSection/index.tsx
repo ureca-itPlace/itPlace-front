@@ -164,12 +164,12 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   if (isLoading && activeTab === 'nearby') {
     return (
-      <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
-        <div className="w-full h-full flex flex-col items-center justify-center">
-          <LoadingSpinner />
-          <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
-        </div>
+      // <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic"> 혹시 몰라서 남겨놓음
+      <div className="w-full h-full flex flex-col items-center justify-center max-md:mt-24">
+        <LoadingSpinner />
+        <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
       </div>
+      // </div>
     );
   }
 

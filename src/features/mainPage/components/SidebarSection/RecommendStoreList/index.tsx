@@ -153,7 +153,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       `}</style>
 
       {!isLoggedIn ? (
-        <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult
             message1="로그인이 필요합니다!"
             message2="AI 추천을 받으려면 로그인해 주세요"
@@ -165,7 +165,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
           />
         </div>
       ) : isLoading ? (
-        <div className="flex-1 flex items-center justify-center min-h-0 mt-[-60px]">
+        <div className="flex-1 flex items-center justify-center min-h-0 mt-[-60px] max-md:min-h-56 max-md:mt-4">
           <div className="flex flex-col items-center">
             <div className="mb-4">
               <LoadingSpinner />
@@ -182,11 +182,11 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
           </div>
         </div>
       ) : error ? (
-        <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult message1={error} message2={getErrorSummary(error)} isLoginRequired={false} />
         </div>
       ) : !stores || stores.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult
             message1="추천 결과가 없어요!"
             message2="ItPlace 이용 정보가 부족해요"
