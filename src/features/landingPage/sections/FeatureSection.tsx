@@ -85,7 +85,6 @@ const FeatureSection = () => {
     menuLinksRef.current.forEach((link, i) => {
       if (link) {
         link.classList.toggle('active', i === index);
-        console.log('현재 인덱스', index);
       }
     });
   };
