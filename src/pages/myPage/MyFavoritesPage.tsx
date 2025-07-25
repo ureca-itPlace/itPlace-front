@@ -10,6 +10,9 @@ import FavoritesDeleteModal from '../../features/myPage/components/Favorites/Fav
 import FavoritesAside from '../../features/myPage/components/Favorites/FavoritesAside';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+import { useMediaQuery } from 'react-responsive';
+import BenefitDetailTabs from '../../features/myPage/components/Favorites/BenefitDetailTabs';
+import { IoCloseOutline } from 'react-icons/io5';
 
 export default function MyFavoritesPage() {
   const {
@@ -39,6 +42,7 @@ export default function MyFavoritesPage() {
   } = useFavorites(6);
 
   const userGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   return (
     <>
@@ -48,15 +52,15 @@ export default function MyFavoritesPage() {
         main={
           <div className="flex flex-col flex-1 h-full">
             {/* 상단 타이틀 */}
-            <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+            <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-md:hidden">
               관심 혜택
             </h1>
             {/* 토글 + 검색 */}
-            <div className="flex justify-between mb-[-10px]">
+            <div className="flex justify-between mb-[-10px] max-md:flex-col max-md:-mt-8">
               <BenefitFilterToggle
                 value={benefitFilter}
                 onChange={setBenefitFilter}
-                width="w-[300px] max-xl:w-[220px]"
+                width="w-[300px] max-xl:w-[220px] max-md:w-full"
                 fontSize="text-title-7 max-xl:text-body-3"
               />
               <SearchBar
@@ -65,7 +69,7 @@ export default function MyFavoritesPage() {
                 onChange={(e) => setKeyword(e.target.value)}
                 onClear={() => setKeyword('')}
                 backgroundColor="bg-grey01"
-                className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px]"
+                className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px] max-md:w-full max-md:-mt-2"
               />
             </div>
             {/* 편집/전체선택 컨트롤 */}
@@ -196,19 +200,49 @@ export default function MyFavoritesPage() {
         }
         // ✨ RightAside 영역
         aside={
-          <FavoritesAside
-            favorites={allFavorites}
-            isEditing={isEditing}
-            selectedItems={selectedItems}
-            selectedId={selectedId}
-            userGrade={userGrade}
-            loading={loading}
-          />
+          <div className="max-md:hidden">
+            <FavoritesAside
+              favorites={allFavorites}
+              isEditing={isEditing}
+              selectedItems={selectedItems}
+              selectedId={selectedId}
+              userGrade={userGrade}
+              loading={loading}
+            />
+          </div>
         }
         bottomImage="/images/myPage/bunny-favorites.webp"
         bottomImageAlt="찜한 혜택 토끼"
         bottomImageFallback="/images/myPage/bunny-favorites.png"
       />
+
+      {/* ✅ 모바일에서만 모달로 BenefitDetailTabs */}
+      {isMobile && selectedId && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[9999] flex items-center justify-center p-5"
+          onClick={() => setSelectedId(null)}
+        >
+          <div
+            className="bg-white rounded-[18px] w-full max-w-[calc(100%-10px)] max-h-[80vh] overflow-y-auto p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center mb-6">
+              <h1 className="flex-1 text-center text-title-2 text-black mb-5 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+                상세 혜택
+              </h1>
+              <button className="text-body-2 text-grey05 -mt-4" onClick={() => setSelectedId(null)}>
+                <IoCloseOutline />
+              </button>
+            </div>
+            <BenefitDetailTabs
+              benefitId={selectedId}
+              image={allFavorites.find((f) => f.benefitId === selectedId)?.partnerImage ?? ''}
+              name={allFavorites.find((f) => f.benefitId === selectedId)?.benefitName ?? ''}
+              userGrade={userGrade}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

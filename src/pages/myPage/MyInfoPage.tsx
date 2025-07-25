@@ -64,34 +64,38 @@ export default function MyInfoPage() {
   // ✅ 로딩중일 경우
   if (loading) {
     return (
-      <MyPageContentLayout
-        main={
-          <div className="flex justify-center items-center h-full">
-            <LoadingSpinner />
-          </div>
-        }
-        aside={<></>}
-        bottomImage="/images/myPage/bunny-info.webp"
-        bottomImageFallback="/images/myPage/bunny-info.png"
-        bottomImageAlt="회원 정보 토끼"
-      />
+      <div className="flex flex-row gap-[28px] w-full h-full max-md:flex-col-reverse max-md:px-5 max-md:pb-7">
+        <MyPageContentLayout
+          main={
+            <div className="flex justify-center items-center h-full">
+              <LoadingSpinner />
+            </div>
+          }
+          aside={<></>}
+          bottomImage="/images/myPage/bunny-info.webp"
+          bottomImageFallback="/images/myPage/bunny-info.png"
+          bottomImageAlt="회원 정보 토끼"
+        />
+      </div>
     );
   }
 
   // ✅ user가 없을 경우
   if (!user) {
     return (
-      <MyPageContentLayout
-        main={
-          <div className="text-center mt-10 text-lg text-grey05">
-            사용자 정보를 불러올 수 없습니다.
-          </div>
-        }
-        aside={<></>}
-        bottomImage="/images/myPage/bunny-info.webp"
-        bottomImageFallback="/images/myPage/bunny-info.png"
-        bottomImageAlt="회원 정보 토끼"
-      />
+      <div className="flex flex-row gap-[28px] w-full h-full max-md:flex-col-reverse max-md:px-5 max-md:pb-7">
+        <MyPageContentLayout
+          main={
+            <div className="text-center mt-10 text-lg text-grey05 max-md:mt-0">
+              사용자 정보를 불러올 수 없습니다.
+            </div>
+          }
+          aside={<></>}
+          bottomImage="/images/myPage/bunny-info.webp"
+          bottomImageFallback="/images/myPage/bunny-info.png"
+          bottomImageAlt="회원 정보 토끼"
+        />
+      </div>
     );
   }
 

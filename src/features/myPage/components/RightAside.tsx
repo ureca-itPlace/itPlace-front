@@ -1,4 +1,5 @@
 import { ReactNode, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface RightAsideProps {
   children: ReactNode;
@@ -15,8 +16,19 @@ export default function RightAside({
 }: RightAsideProps) {
   const [imgSrc, setImgSrc] = useState(bottomImage); // 현재 이미지 소스
 
+  const { pathname } = useLocation();
+
+  // ✅ 모바일 레이아웃을 위한 조건분기
+  const isSimpleLayout =
+    pathname.startsWith('/mypage/favorites') || pathname.startsWith('/mypage/history');
+
   return (
-    <aside className="w-[476px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:w-[390px] max-xl:pt-[56px] max-md:w-full max-md:p-6">
+    <aside
+      className={
+        'w-[476px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:w-[390px] max-xl:pt-[56px] max-md:w-full max-md:p-6' +
+        (isSimpleLayout ? ' max-md:hidden' : '')
+      }
+    >
       {/* 위쪽 내용 */}
       <div className="flex-1">{children}</div>
 
