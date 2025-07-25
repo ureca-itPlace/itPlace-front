@@ -62,12 +62,12 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   }
 
   return (
-    <div className="space-y-3 max-md:space-y-2 max-sm:space-y-1.5 px-5 max-md:px-4 max-sm:px-3">
+    <div className="space-y-3 max-md:space-y-3 px-5 max-md:px-4 max-sm:px-3">
       {favorites.map((favorite) => (
         <div
           key={favorite.benefitId}
           onClick={() => onItemClick(favorite)}
-          className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[50px] max-md:px-3 max-sm:h-[45px] max-sm:px-2"
+          className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[50px] max-md:px-3 max-sm:h-[64px] max-sm:px-2"
         >
           {/* 왼쪽: 파트너 이미지 */}
           <div className="w-[50px] h-[50px] rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
@@ -88,7 +88,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
 
           {/* 중앙: 파트너 이름 */}
           <div className="flex-1">
-            <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold max-sm:text-body-5-bold">
+            <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
               {favorite.partnerName}
             </span>
           </div>
