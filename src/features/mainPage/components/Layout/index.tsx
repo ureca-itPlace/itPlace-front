@@ -218,7 +218,7 @@ const MainPageLayout: React.FC = () => {
       <div
         className="absolute z-20"
         style={{
-          left: '485x',
+          left: '500px',
           bottom: '200px', // 캐릭터 머리 위쪽
           transform: 'translateX(-20%)',
         }}
