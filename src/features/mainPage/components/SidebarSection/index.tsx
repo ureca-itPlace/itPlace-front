@@ -227,7 +227,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
               {/* 즐겨찾기 스토어 리스트 */}
               <div
-                className="-mx-5 overflow-y-auto overflow-x-hidden"
+                className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col"
                 style={{ height: 'calc(100vh - 360px)' }}
               >
                 <FavoriteStoreList
@@ -241,7 +241,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'ai' && (
             <div
-              className="-mx-5 overflow-y-auto overflow-x-hidden"
+              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col"
               style={{ height: 'calc(100vh - 48px)' }}
             >
               <RecommendStoreList
