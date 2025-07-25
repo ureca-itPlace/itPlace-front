@@ -17,7 +17,7 @@ export default function EditControls({
   setSelectedItems,
 }: EditControlsProps) {
   return (
-    <div className="flex items-center justify-end gap-3 mr-1 mb-1">
+    <div className="flex items-center justify-end gap-3 mr-1 mb-1 max-md:mt-6 max-md:mb-2">
       {isEditing ? (
         <label className="flex items-center text-grey05 text-body-0-bold max-xl:text-body-2-bold">
           <input

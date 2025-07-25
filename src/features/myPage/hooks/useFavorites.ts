@@ -61,9 +61,16 @@ export function useFavorites(itemsPerPageInit = 6) {
   // ✅ 페이지 변경 시 현재 페이지의 첫 번째 아이템 선택
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    const startIndex = (page - 1) * itemsPerPage;
-    const newFirst = searchedFavorites[startIndex];
-    setSelectedId(newFirst ? newFirst.benefitId : null);
+
+    // 모바일이 아닐 때만 첫 번째 아이템을 자동 선택
+    if (!isMobile) {
+      const startIndex = (page - 1) * itemsPerPage;
+      const newFirst = searchedFavorites[startIndex];
+      setSelectedId(newFirst ? newFirst.benefitId : null);
+    } else {
+      // 📌 모바일이라면 아무것도 선택하지 않음
+      setSelectedId(null);
+    }
   };
 
   // ✅ 필터나 검색 변경 시 1페이지로 초기화
