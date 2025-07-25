@@ -97,6 +97,13 @@ export const oauthSignUp = (data: {
   return api.post('/api/v1/auth/oauth/signUp', data);
 };
 
+// reCAPTCHA 토큰 검증
+export const verifyRecaptcha = async (recaptchaToken: string) => {
+  return await api.post('/api/v1/auth/verify-recaptcha', {
+    recaptchaToken,
+  });
+};
+
 // /api/v1/users/findPassword
 // 이메일만 넘겨주면 됨
 

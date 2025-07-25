@@ -16,7 +16,7 @@ const FindEmailStep1 = ({ onSuccess, onClickTabPassword, onGoToLogin }: Props) =
   const [step, setStep] = useState('auth'); // auth | verify
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const [recaptchaValid, setRecaptchaValid] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSendCode = async () => {
@@ -25,7 +25,7 @@ const FindEmailStep1 = ({ onSuccess, onClickTabPassword, onGoToLogin }: Props) =
       return;
     }
 
-    if (!recaptchaToken) {
+    if (!recaptchaValid) {
       showToast('reCAPTCHA 인증을 완료해주세요.', 'error');
       return;
     }
@@ -61,13 +61,14 @@ const FindEmailStep1 = ({ onSuccess, onClickTabPassword, onGoToLogin }: Props) =
       phone={phone}
       onChangeName={(e) => setName(e.target.value)}
       onChangePhone={(e) => setPhone(e.target.value)}
-      onRecaptchaChange={setRecaptchaToken}
+      onRecaptchaChange={setRecaptchaValid}
       onSubmit={handleSendCode}
-      showCaptcha={true} // 캡챠를 보여주도록 변경
+      showCaptcha={true}
       submitLabel={'인증번호 받기'}
       loading={loading}
       showFooter={true}
       onClickLogin={onGoToLogin}
+      recaptchaValid={recaptchaValid}
     />
   );
 };

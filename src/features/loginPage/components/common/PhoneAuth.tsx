@@ -11,13 +11,14 @@ type Props = {
   phone: string;
   onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangePhone: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onRecaptchaChange?: (token: string | null) => void;
+  onRecaptchaChange?: (isValid: boolean) => void;
   onSubmit: () => void;
   showCaptcha?: boolean;
   submitLabel?: string;
   showFooter?: boolean;
   onClickLogin?: () => void;
   loading?: boolean;
+  recaptchaValid?: boolean;
 };
 
 const PhoneAuth = ({
@@ -33,6 +34,7 @@ const PhoneAuth = ({
   showFooter = false,
   onClickLogin,
   loading = false,
+  recaptchaValid = false,
 }: Props) => {
   return (
     <div className="w-full flex flex-col items-center">
@@ -63,7 +65,7 @@ const PhoneAuth = ({
         <AuthButton
           label={submitLabel}
           onClick={onSubmit}
-          variant={loading ? 'disabled' : 'default'}
+          variant={loading || (showCaptcha && !recaptchaValid) ? 'disabled' : 'default'}
         />
       </div>
 
