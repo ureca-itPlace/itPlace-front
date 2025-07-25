@@ -27,7 +27,7 @@ export default function BenefitInfoCard({
         </div>
         {onLinkClick && (
           <button type="button" onClick={onLinkClick} className="text-grey05 hover:text-grey06">
-            <TbExternalLink size={18} strokeWidth={1.4} />
+            <TbExternalLink size={20} strokeWidth={1.4} />
           </button>
         )}
       </div>
