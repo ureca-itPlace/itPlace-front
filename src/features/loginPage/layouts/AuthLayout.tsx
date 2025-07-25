@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import MobileHeader from '../../../components/MobileHeader';
 
 // 공통 컴포넌트
 import AuthFormCard from '../components/common/AuthFormCard';
@@ -239,6 +240,9 @@ const AuthLayout = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white max-md:overflow-hidden max-md:h-screen max-md:fixed max-md:inset-0 max-sm:overflow-hidden max-sm:h-screen max-sm:fixed max-sm:inset-0">
+      <div className="fixed top-0 left-0 w-full z-[9999] max-md:block hidden">
+        <MobileHeader title="로그인" />
+      </div>
       {/* OAuth 로딩 모달 */}
       <Modal
         isOpen={showOAuthModal}

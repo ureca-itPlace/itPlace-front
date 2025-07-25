@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { TbMenu2, TbX } from 'react-icons/tb';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import { showToast } from '../utils/toast';
+import { persistor } from '../store';
 import { RootState } from '../store';
 import { logout } from '../store/authSlice';
 import api from '../apis/axiosInstance';
-import Modal from './Modal';
-
 interface MobileHeaderProps {
   title?: string;
   backgroundColor?: string; // Tailwind 클래스명 등
@@ -16,7 +16,6 @@ interface MobileHeaderProps {
 
 const MobileHeader = ({ title, backgroundColor = 'bg-white', onMenuClick }: MobileHeaderProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,13 +27,17 @@ const MobileHeader = ({ title, backgroundColor = 'bg-white', onMenuClick }: Mobi
       await api.post('api/v1/auth/logout');
       // 상태 초기화
       dispatch(logout());
+      // redux-persist 초기화
+      persistor.purge();
+      // 성공 토스트 표시
+      showToast('로그아웃 되었습니다.', 'success');
+      setIsSidebarOpen(false);
       // 페이지 이동
       navigate('/main');
     } catch (err) {
       console.error('로그아웃 실패:', err);
-    } finally {
-      setShowLogoutModal(false); // 모달 닫기
-      setIsSidebarOpen(false); // 사이드바 닫기
+      // 실패 토스트 표시
+      showToast('로그아웃에 실패했습니다.', 'error');
     }
   };
 
@@ -131,7 +134,7 @@ const MobileHeader = ({ title, backgroundColor = 'bg-white', onMenuClick }: Mobi
             <li>
               {isLoggedIn ? (
                 <button
-                  onClick={() => setShowLogoutModal(true)}
+                  onClick={handleLogout}
                   className="text-body-0 text-black hover:text-purple04 transition-colors text-left"
                 >
                   로그아웃
@@ -152,26 +155,6 @@ const MobileHeader = ({ title, backgroundColor = 'bg-white', onMenuClick }: Mobi
           </ul>
         </nav>
       </div>
-
-      {/* 로그아웃 확인 모달 */}
-      <Modal
-        isOpen={showLogoutModal}
-        title="로그아웃"
-        message="로그아웃 하시겠습니까?"
-        onClose={() => setShowLogoutModal(false)}
-        buttons={[
-          {
-            label: '아니오',
-            type: 'secondary',
-            onClick: () => setShowLogoutModal(false),
-          },
-          {
-            label: '예',
-            type: 'primary',
-            onClick: handleLogout,
-          },
-        ]}
-      />
     </>
   );
 };
