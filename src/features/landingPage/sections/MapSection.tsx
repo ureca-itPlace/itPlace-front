@@ -18,7 +18,8 @@ const MapSection = () => {
   const { isMobile, isTablet } = useResponsive();
 
   // 반응형을 고려한 세 번째 이미지 x축 이동
-  const xDistance = isMobile ? 100 : isTablet ? 300 : 400;
+  const xDistance = isMobile ? 100 : isTablet ? 200 : 400;
+  const yDistance = isMobile ? -150 : 50;
 
   useGSAP(() => {
     if (
@@ -142,7 +143,7 @@ const MapSection = () => {
         {
           scale: 2,
           x: xDistance,
-          y: 50,
+          y: yDistance,
           opacity: 0,
           ease: 'power2.out',
           duration: 4,
