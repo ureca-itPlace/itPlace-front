@@ -37,7 +37,9 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
         </div>
 
         {/* 메시지 텍스트 */}
-        <p className="text-body-3 text-black pr-2 max-w-[325px] max-md:text-body-4 max-md:max-w-[280px] max-md:pr-1">{message}</p>
+        <p className="text-body-3 text-black pr-2 max-w-[325px] max-md:text-body-4 max-md:max-w-[280px] max-md:pr-1">
+          {message}
+        </p>
       </div>
 
       {/* 말풍선 꼬리 - 회전된 사각형 */}
