@@ -18,7 +18,18 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
 
   // 사용자 등급 확인 헬퍼 함수
   const isUserGrade = (grade: string) => {
-    return membershipGrade && grade.toLowerCase() === membershipGrade.toLowerCase();
+    if (!membershipGrade) return false;
+
+    const userGrade = membershipGrade.toUpperCase();
+    const benefitGrade = grade.toUpperCase();
+
+    // 기본 매칭
+    if (userGrade === benefitGrade) return true;
+
+    // VIP/VVIP → "VIP 콕" 혜택도 포함
+    if ((userGrade === 'VIP' || userGrade === 'VVIP') && benefitGrade === 'VIP콕') return true;
+
+    return false;
   };
 
   // 등급 표시명 변환 헬퍼 함수

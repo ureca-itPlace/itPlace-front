@@ -179,20 +179,12 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
               className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden"
             >
               {/* 왼쪽 이미지 */}
-              <div className="w-[50px] h-[50px] rounded-[10px] overflow-hidden flex-shrink-0 mr-6">
-                {store.imgUrl ? (
-                  <img
-                    src={store.imgUrl}
-                    alt={`${store.partnerName} 로고`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-purple04 flex items-center justify-center">
-                    <span className="text-white text-body-4 font-bold">
-                      {store.partnerName.charAt(0)}
-                    </span>
-                  </div>
-                )}
+              <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6">
+                <img
+                  src={store.imgUrl || '/mainPage/RecommendDefault.png'}
+                  alt={`${store.partnerName} 로고`}
+                  className="w-full h-full object-contain"
+                />
               </div>
 
               {/* 중앙: 이름 */}
