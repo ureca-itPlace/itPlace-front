@@ -99,7 +99,7 @@ export const oauthSignUp = (data: {
 
 // reCAPTCHA 토큰 검증
 export const verifyRecaptcha = async (recaptchaToken: string) => {
-  return await api.post('/api/v1/auth/verify-recaptcha', {
+  return await api.post('/api/v1/auth/recaptcha', {
     recaptchaToken,
   });
 };

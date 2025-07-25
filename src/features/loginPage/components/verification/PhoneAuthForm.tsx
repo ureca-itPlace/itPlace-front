@@ -50,7 +50,7 @@ const PhoneAuthForm = ({
 }: Props) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const [recaptchaValid, setRecaptchaValid] = useState(false);
   const [birthday, setBirthday] = useState('');
   const [gender, setGender] = useState('');
   const [membershipId, setMembershipId] = useState('');
@@ -59,12 +59,12 @@ const PhoneAuthForm = ({
     'new' | 'uplus' | 'oauth-to-local-merge' | 'local-to-oauth-merge'
   >('new');
 
-  const isReadyToValidate = name.trim() && phone.trim() && recaptchaToken;
+  const isReadyToValidate = name.trim() && phone.trim() && recaptchaValid;
 
   const handleNext = async () => {
     if (!isReadyToValidate) return;
 
-    if (!recaptchaToken) {
+    if (!recaptchaValid) {
       showToast('reCAPTCHA 인증을 완료해주세요.', 'error');
       return;
     }
@@ -180,12 +180,13 @@ const PhoneAuthForm = ({
       phone={phone}
       onChangeName={(e) => setName(e.target.value)}
       onChangePhone={(e) => setPhone(e.target.value)}
-      onRecaptchaChange={setRecaptchaToken}
+      onRecaptchaChange={setRecaptchaValid}
       onSubmit={handleNext}
       showCaptcha={true}
       showFooter={true}
       onClickLogin={onGoToLogin}
       loading={loading}
+      recaptchaValid={recaptchaValid}
     />
   );
 };
