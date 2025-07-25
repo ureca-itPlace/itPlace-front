@@ -59,7 +59,6 @@ const MapSection = () => {
         pin: true,
         scrub: 0.5,
         anticipatePin: 1,
-        markers: true,
       },
     });
 
