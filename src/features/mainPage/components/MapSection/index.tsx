@@ -54,7 +54,7 @@ const MapSection: React.FC<MapSectionProps> = ({
     <div className="relative w-full h-full">
       {/* 카테고리 태그 - 주변 혜택 탭일 때만 지도 위 오버레이 */}
       {activeTab === 'nearby' && (
-        <div className="absolute top-4 left-5 right-5 z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-4 left-5 right-5 z-10 pointer-events-none overflow-hidden max-md:top-[50px] max-md:left-3 max-md:right-3">
           <div className="pointer-events-auto">
             <CategoryTabsSection
               categories={categories}

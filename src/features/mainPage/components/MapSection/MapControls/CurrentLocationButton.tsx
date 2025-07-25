@@ -33,9 +33,9 @@ const CurrentLocationButton: React.FC<CurrentLocationButtonProps> = ({
   return (
     <button
       onClick={handleClick}
-      className="bg-white border-2 border-gray-200 w-12 h-12 rounded-lg shadow-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center"
+      className="bg-white border-2 border-gray-200 w-12 h-12 rounded-lg shadow-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center max-md:w-10 max-md:h-10"
     >
-      <TbCurrentLocation size={24} className="text-gray-600" />
+      <TbCurrentLocation size={24} className="text-gray-600 max-md:w-5 max-md:h-5" />
     </button>
   );
 };

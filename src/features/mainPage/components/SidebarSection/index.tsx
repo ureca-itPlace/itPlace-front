@@ -177,16 +177,18 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
       {viewMode === 'list' ? (
         // 리스트 모드: 기존 UI
-        <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
-          {/* 검색 영역 */}
+        <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] max-md:mx-0 max-md:w-full flex-1 min-h-0">
+          {/* 검색 영역 - 데스크톱에서만 표시 */}
           <div className="pb-8 flex-shrink-0">
-            <SearchSection
-              onSearchChange={handleSearchChange}
-              onKeywordSearch={onKeywordSearch}
-              initialQuery={searchQuery}
-            />
+            <div className="hidden md:block">
+              <SearchSection
+                onSearchChange={handleSearchChange}
+                onKeywordSearch={onKeywordSearch}
+                initialQuery={searchQuery}
+              />
+            </div>
 
-            <div className="mb-4">
+            <div className={`mb-4 ${searchQuery ? 'md:mt-0 mt-0' : 'md:mt-0 mt-0'}`}>
               <NavigationTabsSection
                 tabs={mainTabs}
                 activeTab={activeTab}

@@ -9,9 +9,9 @@ const StoreDetailUsageGuide: React.FC<StoreDetailUsageGuideProps> = ({ detailDat
   if (!detailData?.data.manual) return null;
 
   return (
-    <div className="mb-6">
-      <h3 className="text-title-6 text-grey06 mb-3">이용 방법</h3>
-      <ul className="space-y-2 text-body-3 text-grey05">
+    <div className="mb-6 max-md:mb-4">
+      <h3 className="text-title-6 text-grey06 mb-3 max-md:text-title-7 max-md:mb-2">이용 방법</h3>
+      <ul className="space-y-2 text-body-3 text-grey05 max-md:space-y-1.5 max-md:text-body-4">
         {detailData.data.manual
           .split('\n')
           .filter((line) => line.trim() !== '')

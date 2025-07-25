@@ -49,9 +49,9 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   };
 
   return (
-    <div className="w-full bg-white rounded-t-[20px] shadow-lg flex flex-col h-full">
+    <div className="w-full bg-white rounded-t-[20px] shadow-lg flex flex-col h-full max-md:rounded-t-[15px]">
       {/* 고정 영역 */}
-      <div className="px-6 pt-6 flex-shrink-0">
+      <div className="px-6 pt-6 flex-shrink-0 max-md:px-4 max-md:pt-4">
         <StoreDetailHeader platform={platform} onClose={onClose} />
         <StoreDetailInfo
           url={detailData?.data.url}
@@ -67,12 +67,12 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       </div>
 
       {/* 스크롤 영역 - 이용 방법만 */}
-      <div className="flex-1 overflow-y-auto px-6">
+      <div className="flex-1 overflow-y-auto px-6 max-md:px-4">
         <StoreDetailUsageGuide detailData={detailData} />
       </div>
 
       {/* 고정 버튼 */}
-      <div className="px-6 pb-4 flex-shrink-0">
+      <div className="px-6 pb-4 flex-shrink-0 max-md:px-4 max-md:pb-3">
         <StoreDetailActionButton
           benefitId={detailData?.data?.benefitId}
           isFavorite={isFavorite}

@@ -12,9 +12,15 @@ interface MobileHeaderProps {
   title?: string;
   backgroundColor?: string; // Tailwind 클래스명 등
   onMenuClick?: () => void;
+  rightContent?: React.ReactNode;
 }
 
-const MobileHeader = ({ title, backgroundColor = 'bg-white', onMenuClick }: MobileHeaderProps) => {
+const MobileHeader = ({
+  title,
+  backgroundColor = 'bg-white',
+  onMenuClick,
+  rightContent,
+}: MobileHeaderProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -55,17 +61,20 @@ const MobileHeader = ({ title, backgroundColor = 'bg-white', onMenuClick }: Mobi
       <header
         className={`w-full h-[54px] flex items-center px-4 z-[9999] border-b border-grey01 max-md:flex ${backgroundColor}`}
       >
-        <div className="flex flex-row items-center h-full ">
+        <div className="flex flex-row items-center h-full w-full">
           <button
-            className="w-8 flex items-center justify-center mr-3 h-full"
+            className="w-8 flex items-center justify-center mr-3 h-full flex-shrink-0"
             aria-label="메뉴"
             onClick={handleMenuClick}
           >
             <TbMenu2 className="w-5 h-5 text-black" />
           </button>
-          <span className="text-body-2 text-black leading-none flex items-center h-full mt-[5px]">
-            {title}
-          </span>
+          {title && (
+            <span className="text-body-2 text-black leading-none flex items-center h-full mt-[5px]">
+              {title}
+            </span>
+          )}
+          {rightContent && <div className="flex-1">{rightContent}</div>}
         </div>
       </header>
 

@@ -70,23 +70,31 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
 
   return (
     <div
-      className="group cursor-pointer transition-colors duration-200 w-[370px] px-5 bg-white hover:bg-grey01"
+      className="group cursor-pointer transition-colors duration-200 w-full px-5 bg-white hover:bg-grey01 max-md:px-0 max-sm:px-0"
       onClick={() => onSelect(platform)}
     >
-      <div className="py-4">
+      <div className="py-4 max-md:py-3">
         {/* 상단부: 가맹점 정보 + 로고 */}
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-4 max-md:mb-3">
           {/* 왼쪽: 가맹점 정보 2줄 */}
           <div className="flex flex-col">
             {/* 1줄: 가맹점명 + 카테고리 */}
-            <div className="flex items-center gap-4 mb-2">
-              <span className="text-title-7 font-bold text-grey06">{platform.name}</span>
-              <span className="text-body-5 text-grey04">{platform.category}</span>
+            <div className="flex items-center gap-4 mb-2 max-md:gap-3 max-md:mb-1.5">
+              <span className="text-title-7 font-bold text-grey06 max-md:text-body-1-bold">
+                {platform.name}
+              </span>
+              <span className="text-body-5 text-grey04 max-md:text-body-6">
+                {platform.category}
+              </span>
             </div>
             {/* 2줄: 거리 + 주소 */}
-            <div className="flex items-center gap-3 mb-1 relative">
-              <span className="text-body-3-bold text-black">{platform.distance}km</span>
-              <span className="text-body-3 text-grey04 truncate w-[20ch]">{platform.roadName}</span>
+            <div className="flex items-center gap-3 mb-1 relative max-md:gap-2">
+              <span className="text-body-3-bold text-black max-md:text-body-4-bold">
+                {platform.distance}km
+              </span>
+              <span className="text-body-3 text-grey04 truncate w-[20ch] max-md:text-body-4 max-md:w-[15ch]">
+                {platform.roadName}
+              </span>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -95,9 +103,9 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
                 className="hover:text-grey05 transition-colors"
               >
                 {showAddressTooltip ? (
-                  <TbChevronUp size={16} className="text-grey04" />
+                  <TbChevronUp size={16} className="text-grey04 max-md:w-4 max-md:h-4" />
                 ) : (
-                  <TbChevronDown size={16} className="text-grey04" />
+                  <TbChevronDown size={16} className="text-grey04 max-md:w-4 max-md:h-4" />
                 )}
               </button>
 
@@ -116,7 +124,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
           </div>
 
           {/* 오른쪽: 브랜드 로고 */}
-          <div className="w-[45px] h-[45px] flex items-center justify-center flex-shrink-0">
+          <div className="w-[45px] h-[45px] flex items-center justify-center flex-shrink-0 max-md:w-[40px] max-md:h-[40px]">
             {platform.imageUrl ? (
               <img
                 src={platform.imageUrl}
@@ -132,10 +140,12 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
         </div>
 
         {/* 하단부: 혜택 내용 박스 */}
-        <div className="rounded-[10px] p-3 w-[330px] bg-grey01 group-hover:bg-white">
-          <div className="text-body-3-bold text-grey05 mb-2">혜택 내용</div>
+        <div className="rounded-[10px] p-3 w-full bg-grey01 group-hover:bg-white max-md:p-2 max-sm:p-1.5">
+          <div className="text-body-3-bold text-grey05 mb-2 max-md:text-body-4-bold max-md:mb-1.5">
+            혜택 내용
+          </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 max-md:space-y-0.5">
             {platform.benefits.length > 0 ? (
               platform.benefits.map((benefit, benefitIndex) => {
                 const [grade, content] = benefit.split(': ');
@@ -143,16 +153,16 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
                 return (
                   <div
                     key={benefitIndex}
-                    className="grid grid-cols-[20px_60px_1fr] gap-2 items-center"
+                    className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5"
                   >
-                    <TbCheck size={16} className="text-grey04" />
+                    <TbCheck size={16} className="text-grey04 max-md:w-4 max-md:h-4" />
                     <span
-                      className={`text-body-4 ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
+                      className={`text-body-4 max-md:text-body-5 ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
                     >
                       {getGradeDisplayName(grade)}
                     </span>
                     <span
-                      className={`text-body-4 truncate ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
+                      className={`text-body-4 max-md:text-body-5 truncate ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
                     >
                       {content}
                     </span>
@@ -160,10 +170,10 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
                 );
               })
             ) : (
-              <div className="grid grid-cols-[20px_60px_1fr] gap-2 items-center">
-                <TbCheck size={16} className="text-grey04" />
-                <span className="text-body-4 text-grey05">혜택 정보가</span>
-                <span className="text-body-4 text-grey05">없습니다</span>
+              <div className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5">
+                <TbCheck size={16} className="text-grey04 max-md:w-4 max-md:h-4" />
+                <span className="text-body-4 text-grey05 max-md:text-body-5">혜택 정보가</span>
+                <span className="text-body-4 text-grey05 max-md:text-body-5">없습니다</span>
               </div>
             )}
           </div>

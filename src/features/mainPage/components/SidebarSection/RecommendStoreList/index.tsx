@@ -58,7 +58,8 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   };
 
   const getBadgeClass = (rank: number) => {
-    const base = 'ml-2 px-6 py-1 rounded-full text-body-4 text-black shimmer-gradient';
+    const base =
+      'ml-2 px-6 py-1 rounded-full text-body-4 text-black shimmer-gradient max-md:px-4 max-md:text-body-5';
     switch (rank) {
       case 1:
         return `${base} badge-gold`;
@@ -67,7 +68,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       case 3:
         return `${base} badge-bronze`;
       default:
-        return 'ml-2 px-6 py-1 rounded-full text-body-4 bg-grey02 text-grey05';
+        return 'ml-2 px-6 py-1 rounded-full text-body-4 bg-grey02 text-grey05 max-md:px-4 max-md:text-body-5';
     }
   };
 
@@ -164,14 +165,14 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
           />
         </div>
       ) : isLoading ? (
-        <div className="flex-1 flex items-center justify-center min-h-0 mt-[-60px]">
+        <div className="flex-1 flex items-center justify-center min-h-0 mt-[-60px] max-md:mt-[-40px]">
           <div className="flex flex-col items-center">
-            <div className="mb-4">
+            <div className="mb-4 max-md:mb-3">
               <LoadingSpinner />
             </div>
-            <div className="text-center min-h-[3rem] flex items-center justify-center">
+            <div className="text-center min-h-[3rem] flex items-center justify-center max-md:min-h-[2.5rem]">
               <p
-                className={`text-body-2 font-bold transition-opacity duration-1000 whitespace-pre-line ${
+                className={`text-body-2 font-bold transition-opacity duration-1000 whitespace-pre-line max-md:text-body-3 ${
                   animatedText.isVisible ? 'opacity-100' : 'opacity-0'
                 } ${animatedText.textColorClass}`}
               >
@@ -195,15 +196,15 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
           />
         </div>
       ) : (
-        <div className="space-y-3 px-5">
+        <div className="space-y-3 px-5 max-md:space-y-2 max-md:px-3">
           {stores.map((store) => (
             <div
               key={`${store.partnerName}-${store.rank}`}
               onClick={() => onItemClick(store)}
-              className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden"
+              className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-full max-md:h-[50px] max-md:px-3"
             >
               {/* 왼쪽 이미지 */}
-              <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6">
+              <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4">
                 <img
                   src={store.imgUrl || '/mainPage/RecommendDefault.png'}
                   alt={`${store.partnerName} 로고`}
@@ -213,7 +214,9 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
 
               {/* 중앙: 이름 */}
               <div className="flex-1">
-                <span className="text-body-3-bold text-grey06">{store.partnerName}</span>
+                <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
+                  {store.partnerName}
+                </span>
               </div>
 
               {/* 오른쪽: 뱃지 */}
