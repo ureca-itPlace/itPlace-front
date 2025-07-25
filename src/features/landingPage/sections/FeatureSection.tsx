@@ -1,142 +1,143 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useRef, useState } from 'react';
 import { featureData } from '../data/featuresData.ts';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const FeatureSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<HTMLLIElement[]>([]);
-  const featureListRef = useRef<HTMLDivElement>(null);
+  const featureCardRefs = useRef<HTMLLIElement[]>([]);
+  const menuLinksRef = useRef<HTMLDivElement[]>([]); // `a` 태그 대신 div로 설정
 
   const [activeIdx, setActiveIdx] = useState(0);
 
-  useGSAP(() => {
-    if (!sectionRef.current || !featureListRef.current) return;
+  // 현재 카드 설정
+  const setCardRef = (el: HTMLLIElement | null, index: number) => {
+    if (el) featureCardRefs.current[index] = el;
+  };
 
-    // 초기 상태 설정
-    cardRefs.current.forEach((el, idx) => {
+  // 현재 기능 메뉴 설정
+  const setMenuLinkRef = (el: HTMLDivElement | null, index: number) => {
+    if (el) menuLinksRef.current[index] = el;
+  };
+
+  useGSAP(() => {
+    if (!sectionRef.current) return;
+
+    // 기능 카드 초기 설정
+    featureCardRefs.current.forEach((el, idx) => {
       if (!el) return;
-      gsap.set(el, { y: idx === 0 ? '0%' : '100%' });
+      gsap.set(el, {
+        y: idx === 0 ? '0%' : '100%',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: featureData.length - idx,
+      });
     });
 
-    // 애니메이션 전체 타임라인
     const tl = gsap.timeline({
       scrollTrigger: {
+        id: 'feature-scroll',
         trigger: sectionRef.current,
-        start: 'center center',
-        end: '+=2000',
-        scrub: 0.3,
+        start: 'top top',
+        end: `+=${featureData.length * 600}`,
+        scrub: 0.2,
         pin: true,
         anticipatePin: 1,
+        onUpdate: (self) => {
+          const scroll = self.scroll();
+          const step = (self.end - self.start) / (featureData.length - 1);
+          const idx = Math.round((scroll - self.start) / step);
+          setActiveMenu(idx);
+        },
       },
     });
 
-    // 2. 카드 등장 & 퇴장 애니메이션
     featureData.forEach((_, idx) => {
       if (idx > 0) {
+        tl.to(featureCardRefs.current[idx], { y: '0%', duration: 0.5, ease: 'none' }, idx * 1);
         tl.to(
-          cardRefs.current[idx],
-          {
-            y: '0%',
-            duration: 1.2,
-            ease: 'power1.inOut',
-            onStart: () => setActiveIdx(idx),
-          },
-          '+=0.5'
+          featureCardRefs.current[idx - 1],
+          { y: '-100%', duration: 0.5, ease: 'none' },
+          idx * 1
         );
-        tl.to(
-          cardRefs.current[idx - 1],
-          {
-            y: '-100%',
-            duration: 1.2,
-            ease: 'power1.inOut',
-          },
-          '<'
-        );
+      } else {
+        tl.set({}, { onStart: () => setActiveMenu(0) });
+      }
+
+      // 카드가 화면의 중간에 올 때마다 메뉴 항목의 active 상태 변경
+      ScrollTrigger.create({
+        trigger: featureCardRefs.current[idx],
+        start: 'top center', // 화면의 중간에 도달할 때
+        end: 'bottom center', // 끝까지
+        onEnter: () => setActiveMenu(idx),
+        onLeaveBack: () => setActiveMenu(-1), // 카드가 다시 지나가면 active 상태를 리셋
+      });
+    });
+  }, []);
+
+  const setActiveMenu = (index: number) => {
+    setActiveIdx(index);
+    menuLinksRef.current.forEach((link, i) => {
+      if (link) {
+        link.classList.toggle('active', i === index);
+        console.log('현재 인덱스', index);
       }
     });
-
-    featureData.forEach((_, idx) => {
-      if (!cardRefs.current[idx]) return;
-
-      ScrollTrigger.create({
-        trigger: cardRefs.current[idx],
-        start: 'top top',
-        end: 'bottom top',
-        onToggle: (self) => {
-          if (self.isActive) {
-            setActiveIdx(idx);
-          }
-        },
-      });
-    });
-  }, [cardRefs, sectionRef]);
-
-  const handleMenuClick = (idx: number) => {
-    const targetCard = cardRefs.current[idx];
-    if (targetCard) {
-      // 카드 위치를 y:0%로 설정
-      gsap.to(targetCard, {
-        y: '0%',
-        duration: 1.2,
-        ease: 'power1.inOut',
-      });
-
-      // 해당 카드로 스크롤 이동
-      gsap.to(window, {
-        scrollTo: targetCard,
-        duration: 1.2,
-        ease: 'power2.inOut',
-      });
-
-      setActiveIdx(idx);
-    }
   };
 
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-[100dvh] bg-[#000000] flex items-center justify-center overflow-hidden"
+      className="relative w-full h-[100dvh] bg-[#000000] flex items-center overflow-hidden max-lg:flex-col max-lg:items-start"
     >
-      <div className="w-full h-full flex items-center justify-center max-sm:flex-col">
-        <nav ref={featureListRef}>
-          <ul className="flex flex-col gap-28 text-[64px] ml-36 whitespace-nowrap text-white">
-            {featureData.map((feature, i) => (
-              <li key={feature.title}>
-                <button
-                  onClick={() => handleMenuClick(i)}
-                  className={`transition-colors ${activeIdx === i ? 'text-purple04' : 'text-white'}`}
+      <div className="z-30 h-full">
+        <div className="relative h-full w-[43dvw] z-30 overflow-hidden pl-36 max-lg:px-5 max-lg:w-full max-lg:items-center">
+          <ul className="h-full w-full flex flex-col text-[64px] justify-between py-24 whitespace-nowrap text-white max-lg:flex-row max-lg:pb-16 max-lg:gap-14 max-sm:gap-6 max-sm:pt-10 max-sm:pb-6 max-sm:text-title-4">
+            {featureData.map((feature, idx) => (
+              <li key={idx}>
+                <div
+                  ref={(el) => setMenuLinkRef(el, idx)}
+                  className={`${
+                    activeIdx === idx ? 'active text-purple04 font-bold' : 'text-white'
+                  }`}
                 >
                   {feature.title}
-                </button>
+                </div>
               </li>
             ))}
           </ul>
-        </nav>
+        </div>
+      </div>
 
-        <ul className="relative flex flex-col w-[57%] h-full ml-auto text-[#000000]">
-          {featureData.map((feature, i) => (
+      <div className="h-[100dvh] flex-1 relative">
+        <ul className="relative w-full h-full">
+          {featureData.map((feature, idx) => (
             <li
-              key={feature.title}
-              ref={(el) => {
-                if (el) cardRefs.current[i] = el;
-              }}
-              className={`${feature.color} absolute top-0 right-0 flex flex-col items-center justify-center h-screen w-full ml-auto`}
+              key={idx}
+              id={`feature${idx + 1}`}
+              ref={(el) => setCardRef(el, idx)}
+              className={`w-full h-full flex flex-col justify-center items-center ${
+                idx % 2 === 0 ? 'bg-gray-400' : 'bg-white'
+              }`}
             >
-              <div className="flex items-center justify-center mb-20 mt-24 w-[964px] h-[476px]">
+              <div className="flex items-center justify-center mb-20 mt-24 w-[88%] h-[476px] max-sm:h-[158px] max-sm:mb-16">
                 <img
-                  src={feature.image}
-                  alt={`기능-소개${i + 1}`}
+                  src={feature.image || '/images/landing/landing-feature-1.png'}
+                  alt={`기능소개${idx + 1}`}
                   loading="lazy"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col gap-14 ml-16 mr-20">
-                <h1 className="text-title-1">{feature.title}</h1>
-                <h4 className="text-2xl leading-loose font-light pb-20">{feature.description}</h4>
+              <div className="flex flex-col gap-10 ml-16 mr-20 max-sm:mx-5 max-sm:gap-6 max-lg:items-center">
+                <h1 className="text-title-1 max-sm:text-title-5 text-black">{feature.title}</h1>
+                <h4 className="text-2xl leading-loose font-light pb-20 max-sm:text-body-0 max-sm:text-center text-black">
+                  {feature.description}
+                </h4>
               </div>
             </li>
           ))}
