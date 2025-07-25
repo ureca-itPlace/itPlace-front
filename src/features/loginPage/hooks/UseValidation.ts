@@ -63,7 +63,6 @@ const useValidation = () => {
   };
 
   const checkEmail = () => {
-    console.log('📬 checkEmail called');
     setEmailChecked(true); // TODO: 실제 중복확인 API 바인딩
   };
 

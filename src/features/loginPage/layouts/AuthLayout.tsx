@@ -70,8 +70,6 @@ const AuthLayout = () => {
 
   const checkOAuthResult = useCallback(async () => {
     try {
-      console.log('🟡 OAuth 결과 확인 중...');
-
       // 최소 1초는 모달을 표시하기 위해 Promise.all 사용
       const [response] = await Promise.all([
         getOAuthResult(),
@@ -79,8 +77,6 @@ const AuthLayout = () => {
       ]);
 
       const { code, data } = response.data;
-
-      console.log('🟢 OAuth 결과:', response.data);
 
       if (code === 'OAUTH_INFO_FOUND') {
         const userData = data;
@@ -91,7 +87,6 @@ const AuthLayout = () => {
               membershipGrade: userData.membershipGrade || 'NORMAL',
             })
           );
-          console.log('🟢 Redux에 OAuth 로그인 정보 저장 완료:', userData);
         }
 
         showToast('로그인에 성공하셨습니다!', 'success');
@@ -101,8 +96,6 @@ const AuthLayout = () => {
 
         navigate('/main');
       } else if (code === 'PRE_AUTHENTICATION_SUCCESS') {
-        console.log('🟡 추가 정보 입력 필요 → PhoneAuthForm으로 이동');
-
         // URL에서 oauth 파라미터 제거
         window.history.replaceState({}, '', '/login?step=phoneAuth&verifiedType=oauth');
 
@@ -115,8 +108,7 @@ const AuthLayout = () => {
         // URL에서 oauth 파라미터 제거
         window.history.replaceState({}, '', '/login');
       }
-    } catch (error) {
-      console.error('🔴 OAuth 결과 확인 실패:', error);
+    } catch {
       showToast('로그인에 실패했습니다.', 'error');
 
       // URL에서 oauth 파라미터 제거
@@ -128,10 +120,8 @@ const AuthLayout = () => {
 
   const handleOAuthToLocalMerge = async (phoneNumber: string) => {
     try {
-      console.log('🟡 OAuth → 로컬 계정 통합 시작:', phoneNumber);
       const response = await oauthAccountLink(phoneNumber);
 
-      console.log('🟢 계정 통합 성공:', response.data);
       showToast('계정이 성공적으로 통합되었습니다!', 'success');
 
       // 통합 완료 후 로그인 성공 처리 (필요시)
@@ -149,8 +139,7 @@ const AuthLayout = () => {
         showToast('이제 카카오 로그인을 사용하실 수 있습니다!', 'success');
         goToLogin();
       }
-    } catch (error) {
-      console.error('🔴 계정 통합 실패:', error);
+    } catch {
       showToast('계정 통합에 실패했습니다. 다시 시도해주세요.', 'error');
     }
   };
@@ -161,12 +150,8 @@ const AuthLayout = () => {
     const verifiedType = params.get('verifiedType');
     const oauth = params.get('oauth');
 
-    console.log('🟡 AuthLayout useEffect 실행:', { step, verifiedType, oauth, showOAuthModal });
-    console.log('🟡 현재 URL:', location.search);
-
     // OAuth 처리 중 파라미터가 있으면 모달 표시하고 결과 확인
     if (oauth === 'processing' && !showOAuthModal) {
-      console.log('🟡 OAuth 모달 표시 조건 충족');
       setShowOAuthModal(true);
       checkOAuthResult();
       return;
@@ -202,7 +187,6 @@ const AuthLayout = () => {
   useEffect(() => {
     const shouldReset = sessionStorage.getItem('resetToLogin');
     if (shouldReset && formStep !== 'login') {
-      console.log('🟡 AuthLayout: sessionStorage 플래그 감지 - 로그인으로 리셋');
       sessionStorage.removeItem('resetToLogin');
       setMode('signup');
       setShowTab(false);
@@ -211,9 +195,7 @@ const AuthLayout = () => {
     }
   }, [formStep, goToLogin]);
 
-  useEffect(() => {
-    console.log('🟡 AuthLayout: 현재 formStep =', formStep);
-  }, [formStep]);
+  useEffect(() => {}, [formStep]);
 
   const handleOAuthSignup = async (birthday: string, gender: string) => {
     try {
@@ -225,13 +207,9 @@ const AuthLayout = () => {
         membershipId: oauthUserData.membershipId,
       };
 
-      console.log('🟡 최종 payload 확인:', payload);
-
-      const response = await oauthSignUp(payload);
+      await oauthSignUp(payload);
 
       // 회원가입 성공 후 반환된 사용자 정보 확인
-      console.log('🟢 OAuth 회원가입 성공:', response.data);
-
       // 회원가입 성공 - 로그인 화면으로 이동
       showToast('회원가입에 성공하셨습니다!', 'success');
 
@@ -252,16 +230,12 @@ const AuthLayout = () => {
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
 
-      console.error('🔴 OAuth 회원가입 실패:', axiosError);
-
       const msg =
         axiosError.response?.data?.message || '회원가입에 실패했습니다. 다시 시도해주세요.';
 
       showToast(msg, 'error');
     }
   };
-
-  console.log('🟡 AuthLayout 렌더링:', { showOAuthModal });
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white max-md:overflow-hidden max-md:h-screen max-md:fixed max-md:inset-0 max-sm:overflow-hidden max-sm:h-screen max-sm:fixed max-sm:inset-0">
@@ -290,13 +264,11 @@ const AuthLayout = () => {
             {formStep === 'login' && (
               <LoginForm
                 onGoToPhoneAuth={() => {
-                  console.log('🟡 AuthLayout: "계정이 없으신가요?" 클릭');
                   setMode('signup');
                   setShowTab(false);
                   goToPhoneAuth();
                 }}
                 onGoToFindEmail={() => {
-                  console.log('🟡 AuthLayout: "아이디/비밀번호 찾기" 클릭');
                   setMode('find');
                   setShowTab(true);
                   goToFindEmail();
@@ -316,7 +288,6 @@ const AuthLayout = () => {
                 showTab={showTab}
                 onGoToLogin={goToLogin}
                 onAuthComplete={({ name, phone }) => {
-                  console.log('🟡 AuthLayout: onAuthComplete 호출됨', { name, phone });
                   setUserData({
                     name,
                     phone,
@@ -325,7 +296,6 @@ const AuthLayout = () => {
                     membershipId: '',
                     verifiedType: '',
                   });
-                  console.log('🟡 AuthLayout: goToVerification() 호출');
                   goToVerification();
                 }}
                 onVerified={(verifiedType, user) => {
@@ -428,13 +398,11 @@ const AuthLayout = () => {
               {formStep === 'login' && (
                 <LoginForm
                   onGoToPhoneAuth={() => {
-                    console.log('🟡 AuthLayout: "계정이 없으신가요?" 클릭');
                     setMode('signup');
                     setShowTab(false);
                     goToPhoneAuth();
                   }}
                   onGoToFindEmail={() => {
-                    console.log('🟡 AuthLayout: "아이디/비밀번호 찾기" 클릭');
                     setMode('find');
                     setShowTab(true);
                     goToFindEmail();
@@ -454,7 +422,6 @@ const AuthLayout = () => {
                   showTab={showTab}
                   onGoToLogin={goToLogin}
                   onAuthComplete={({ name, phone }) => {
-                    console.log('🟡 AuthLayout: onAuthComplete 호출됨', { name, phone });
                     setUserData({
                       name,
                       phone,
@@ -463,24 +430,14 @@ const AuthLayout = () => {
                       membershipId: '',
                       verifiedType: '',
                     });
-                    console.log('🟡 AuthLayout: goToVerification() 호출');
                     goToVerification();
                   }}
                   onVerified={(verifiedType, user) => {
                     const urlParams = new URLSearchParams(location.search);
                     const isOAuthFlow = urlParams.get('verifiedType') === 'oauth';
 
-                    console.log('🟡 AuthLayout: onVerified 첫 번째 파라미터:', verifiedType);
-                    console.log('🟡 AuthLayout: onVerified 두 번째 파라미터:', user);
-                    console.log('🟡 AuthLayout: onVerified 호출됨', {
-                      verifiedType,
-                      user,
-                      isOAuthFlow,
-                    });
-
                     if (isOAuthFlow || verifiedType === 'oauth-new') {
                       // OAuth 플로우는 모든 경우에 OAuthIntegrationForm으로
-                      console.log('🟢 AuthLayout: OAuth 플로우 - OAuthIntegrationForm으로 이동');
                       setOAuthUserData({
                         name: user.name,
                         phone: user.phone,

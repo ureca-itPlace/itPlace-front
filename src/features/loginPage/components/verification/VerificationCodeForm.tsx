@@ -149,8 +149,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
       await sendVerificationCode(name, phone);
       setCode('');
       startTimer();
-    } catch (error) {
-      console.log('재전송 실패', error);
+    } catch {
+      showToast('재전송 실패', 'error');
     }
   };
 
@@ -171,18 +171,9 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
 
       const { userStatus, isLocalUser, uplusDataExists } = res.data.data;
 
-      console.log('🟡 checkVerificationCode API 응답:', {
-        userStatus,
-        isLocalUser,
-        uplusDataExists,
-        phoneNumber: phone,
-        fullResponse: res.data,
-      });
-
       // OAuth 플로우인지 확인
       const urlParams = new URLSearchParams(window.location.search);
       const isOAuthFlow = urlParams.get('verifiedType') === 'oauth';
-      console.log('🟡 OAuth 플로우 확인:', { isOAuthFlow, urlParams: urlParams.toString() });
 
       // 분기 처리
       if (userStatus === 'EXISTING_USER' && isLocalUser === true && !isOAuthFlow) {
@@ -211,7 +202,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
         verifiedTypeRef.current = 'new';
       }
 
-      console.log('[분기 결과] verifiedType:', verifiedTypeRef.current);
       // 사용자 정보 저장 (공통 구조로)
       userInfoRef.current = {
         name,
@@ -309,10 +299,8 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
           onClick={() => {
             const user = userInfoRef.current!;
 
-            console.log('🔍 switch문 실행 직전 verifiedTypeRef.current:', verifiedTypeRef.current);
             switch (verifiedTypeRef.current) {
               case 'local':
-                console.log('🔵 local 케이스 실행');
                 setModal(
                   modalPresets.alreadyJoined(() => {
                     closeModal();
@@ -322,15 +310,11 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 break;
 
               case 'oauth':
-                console.log('🔵 oauth 케이스 실행');
                 setModal(
                   modalPresets.mergeAccount(
                     async () => {
                       try {
-                        console.log('🟡 OAuth 계정 통합 API 호출 중...');
                         const response = await oauthAccountLink(phone);
-
-                        console.log('🟢 OAuth 계정 통합 성공:', response.data);
 
                         // API 응답의 메시지를 토스트로 표시
                         const message = response.data?.message || '계정 통합이 완료되었습니다.';
@@ -345,7 +329,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                               membershipGrade: userData.membershipGrade || 'NORMAL',
                             })
                           );
-                          console.log('🟢 Redux에 OAuth 통합 로그인 정보 저장 완료:', userData);
 
                           // 통합 성공 시 메인 페이지로 직접 이동
                           closeModal();
@@ -361,8 +344,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                           })
                         );
                       } catch (error) {
-                        console.error('🔴 OAuth 계정 통합 실패:', error);
-
                         const axiosError = error as AxiosError<{ message?: string }>;
                         const errorMessage =
                           axiosError.response?.data?.message || '계정 통합에 실패했습니다.';
@@ -381,7 +362,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 break;
 
               case 'uplus':
-                console.log('🔵 uplus 케이스 실행');
                 setModal(
                   modalPresets.uplusMember(
                     async () => {
@@ -423,10 +403,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 break;
 
               case 'oauth-new':
-                console.log(
-                  '🟢 oauth-new 케이스 실행, verifiedTypeRef.current:',
-                  verifiedTypeRef.current
-                );
                 onVerified('oauth-new', {
                   name: user.name,
                   phone: user.phone,
@@ -437,15 +413,11 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 break;
 
               case 'oauth-to-local-merge':
-                console.log('🟢 oauth-to-local-merge 케이스 실행');
                 setModal(
                   modalPresets.mergeAccount(
                     async () => {
                       try {
-                        console.log('🟡 OAuth → 로컬 계정 통합 API 호출 중...');
                         const response = await oauthAccountLink(phone);
-
-                        console.log('🟢 OAuth → 로컬 계정 통합 성공:', response.data);
 
                         // API 응답의 메시지를 토스트로 표시
                         const message = response.data?.message || '계정 통합이 완료되었습니다.';
@@ -459,10 +431,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                               name: userData.name,
                               membershipGrade: userData.membershipGrade || 'NORMAL',
                             })
-                          );
-                          console.log(
-                            '🟢 Redux에 OAuth → 로컬 통합 로그인 정보 저장 완료:',
-                            userData
                           );
 
                           // 통합 성공 시 메인 페이지로 직접 이동
@@ -479,8 +447,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                           })
                         );
                       } catch (error) {
-                        console.error('🔴 OAuth → 로컬 계정 통합 실패:', error);
-
                         const axiosError = error as AxiosError<{ message?: string }>;
                         const errorMessage =
                           axiosError.response?.data?.message || '계정 통합에 실패했습니다.';
@@ -499,17 +465,13 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 break;
 
               case 'local-to-oauth-merge':
-                console.log('🟢 local-oauth-merge 케이스 실행');
                 setModal(
                   modalPresets.mergeAccount(
                     async () => {
                       // "예" 선택 시: OAuth API에서 정보 받아와서 회원가입 폼으로
                       closeModal();
                       try {
-                        console.log('🟡 OAuth 데이터 로드 API 호출 중...');
                         const response = await loadOAuthData(phone);
-
-                        console.log('🟢 OAuth 계정 연동 성공:', response.data);
 
                         const userData = response.data?.data;
                         onVerified('local-to-oauth-merge', {
@@ -520,8 +482,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                           membershipId: userData?.membershipId || '',
                         });
                       } catch (error) {
-                        console.error('🔴 OAuth 데이터 로드 실패:', error);
-
                         const axiosError = error as AxiosError<{ message?: string }>;
                         const errorMessage =
                           axiosError.response?.data?.message || 'OAuth 데이터 로드에 실패했습니다.';
@@ -554,7 +514,6 @@ const VerificationCodeForm = ({ onGoToLogin, onVerified, name, phone }: Props) =
                 break;
 
               case 'new':
-                console.log('🔵 new 케이스 실행');
                 onVerified('new', {
                   name: user.name,
                   phone: user.phone,

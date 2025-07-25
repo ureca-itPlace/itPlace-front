@@ -36,8 +36,7 @@ const FindEmailStep1 = ({ onSuccess, onClickTabPassword, onGoToLogin }: Props) =
       await sendFindEmailCode(payload);
       showToast('인증번호가 전송되었습니다.', 'success');
       setStep('verify'); // 인증번호 입력 단계로 전환
-    } catch (err) {
-      console.error('[인증번호 요청 실패]', err);
+    } catch {
       showToast('인증번호 전송에 실패했습니다.', 'error');
     } finally {
       setLoading(false);

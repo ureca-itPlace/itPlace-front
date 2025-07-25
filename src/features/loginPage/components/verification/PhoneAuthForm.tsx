@@ -73,7 +73,6 @@ const PhoneAuthForm = ({
     try {
       await sendVerificationCode(name, phone);
       onAuthComplete({ name, phone });
-      console.log('인증번호 전송이 완료되었습니다. ');
     } catch (error) {
       const axiosError = error as AxiosError<{ code?: string; message?: string }>;
       const res = axiosError.response?.data;

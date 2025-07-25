@@ -27,8 +27,6 @@ const OAuthIntegrationForm = ({
   const [birthday, setBirthday] = useState(initialBirthday);
   const [gender, setGender] = useState(initialGender);
 
-  console.log('🟡 OAuthIntegrationForm props:', { isOAuthNew, birthday, gender });
-
   return (
     <div className="w-full flex flex-col items-center">
       {/* 제목 */}

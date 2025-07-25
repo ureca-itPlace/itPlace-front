@@ -114,7 +114,6 @@ export const AuthTransition = () => {
 
   // 인증번호 입력 단계 (같은 카드 내 내부 전환)
   const goToVerification = () => {
-    console.log('🟡 AuthTransition: formStep을 verification으로 변경');
     setFormStep('verification');
   };
 
