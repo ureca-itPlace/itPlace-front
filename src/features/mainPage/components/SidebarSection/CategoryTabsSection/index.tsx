@@ -78,58 +78,37 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
     };
   }, [mode]);
 
-  // 사이드바 모드에서만 스와이퍼 사용
-  if (mode === 'sidebar') {
-    return (
-      <div className="pb-2">
-        <Swiper
-          modules={[FreeMode]}
-          spaceBetween={8}
-          slidesPerView="auto"
-          freeMode={true}
-          grabCursor={true}
-          className="category-tabs-swiper !overflow-visible"
-        >
-          {categories.map((category) => (
-            <SwiperSlide key={category.id} style={{ width: 'auto' }}>
-              <button
-                onClick={() => onCategorySelect(category.id)}
-                className={`${styles.button} ${
-                  selectedCategory === category.id
-                    ? 'bg-purple04 text-white'
-                    : 'bg-white text-grey05 hover:bg-purple02'
-                }`}
-              >
-                <span className="whitespace-nowrap">{category.name}</span>
-              </button>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-    );
-  }
-
-  // 맵 모드에서는 기존 방식 (스크롤)
+  // 모든 모드에서 스와이퍼 사용
   return (
-    <div className={styles.container}>
-      {categories.map((category) => (
-        <button
-          key={category.id}
-          onClick={() => onCategorySelect(category.id)}
-          className={`${styles.button} ${
-            selectedCategory === category.id
-              ? 'bg-purple04 text-white'
-              : 'bg-white text-grey05 hover:bg-purple02'
-          }`}
-        >
-          {styles.showIcon && category.id !== '전체' && (
-            <span className="flex-shrink-0">
-              {getCategoryIcon(category.id, selectedCategory === category.id)}
-            </span>
-          )}
-          <span className="whitespace-nowrap">{category.name}</span>
-        </button>
-      ))}
+    <div className={mode === 'map' ? 'px-0 pt-2 pb-2 h-20' : 'px-2 h-15'}>
+      <Swiper
+        modules={[FreeMode]}
+        spaceBetween={mode === 'sidebar' ? 8 : 12}
+        slidesPerView="auto"
+        freeMode={true}
+        grabCursor={true}
+        className={`category-tabs-swiper ${mode === 'map' ? 'h-16' : 'h-14'}`}
+      >
+        {categories.map((category) => (
+          <SwiperSlide key={category.id} style={{ width: 'auto' }}>
+            <button
+              onClick={() => onCategorySelect(category.id)}
+              className={`${styles.button} ${
+                selectedCategory === category.id
+                  ? 'bg-purple04 text-white'
+                  : 'bg-white text-grey05 hover:bg-purple02'
+              }`}
+            >
+              {styles.showIcon && category.id !== '전체' && (
+                <span className="flex-shrink-0">
+                  {getCategoryIcon(category.id, selectedCategory === category.id)}
+                </span>
+              )}
+              <span className="whitespace-nowrap">{category.name}</span>
+            </button>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   );
 };

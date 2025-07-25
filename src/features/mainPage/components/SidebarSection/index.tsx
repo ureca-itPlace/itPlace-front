@@ -146,7 +146,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       case 'favorites':
         return {
-          message: '잇플픽이 관심 혜택을 보여드릴게요!',
+          message: '잇플님의 관심 혜택을 보여드릴게요!',
           highlightText: '관심 혜택',
         };
       case 'ai':

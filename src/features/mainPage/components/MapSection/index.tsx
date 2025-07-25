@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Platform, Category, MapLocation } from '../../types';
 import CategoryTabsSection from '../SidebarSection/CategoryTabsSection';
 import KakaoMap from './KakaoMap';
@@ -50,15 +50,11 @@ const MapSection: React.FC<MapSectionProps> = ({
     onSearchInMap?.();
   };
 
-  // 카테고리 변경시 검색 버튼 숨김
-  useEffect(() => {
-    setShowSearchButton(false);
-  }, [selectedCategory]);
   return (
     <div className="relative w-full h-full">
       {/* 카테고리 태그 - 주변 혜택 탭일 때만 지도 위 오버레이 */}
       {activeTab === 'nearby' && (
-        <div className="absolute top-4 left-5 z-10 pointer-events-none">
+        <div className="absolute top-4 left-5 right-5 z-10 pointer-events-none overflow-hidden">
           <div className="pointer-events-auto">
             <CategoryTabsSection
               categories={categories}

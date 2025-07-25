@@ -151,86 +151,132 @@ const MainPageLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-screen flex gap-6 bg-grey01 p-6 relative">
-      <div
-        className="flex-shrink-0 h-full"
-        style={{
-          flexBasis: `${LAYOUT.SIDEBAR_WIDTH}px`,
-          minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
-        }}
-      >
-        <SidebarSection
-          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-          selectedPlatform={selectedPlatform}
-          onPlatformSelect={handlePlatformSelect}
-          currentLocation={currentLocation}
-          isLoading={isLoading}
-          error={error}
-          activeTab={activeTab}
-          onActiveTabChange={setActiveTab}
-          onKeywordSearch={handleKeywordSearch}
-          searchQuery={searchQuery}
-          onMapCenterMove={handleMapCenterMove}
-        />
+    <>
+      {/* 데스크톱 레이아웃 */}
+      <div className="hidden md:flex h-screen gap-6 bg-grey01 p-6 relative">
+        <div
+          className="flex-shrink-0 h-full"
+          style={{
+            flexBasis: `${LAYOUT.SIDEBAR_WIDTH}px`,
+            minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
+          }}
+        >
+          <SidebarSection
+            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            selectedPlatform={selectedPlatform}
+            onPlatformSelect={handlePlatformSelect}
+            currentLocation={currentLocation}
+            isLoading={isLoading}
+            error={error}
+            activeTab={activeTab}
+            onActiveTabChange={setActiveTab}
+            onKeywordSearch={handleKeywordSearch}
+            searchQuery={searchQuery}
+            onMapCenterMove={handleMapCenterMove}
+          />
+        </div>
+
+        <div className="flex-1 h-full">
+          <MapSection
+            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            selectedPlatform={selectedPlatform}
+            onPlatformSelect={handlePlatformSelect}
+            onLocationChange={handleLocationChange}
+            onMapCenterChange={handleMapCenterChange}
+            onLocationMove={handleLocationMove}
+            categories={CATEGORIES}
+            selectedCategory={selectedCategory || '전체'}
+            onCategorySelect={handleCategorySelect}
+            onSearchInMap={handleSearchInMap}
+            centerLocation={
+              currentMapCenter
+                ? { latitude: currentMapCenter.lat, longitude: currentMapCenter.lng }
+                : null
+            }
+            onMapLevelChange={handleMapLevelChange}
+            activeTab={activeTab}
+          />
+        </div>
+
+        {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
+        <div
+          className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
+          style={{
+            left: '400px',
+            transform: 'translateX(-20%)',
+            width: '380px',
+            height: '200px', // 허리까지만 보이도록 절반 높이
+          }}
+        >
+          <img
+            src="/images/main/mainCharacter.webp"
+            alt="잇플 캐릭터"
+            className="w-full h-auto object-contain object-bottom"
+            style={{ width: '190px', height: '190px' }}
+          />
+        </div>
+
+        {/* 말풍선 - 캐릭터 위에 위치 */}
+        <div
+          className="absolute z-20"
+          style={{
+            left: '500px',
+            bottom: '200px', // 캐릭터 머리 위쪽
+            transform: 'translateX(-20%)',
+          }}
+        >
+          <SpeechBubble
+            message={speechBubble.message}
+            partnerName={speechBubble.partnerName}
+            isVisible={speechBubble.isVisible}
+            onClose={handleSpeechBubbleClose}
+          />
+        </div>
       </div>
 
-      <div className="flex-1 h-full" style={{ minWidth: `${LAYOUT.MAP_MIN_WIDTH}px` }}>
-        <MapSection
-          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-          selectedPlatform={selectedPlatform}
-          onPlatformSelect={handlePlatformSelect}
-          onLocationChange={handleLocationChange}
-          onMapCenterChange={handleMapCenterChange}
-          onLocationMove={handleLocationMove}
-          categories={CATEGORIES}
-          selectedCategory={selectedCategory || '전체'}
-          onCategorySelect={handleCategorySelect}
-          onSearchInMap={handleSearchInMap}
-          centerLocation={
-            currentMapCenter
-              ? { latitude: currentMapCenter.lat, longitude: currentMapCenter.lng }
-              : null
-          }
-          onMapLevelChange={handleMapLevelChange}
-          activeTab={activeTab}
-        />
-      </div>
+      {/* 모바일 레이아웃 */}
+      <div className="flex md:hidden flex-col h-screen bg-grey01">
+        {/* 지도 + 바텀시트 */}
+        <div className="flex-1 relative">
+          <MapSection
+            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            selectedPlatform={selectedPlatform}
+            onPlatformSelect={handlePlatformSelect}
+            onLocationChange={handleLocationChange}
+            onMapCenterChange={handleMapCenterChange}
+            onLocationMove={handleLocationMove}
+            categories={CATEGORIES}
+            selectedCategory={selectedCategory || '전체'}
+            onCategorySelect={handleCategorySelect}
+            onSearchInMap={handleSearchInMap}
+            centerLocation={
+              currentMapCenter
+                ? { latitude: currentMapCenter.lat, longitude: currentMapCenter.lng }
+                : null
+            }
+            onMapLevelChange={handleMapLevelChange}
+            activeTab={activeTab}
+          />
 
-      {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
-      <div
-        className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
-        style={{
-          left: '400px',
-          transform: 'translateX(-20%)',
-          width: '380px',
-          height: '200px', // 허리까지만 보이도록 절반 높이
-        }}
-      >
-        <img
-          src="/images/main/mainCharacter.webp"
-          alt="잇플 캐릭터"
-          className="w-full h-auto object-contain object-bottom"
-          style={{ width: '190px', height: '190px' }}
-        />
+          {/* 바텀시트 */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[18px] shadow-lg">
+            <SidebarSection
+              platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+              selectedPlatform={selectedPlatform}
+              onPlatformSelect={handlePlatformSelect}
+              currentLocation={currentLocation}
+              isLoading={isLoading}
+              error={error}
+              activeTab={activeTab}
+              onActiveTabChange={setActiveTab}
+              onKeywordSearch={handleKeywordSearch}
+              searchQuery={searchQuery}
+              onMapCenterMove={handleMapCenterMove}
+            />
+          </div>
+        </div>
       </div>
-
-      {/* 말풍선 - 캐릭터 위에 위치 */}
-      <div
-        className="absolute z-20"
-        style={{
-          left: '500px',
-          bottom: '200px', // 캐릭터 머리 위쪽
-          transform: 'translateX(-20%)',
-        }}
-      >
-        <SpeechBubble
-          message={speechBubble.message}
-          partnerName={speechBubble.partnerName}
-          isVisible={speechBubble.isVisible}
-          onClose={handleSpeechBubbleClose}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 
