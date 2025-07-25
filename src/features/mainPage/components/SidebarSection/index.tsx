@@ -146,7 +146,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       case 'favorites':
         return {
-          message: '잇플픽이 관심 혜택을 보여드릴게요!',
+          message: '잇플님의 관심 혜택을 보여드릴게요!',
           highlightText: '관심 혜택',
         };
       case 'ai':
@@ -157,7 +157,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
       default:
         return {
           message: '근처 제휴처만 안내해드릴게요 !',
-          highlightText: '근처 제휴처만만',
+          highlightText: '근처 제휴처만',
         };
     }
   };
@@ -174,19 +174,21 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   }
 
   return (
-    <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
+    <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic max-md:bg-transparent max-md:rounded-none max-md:drop-shadow-none max-md:overflow-visible">
       {viewMode === 'list' ? (
         // 리스트 모드: 기존 UI
-        <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] flex-1 min-h-0">
-          {/* 검색 영역 */}
+        <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] max-md:mx-0 max-md:w-full flex-1 min-h-0">
+          {/* 검색 영역 - 데스크톱에서만 표시 */}
           <div className="pb-8 flex-shrink-0">
-            <SearchSection
-              onSearchChange={handleSearchChange}
-              onKeywordSearch={onKeywordSearch}
-              initialQuery={searchQuery}
-            />
+            <div className="hidden md:block">
+              <SearchSection
+                onSearchChange={handleSearchChange}
+                onKeywordSearch={onKeywordSearch}
+                initialQuery={searchQuery}
+              />
+            </div>
 
-            <div className="mb-4">
+            <div className={`mb-4 ${searchQuery ? 'md:mt-0 mt-0' : 'md:mt-0 mt-0'} max-md:mx-0`}>
               <NavigationTabsSection
                 tabs={mainTabs}
                 activeTab={activeTab}
@@ -216,7 +218,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           {activeTab === 'favorites' && (
             <>
               {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-6">
+              <div className="mb-6 max-md:mx-0">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}
@@ -227,7 +229,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
               {/* 즐겨찾기 스토어 리스트 */}
               <div
-                className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col"
+                className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
                 style={{ height: 'calc(100vh - 360px)' }}
               >
                 <FavoriteStoreList
@@ -241,7 +243,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'ai' && (
             <div
-              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col"
+              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
               style={{ height: 'calc(100vh - 48px)' }}
             >
               <RecommendStoreList

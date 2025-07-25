@@ -1,7 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import SidebarSection from '../SidebarSection';
 import MapSection from '../MapSection';
+import SearchSection from '../SidebarSection/SearchSection';
 import SpeechBubble from '../SidebarSection/RecommendStoreList/SpeechBubble';
+import MobileHeader from '../../../../components/MobileHeader';
 import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
@@ -17,6 +19,12 @@ const MainPageLayout: React.FC = () => {
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]); // 검색 결과 가맹점 목록
   const [activeTab, setActiveTab] = useState<string>('nearby'); // 사이드바 활성 탭 ('주변 혜택', '관심 혜택', '잏AI 추천')
   const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태
+
+  // 바텀시트 상태 관리
+  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(20); // 바텀시트 높이
+  const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
+  const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
+  const [startHeight, setStartHeight] = useState<number>(0); // 드래그 시작 시 높이
 
   // 말풍선 상태
   const [speechBubble, setSpeechBubble] = useState<{
@@ -150,87 +158,258 @@ const MainPageLayout: React.FC = () => {
     });
   }, []);
 
+  // 바텀시트 드래그 핸들러
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      setIsDragging(true);
+      setStartY(e.touches[0].clientY);
+      setStartHeight(bottomSheetHeight);
+    },
+    [bottomSheetHeight]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDragging) return;
+
+      const currentY = e.touches[0].clientY;
+      const deltaY = startY - currentY; // 위로 드래그하면 양수, 아래로 드래그하면 음수
+      const newHeight = Math.max(20, Math.min(window.innerHeight - 100, startHeight + deltaY));
+
+      setBottomSheetHeight(newHeight);
+    },
+    [isDragging, startY, startHeight]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+
+    // 스냅 포인트 설정
+    const windowHeight = window.innerHeight;
+    const snapPoints = [20, 300, windowHeight - 100]; // 최소, 중간, 최대 높이
+
+    // 가장 가까운 스냅 포인트로 이동
+    const closestSnapPoint = snapPoints.reduce((prev, curr) =>
+      Math.abs(curr - bottomSheetHeight) < Math.abs(prev - bottomSheetHeight) ? curr : prev
+    );
+
+    setBottomSheetHeight(closestSnapPoint);
+  }, [bottomSheetHeight]);
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      setIsDragging(true);
+      setStartY(e.clientY);
+      setStartHeight(bottomSheetHeight);
+    },
+    [bottomSheetHeight]
+  );
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging) return;
+
+      const currentY = e.clientY;
+      const deltaY = startY - currentY;
+      const newHeight = Math.max(20, Math.min(window.innerHeight - 100, startHeight + deltaY));
+
+      setBottomSheetHeight(newHeight);
+    },
+    [isDragging, startY, startHeight]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+
+    const windowHeight = window.innerHeight;
+    const snapPoints = [20, 300, windowHeight - 100];
+
+    const closestSnapPoint = snapPoints.reduce((prev, curr) =>
+      Math.abs(curr - bottomSheetHeight) < Math.abs(prev - bottomSheetHeight) ? curr : prev
+    );
+
+    setBottomSheetHeight(closestSnapPoint);
+  }, [bottomSheetHeight]);
+
+  // 모바일에서 body 스크롤 방지
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
+
   return (
-    <div className="h-screen flex gap-6 bg-grey01 p-6 relative">
-      <div
-        className="flex-shrink-0 h-full"
-        style={{
-          flexBasis: `${LAYOUT.SIDEBAR_WIDTH}px`,
-          minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
-        }}
-      >
-        <SidebarSection
-          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-          selectedPlatform={selectedPlatform}
-          onPlatformSelect={handlePlatformSelect}
-          currentLocation={currentLocation}
-          isLoading={isLoading}
-          error={error}
-          activeTab={activeTab}
-          onActiveTabChange={setActiveTab}
-          onKeywordSearch={handleKeywordSearch}
-          searchQuery={searchQuery}
-          onMapCenterMove={handleMapCenterMove}
-        />
+    <>
+      {/* 데스크톱 레이아웃 */}
+      <div className="hidden md:flex h-screen gap-6 bg-grey01 p-6 relative">
+        <div
+          className="flex-shrink-0 h-full"
+          style={{
+            flexBasis: `${LAYOUT.SIDEBAR_WIDTH}px`,
+            minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
+          }}
+        >
+          <SidebarSection
+            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            selectedPlatform={selectedPlatform}
+            onPlatformSelect={handlePlatformSelect}
+            currentLocation={currentLocation}
+            isLoading={isLoading}
+            error={error}
+            activeTab={activeTab}
+            onActiveTabChange={setActiveTab}
+            onKeywordSearch={handleKeywordSearch}
+            searchQuery={searchQuery}
+            onMapCenterMove={handleMapCenterMove}
+          />
+        </div>
+
+        <div className="flex-1 h-full">
+          <MapSection
+            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            selectedPlatform={selectedPlatform}
+            onPlatformSelect={handlePlatformSelect}
+            onLocationChange={handleLocationChange}
+            onMapCenterChange={handleMapCenterChange}
+            onLocationMove={handleLocationMove}
+            categories={CATEGORIES}
+            selectedCategory={selectedCategory || '전체'}
+            onCategorySelect={handleCategorySelect}
+            onSearchInMap={handleSearchInMap}
+            centerLocation={
+              currentMapCenter
+                ? { latitude: currentMapCenter.lat, longitude: currentMapCenter.lng }
+                : null
+            }
+            onMapLevelChange={handleMapLevelChange}
+            activeTab={activeTab}
+          />
+        </div>
+
+        {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
+        <div
+          className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
+          style={{
+            left: '400px',
+            transform: 'translateX(-20%)',
+            width: '380px',
+            height: '200px', // 허리까지만 보이도록 절반 높이
+          }}
+        >
+          <img
+            src="/images/main/mainCharacter.webp"
+            alt="잇플 캐릭터"
+            className="w-full h-auto object-contain object-bottom"
+            style={{ width: '190px', height: '190px' }}
+          />
+        </div>
+
+        {/* 말풍선 - 캐릭터 위에 위치 */}
+        <div
+          className="absolute z-20"
+          style={{
+            left: '500px',
+            bottom: '200px', // 캐릭터 머리 위쪽
+            transform: 'translateX(-20%)',
+          }}
+        >
+          <SpeechBubble
+            message={speechBubble.message}
+            partnerName={speechBubble.partnerName}
+            isVisible={speechBubble.isVisible}
+            onClose={handleSpeechBubbleClose}
+          />
+        </div>
       </div>
 
-      <div className="flex-1 h-full" style={{ minWidth: `${LAYOUT.MAP_MIN_WIDTH}px` }}>
-        <MapSection
-          platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-          selectedPlatform={selectedPlatform}
-          onPlatformSelect={handlePlatformSelect}
-          onLocationChange={handleLocationChange}
-          onMapCenterChange={handleMapCenterChange}
-          onLocationMove={handleLocationMove}
-          categories={CATEGORIES}
-          selectedCategory={selectedCategory || '전체'}
-          onCategorySelect={handleCategorySelect}
-          onSearchInMap={handleSearchInMap}
-          centerLocation={
-            currentMapCenter
-              ? { latitude: currentMapCenter.lat, longitude: currentMapCenter.lng }
-              : null
-          }
-          onMapLevelChange={handleMapLevelChange}
-          activeTab={activeTab}
-        />
-      </div>
+      {/* 모바일 레이아웃 */}
+      <div className="flex md:hidden flex-col h-screen bg-grey01 overflow-hidden">
+        {/* 투명 MobileHeader with SearchSection */}
+        <div className="absolute top-0 left-0 right-0 z-[10000]">
+          <MobileHeader
+            backgroundColor="bg-transparent"
+            rightContent={
+              <SearchSection
+                onSearchChange={(query) => setSearchQuery(query)}
+                onKeywordSearch={handleKeywordSearch}
+                initialQuery={searchQuery}
+              />
+            }
+          />
+        </div>
 
-      {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
-      <div
-        className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
-        style={{
-          left: '400px',
-          transform: 'translateX(-20%)',
-          width: '380px',
-          height: '200px', // 허리까지만 보이도록 절반 높이
-        }}
-      >
-        <img
-          src="/images/main/mainCharacter.webp"
-          alt="잇플 캐릭터"
-          className="w-full h-auto object-contain object-bottom"
-          style={{ width: '190px', height: '190px' }}
-        />
-      </div>
+        {/* 지도 - 전체 화면 */}
+        <div className="absolute inset-0">
+          <MapSection
+            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            selectedPlatform={selectedPlatform}
+            onPlatformSelect={handlePlatformSelect}
+            onLocationChange={handleLocationChange}
+            onMapCenterChange={handleMapCenterChange}
+            onLocationMove={handleLocationMove}
+            categories={CATEGORIES}
+            selectedCategory={selectedCategory || '전체'}
+            onCategorySelect={handleCategorySelect}
+            onSearchInMap={handleSearchInMap}
+            centerLocation={
+              currentMapCenter
+                ? { latitude: currentMapCenter.lat, longitude: currentMapCenter.lng }
+                : null
+            }
+            onMapLevelChange={handleMapLevelChange}
+            activeTab={activeTab}
+          />
 
-      {/* 말풍선 - 캐릭터 위에 위치 */}
-      <div
-        className="absolute z-20"
-        style={{
-          left: '500px',
-          bottom: '200px', // 캐릭터 머리 위쪽
-          transform: 'translateX(-20%)',
-        }}
-      >
-        <SpeechBubble
-          message={speechBubble.message}
-          partnerName={speechBubble.partnerName}
-          isVisible={speechBubble.isVisible}
-          onClose={handleSpeechBubbleClose}
-        />
+          {/* 바텀시트 */}
+          <div
+            className="absolute left-0 right-0 bg-white rounded-t-[18px] shadow-lg transition-all duration-300 ease-out z-[9998] flex flex-col"
+            style={{
+              height: `${bottomSheetHeight}px`,
+              bottom: 0,
+              minHeight: '100px',
+            }}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            {/* 드래그 핸들 */}
+            <div
+              className="w-full h-6 flex items-center justify-center cursor-grab active:cursor-grabbing"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onMouseDown={handleMouseDown}
+            >
+              <div className="w-8 h-1 bg-grey03 rounded-full" />
+            </div>
+
+            {/* 사이드바 콘텐츠 */}
+            <div className="flex-1 min-h-0">
+              <SidebarSection
+                platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+                selectedPlatform={selectedPlatform}
+                onPlatformSelect={handlePlatformSelect}
+                currentLocation={currentLocation}
+                isLoading={isLoading}
+                error={error}
+                activeTab={activeTab}
+                onActiveTabChange={setActiveTab}
+                onKeywordSearch={handleKeywordSearch}
+                searchQuery={searchQuery}
+                onMapCenterMove={handleMapCenterMove}
+              />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
