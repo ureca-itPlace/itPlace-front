@@ -146,8 +146,8 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
             <NoResult
               message1="로그인이 필요합니다!"
               message2="AI 추천을 받으려면 로그인해 주세요"
-              message1FontSize="text-title-5"
-              message2FontSize="text-body-2"
+              message1FontSize="text-title-6"
+              message2FontSize="text-body-3"
               isLoginRequired={true}
               buttonText="로그인하러 가기"
               buttonRoute="/login"
@@ -166,8 +166,8 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
             <NoResult
               message1="추천 결과가 없어요!"
               message2="ItPlace 이용 정보가 부족해요"
-              message1FontSize="text-title-5"
-              message2FontSize="text-body-2"
+              message1FontSize="text-title-6"
+              message2FontSize="text-body-3"
               isLoginRequired={false}
             />
           </div>
