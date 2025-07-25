@@ -30,7 +30,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   // 로그인하지 않은 경우
   if (!isLoggedIn) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0">
         <NoResult
           message1="로그인이 필요해요!"
           message2="로그인 후 관심 혜택을 이용해 보세요"
@@ -47,7 +47,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   // 로그인했지만 즐겨찾기가 없는 경우
   if (!favorites || favorites.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0">
         <NoResult
           message1="아직 관심 혜택이 없어요!"
           message2="마음에 드는 혜택을 담아보세요"

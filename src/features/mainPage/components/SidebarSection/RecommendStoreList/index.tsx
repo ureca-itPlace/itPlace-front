@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../store';
 import { RecommendationItem } from '../../../types/api';
 import NoResult from '../../../../../components/NoResult';
+import { useAnimatedLoadingText } from '../../../hooks/useAnimatedLoadingText';
 import LoadingSpinner from '../../../../../components/LoadingSpinner';
 
 interface RecommendStoreListProps {
@@ -19,6 +20,16 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   error = null,
 }) => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
+
+  const animatedText = useAnimatedLoadingText({
+    messages: [
+      '잇콩이가 당신의 취향을 분석 중이에요!\n잠깐만 기다려주세요..',
+      '이 순간에도 잇콩이는\n열심히 추천 제휴처를 수집 중이에요..',
+      '조금만 기다려 주세요!\n나에게 꼭 맞는 혜택을 찾고 있어요 ..',
+      '잇콩이의 안테나가 열일 중...\n고객님의 잇플 픽을 찾는 중이에요!',
+      '혜택 가득한 제휴처를 열심히 골라오는 중이에요',
+    ],
+  });
   // 에러 메시지에 따른 요약 생성
   const getErrorSummary = (errorMessage: string) => {
     if (
@@ -140,39 +151,52 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
         }
       `}</style>
 
-      <div className="space-y-3 px-5">
-        {!isLoggedIn ? (
-          <div className="flex items-center justify-center">
-            <NoResult
-              message1="로그인이 필요합니다!"
-              message2="AI 추천을 받으려면 로그인해 주세요"
-              message1FontSize="text-title-6"
-              message2FontSize="text-body-3"
-              isLoginRequired={true}
-              buttonText="로그인하러 가기"
-              buttonRoute="/login"
-            />
+      {!isLoggedIn ? (
+        <div className="flex-1 flex items-center justify-center min-h-0">
+          <NoResult
+            message1="로그인이 필요합니다!"
+            message2="AI 추천을 받으려면 로그인해 주세요"
+            message1FontSize="text-title-6"
+            message2FontSize="text-body-3"
+            isLoginRequired={true}
+            buttonText="로그인하러 가기"
+            buttonRoute="/login"
+          />
+        </div>
+      ) : isLoading ? (
+        <div className="flex-1 flex items-center justify-center min-h-0 mt-[-60px]">
+          <div className="flex flex-col items-center">
+            <div className="mb-4">
+              <LoadingSpinner />
+            </div>
+            <div className="text-center min-h-[3rem] flex items-center justify-center">
+              <p
+                className={`text-body-2 font-bold transition-opacity duration-1000 whitespace-pre-line ${
+                  animatedText.isVisible ? 'opacity-100' : 'opacity-0'
+                } ${animatedText.textColorClass}`}
+              >
+                {animatedText.currentMessage}
+              </p>
+            </div>
           </div>
-        ) : isLoading ? (
-          <div className="flex items-center justify-center">
-            <LoadingSpinner />
-          </div>
-        ) : error ? (
-          <div className="flex items-center justify-center">
-            <NoResult message1={error} message2={getErrorSummary(error)} isLoginRequired={false} />
-          </div>
-        ) : !stores || stores.length === 0 ? (
-          <div className="flex items-center justify-center">
-            <NoResult
-              message1="추천 결과가 없어요!"
-              message2="ItPlace 이용 정보가 부족해요"
-              message1FontSize="text-title-6"
-              message2FontSize="text-body-3"
-              isLoginRequired={false}
-            />
-          </div>
-        ) : (
-          stores.map((store) => (
+        </div>
+      ) : error ? (
+        <div className="flex-1 flex items-center justify-center min-h-0">
+          <NoResult message1={error} message2={getErrorSummary(error)} isLoginRequired={false} />
+        </div>
+      ) : !stores || stores.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center min-h-0">
+          <NoResult
+            message1="추천 결과가 없어요!"
+            message2="ItPlace 이용 정보가 부족해요"
+            message1FontSize="text-title-6"
+            message2FontSize="text-body-3"
+            isLoginRequired={false}
+          />
+        </div>
+      ) : (
+        <div className="space-y-3 px-5">
+          {stores.map((store) => (
             <div
               key={`${store.partnerName}-${store.rank}`}
               onClick={() => onItemClick(store)}
@@ -197,9 +221,9 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
                 <span>{store.rank}위</span>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </>
   );
 };

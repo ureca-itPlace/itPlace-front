@@ -56,7 +56,7 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
         <h3 className="text-lg font-bold text-grey06 mb-4">{currentLocation}</h3>
         <div className="border-b border-grey03 w-[330px] mb-0" />
 
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center min-h-0">
           <NoResult
             message1="검색 결과가 없어요!"
             message2="다른 키워드나 지역에서 검색해보세요!"
