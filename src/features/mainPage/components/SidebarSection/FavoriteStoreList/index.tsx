@@ -32,7 +32,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   // 로그인하지 않은 경우
   if (!isLoggedIn) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center min-h-0">
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
         <NoResult
           message1="로그인이 필요해요!"
           message2="로그인 후 관심 혜택을 이용해 보세요"
@@ -49,7 +49,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   // 로그인했지만 즐겨찾기가 없는 경우
   if (!favorites || favorites.length === 0) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center min-h-0">
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
         <NoResult
           message1="아직 관심 혜택이 없어요!"
           message2="마음에 드는 혜택을 담아보세요"
@@ -62,12 +62,12 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   }
 
   return (
-    <div className="space-y-3 max-md:space-y-2 max-sm:space-y-1.5 px-5 max-md:px-4 max-sm:px-3">
+    <div className="space-y-3 max-md:space-y-3 px-5 max-md:px-4 max-sm:px-3">
       {favorites.map((favorite) => (
         <div
           key={favorite.benefitId}
           onClick={() => onItemClick(favorite)}
-          className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[50px] max-md:px-3 max-sm:h-[45px] max-sm:px-2"
+          className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[50px] max-md:px-3 max-sm:h-[64px] max-sm:px-2"
         >
           {/* 왼쪽: 파트너 이미지 */}
           <div className="w-[50px] h-[50px] rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
@@ -88,7 +88,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
 
           {/* 중앙: 파트너 이름 */}
           <div className="flex-1">
-            <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold max-sm:text-body-5-bold">
+            <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
               {favorite.partnerName}
             </span>
           </div>

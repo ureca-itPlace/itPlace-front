@@ -153,9 +153,9 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       `}</style>
 
       {!isLoggedIn ? (
-        <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult
-            message1="로그인이 필요합니다!"
+            message1="로그인이 필요해요!"
             message2="AI 추천을 받으려면 로그인해 주세요"
             message1FontSize="text-title-6"
             message2FontSize="text-body-3"
@@ -165,7 +165,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
           />
         </div>
       ) : isLoading ? (
-        <div className="flex-1 flex items-center justify-center min-h-0 mt-[-60px]">
+        <div className="flex-1 flex items-center justify-center min-h-0 mt-[-60px] max-md:min-h-56 max-md:mt-4">
           <div className="flex flex-col items-center">
             <div className="mb-4">
               <LoadingSpinner />
@@ -182,11 +182,11 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
           </div>
         </div>
       ) : error ? (
-        <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult message1={error} message2={getErrorSummary(error)} isLoginRequired={false} />
         </div>
       ) : !stores || stores.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult
             message1="추천 결과가 없어요!"
             message2="ItPlace 이용 정보가 부족해요"
@@ -196,7 +196,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
           />
         </div>
       ) : (
-        <div className="space-y-3 max-md:space-y-2 max-sm:space-y-1.5 px-5 max-md:px-4 max-sm:px-3">
+        <div className="space-y-3 max-md:space-y-3 px-5 max-md:px-4 max-sm:px-3">
           {stores.map((store) => (
             <div
               key={`${store.partnerName}-${store.rank}`}
@@ -214,7 +214,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
 
               {/* 중앙: 이름 */}
               <div className="flex-1">
-                <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold max-sm:text-body-5-bold">
+                <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
                   {store.partnerName}
                 </span>
               </div>

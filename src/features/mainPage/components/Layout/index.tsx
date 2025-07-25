@@ -159,6 +159,20 @@ const MainPageLayout: React.FC = () => {
   }, []);
 
   // 바텀시트 드래그 핸들러
+
+  // 상태 추가
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // 스냅 포인트로 이동할 때 부드럽게 애니메이션
+  const animateTo = (target: number) => {
+    setIsAnimating(true);
+    setBottomSheetHeight(target);
+    // transition이 끝난 뒤 끄기
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 300); // transition duration과 동일
+  };
+
   const handleTouchStart = useCallback(
     (e: React.TouchEvent) => {
       setIsDragging(true);
@@ -174,7 +188,7 @@ const MainPageLayout: React.FC = () => {
 
       const currentY = e.touches[0].clientY;
       const deltaY = startY - currentY; // 위로 드래그하면 양수, 아래로 드래그하면 음수
-      const newHeight = Math.max(20, Math.min(window.innerHeight - 100, startHeight + deltaY));
+      const newHeight = Math.max(20, Math.min(window.innerHeight - 120, startHeight + deltaY));
 
       setBottomSheetHeight(newHeight);
     },
@@ -186,14 +200,14 @@ const MainPageLayout: React.FC = () => {
 
     // 스냅 포인트 설정
     const windowHeight = window.innerHeight;
-    const snapPoints = [20, 300, windowHeight - 100]; // 최소, 중간, 최대 높이
+    const snapPoints = [90, 300, windowHeight - 120]; // 최소, 중간, 최대 높이
 
     // 가장 가까운 스냅 포인트로 이동
     const closestSnapPoint = snapPoints.reduce((prev, curr) =>
       Math.abs(curr - bottomSheetHeight) < Math.abs(prev - bottomSheetHeight) ? curr : prev
     );
 
-    setBottomSheetHeight(closestSnapPoint);
+    animateTo(closestSnapPoint);
   }, [bottomSheetHeight]);
 
   const handleMouseDown = useCallback(
@@ -211,7 +225,7 @@ const MainPageLayout: React.FC = () => {
 
       const currentY = e.clientY;
       const deltaY = startY - currentY;
-      const newHeight = Math.max(20, Math.min(window.innerHeight - 100, startHeight + deltaY));
+      const newHeight = Math.max(20, Math.min(window.innerHeight - 120, startHeight + deltaY));
 
       setBottomSheetHeight(newHeight);
     },
@@ -222,13 +236,13 @@ const MainPageLayout: React.FC = () => {
     setIsDragging(false);
 
     const windowHeight = window.innerHeight;
-    const snapPoints = [20, 300, windowHeight - 100];
+    const snapPoints = [90, 300, windowHeight - 120];
 
     const closestSnapPoint = snapPoints.reduce((prev, curr) =>
       Math.abs(curr - bottomSheetHeight) < Math.abs(prev - bottomSheetHeight) ? curr : prev
     );
 
-    setBottomSheetHeight(closestSnapPoint);
+    animateTo(closestSnapPoint);
   }, [bottomSheetHeight]);
 
   // 모바일에서 body 스크롤 방지
@@ -369,11 +383,13 @@ const MainPageLayout: React.FC = () => {
 
           {/* 바텀시트 */}
           <div
-            className="absolute left-0 right-0 bg-white rounded-t-[18px] shadow-lg transition-all duration-300 ease-out z-[9998] flex flex-col"
+            className={`absolute left-0 right-0 bg-white rounded-t-[18px] shadow-lg z-[9998] flex flex-col ${
+              isAnimating ? 'transition-all duration-300 ease-out' : ''
+            }`}
             style={{
               height: `${bottomSheetHeight}px`,
               bottom: 0,
-              minHeight: '100px',
+              minHeight: '90px',
             }}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}

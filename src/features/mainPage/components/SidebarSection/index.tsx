@@ -164,12 +164,12 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   if (isLoading && activeTab === 'nearby') {
     return (
-      <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic">
-        <div className="w-full h-full flex flex-col items-center justify-center">
-          <LoadingSpinner />
-          <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
-        </div>
+      // <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic"> 혹시 몰라서 남겨놓음
+      <div className="w-full h-full flex flex-col items-center justify-center max-md:mt-24">
+        <LoadingSpinner />
+        <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
       </div>
+      // </div>
     );
   }
 
@@ -218,7 +218,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           {activeTab === 'favorites' && (
             <>
               {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-6 max-md:mx-0">
+              <div className="mb-6 max-md:mb-3">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}
@@ -243,7 +243,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'ai' && (
             <div
-              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
+              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0 max-md:mb-2"
               style={{ height: 'calc(100vh - 48px)' }}
             >
               <RecommendStoreList
