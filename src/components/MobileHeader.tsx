@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { showToast } from '../utils/toast';
 import { persistor } from '../store';
 import { RootState } from '../store';
+import { useLocation } from 'react-router-dom';
 import { logout } from '../store/authSlice';
 import api from '../apis/axiosInstance';
 interface MobileHeaderProps {
@@ -23,9 +24,11 @@ const MobileHeader = ({
 }: MobileHeaderProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const isMain = pathname.startsWith('/main');
 
   const handleLogout = async () => {
     try {
@@ -59,7 +62,10 @@ const MobileHeader = ({
   return (
     <>
       <header
-        className={`w-full h-[54px] flex items-center px-4 z-[9999] border-b border-grey01 max-md:flex ${backgroundColor}`}
+        className={
+          `w-full h-[54px] flex items-center px-4 z-[9999] border-grey01 max-md:flex ${backgroundColor}` +
+          (isMain ? 'border-b-none' : 'border-b')
+        }
       >
         <div className="flex flex-row items-center h-full w-full">
           <button
