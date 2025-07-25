@@ -223,15 +223,15 @@ export default function MyFavoritesPage() {
           onClick={() => setSelectedId(null)}
         >
           <div
-            className="bg-white rounded-[18px] w-full max-w-[calc(100%-10px)] max-h-[80vh] overflow-y-auto p-4"
+            className="bg-white rounded-[18px] w-full max-w-[calc(100%-10px)] max-h-[80vh] overflow-y-auto p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center mb-6">
-              <h1 className="flex-1 text-center text-title-2 text-black mb-5 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+              <h1 className="flex-1 text-center text-black text-title-5 font-semibold">
                 상세 혜택
               </h1>
-              <button className="text-body-2 text-grey05 -mt-4" onClick={() => setSelectedId(null)}>
-                <IoCloseOutline />
+              <button className=" text-grey05 -mt-2 -ml-6" onClick={() => setSelectedId(null)}>
+                <IoCloseOutline size={26} />
               </button>
             </div>
             <BenefitDetailTabs
