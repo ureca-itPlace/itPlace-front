@@ -53,7 +53,7 @@ const CustomCursor = () => {
       const dy = e.clientY - lastY.current;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
-      if (distance > 100) {
+      if (distance > 180) {
         createTrail(e.clientX, e.clientY);
         lastX.current = e.clientX;
         lastY.current = e.clientY;
