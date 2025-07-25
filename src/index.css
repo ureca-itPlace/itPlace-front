@@ -57,3 +57,14 @@ body {
     font-family: 'Anton', sans-serif;
   }
 }
+
+.trail-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  width: 40px;
+  height: 40px;
+  z-index: 9999;
+}
