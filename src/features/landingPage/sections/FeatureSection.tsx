@@ -92,7 +92,7 @@ const FeatureSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full h-[100dvh] bg-[#000000] flex items-center overflow-hidden max-lg:flex-col max-lg:items-start"
+      className="relative w-full h-screen bg-[#000000] flex items-center overflow-hidden max-lg:flex-col max-lg:items-start"
     >
       <div className="z-30 h-full">
         <div className="relative h-full w-[43dvw] z-30 overflow-hidden pl-36 max-lg:px-5 max-lg:w-full max-lg:items-center">

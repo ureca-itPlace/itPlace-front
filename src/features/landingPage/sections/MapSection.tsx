@@ -194,7 +194,7 @@ const MapSection = () => {
   return (
     <section
       ref={mapSectionRef}
-      className="relative w-full h-[100dvh] flex justify-center items-center overflow-hidden"
+      className="relative w-full h-screen flex justify-center items-center overflow-hidden"
     >
       <img
         ref={firstMapImageRef}
