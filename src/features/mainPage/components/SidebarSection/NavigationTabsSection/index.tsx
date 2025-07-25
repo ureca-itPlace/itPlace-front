@@ -22,7 +22,7 @@ const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
-          className={`text-title-7 text-center h-9 w-[105px] rounded-[10px] mt-5 max-md:text-body-2 max-md:h-8 max-md:flex-1 max-md:mt-3 max-sm:text-body-3 max-sm:h-8 max-sm:mt-2 ${
+          className={`text-title-7 text-center h-9 w-[105px] rounded-[10px] mt-5 max-md:text-body-2 max-md:h-10 max-md:flex-1 max-md:mt-3 max-sm:text-body-3 max-sm:h-8 max-sm:mt-2 ${
             activeTab === tab.id
               ? 'bg-purple04 text-white'
               : 'bg-grey01 text-grey05 hover:bg-grey02'
