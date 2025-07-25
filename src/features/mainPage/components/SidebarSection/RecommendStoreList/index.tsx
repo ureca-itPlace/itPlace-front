@@ -155,7 +155,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       {!isLoggedIn ? (
         <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult
-            message1="로그인이 필요합니다!"
+            message1="로그인이 필요해요!"
             message2="AI 추천을 받으려면 로그인해 주세요"
             message1FontSize="text-title-6"
             message2FontSize="text-body-3"

@@ -218,7 +218,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           {activeTab === 'favorites' && (
             <>
               {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-6 max-md:mx-0">
+              <div className="mb-6 max-md:mb-3">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}
@@ -243,7 +243,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'ai' && (
             <div
-              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
+              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0 max-md:mb-2"
               style={{ height: 'calc(100vh - 48px)' }}
             >
               <RecommendStoreList
