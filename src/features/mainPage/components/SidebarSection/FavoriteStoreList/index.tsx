@@ -19,12 +19,11 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
   if (isLoading) {
     return (
-      <div className="space-y-2 max-md:space-y-1.5">
+      <div className="space-y-2 max-md:space-y-1.5 max-sm:space-y-1">
         {Array.from({ length: 5 }).map((_, index) => (
-          <div
-            key={index}
-            className="h-[60px] bg-grey02 rounded-[10px] animate-pulse max-md:h-[50px]"
-          />
+          <div key={index} className="px-5 max-md:px-4 max-sm:px-3">
+            <div className="w-[330px] h-[60px] bg-grey02 rounded-[10px] animate-pulse max-md:w-auto max-md:h-[50px] max-sm:h-[45px]" />
+          </div>
         ))}
       </div>
     );
@@ -63,15 +62,15 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   }
 
   return (
-    <div className="space-y-3 px-5 max-md:space-y-2 max-md:px-3">
+    <div className="space-y-3 max-md:space-y-2 max-sm:space-y-1.5 px-5 max-md:px-4 max-sm:px-3">
       {favorites.map((favorite) => (
         <div
           key={favorite.benefitId}
           onClick={() => onItemClick(favorite)}
-          className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-full max-md:h-[50px] max-md:px-3"
+          className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[50px] max-md:px-3 max-sm:h-[45px] max-sm:px-2"
         >
           {/* 왼쪽: 파트너 이미지 */}
-          <div className="w-[50px] h-[50px] rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4">
+          <div className="w-[50px] h-[50px] rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
             {favorite.partnerImage ? (
               <img
                 src={favorite.partnerImage}
@@ -80,7 +79,7 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
               />
             ) : (
               <div className="w-full h-full bg-purple04 flex items-center justify-center">
-                <span className="text-white text-body-4 font-bold max-md:text-body-5">
+                <span className="text-white text-body-4 font-bold max-md:text-body-5 max-sm:text-body-6">
                   {favorite.partnerName.charAt(0)}
                 </span>
               </div>
@@ -89,14 +88,17 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
 
           {/* 중앙: 파트너 이름 */}
           <div className="flex-1">
-            <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
+            <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold max-sm:text-body-5-bold">
               {favorite.partnerName}
             </span>
           </div>
 
           {/* 오른쪽: 화살표 */}
           <div className="flex-shrink-0">
-            <TbChevronRight size={20} className="text-grey04 max-md:w-4 max-md:h-4" />
+            <TbChevronRight
+              size={20}
+              className="text-grey04 max-md:w-4 max-md:h-4 max-sm:w-3.5 max-sm:h-3.5"
+            />
           </div>
         </div>
       ))}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BenefitDetailResponse } from '../../../types/api';
+import NoResult from '../../../../../components/NoResult';
 
 interface StoreDetailUsageGuideProps {
   detailData: BenefitDetailResponse | null;
@@ -9,7 +10,7 @@ const StoreDetailUsageGuide: React.FC<StoreDetailUsageGuideProps> = ({ detailDat
   if (!detailData?.data.manual) return null;
 
   return (
-    <div className="mb-6 max-md:mb-4">
+    <div>
       <h3 className="text-title-6 text-grey06 mb-3 max-md:text-title-7 max-md:mb-2">이용 방법</h3>
       <ul className="space-y-2 text-body-3 text-grey05 max-md:space-y-1.5 max-md:text-body-4">
         {detailData.data.manual

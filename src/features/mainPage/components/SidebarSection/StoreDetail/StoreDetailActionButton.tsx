@@ -78,7 +78,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
 
   const getButtonClass = () => {
     const baseClass =
-      'w-full py-3 mt-3 text-body-2-bold rounded-[10px] transition-colors duration-200 max-md:py-2.5 max-md:mt-2 max-md:text-body-3-bold max-md:rounded-[8px]';
+      'w-full py-3 text-body-2-bold rounded-[10px] transition-colors duration-200 max-md:py-2.5 max-md:text-body-3-bold max-md:rounded-[8px]';
 
     if (!isLoggedIn || !benefitId) {
       return `${baseClass} bg-grey03 text-grey04 cursor-not-allowed`;

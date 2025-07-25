@@ -369,8 +369,12 @@ const MainPageLayout: React.FC = () => {
 
           {/* 바텀시트 */}
           <div
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[18px] shadow-lg transition-all duration-300 ease-out z-[9998]"
-            style={{ height: `${bottomSheetHeight}px` }}
+            className="absolute left-0 right-0 bg-white rounded-t-[18px] shadow-lg transition-all duration-300 ease-out z-[9998] flex flex-col"
+            style={{
+              height: `${bottomSheetHeight}px`,
+              bottom: 0,
+              minHeight: '100px',
+            }}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
@@ -387,7 +391,7 @@ const MainPageLayout: React.FC = () => {
             </div>
 
             {/* 사이드바 콘텐츠 */}
-            <div className="h-full overflow-hidden">
+            <div className="flex-1 min-h-0">
               <SidebarSection
                 platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
                 selectedPlatform={selectedPlatform}

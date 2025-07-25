@@ -24,12 +24,10 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
   if (isLoading) {
     return (
       <div className="flex-1 flex flex-col">
-        <div className="px-5 max-md:px-4 max-sm:px-3">
-          <h3 className="text-lg font-bold text-grey06 mb-4 max-md:text-base max-md:mb-3 max-sm:text-sm max-sm:mb-2">
-            주변 가맹점을 찾고 있습니다...
-          </h3>
-          <div className="border-b border-grey03 w-full mb-0" />
-        </div>
+        <h3 className="text-lg font-bold text-grey06 mb-4 max-md:text-title-7 max-md:mb-3 max-sm:text-title-7 max-sm:mb-2 px-5 max-md:px-4 max-sm:px-3">
+          주변 가맹점을 찾고 있습니다...
+        </h3>
+        <div className="border-b border-grey03 w-[330px] max-md:w-full mb-0 mx-5 max-md:mx-4 max-sm:mx-3" />
 
         <div className="flex-1 flex flex-col items-center justify-center">
           <LoadingSpinner />
@@ -59,12 +57,10 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
   if (!platforms || platforms.length === 0) {
     return (
       <div className="flex-1 flex flex-col">
-        <div className="px-5 max-md:px-4 max-sm:px-3">
-          <h3 className="text-lg font-bold text-grey06 mb-4 max-md:text-base max-md:mb-3 max-sm:text-sm max-sm:mb-2">
-            {currentLocation}
-          </h3>
-          <div className="border-b border-grey03 w-full mb-0" />
-        </div>
+        <h3 className="text-lg font-bold text-grey06 mb-4 max-md:text-title-7 max-md:mb-3 max-sm:text-title-7 max-sm:mb-2 max-md:px-4 max-sm:px-3">
+          {currentLocation}
+        </h3>
+        <div className="border-b border-grey03 w-[330px] mb-0 max-md:mx-4 max-sm:mx-3 max-md:w-auto" />
 
         <div className="flex-1 flex items-center justify-center min-h-0">
           <NoResult
@@ -81,18 +77,19 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
 
   return (
     <div className="flex-1 flex flex-col">
-      <div className="px-5 max-md:px-4 max-sm:px-3">
-        <h3 className="text-lg font-bold text-grey06 mb-4 max-md:text-base max-md:mb-3 max-sm:text-sm max-sm:mb-2">
-          {currentLocation}
-        </h3>
+      <h3 className="text-lg font-bold text-grey06 mb-4 max-md:text-title-7 max-md:mb-3 max-sm:text-title-7 max-sm:mb-2 max-md:px-4 max-sm:px-3">
+        {currentLocation}
+      </h3>
 
-        {/* 현재 위치 아래 구분선 */}
-        <div className="border-b border-grey03 w-full mb-0" />
-      </div>
+      {/* 현재 위치 아래 구분선 */}
+      <div className="border-b border-grey03 w-[330px] mb-0 max-md:mx-4 max-sm:mx-3 max-md:w-auto" />
 
       <div
-        className="overflow-y-auto overflow-x-hidden max-md:px-4 max-sm:px-3"
-        style={{ height: 'calc(100vh - 360px)' }}
+        className="-mx-5 overflow-y-auto overflow-x-hidden max-md:overflow-y-scroll max-md:mx-0"
+        style={{
+          height: window.innerWidth >= 768 ? 'calc(100vh - 360px)' : 'calc(100vh - 200px)',
+          maxHeight: window.innerWidth < 768 ? 'calc(100vh - 200px)' : undefined,
+        }}
       >
         {platforms.map((platform, index) => (
           <div key={platform.id}>
@@ -104,13 +101,13 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
 
             {/* 구분선 (마지막 항목 제외) */}
             {index < platforms.length - 1 && (
-              <div className="border-b border-grey03 mx-5 max-md:mx-4 max-sm:mx-3" />
+              <div className="border-b border-grey03 mx-5 w-[330px] max-md:mx-4 max-sm:mx-3 max-md:w-auto" />
             )}
           </div>
         ))}
 
         {/* 마지막 카드 아래 여백 */}
-        <div className="h-2 max-md:h-1 max-sm:h-0.5"></div>
+        <div className="h-4 max-md:h-2 max-sm:h-1"></div>
       </div>
     </div>
   );

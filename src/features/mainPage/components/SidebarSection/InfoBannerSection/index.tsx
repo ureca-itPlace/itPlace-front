@@ -40,8 +40,10 @@ const InfoBannerSection: React.FC<InfoBannerSectionProps> = ({
   };
 
   return (
-    <div className={`border ${borderColor} rounded-[10px] mt-5 max-md:mt-3`}>
-      <div className="py-3 text-center max-md:py-2">{renderMessage()}</div>
+    <div
+      className={`w-[330px] border ${borderColor} rounded-[10px] mt-5 max-md:mt-3 max-md:w-auto max-md:mx-4 max-sm:mx-3`}
+    >
+      <div className="py-3 text-center max-md:py-2 max-sm:py-1.5">{renderMessage()}</div>
     </div>
   );
 };

@@ -36,7 +36,7 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
         fontSize="text-title-7"
       />
 
-      <div className="mb-6 max-md:mb-4">
+      <div className={`${detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}>
         <h3 className="text-title-6 text-grey06 mb-2 max-md:text-title-7 max-md:mb-1.5">상세 혜택</h3>
 
         {detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? (
@@ -62,7 +62,7 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
             ))}
           </div>
         ) : (
-          <div className="py-7 max-md:py-5">
+          <div>
             <NoResult
               message1="혜택 정보가 없어요!"
               message2={`${activeTab === 'vipkok' ? 'VIP콕' : '기본'} 혜택이 존재하지 않아요`}

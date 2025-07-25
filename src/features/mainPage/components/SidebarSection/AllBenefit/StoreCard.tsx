@@ -70,10 +70,10 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
 
   return (
     <div
-      className="group cursor-pointer transition-colors duration-200 w-full px-5 bg-white hover:bg-grey01 max-md:px-0 max-sm:px-0"
+      className="group cursor-pointer transition-colors duration-200 w-full px-5 bg-white hover:bg-grey01 max-md:px-4 max-sm:px-3"
       onClick={() => onSelect(platform)}
     >
-      <div className="py-4 max-md:py-3">
+      <div className="py-4 max-md:py-3 w-[330px] max-md:w-full">
         {/* 상단부: 가맹점 정보 + 로고 */}
         <div className="flex justify-between items-start mb-4 max-md:mb-3">
           {/* 왼쪽: 가맹점 정보 2줄 */}
