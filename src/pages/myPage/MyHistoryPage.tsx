@@ -13,6 +13,11 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { RiResetRightFill } from 'react-icons/ri';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { useMediaQuery } from 'react-responsive';
+import BenefitInfoCard from '../../components/BenefitInfoCard';
+
+import { useDispatch } from 'react-redux';
+import { setTotalAmount as setTotalAmountAction } from '../../store/historySlice';
 
 interface HistoryItem {
   image: string;
@@ -22,6 +27,7 @@ interface HistoryItem {
 }
 
 export default function MyHistoryPage() {
+  const dispatch = useDispatch();
   // Redux 상태에서 사용자 정보 가져오기
   const user = useSelector((state: RootState) => state.auth.user);
   const membershipGrade = user?.membershipGrade ?? null;
@@ -41,6 +47,8 @@ export default function MyHistoryPage() {
 
   // 로딩 상태
   const [loading, setLoading] = useState(false);
+
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   // ✅ 혜택 사용 이력 API 호출 (페이지/필터 변화 시 재호출)
   useEffect(() => {
@@ -92,7 +100,10 @@ export default function MyHistoryPage() {
       try {
         const res = await api.get('/api/v1/membership-history/summary');
         const data = res.data?.data;
-        setTotalAmount(data?.totalDiscountAmount ?? 0);
+        const amount = data?.totalDiscountAmount ?? 0;
+
+        setTotalAmount(amount);
+        dispatch(setTotalAmountAction(amount));
       } catch (err) {
         console.error('멤버십 요약 API 오류:', err);
         setTotalAmount(0);
@@ -102,7 +113,7 @@ export default function MyHistoryPage() {
     };
 
     fetchSummary();
-  }, [membershipGrade]);
+  }, [membershipGrade, dispatch]);
 
   // 🔥 keyword, startDate, endDate가 바뀔 때마다 페이지를 0으로 초기화
   useEffect(() => {
@@ -113,21 +124,21 @@ export default function MyHistoryPage() {
     <MyPageContentLayout
       main={
         <div className="flex flex-col h-full">
-          <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+          {/* 상단 타이틀 */}
+          <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-md:hidden">
             혜택 사용 이력
           </h1>
-
           {/* 🔎 검색바 + 날짜필터 */}
-          <div className="flex justify-between mb-8 gap-2">
+          <div className="flex justify-between mb-8 gap-2 max-md:flex-col max-md:-mt-8">
             <SearchBar
               placeholder="혜택명으로 검색하기"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onClear={() => setKeyword('')}
               backgroundColor="bg-grey01"
-              className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px]"
+              className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px] max-md:w-full max-md:mb-2"
             />
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center justify-end">
               <button
                 onClick={() => {
                   setStartDate(null);
@@ -142,7 +153,7 @@ export default function MyHistoryPage() {
                 onChange={(date) => setStartDate(date)}
                 dateFormat="yyyy-MM-dd"
                 placeholderText="시작 날짜"
-                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[100px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[100px] max-md:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
               />
               <span className="text-grey05">~</span>
               <DatePicker
@@ -150,7 +161,7 @@ export default function MyHistoryPage() {
                 onChange={(date) => setEndDate(date)}
                 dateFormat="yyyy-MM-dd"
                 placeholderText="종료 날짜"
-                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[100px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[100px] max-md:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
               />
             </div>
           </div>
@@ -185,35 +196,55 @@ export default function MyHistoryPage() {
                 />
               </div>
             ) : (
-              <div className="flex flex-col gap-5 pt-1 max-xl:gap-3">
-                {history.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center border border-purple02 rounded-[10px] p-2"
-                  >
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <img
-                        src={item.image}
-                        alt={item.benefitName}
-                        className="h-[70px] w-auto object-contain flex-shrink-0 ml-3 max-xl:h-[50px]"
-                      />
-                      <span
-                        className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block max-xl:text-title-7 max-xl:font-semibold"
+              <div className="flex flex-col gap-5 max-xl:gap-3">
+                {isMobile
+                  ? // ✅ 모바일 전용 컴포넌트
+                    history.map((item, idx) => (
+                      <BenefitInfoCard
+                        key={idx}
+                        image={item.image}
                         title={item.benefitName}
+                        fields={[
+                          { label: '제휴처명', value: item.benefitName },
+                          {
+                            label: '할인 금액',
+                            value: `${item.discountAmount.toLocaleString()}원`,
+                          },
+                          {
+                            label: '사용 일시',
+                            value: dayjs(item.usedAt).format('YYYY-MM-DD hh:mm A'),
+                          },
+                        ]}
+                      />
+                    ))
+                  : history.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center border border-purple02 rounded-[10px] p-2"
                       >
-                        {item.benefitName}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 flex-shrink-0">
-                      <span className="text-black text-title-5 font-semibold w-[120px] text-right max-xl:text-title-7 max-xl:font-semibold">
-                        {item.discountAmount.toLocaleString()}원
-                      </span>
-                      <span className="text-grey05 text-body-1 px-4 font-light max-xl:text-body-3 max-xl:font-light max-xl:px-3">
-                        {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          <img
+                            src={item.image}
+                            alt={item.benefitName}
+                            className="h-[70px] w-auto object-contain flex-shrink-0 ml-3 max-xl:h-[50px]"
+                          />
+                          <span
+                            className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block max-xl:text-title-7 max-xl:font-semibold"
+                            title={item.benefitName}
+                          >
+                            {item.benefitName}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-4 flex-shrink-0">
+                          <span className="text-black text-title-5 font-semibold w-[120px] text-right max-xl:text-title-7 max-xl:font-semibold">
+                            {item.discountAmount.toLocaleString()}원
+                          </span>
+                          <span className="text-grey05 text-body-1 px-4 font-light max-xl:text-body-3 max-xl:font-light max-xl:px-3">
+                            {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
               </div>
             )}
           </div>

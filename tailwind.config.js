@@ -89,6 +89,15 @@ export default {
       'max-md': { max: '767px' }, // 태블릿 세로
       'max-sm': { max: '500px' }, // 모바일 세로
     },
+    keyframes: {
+      floating: {
+        '0%, 100%': { transform: 'translateY(0)' },
+        '50%': { transform: 'translateY(-4px)' }, // 살짝 위로
+      },
+    },
+    animation: {
+      floating: 'floating 2s ease-in-out infinite',
+    },
   },
   plugins: [
     // 헤더 글래스 모피즘

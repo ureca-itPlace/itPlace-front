@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import { fetchFavorites, deleteFavorites } from '../apis/favorites';
 import { FavoriteItem } from '../../../types/favorites';
 import { showToast } from '../../../utils/toast';
+import { useMediaQuery } from 'react-responsive';
 
 export function useFavorites(itemsPerPageInit = 6) {
   const [allFavorites, setAllFavorites] = useState<FavoriteItem[]>([]);
@@ -12,6 +13,7 @@ export function useFavorites(itemsPerPageInit = 6) {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   // 페이지네이션
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,9 +61,16 @@ export function useFavorites(itemsPerPageInit = 6) {
   // ✅ 페이지 변경 시 현재 페이지의 첫 번째 아이템 선택
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    const startIndex = (page - 1) * itemsPerPage;
-    const newFirst = searchedFavorites[startIndex];
-    setSelectedId(newFirst ? newFirst.benefitId : null);
+
+    // 모바일이 아닐 때만 첫 번째 아이템을 자동 선택
+    if (!isMobile) {
+      const startIndex = (page - 1) * itemsPerPage;
+      const newFirst = searchedFavorites[startIndex];
+      setSelectedId(newFirst ? newFirst.benefitId : null);
+    } else {
+      // 📌 모바일이라면 아무것도 선택하지 않음
+      setSelectedId(null);
+    }
   };
 
   // ✅ 필터나 검색 변경 시 1페이지로 초기화
@@ -72,10 +81,14 @@ export function useFavorites(itemsPerPageInit = 6) {
   // ✅ 목록이 갱신될 때 첫 번째 아이템 선택
   useEffect(() => {
     if (searchedFavorites.length > 0) {
-      setSelectedId(searchedFavorites[0].benefitId);
+      // 모바일이 아니라면 첫 번째 아이템 선택
+      if (!isMobile) {
+        setSelectedId(searchedFavorites[0].benefitId);
+      } else {
+        setSelectedId(null);
+      }
     }
-    // 검색 결과 0일 때는 기존 선택 유지
-  }, [searchedFavorites]);
+  }, [searchedFavorites, isMobile]);
 
   // ✅ 단일 삭제
   const handleRemoveFavorite = async (benefitId: number) => {

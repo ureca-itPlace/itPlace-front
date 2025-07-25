@@ -38,7 +38,7 @@ export default function BenefitCardList({
   };
 
   return (
-    <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px] max-xl:min-h-[300px] max-xl:gap-x-6">
+    <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px] max-xl:min-h-[300px] max-xl:gap-x-6 max-md:grid-cols-2">
       {items.map((item) => (
         <div
           key={item.benefitId}
@@ -49,7 +49,7 @@ export default function BenefitCardList({
               setSelectedId(item.benefitId); // 상세보기
             }
           }}
-          className={`relative p-4 border rounded-[18px] w-[220px] h-[240px] max-xl:w-[160px] max-xl:h-[180px] cursor-pointer border-none shadow-[0px_3px_12px_rgba(0,0,0,0.15)] ${
+          className={`relative p-4 border flex flex-col items-center rounded-[18px] aspect-[12/13] w-full max-md:aspect-[4/3] max-sm:aspect-[12/13] cursor-pointer border-none shadow-[0px_3px_12px_rgba(0,0,0,0.15)] ${
             isEditing
               ? selectedItems.includes(item.benefitId)
                 ? 'ring-2 ring-purple04'
@@ -93,9 +93,10 @@ export default function BenefitCardList({
           <img
             src={item.partnerImage}
             alt={item.benefitName}
-            className="h-[108px] w-auto object-contain mx-auto mt-6 max-xl:h-[68px]"
+            className="h-[108px] w-auto object-contain mt-6 max-xl:h-[68px] max-md:h-[98px] max-sm:h-[60px]"
           />
-          <p className="text-grey05 text-title-5 text-center mt-4 max-xl:text-title-7">
+          <div className="flex flex-grow" />
+          <p className="text-grey05 text-title-5 text-center mt-3 max-xl:text-title-7 max-md:text-title-6 max-sm:text-title-7 line-clamp-2 min-h-[3rem]">
             {item.benefitName}
           </p>
         </div>
