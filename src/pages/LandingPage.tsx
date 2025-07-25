@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useState, useEffect, lazy } from 'react';
+import CustomCursor from '../features/landingPage/components/CustomCursor';
 
 const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
 const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
@@ -36,6 +37,7 @@ const LandingPage = () => {
 
   return (
     <div className="relative h-full w-full overflow-x-hidden bg-white">
+      <CustomCursor />
       <EarthSection />
       <MapSection />
       <FeatureSection />
