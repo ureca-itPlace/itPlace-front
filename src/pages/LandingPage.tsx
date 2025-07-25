@@ -3,7 +3,6 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { useState, useEffect, lazy } from 'react';
-import { Header } from '../components';
 
 const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
 const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
