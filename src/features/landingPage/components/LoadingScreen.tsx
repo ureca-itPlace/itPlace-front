@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { useResponsive } from '../../../hooks/useResponsive';
+import { disableScroll, enableScroll } from '../../../utils/scrollLock';
 
 interface LoadingScreenProps {
   onFinish: () => void;
@@ -22,16 +23,13 @@ const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
 
   useEffect(() => {
     if (isVisible) {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
+      disableScroll();
     } else {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
+      enableScroll();
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
+      enableScroll();
     };
   }, [isVisible]);
 
