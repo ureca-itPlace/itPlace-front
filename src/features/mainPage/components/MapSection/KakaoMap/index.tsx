@@ -161,8 +161,8 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           styles: [
             {
               // 1-9개 마커 (작은 크기)
-              width: '30px',
-              height: '30px',
+              width: '40px',
+              height: '40px',
               background: 'rgba(118, 56, 250, 0.8)',
               borderRadius: '20px',
               color: '#fff',
