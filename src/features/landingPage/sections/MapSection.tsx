@@ -1,15 +1,13 @@
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useRef } from 'react';
-import BlackSquare from '../components/BlackSquare';
 import { useResponsive } from '../../../hooks/useResponsive';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MapSection = () => {
   const mapSectionRef = useRef<HTMLDivElement>(null);
-  const blackSquareRef = useRef<HTMLDivElement>(null);
   const firstMapImageRef = useRef<HTMLImageElement>(null);
   const secondMapImageRef = useRef<HTMLImageElement>(null);
   const thirdMapImageRef = useRef<HTMLImageElement>(null);
@@ -24,7 +22,6 @@ const MapSection = () => {
   useGSAP(() => {
     if (
       !mapSectionRef.current ||
-      !blackSquareRef.current ||
       !firstMapImageRef.current ||
       !secondMapImageRef.current ||
       !thirdMapImageRef.current ||
@@ -44,100 +41,82 @@ const MapSection = () => {
         scale: 1,
         opacity: 0,
         filter: 'blur(10px)',
-        zIndex: 0, // 각 이미지가 겹치지 않도록 z-index 설정
+        zIndex: 0,
       }
     );
 
-    gsap.set(blackSquareRef.current, {
-      x: '-100%',
-    });
-
-    const tl = gsap.timeline({
+    const changeTl = gsap.timeline({
       scrollTrigger: {
         trigger: mapSectionRef.current,
         start: 'top top',
-        end: '+=2400',
+        end: '+=2500',
         pin: true,
-        scrub: 0.5,
+        scrub: 0.6,
         anticipatePin: 1,
       },
     });
 
-    // 첫 번째 이미지: 나타나기 -> 커지기 -> 블러 처리하기
-    tl.to(
-      firstMapImageRef.current,
-      {
-        opacity: 1,
-        filter: 'blur(0px)',
-        ease: 'none',
-        duration: 2,
-      },
-      2
-    )
+    // 첫 번째 이미지
+    changeTl
       .to(
         firstMapImageRef.current,
         {
-          scale: 1.5,
-          opacity: 0,
-          ease: 'power2.out',
-          duration: 4,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 2,
+          ease: 'expo.out',
         },
-        5
+        0
       )
       .to(
         firstMapImageRef.current,
         {
-          filter: 'blur(15px)',
-          duration: 0.7,
-          ease: 'none',
+          scale: 1.4,
+          opacity: 0,
+          duration: 3,
+          filter: 'blur(10px)',
+          ease: 'power4.out',
         },
-        6.5
+        '+=1.5'
       );
 
     // 두 번째 이미지
-    tl.to(
-      secondMapImageRef.current,
-      {
-        opacity: 1,
-        filter: 'blur(0px)',
-        ease: 'power2.out',
-        duration: 1,
-      },
-      6.5
-    )
+    changeTl
+      .to(
+        secondMapImageRef.current,
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1,
+          ease: 'expo.out',
+        },
+        '>-1'
+      )
       .to(
         secondMapImageRef.current,
         {
           scale: 2,
           x: 80,
           opacity: 0,
-          ease: 'power2.out',
-          duration: 4,
-          delay: 1,
+          duration: 3,
+          ease: 'power4.out',
+          filter: 'blur(10px)',
         },
-        7.5
-      )
-      .to(
-        secondMapImageRef.current,
-        {
-          filter: 'blur(15px)',
-          duration: 0.7,
-          ease: 'none',
-        },
-        10
+        '+=1.2'
       );
 
     // 세 번째 이미지
-    tl.to(
-      thirdMapImageRef.current,
-      {
-        opacity: 1,
-        filter: 'blur(0px)',
-        ease: 'power2.out',
-        duration: 1,
-      },
-      10
-    )
+    changeTl
+      .to(
+        thirdMapImageRef.current,
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1,
+          ease: 'expo.out',
+        },
+        '>-1'
+      )
       .to(
         thirdMapImageRef.current,
         {
@@ -145,45 +124,37 @@ const MapSection = () => {
           x: xDistance,
           y: yDistance,
           opacity: 0,
-          ease: 'power2.out',
-          duration: 4,
-          delay: 1,
+          duration: 3,
+          ease: 'power4.out',
+          filter: 'blur(10px)',
         },
-        11
-      )
-      .to(
-        thirdMapImageRef.current,
-        {
-          filter: 'blur(15px)',
-          duration: 0.7,
-          ease: 'none',
-        },
-        13.5
+        '+=1.2'
       );
 
     // 네 번째 이미지
-    tl.to(
+    changeTl.to(
       fourthMapImageRef.current,
       {
         opacity: 1,
         filter: 'blur(0px)',
-        ease: 'power2.out',
-        duration: 3,
+        duration: 1.5,
+        ease: 'expo.out',
       },
-      14.5
+      '>-1'
     );
 
-    tl.to({}, { duration: 1 });
+    // 다음 섹션 전 지연 시간
+    changeTl.to({}, { duration: 1 });
 
     return () => {
-      tl.kill();
+      changeTl.kill();
     };
   }, [mapSectionRef]);
 
   return (
     <section
       ref={mapSectionRef}
-      className="relative w-full h-screen flex justify-center items-center overflow-hidden bg-white border-4 border-green-500"
+      className="relative w-full h-screen flex justify-center items-center overflow-hidden bg-white"
     >
       <img
         ref={firstMapImageRef}
@@ -209,7 +180,6 @@ const MapSection = () => {
         alt="지도4"
         className="absolute inset-0 w-full h-full object-cover"
       />
-      <BlackSquare ref={blackSquareRef} />
     </section>
   );
 };
