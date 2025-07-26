@@ -17,22 +17,20 @@ const TestPage = () => {
   }, []);
 
   return (
-    <>
-      <div className="relative bg-white">
-        {/* 지구 */}
-        <EarthSection onLoaded={() => setIsLoaded(true)} />
+    <div className="relative bg-white z-20 overflow-x-hidden">
+      {/* 지구 */}
+      <EarthSection onLoaded={() => setIsLoaded(true)} />
 
-        <div className="relative z-20">
-          {/* 헤더 */}
-          {isLoaded && (isMobile && isTablet ? <MobileHeader /> : <Header variant="glass" />)}
-          <div className="h-screen border-4 border-red-500" />
-          {/* 지도 */}
-          <MapSection />
-          {/* 기능 설명 */}
-          {/* CTA */}
-        </div>
-      </div>
-    </>
+      {/* 헤더 */}
+      {isLoaded && (isMobile && isTablet ? <MobileHeader /> : <Header variant="glass" />)}
+      {/* 더미 박스 */}
+      <div className="h-[65vh]" />
+      {/* 지도 */}
+      <MapSection />
+      {/* 기능 설명 */}
+      {/* 비디오 */}
+      {/* CTA */}
+    </div>
   );
 };
 
