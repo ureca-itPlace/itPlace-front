@@ -1,8 +1,8 @@
+import { TextureLoader } from 'three';
 import { Canvas, useLoader, useThree } from '@react-three/fiber';
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Suspense, useEffect } from 'react';
 import Model from './Earth';
-import { TextureLoader } from 'three';
 import LoadingScreen from './LoadingScreen';
 
 const CanvasContainer = ({ onLoaded }: { onLoaded: () => void }) => {
@@ -21,8 +21,9 @@ const CanvasContainer = ({ onLoaded }: { onLoaded: () => void }) => {
       {/* three.js 로딩 */}
       <LoadingScreen onFinish={onLoaded} />
       <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={0.5} color="#e0d5ff" />
         <directionalLight position={[5, 5, 5]} intensity={1} color="#b48bff" castShadow />
+        <pointLight position={[-5, 0, 5]} intensity={0.8} color="#9b59b6" distance={20} />
         {/* 우주 배경 */}
         <BackgroundSetter />
         <Environment preset="city" />

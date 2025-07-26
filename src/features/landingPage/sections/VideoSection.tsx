@@ -1,11 +1,9 @@
-import { useRef } from 'react';
-import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
+import { useRef } from 'react';
 import PurpleCircle from '../components/PurpleCircle';
 import Video from '../components/Video';
-
 import { VideoSectionProps } from '../types/landing.types';
 
 gsap.registerPlugin(ScrollTrigger);

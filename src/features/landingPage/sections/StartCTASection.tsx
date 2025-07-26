@@ -1,7 +1,7 @@
-import { useSelector } from 'react-redux';
-import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
+import Button from '../components/Button';
 
 const StartCTASection = () => {
   const navigate = useNavigate();
