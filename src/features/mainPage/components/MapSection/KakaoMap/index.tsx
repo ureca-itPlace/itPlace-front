@@ -22,6 +22,7 @@ interface KakaoMarker {
 interface KakaoMarkerClusterer {
   clear(): void;
   addMarkers(markers: KakaoMarker[]): void;
+  setMinClusterSize(size: number): void;
 }
 
 interface KakaoCustomOverlay {
@@ -155,10 +156,23 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         const clusterer = new window.kakao.maps.MarkerClusterer({
           map: map,
           averageCenter: true,
-          minLevel: 6, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
+          minLevel: 7, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
           disableClickZoom: false,
           styles: [
             {
+              // 1-9개 마커 (작은 크기)
+              width: '30px',
+              height: '30px',
+              background: 'rgba(118, 56, 250, 0.8)',
+              borderRadius: '20px',
+              color: '#fff',
+              textAlign: 'center',
+              lineHeight: '40px',
+              fontSize: '12px',
+              fontWeight: 'bold',
+            },
+            {
+              // 50-60개 마커 (중간 크기)
               width: '50px',
               height: '50px',
               background: 'rgba(118, 56, 250, 0.8)',
@@ -169,8 +183,35 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
               fontSize: '14px',
               fontWeight: 'bold',
             },
+            {
+              // 60개 이상 마커 (큰 크기)
+              width: '70px',
+              height: '70px',
+              background: 'rgba(118, 56, 250, 0.8)',
+              borderRadius: '30px',
+              color: '#fff',
+              textAlign: 'center',
+              lineHeight: '60px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+            },
+            {
+              // 100개 이상 마커 (큰 크기)
+              width: '90px',
+              height: '90px',
+              background: 'rgba(118, 56, 250, 0.8)',
+              borderRadius: '30px',
+              color: '#fff',
+              textAlign: 'center',
+              lineHeight: '60px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+            },
           ],
         });
+
+        // minClusterSize 설정 (1개부터 클러스터링)
+        clusterer.setMinClusterSize(1);
         clustererRef.current = clusterer;
       }
 
@@ -259,6 +300,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
     const newMarkers: KakaoMarker[] = [];
 
+    // 클러스터링 활성화 여부 확인
+    const isClusteringActive = currentZoomLevel >= 7 && clustererRef.current;
+
     platforms.forEach((platform) => {
       // 좌표가 없는 가맹점은 마커 표시 안함
       if (
@@ -271,11 +315,10 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       }
 
       const markerPosition = new window.kakao.maps.LatLng(platform.latitude, platform.longitude);
-      const isSelected = selectedPlatform?.id === platform.id;
 
       // 줌 레벨에 따라 클러스터링 또는 개별 표시
-      if (currentZoomLevel >= 7 && clustererRef.current) {
-        // 클러스터링용 일반 마커 생성
+      if (isClusteringActive) {
+        // 클러스터링용 일반 마커 생성 (지도에 표시하지 않음)
         const clusterMarker = new window.kakao.maps.Marker({
           position: markerPosition,
         });
@@ -287,6 +330,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
         newMarkers.push(clusterMarker);
       } else {
+        // 개별 커스텀 마커만 표시 (클러스터링 비활성화 시에만)
+        const isSelected = selectedPlatform?.id === platform.id;
+
         // React 컴포넌트를 HTML로 렌더링
         const markerHTML = renderToString(
           <CustomMarker imageUrl={platform.imageUrl} name={platform.name} isSelected={isSelected} />
