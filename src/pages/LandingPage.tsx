@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react';
+import { lazy, useEffect, useState } from 'react';
 import { Header } from '../components';
-import EarthSection from '../features/landingPage/sections/EarthSection';
-import MapSection from '../features/landingPage/sections/MapSection';
 import { useResponsive } from '../hooks/useResponsive';
 import MobileHeader from '../components/MobileHeader';
 
-const TestPage = () => {
+const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
+const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
+// const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
+// const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
+// const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
+
+const Landingpage = () => {
   // 지구 로드 상태
   const [isLoaded, setIsLoaded] = useState(false);
   const { isMobile, isTablet } = useResponsive();
@@ -25,7 +29,7 @@ const TestPage = () => {
       {/* 헤더 */}
       {isLoaded && (isMobile && isTablet ? <MobileHeader /> : <Header variant="glass" />)}
       {/* 더미 박스 */}
-      <div className="h-[65vh]" />
+      <div className="h-[65vh] border-4 border-red-500" />
       {/* 지도 */}
       <MapSection />
       {/* 더미 박스 */}
@@ -37,4 +41,4 @@ const TestPage = () => {
   );
 };
 
-export default TestPage;
+export default Landingpage;
