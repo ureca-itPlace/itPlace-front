@@ -1,20 +1,13 @@
-import { useRef, useEffect, useState } from 'react';
-import EarthScene from '../components/EarthScene';
+import CanvasContainer from '../components/CanvasContainer';
+import CustomCursor from '../components/CustomCursor';
 
-const EarthSection = () => {
-  const earthSectionRef = useRef<HTMLDivElement>(null);
-  const [triggerReady, setTriggerReady] = useState(false);
-
-  useEffect(() => {
-    if (earthSectionRef.current) {
-      setTriggerReady(true);
-      console.log('지구 섹션 준비 완료');
-    }
-  }, []);
-
+const EarthSection = ({ onLoaded }: { onLoaded: () => void }) => {
   return (
-    <div ref={earthSectionRef} className="h-screen w-full bg-white overflow-hidden relative">
-      {triggerReady && <EarthScene earthAnimationTrigger={earthSectionRef} />}
+    <div className="earth-section relative h-[100vh]">
+      <div className="sticky top-0 h-full w-full bg-white">
+        <CanvasContainer onLoaded={onLoaded} />
+        <CustomCursor />
+      </div>
     </div>
   );
 };

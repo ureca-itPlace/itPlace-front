@@ -173,17 +173,6 @@ const MapSection = () => {
       14.5
     );
 
-    // BlackSquare 이동 (맨 마지막)
-    tl.to(
-      blackSquareRef.current,
-      {
-        x: '0%',
-        ease: 'none',
-        duration: 4,
-      },
-      17
-    );
-
     tl.to({}, { duration: 1 });
 
     return () => {
@@ -194,7 +183,7 @@ const MapSection = () => {
   return (
     <section
       ref={mapSectionRef}
-      className="relative w-full h-screen flex justify-center items-center overflow-hidden"
+      className="relative w-full h-screen flex justify-center items-center overflow-hidden bg-white border-4 border-green-500"
     >
       <img
         ref={firstMapImageRef}

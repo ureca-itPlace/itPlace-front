@@ -4,7 +4,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { useResponsive } from '../../../hooks/useResponsive';
 
-const LoadingScreen = () => {
+interface LoadingScreenProps {
+  onFinish: () => void;
+}
+
+const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
   const { progress, active } = useProgress();
   const [isVisible, setIsVisible] = useState(true);
 
@@ -43,13 +47,14 @@ const LoadingScreen = () => {
             if (bgRef.current) {
               bgRef.current.style.display = 'none';
             }
+            onFinish(); // 로딩 종료
           },
         });
-      }, 5000);
+      }, 4000);
 
       return () => clearTimeout(timeout);
     }
-  }, [active, progress]);
+  }, [active, progress, onFinish]);
 
   useGSAP(
     () => {

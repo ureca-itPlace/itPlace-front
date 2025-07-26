@@ -1,20 +1,13 @@
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { useState, useEffect, lazy } from 'react';
-import CustomCursor from '../features/landingPage/components/CustomCursor';
+import { useEffect, useState } from 'react';
+import { Header } from '../components';
+import EarthSection from '../features/landingPage/sections/EarthSection';
+import MapSection from '../features/landingPage/sections/MapSection';
+import { useResponsive } from '../hooks/useResponsive';
+import MobileHeader from '../components/MobileHeader';
 
-const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
-const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
-const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
-const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
-const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
-
-gsap.registerPlugin(useGSAP, ScrollTrigger, ScrollToPlugin);
-
-const LandingPage = () => {
-  const [videoEnded, setVideoEnded] = useState(false);
+const TestPage = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const { isMobile, isTablet } = useResponsive();
 
   // 새로 고침 시 최상단으로 이동
   useEffect(() => {
@@ -23,29 +16,24 @@ const LandingPage = () => {
     };
   }, []);
 
-  // 비디오 종료 후 맨 아래로 이동
-  useEffect(() => {
-    if (videoEnded) {
-      console.log('비디오 종료');
-      gsap.to(window, {
-        scrollTo: { y: 'max', autoKill: false },
-        duration: 0.6,
-        ease: 'power2.inOut',
-      });
-    }
-  }, [videoEnded]);
-
   return (
-    <div className="relative h-full w-full overflow-x-hidden bg-white">
-      <CustomCursor />
-      <EarthSection />
-      <MapSection />
-      <FeatureSection />
-      <VideoSection setVideoEnded={setVideoEnded} />
-      {/* 비디오가 끝났을 때만 표시 */}
-      {videoEnded && <StartCTASection />}
-    </div>
+    <>
+      <div className="relative bg-white">
+        {/* 지구 */}
+        <EarthSection onLoaded={() => setIsLoaded(true)} />
+
+        <div className="relative z-20">
+          {/* 헤더 */}
+          {isLoaded && (isMobile && isTablet ? <MobileHeader /> : <Header variant="glass" />)}
+          <div className="h-screen border-4 border-red-500" />
+          {/* 지도 */}
+          <MapSection />
+          {/* 기능 설명 */}
+          {/* CTA */}
+        </div>
+      </div>
+    </>
   );
 };
 
-export default LandingPage;
+export default TestPage;
