@@ -12,6 +12,7 @@ const MapSection = () => {
   const secondMapImageRef = useRef<HTMLImageElement>(null);
   const thirdMapImageRef = useRef<HTMLImageElement>(null);
   const fourthMapImageRef = useRef<HTMLImageElement>(null);
+  const backgroundRef = useRef<HTMLImageElement>(null);
 
   const { isMobile, isTablet } = useResponsive();
 
@@ -51,7 +52,7 @@ const MapSection = () => {
         start: 'top top',
         end: '+=2500',
         pin: true,
-        scrub: 0.6,
+        scrub: 0.3,
         anticipatePin: 1,
       },
     });
@@ -64,7 +65,7 @@ const MapSection = () => {
           opacity: 1,
           filter: 'blur(0px)',
           duration: 2,
-          ease: 'expo.out',
+          ease: 'power1.out',
         },
         0
       )
@@ -73,9 +74,9 @@ const MapSection = () => {
         {
           scale: 1.4,
           opacity: 0,
-          duration: 3,
+          duration: 1.5,
           filter: 'blur(10px)',
-          ease: 'power4.out',
+          ease: 'none',
         },
         '+=1.5'
       );
@@ -88,7 +89,7 @@ const MapSection = () => {
           opacity: 1,
           filter: 'blur(0px)',
           duration: 1,
-          ease: 'expo.out',
+          ease: 'power1.out',
         },
         '>-1'
       )
@@ -98,8 +99,8 @@ const MapSection = () => {
           scale: 2,
           x: 80,
           opacity: 0,
-          duration: 3,
-          ease: 'power4.out',
+          duration: 1.5,
+          ease: 'none',
           filter: 'blur(10px)',
         },
         '+=1.2'
@@ -113,7 +114,7 @@ const MapSection = () => {
           opacity: 1,
           filter: 'blur(0px)',
           duration: 1,
-          ease: 'expo.out',
+          ease: 'power1.out',
         },
         '>-1'
       )
@@ -124,8 +125,8 @@ const MapSection = () => {
           x: xDistance,
           y: yDistance,
           opacity: 0,
-          duration: 3,
-          ease: 'power4.out',
+          duration: 1.5,
+          ease: 'none',
           filter: 'blur(10px)',
         },
         '+=1.2'
@@ -138,13 +139,34 @@ const MapSection = () => {
         opacity: 1,
         filter: 'blur(0px)',
         duration: 1.5,
-        ease: 'expo.out',
+        ease: 'power1.out',
       },
       '>-1'
     );
 
-    // 다음 섹션 전 지연 시간
-    changeTl.to({}, { duration: 1 });
+    changeTl.to(
+      backgroundRef.current,
+      {
+        opacity: 1,
+        duration: 1.5,
+        ease: 'power2.out',
+      },
+      '+=0.5'
+    );
+
+    changeTl.to(
+      fourthMapImageRef.current,
+      {
+        scale: isMobile || isTablet ? 0.8 : 0.5,
+        x: isMobile || isTablet ? 0 : 300,
+        duration: 4,
+        ease: 'power4.Out',
+      },
+      '+=0.5'
+    );
+
+    // // 다음 섹션 전 지연 시간
+    // changeTl.to({}, { duration: 1 });
 
     return () => {
       changeTl.kill();
@@ -156,30 +178,48 @@ const MapSection = () => {
       ref={mapSectionRef}
       className="relative w-full h-screen flex justify-center items-center overflow-hidden bg-white"
     >
-      <img
-        ref={firstMapImageRef}
-        src="/images/landing/map-1.webp"
-        alt="지도"
-        className="absolute inset-0 w-full h-full object-cover"
+      <div
+        ref={backgroundRef}
+        className="absolute inset-0 bg-cover bg-center z-0 transition-all duration-500"
+        style={{
+          backgroundImage: "url('')",
+          filter: 'blur(3px)',
+          opacity: 0,
+        }}
       />
-      <img
-        ref={secondMapImageRef}
-        src="/images/landing/map-2.webp"
-        alt="지도2"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <img
-        ref={thirdMapImageRef}
-        src="/images/landing/map-3.webp"
-        alt="지도3"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <img
-        ref={fourthMapImageRef}
-        src="/images/landing/map-4.webp"
-        alt="지도4"
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+      <div>
+        <img
+          ref={firstMapImageRef}
+          src="/images/landing/map-1.webp"
+          alt="지도"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <img
+          ref={secondMapImageRef}
+          src="/images/landing/map-2.webp"
+          alt="지도2"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <img
+          ref={thirdMapImageRef}
+          src="/images/landing/map-3.webp"
+          alt="지도3"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <img
+          ref={fourthMapImageRef}
+          src="/images/landing/map-4.webp"
+          alt="지도4"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
+
+      <div className="text-white">
+        <h1>제휴처 멤버십을 지도에서 한눈에!</h1>
+        <h4>
+          기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명
+        </h4>
+      </div>
     </section>
   );
 };
