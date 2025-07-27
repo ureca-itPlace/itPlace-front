@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react';
 import { SplitText } from 'gsap/SplitText';
 import { ScrollSmoother } from 'gsap/ScrollSmoother';
 import { useRef } from 'react';
+import CustomCursor from '../components/CustomCursor';
 
 gsap.registerPlugin(SplitText, ScrollSmoother);
 
@@ -13,6 +14,9 @@ const FeatureSection = () => {
   const imgRef = useRef<HTMLImageElement>(null);
 
   useGSAP(() => {
+    const titleSplits: SplitText[] = [];
+    const descSplits: SplitText[] = [];
+
     document.fonts.ready.then(() => {
       // ScrollTrigger 타임라인
       const featureTl = gsap.timeline({
@@ -35,11 +39,13 @@ const FeatureSection = () => {
           type: 'chars',
           charsClass: 'char',
         });
+        titleSplits.push(titleSplit);
 
         const descSplit = new SplitText(descEl, {
           type: 'lines',
           linesClass: 'line',
         });
+        descSplits.push(descSplit);
 
         // 타이틀 애니메이션
         featureTl.from(
@@ -63,7 +69,7 @@ const FeatureSection = () => {
             opacity: 0,
             duration: 1.5,
             ease: 'power3.out',
-            stagger: 0.06,
+            stagger: 0.1,
             force3D: true,
           },
           currentTime + 0.3
@@ -72,16 +78,21 @@ const FeatureSection = () => {
         currentTime += 0.7;
       });
     });
+
+    return () => {
+      titleSplits.forEach((split) => split.revert());
+      descSplits.forEach((split) => split.revert());
+    };
   }, []);
 
   return (
-    <div data-theme="dark" ref={featureSectionRef} className="h-[300vh] bg-[#000000]">
-      <div className="h-[100vh] flex justify-center items-center">
+    <div data-theme="dark" ref={featureSectionRef} className="h-[270vh] bg-[#000000]">
+      <div className="h-[90vh] flex justify-center items-center">
         <div className="w-1/2 h-full flex justify-center items-center pr-3">
           <img
             ref={imgRef}
             src="/images/landing/map-4.webp"
-            alt="기능설명2"
+            alt="기능설명1"
             className="h-[95%] w-auto object-contain"
           />
         </div>
@@ -106,7 +117,7 @@ const FeatureSection = () => {
           </h4>
         </div>
       </div>
-      <div className="h-[100vh] flex justify-center items-center">
+      <div className="h-[90vh] flex justify-center items-center">
         <div className="relative w-[40%] text-white flex flex-col mr-12 gap-20">
           <h1
             ref={(el) => {
@@ -135,11 +146,11 @@ const FeatureSection = () => {
           />
         </div>
       </div>
-      <div className="h-[100vh] flex justify-center items-center">
+      <div className="h-[90vh] flex justify-center items-center">
         <div className="w-1/2 h-full flex justify-center items-center pr-3">
           <img
             src="/images/landing/map-4.webp"
-            alt="기능설명2"
+            alt="기능설명3"
             className="h-full w-auto object-contain "
           />
         </div>
@@ -164,6 +175,7 @@ const FeatureSection = () => {
           </h4>
         </div>
       </div>
+      <CustomCursor />
     </div>
   );
 };
