@@ -51,7 +51,6 @@ const Model: React.FC<ModelProps> = ({ modelPath }) => {
         pin: true,
         anticipatePin: 1,
         pinSpacing: true,
-        markers: true,
         onUpdate: (self) => {
           const canvasWrapper = document.querySelector('.canvas-wrapper');
           if (canvasWrapper) {

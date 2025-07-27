@@ -9,7 +9,7 @@ const MapSection = lazy(() => import('../features/landingPage/sections/MapSectio
 const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
 // const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
 
-const Landingpage = () => {
+const LandingPage = () => {
   const { isMobile, isTablet } = useResponsive();
   // 지구 로드 상태
   const [isLoaded, setIsLoaded] = useState(false);
@@ -42,4 +42,4 @@ const Landingpage = () => {
   );
 };
 
-export default Landingpage;
+export default LandingPage;
