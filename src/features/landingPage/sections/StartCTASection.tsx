@@ -8,7 +8,10 @@ const StartCTASection = () => {
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white">
+    <section
+      data-theme="light"
+      className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white"
+    >
       <div className="absolute left-[-11%] top-[5%] max-xl:hidden">
         <img
           src="/images/landing/cta-rabbit.webp"
@@ -36,7 +39,7 @@ const StartCTASection = () => {
           </Button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

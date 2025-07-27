@@ -14,6 +14,7 @@ interface MobileHeaderProps {
   backgroundColor?: string; // Tailwind 클래스명 등
   onMenuClick?: () => void;
   rightContent?: React.ReactNode;
+  theme?: string;
 }
 
 const MobileHeader = ({
@@ -21,6 +22,7 @@ const MobileHeader = ({
   backgroundColor = 'bg-white',
   onMenuClick,
   rightContent,
+  theme = 'light',
 }: MobileHeaderProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -63,7 +65,7 @@ const MobileHeader = ({
     <>
       <header
         className={
-          `w-full h-[54px] flex items-center px-4 z-[9999] border-grey01 max-md:flex ${backgroundColor}` +
+          `w-full h-[54px] fixed top-0 left-0 flex items-center px-4 z-[9999] border-grey01 max-md:flex ${backgroundColor}` +
           (isMain ? 'border-b-none' : 'border-b')
         }
       >
@@ -73,7 +75,7 @@ const MobileHeader = ({
             aria-label="메뉴"
             onClick={handleMenuClick}
           >
-            <TbMenu2 className="w-5 h-5 text-black" />
+            <TbMenu2 className={`w-5 h-5 ${theme === 'dark' ? 'text-white' : 'text-black'}`} />
           </button>
           {title && (
             <span className="text-body-2 text-black leading-none flex items-center h-full mt-[5px]">

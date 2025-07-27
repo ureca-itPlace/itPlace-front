@@ -1,8 +1,9 @@
 import gsap from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { lazy, useEffect, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
 import StartCTASection from '../features/landingPage/sections/StartCTASection';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
 
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -16,6 +17,8 @@ const LandingPage = () => {
   // 지구 로드 상태
   const [isLoaded, setIsLoaded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
+  const [theme, setTheme] = useState<string>('light');
+  useHeaderThemeObserver(setTheme);
 
   // 새로 고침 시 최상단으로 이동
   useEffect(() => {
@@ -42,7 +45,7 @@ const LandingPage = () => {
 
       {/* 헤더 */}
       {/* {isLoaded && (isMobile || isTablet ? <MobileHeader /> : <Header variant="glass" />)} */}
-      {isLoaded && <MobileHeader />}
+      {isLoaded && <MobileHeader theme={theme} />}
       {/* 더미 박스 */}
       <div className="h-[65vh]" />
       {/* 지도 */}

@@ -137,6 +137,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
 
   return (
     <section
+      data-theme="dark"
       ref={sectionRef}
       className="relative w-full h-screen bg-[#000000] text-white flex items-center justify-center overflow-hidden"
     >

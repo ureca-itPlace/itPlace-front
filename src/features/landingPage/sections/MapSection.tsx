@@ -175,6 +175,7 @@ const MapSection = () => {
 
   return (
     <section
+      data-theme="light"
       ref={mapSectionRef}
       className="relative w-full h-screen flex justify-center items-center overflow-hidden bg-white"
     >
@@ -214,7 +215,7 @@ const MapSection = () => {
         />
       </div>
 
-      <div className="text-white">
+      <div className="text-black">
         <h1>제휴처 멤버십을 지도에서 한눈에!</h1>
         <h4>
           기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명
