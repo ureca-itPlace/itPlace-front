@@ -27,7 +27,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=2000',
+        end: '+=2400',
         scrub: 0.5,
         pin: true,
         anticipatePin: 1,
@@ -51,9 +51,9 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     tl.to(
       textRef.current,
       {
-        x: -1500,
+        x: -2000,
         skewX: 20,
-        duration: 6,
+        duration: 8,
         ease: 'power1.out',
       },
       3.2
@@ -64,32 +64,34 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       rockRefs.current,
       {
         opacity: 1,
-        x: -300,
-        rotate: 270,
-        duration: 6,
+        x: -420,
+        rotate: 250,
+        duration: 10,
         ease: 'expo.out',
         stagger: 0.2,
       },
       3.2
     );
 
+    tl.to({}, { duration: 1 });
+
     // 보라색 원 & 비디오 마스크 등장
     tl.fromTo(
       [circleRef.current, videoBoxRef.current],
       { opacity: 0 },
       { opacity: 1, duration: 0.5, ease: 'power2.out' },
-      9.3
+      11.3
     );
 
     // 보라색 원 & 비디오 확대
-    tl.to(circleRef.current, { scale: 30, duration: 2, ease: 'none' }, 9.8).to(
+    tl.to(circleRef.current, { scale: 30, duration: 2, ease: 'none' }, 11.8).to(
       videoBoxRef.current,
       {
         clipPath: 'circle(100% at 50% 50%)',
         duration: 3,
         ease: 'none',
       },
-      10.3
+      12
     );
 
     // 비디오 재생 트리거
@@ -144,7 +146,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       <Video ref={videoRef} videoBoxRef={videoBoxRef} onVideoEnd={() => setVideoEnded(true)} />
       <PurpleCircle ref={circleRef} />
       <div className="absolute left-32 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
-        <h1 ref={textRef} className="relative custom-font text-[30vh] whitespace-nowrap">
+        <h1 ref={textRef} className="relative custom-font text-[35vh] whitespace-nowrap">
           LET'S EXPLORE TOGETHER
         </h1>
         <img
@@ -153,7 +155,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
           }}
           src="/images/landing/rock-1.webp"
           alt="rock1"
-          className="absolute w-40 h-40 left-0 top-[-5%]"
+          className="absolute w-48 h-48 left-6 top-[-5%]"
         />
         <img
           ref={(el) => {
@@ -161,7 +163,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
           }}
           src="/images/landing/rock-2.webp"
           alt="rock2"
-          className="absolute w-40 h-40 left-1/4 top-2/3"
+          className="absolute w-48 h-48 left-1/4 top-2/3"
         />
         <img
           ref={(el) => {
@@ -169,7 +171,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
           }}
           src="/images/landing/rock-3.webp"
           alt="rock3"
-          className="absolute w-40 h-40 right-[45%] top-1/3"
+          className="absolute w-48 h-48 right-[45%] top-1/3"
         />
       </div>
     </section>
