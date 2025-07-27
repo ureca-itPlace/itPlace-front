@@ -5,7 +5,7 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(({ onVideoEnd, videoBoxRe
   return (
     <div
       ref={videoBoxRef}
-      className="w-full h-screen flex items-center justify-center z-30 bg-white"
+      className="w-full h-screen absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 bg-white"
       style={{ clipPath: 'circle(0% at 50% 50%)' }}
     >
       <video

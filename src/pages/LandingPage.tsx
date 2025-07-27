@@ -28,7 +28,8 @@ const LandingPage = () => {
       <EarthSection onLoaded={() => setIsLoaded(true)} />
 
       {/* 헤더 */}
-      {isLoaded && (isMobile || isTablet ? <MobileHeader /> : <Header variant="glass" />)}
+      {/* {isLoaded && (isMobile || isTablet ? <MobileHeader /> : <Header variant="glass" />)} */}
+      {isLoaded && <MobileHeader />}
       {/* 더미 박스 */}
       <div className="h-[65vh]" />
       {/* 지도 */}
