@@ -150,7 +150,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
           }}
           src="/images/landing/rock-3.webp"
           alt="rock3"
-          className="absolute w-40 h-40 right-1/3 top-1/3"
+          className="absolute w-40 h-40 right-[45%] top-1/3"
         />
       </div>
     </section>
