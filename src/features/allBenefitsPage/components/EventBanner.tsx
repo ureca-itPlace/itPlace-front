@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
 
 const images = ['/images/allBenefits/event1.png', '/images/allBenefits/event2.png'];
+const images2 = ['/images/allBenefits/event1-1.png', '/images/allBenefits/event2-2.png'];
 
 const EventBanner: React.FC = () => {
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 500);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 500); // max-sm 기준
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const renderImages = isMobile ? images2 : images;
+
   return (
     <div className="rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic flex items-center justify-center w-[1200px] max-xl:w-[950px] h-[250px] max-xl:h-[200px] max-md:w-full max-md:h-[100px] max-md:rounded-none max-md:drop-shadow-none">
       <Swiper
@@ -23,7 +36,7 @@ const EventBanner: React.FC = () => {
         }}
         className="rounded-[12px] max-xl:rounded-[10px] w-full h-full max-md:rounded-none"
       >
-        {images.map((src, idx) => (
+        {renderImages.map((src, idx) => (
           <SwiperSlide key={idx}>
             <a
               href={

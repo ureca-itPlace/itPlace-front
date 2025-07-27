@@ -74,7 +74,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       </div>
 
       {/* 고정 버튼 */}
-      <div className="px-6 py-3 flex-shrink-0 max-md:px-4 max-md:py-1">
+      <div className="px-6 pb-2 flex-shrink-0 max-md:px-4 max-md:pb-2">
         <StoreDetailActionButton
           benefitId={detailData?.data?.benefitId}
           isFavorite={isFavorite}
