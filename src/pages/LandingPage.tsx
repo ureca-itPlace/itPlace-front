@@ -6,13 +6,14 @@ import MobileHeader from '../components/MobileHeader';
 const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
 const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
 // const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
-// const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
+const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
 // const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
 
 const Landingpage = () => {
+  const { isMobile, isTablet } = useResponsive();
   // 지구 로드 상태
   const [isLoaded, setIsLoaded] = useState(false);
-  const { isMobile, isTablet } = useResponsive();
+  const [videoEnded, setVideoEnded] = useState(false);
 
   // 새로 고침 시 최상단으로 이동
   useEffect(() => {
@@ -27,15 +28,15 @@ const Landingpage = () => {
       <EarthSection onLoaded={() => setIsLoaded(true)} />
 
       {/* 헤더 */}
-      {isLoaded && (isMobile && isTablet ? <MobileHeader /> : <Header variant="glass" />)}
+      {isLoaded && (isMobile || isTablet ? <MobileHeader /> : <Header variant="glass" />)}
       {/* 더미 박스 */}
-      <div className="h-[65vh] border-4 border-red-500" />
+      <div className="h-[65vh]" />
       {/* 지도 */}
       <MapSection />
-      {/* 더미 박스 */}
-      <div className="h-[100vh]" />
       {/* 기능 설명 */}
+      {/* <FeatureSection /> */}
       {/* 비디오 */}
+      <VideoSection setVideoEnded={setVideoEnded} />
       {/* CTA */}
     </div>
   );
