@@ -24,7 +24,6 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
     gsap.set(videoBoxRef.current, { clipPath: 'circle(0% at 50% 50%)' });
     gsap.set(rockRefs.current, { opacity: 0, rotate: 0 });
 
-    // 애니메이션 타임라인
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
@@ -36,6 +35,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
       },
     });
 
+    // 텍스트 등장
     tl.from(
       textRef.current,
       {
@@ -48,6 +48,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
       0
     );
 
+    // 텍스트 x축 이동
     tl.to(
       textRef.current,
       {
@@ -59,6 +60,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
       3.2
     );
 
+    // 암석 x축 이동
     tl.to(
       rockRefs.current,
       {
@@ -72,6 +74,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
       3.2
     );
 
+    // 보라색 원 & 비디오 마스크 등장
     tl.fromTo(
       [circleRef.current, videoBoxRef.current],
       { opacity: 0 },
@@ -79,7 +82,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
       9.3
     );
 
-    // 보라색 원 & 비디오 확대 애니메이션
+    // 보라색 원 & 비디오 확대
     tl.to(circleRef.current, { scale: 30, duration: 2, ease: 'none' }, 9.8).to(
       videoBoxRef.current,
       {
@@ -109,12 +112,16 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
         if (video) {
           video.pause();
           video.currentTime = 0;
-          hasPlayed = false; // ⬅️ 뒤로 갈 때 다시 재생 가능하게 초기화
+          hasPlayed = false;
         }
       },
     });
 
     ScrollTrigger.refresh();
+
+    return () => {
+      tl.kill();
+    };
   }, []);
 
   return (
