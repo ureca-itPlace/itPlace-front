@@ -218,12 +218,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           {activeTab === 'favorites' && (
             <>
               {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-6 max-md:mx-0">
+              <div className="mb-3 max-md:mx-0">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}
                   onCategorySelect={handleCategorySelect}
                   mode="sidebar"
+                  showNavigationButtons={true}
                 />
               </div>
 
