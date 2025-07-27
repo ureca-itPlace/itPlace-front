@@ -8,7 +8,7 @@ import { VideoSectionProps } from '../types/landing.types';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
+const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoBoxRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -18,7 +18,6 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
 
   useGSAP(() => {
     const video = videoRef.current;
-    let hasPlayed = false;
     // 초기 세팅
     gsap.set(circleRef.current, { scale: 0.5 });
     gsap.set(videoBoxRef.current, { clipPath: 'circle(0% at 50% 50%)' });
@@ -66,7 +65,7 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
       {
         opacity: 1,
         x: -300,
-        rotate: 180,
+        rotate: 270,
         duration: 6,
         ease: 'expo.out',
         stagger: 0.2,
@@ -97,22 +96,34 @@ const VideoSection = ({ setVideoEnded }: VideoSectionProps) => {
     ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
-      end: '+=2000', // timeline과 동일
+      end: '+=2000',
       scrub: true,
       onUpdate: (self) => {
-        if (!hasPlayed && self.progress >= 0.9) {
-          if (video && video.paused) {
-            video.play().catch(console.log);
-            setVideoEnded(false);
-            hasPlayed = true;
-          }
+        if (!video) return;
+        if (self.direction === 1 && !videoEnded && video.paused && self.progress >= 0.95) {
+          video.play().catch(console.log);
+        }
+
+        // 역방향으로 올라갈 때 영상 일시 정지
+        if (self.direction === -1 && !videoEnded && !video.paused) {
+          video.pause();
         }
       },
+
       onLeaveBack: () => {
+        // 위로 완전히 벗어나면 처음부터 시작
         if (video) {
           video.pause();
           video.currentTime = 0;
-          hasPlayed = false;
+        }
+        setVideoEnded(false);
+      },
+
+      onEnterBack: () => {
+        setVideoEnded(false);
+        // 다시 아래로 돌아오면 시작
+        if (video && video.paused) {
+          video.play().catch(console.log);
         }
       },
     });

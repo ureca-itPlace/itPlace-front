@@ -12,7 +12,8 @@ export interface VideoProps {
 }
 
 export interface VideoSectionProps {
-  setVideoEnded: React.Dispatch<React.SetStateAction<boolean>>;
+  videoEnded: boolean;
+  setVideoEnded: (ended: boolean) => void;
 }
 
 // 지구 섹션 타입 정의
