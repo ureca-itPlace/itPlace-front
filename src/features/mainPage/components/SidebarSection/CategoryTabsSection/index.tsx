@@ -1,5 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperType } from 'swiper';
 import { FreeMode } from 'swiper/modules';
 import { Category } from '../../../types';
 import { LAYOUT } from '../../../constants';
@@ -72,7 +73,7 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
   mode = 'map',
   showNavigationButtons = false,
 }) => {
-  const swiperRef = useRef<any>(null);
+  const swiperRef = useRef<SwiperType | null>(null);
   // 모드별 스타일 메모이제이션
   const styles = useMemo(() => {
     const isMapMode = mode === 'map';

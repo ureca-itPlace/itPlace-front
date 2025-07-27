@@ -257,13 +257,16 @@ const AuthLayout = () => {
       {/* 모바일 레이아웃 (max-md: ~767px) */}
       <div className="max-md:block hidden w-full h-screen relative fixed max-md:fixed max-md:inset-0 max-sm:block max-sm:fixed max-sm:inset-0">
         {/* 배경 SideCard - 전체 화면 */}
-        <div className="absolute top-0 left-0 w-full h-2/3">
+        <div className="absolute top-0 left-0 w-full h-1/2">
           <AuthSideCard />
         </div>
 
         {/* 하단에서 올라오는 오버레이 폼 카드 - 전체 너비 */}
         <div className="absolute bottom-0 left-0 w-full" style={{ bottom: '0rem' }}>
-          <div className="bg-white rounded-t-[24px] px-6 pt-8 pb-8 w-full shadow-2xl overflow-hidden">
+          <div
+            className="bg-white rounded-t-[24px] px-6 pt-8 pb-8 w-full shadow-2xl overflow-hidden"
+            style={{ minHeight: 'calc(50vh + 5rem)' }}
+          >
             {/* 로그인 */}
             {formStep === 'login' && (
               <LoginForm
