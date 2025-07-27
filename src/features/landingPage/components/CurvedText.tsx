@@ -36,9 +36,6 @@ const CurveText = forwardRef<Group, CurvedTextProps>(
               rotation={[0, -theta + Math.PI / 2, 0]} // 중심을 바라보도록 회전
               castShadow
               receiveShadow
-              material-toneMapped={false}
-              material-metalness={0.3}
-              material-roughness={0.2}
             >
               {char}
             </Text>
