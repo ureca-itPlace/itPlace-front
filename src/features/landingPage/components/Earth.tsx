@@ -111,7 +111,7 @@ const Model: React.FC<ModelProps> = ({ modelPath }) => {
     if (groupRef.current) {
       groupRef.current.rotation.y += 0.002;
     }
-    if (textRef.current) textRef.current.rotation.y -= 0.01;
+    if (textRef.current) textRef.current.rotation.y -= 0.015;
   });
 
   return (
