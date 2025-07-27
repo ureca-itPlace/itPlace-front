@@ -4,24 +4,27 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const useHeaderThemeObserver = (setTheme: (theme: string) => void) => {
+export const useHeaderThemeObserver = (setTheme: (theme: 'light' | 'dark') => void) => {
   useEffect(() => {
-    const sections = document.querySelectorAll('[data-theme]');
+    const sections = document.querySelectorAll<HTMLElement>('[data-theme]');
+    const triggers: ScrollTrigger[] = [];
 
     sections.forEach((section) => {
-      const theme = section.getAttribute('data-theme');
+      const theme = section.getAttribute('data-theme') as 'light' | 'dark';
 
-      ScrollTrigger.create({
+      const trigger = ScrollTrigger.create({
         trigger: section,
         start: 'top center',
         end: 'bottom center',
         onEnter: () => setTheme(theme || 'light'),
         onEnterBack: () => setTheme(theme || 'light'),
       });
+
+      triggers.push(trigger);
     });
 
     return () => {
-      ScrollTrigger.getAll().forEach((st) => st.kill());
+      triggers.forEach((t) => t.kill());
     };
   }, [setTheme]);
 };
