@@ -28,7 +28,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         trigger: sectionRef.current,
         start: 'top top',
         end: '+=2400',
-        scrub: 0.5,
+        scrub: 0.8,
         pin: true,
         anticipatePin: 1,
       },
@@ -99,7 +99,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       trigger: sectionRef.current,
       start: 'top top',
       end: '+=2000',
-      scrub: true,
+      scrub: 0.5,
       onUpdate: (self) => {
         if (!video) return;
         if (self.direction === 1 && !videoEnded && video.paused && self.progress >= 0.95) {

@@ -1,10 +1,11 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SplitText } from 'gsap/SplitText';
 import { useRef } from 'react';
 import { useResponsive } from '../../../hooks/useResponsive';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const MapSection = () => {
   const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -13,6 +14,8 @@ const MapSection = () => {
   const thirdMapImageRef = useRef<HTMLImageElement>(null);
   const fourthMapImageRef = useRef<HTMLImageElement>(null);
   const backgroundRef = useRef<HTMLImageElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
 
   const { isMobile, isTablet } = useResponsive();
 
@@ -46,19 +49,19 @@ const MapSection = () => {
       }
     );
 
-    const changeTl = gsap.timeline({
+    const mapTl = gsap.timeline({
       scrollTrigger: {
         trigger: mapSectionRef.current,
         start: 'top top',
-        end: '+=2500',
+        end: '+=3200',
         pin: true,
-        scrub: 0.3,
+        scrub: 0.8,
         anticipatePin: 1,
       },
     });
 
     // 첫 번째 이미지
-    changeTl
+    mapTl
       .to(
         firstMapImageRef.current,
         {
@@ -82,7 +85,7 @@ const MapSection = () => {
       );
 
     // 두 번째 이미지
-    changeTl
+    mapTl
       .to(
         secondMapImageRef.current,
         {
@@ -91,7 +94,7 @@ const MapSection = () => {
           duration: 1,
           ease: 'power1.out',
         },
-        '>-1'
+        '>-0.5'
       )
       .to(
         secondMapImageRef.current,
@@ -99,7 +102,7 @@ const MapSection = () => {
           scale: 2,
           x: 80,
           opacity: 0,
-          duration: 1.5,
+          duration: 4,
           ease: 'none',
           filter: 'blur(10px)',
         },
@@ -107,7 +110,7 @@ const MapSection = () => {
       );
 
     // 세 번째 이미지
-    changeTl
+    mapTl
       .to(
         thirdMapImageRef.current,
         {
@@ -116,7 +119,7 @@ const MapSection = () => {
           duration: 1,
           ease: 'power1.out',
         },
-        '>-1'
+        '>-0.5'
       )
       .to(
         thirdMapImageRef.current,
@@ -125,7 +128,7 @@ const MapSection = () => {
           x: xDistance,
           y: yDistance,
           opacity: 0,
-          duration: 1.5,
+          duration: 4,
           ease: 'none',
           filter: 'blur(10px)',
         },
@@ -133,7 +136,7 @@ const MapSection = () => {
       );
 
     // 네 번째 이미지
-    changeTl.to(
+    mapTl.to(
       fourthMapImageRef.current,
       {
         opacity: 1,
@@ -141,35 +144,79 @@ const MapSection = () => {
         duration: 1.5,
         ease: 'power1.out',
       },
-      '>-1'
+      '+=0.2'
     );
 
-    changeTl.to(
+    // 더미 시간
+    mapTl.to({}, { duration: 1 });
+
+    // 배경색 change
+    mapTl.to(
       backgroundRef.current,
       {
+        backgroundColor: 'black',
         opacity: 1,
-        duration: 1.5,
-        ease: 'power2.out',
       },
       '+=0.5'
     );
 
-    changeTl.to(
+    // 이미지 축소 및 오른쪽으로 이동
+    mapTl.to(
       fourthMapImageRef.current,
       {
-        scale: isMobile || isTablet ? 0.8 : 0.5,
-        x: isMobile || isTablet ? 0 : 300,
-        duration: 4,
-        ease: 'power4.Out',
+        scale: isMobile || isTablet ? 0.8 : 0.46,
+        x: isMobile || isTablet ? 0 : 400,
+        duration: 6,
+        ease: 'power1.Out',
       },
       '+=0.5'
     );
 
-    // // 다음 섹션 전 지연 시간
-    // changeTl.to({}, { duration: 1 });
+    // 텍스트 타이틀 애니메이션
+    const titleSplit = new SplitText(titleRef.current, {
+      type: 'chars',
+      charsClass: 'char',
+    });
+
+    mapTl.from(
+      titleSplit.chars,
+      {
+        xPercent: 100,
+        opacity: 0,
+        duration: 1.5,
+        ease: 'power1.out',
+        stagger: 0.035,
+        force3D: true,
+      },
+      '+=0.2'
+    );
+
+    // 텍스트 설명 애니메이션
+    const descSplit = new SplitText(descRef.current, {
+      type: 'lines',
+      linesClass: 'line',
+    });
+
+    mapTl.from(
+      descSplit.lines,
+      {
+        yPercent: 100,
+        opacity: 0,
+        duration: 3,
+        stagger: 0.1,
+        ease: 'power3.out',
+        force3D: true,
+      },
+      '+=0.2'
+    );
+
+    // 더미 시간
+    mapTl.to({}, { duration: 1 });
 
     return () => {
-      changeTl.kill();
+      mapTl.kill();
+      titleSplit.revert();
+      descSplit.revert();
     };
   }, [mapSectionRef]);
 
@@ -177,16 +224,11 @@ const MapSection = () => {
     <section
       data-theme="light"
       ref={mapSectionRef}
-      className="relative w-full h-screen flex justify-center items-center overflow-hidden bg-white"
+      className="relative w-full h-screen flex items-center overflow-hidden bg-white"
     >
       <div
         ref={backgroundRef}
         className="absolute inset-0 bg-cover bg-center z-0 transition-all duration-500"
-        style={{
-          backgroundImage: "url('')",
-          filter: 'blur(3px)',
-          opacity: 0,
-        }}
       />
       <div>
         <img
@@ -215,10 +257,14 @@ const MapSection = () => {
         />
       </div>
 
-      <div className="text-black">
-        <h1>제휴처 멤버십을 지도에서 한눈에!</h1>
-        <h4>
-          기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명기능설명
+      <div className="relative w-[40%] text-white flex flex-col ml-20 gap-20">
+        <h1 ref={titleRef} className="text-5xl font-bold">
+          제휴처 멤버십을 지도에서 한눈에!
+        </h1>
+        <h4 ref={descRef} className="text-3xl leading-loose">
+          내 주변 제휴처를 지도에서 한눈에 확인하고, 다양한 혜택 정보를 바로 비교할 수 있어요.
+          원하는 조건으로 필터링하고, 클릭 한 번으로 제휴처 상세 페이지로 이동할 수 있어요. 즐겨찾기
+          기능과 맞춤 추천으로 나에게 꼭 맞는 혜택을 더 쉽게 찾을 수 있어요.
         </h4>
       </div>
     </section>
