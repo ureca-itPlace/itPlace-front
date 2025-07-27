@@ -1,4 +1,4 @@
-import { TextureLoader } from 'three';
+import { SRGBColorSpace, TextureLoader } from 'three';
 import { Canvas, useLoader, useThree } from '@react-three/fiber';
 import { Environment, OrbitControls } from '@react-three/drei';
 import { Suspense, useEffect } from 'react';
@@ -9,6 +9,7 @@ const CanvasContainer = ({ onLoaded }: { onLoaded: () => void }) => {
   const BackgroundSetter = () => {
     const { scene } = useThree();
     const texture = useLoader(TextureLoader, '/images/landing/bg-earth.webp');
+    texture.colorSpace = SRGBColorSpace;
 
     useEffect(() => {
       scene.background = texture;
@@ -24,7 +25,6 @@ const CanvasContainer = ({ onLoaded }: { onLoaded: () => void }) => {
         <ambientLight intensity={0.5} color="#e0d5ff" />
         <directionalLight position={[5, 5, 5]} intensity={1} color="#b48bff" castShadow />
         <pointLight position={[-5, 0, 5]} intensity={0.8} color="#9b59b6" distance={20} />
-        {/* 우주 배경 */}
         <BackgroundSetter />
         <Environment preset="city" />
         <Suspense fallback={null}>
