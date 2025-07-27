@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import SidebarSection from '../SidebarSection';
 import MapSection from '../MapSection';
 import SearchSection from '../SidebarSection/SearchSection';
@@ -122,9 +122,18 @@ const MainPageLayout: React.FC = () => {
     setCurrentMapLevel(mapLevel);
   }, []);
 
+  // 마지막 검색어 추적 (중복 검색 방지용)
+  const lastSearchedKeywordRef = useRef<string>('');
+
   // 키워드 검색 핸들러 (AI 추천에서 reason과 함께 호출되는 경우 포함)
   const handleKeywordSearch = useCallback(
     (keyword: string, reason?: string) => {
+      // 동일한 검색어로 중복 검색 방지
+      if (keyword === lastSearchedKeywordRef.current && !reason) {
+        return;
+      }
+
+      lastSearchedKeywordRef.current = keyword;
       setSelectedPlatform(null); // 선택된 가맹점 초기화
       setFilteredPlatforms([]); // 검색 결과 초기화
       setSearchQuery(keyword); // 검색어 저장 (빈 문자열도 포함)
@@ -339,7 +348,7 @@ const MainPageLayout: React.FC = () => {
               <SearchSection
                 onSearchChange={(query) => setSearchQuery(query)}
                 onKeywordSearch={handleKeywordSearch}
-                initialQuery={searchQuery}
+                defaultValue={searchQuery}
               />
             }
           />

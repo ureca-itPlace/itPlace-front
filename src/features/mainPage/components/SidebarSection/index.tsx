@@ -184,7 +184,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               <SearchSection
                 onSearchChange={handleSearchChange}
                 onKeywordSearch={onKeywordSearch}
-                initialQuery={searchQuery}
+                defaultValue={searchQuery}
               />
             </div>
 
