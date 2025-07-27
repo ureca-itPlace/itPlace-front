@@ -77,7 +77,7 @@ const MapSection = () => {
         {
           scale: 1.4,
           opacity: 0,
-          duration: 1.5,
+          duration: 4,
           filter: 'blur(10px)',
           ease: 'none',
         },
@@ -128,7 +128,7 @@ const MapSection = () => {
           x: xDistance,
           y: yDistance,
           opacity: 0,
-          duration: 4,
+          duration: 6,
           ease: 'none',
           filter: 'blur(10px)',
         },
