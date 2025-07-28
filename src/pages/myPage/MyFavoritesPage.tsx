@@ -42,7 +42,7 @@ export default function MyFavoritesPage() {
   } = useFavorites(6);
 
   const userGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   return (
     <div className="flex flex-row gap-[28px] w-full h-full max-xlg:flex-col max-md:flex-col-reverse max-md:px-5 max-md:pb-7 max-md:pt-[20px]">

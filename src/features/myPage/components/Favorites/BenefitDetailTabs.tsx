@@ -87,7 +87,7 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
   // 🔹 모든등급
   if (allBenefit) {
     return (
-      <div className="w-full flex max-xlg:flex-row max-md:flex-col">
+      <div className="w-full flex flex-col max-xlg:flex-row max-md:flex-col">
         <div className="max-xlg:min-w-[210px] max-md:w-full">
           <LogoBox image={image} alt={name} />
           <div className="flex items-center justify-center h-[50px] rounded-[12px] bg-orange04 text-white text-center text-body-0 font-medium w-full mb-4 max-xl:h-[44px] max-xl:text-body-2">
@@ -106,7 +106,7 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
     const active = userGrade === 'VVIP' || userGrade === 'VIP';
     const vipContent = detail.tiers.find((b) => b.grade === 'VIP콕');
     return (
-      <div className="w-full flex max-xlg:flex-row max-md:flex-col">
+      <div className="w-full flex flex-col max-xlg:flex-row max-md:flex-col">
         <div className="max-xlg:min-w-[210px] max-md:w-full">
           <LogoBox image={image} alt={name} />
           <div
@@ -129,7 +129,7 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
   const content = detail.tiers.find((b) => b.grade === selectedGrade);
 
   return (
-    <div className="w-full flex max-xlg:flex-row max-md:flex-col">
+    <div className="w-full flex flex-col max-xlg:flex-row max-md:flex-col">
       <div className="max-xlg:min-w-[210px] max-md:w-full">
         <LogoBox image={image} alt={name} />
         <div className="flex w-full mb-4 bg-grey01 rounded-[12px] p-[4px] max-xlg:mb-0 max-md:mb-4">
