@@ -11,7 +11,6 @@ let isGlobalFavoritesLoading = false;
  * 카테고리별 즐겨찾기 조회 및 새로고침 기능 제공
  */
 export const useFavoritesList = (category?: string) => {
-  console.log('[useFavoritesList] 훅 생성 - category:', category);
   const { data: favorites, isLoading, error, execute } = useApiCall<FavoriteBenefit[]>([]);
 
   // 함수 참조를 ref로 저장 (의존성 배열 최적화)
@@ -25,7 +24,6 @@ export const useFavoritesList = (category?: string) => {
   const fetchFavorites = useCallback(async (selectedCategory?: string) => {
     // 전역 중복 호출 방지
     if (isGlobalFavoritesLoading) {
-      console.log('[useFavoritesList] 전역 로딩 중이라 스킵');
       return [];
     }
 
@@ -60,10 +58,8 @@ export const useFavoritesList = (category?: string) => {
 
   // 초기 로드만 (nearby 패턴과 동일)
   useEffect(() => {
-    console.log('[useFavoritesList] 초기 로드 useEffect 실행 - category:', categoryRef.current);
     const initializeFavorites = async () => {
       if (categoryRef.current !== undefined) {
-        console.log('[useFavoritesList] API 호출 시작 - 초기 로드');
         const data = await fetchFavoritesRef.current(categoryRef.current);
         return data;
       }
@@ -75,14 +71,7 @@ export const useFavoritesList = (category?: string) => {
 
   // 초기 로드 완료 감지 (nearby 패턴과 동일 - favorites 데이터가 로드된 후에 완료 처리)
   useEffect(() => {
-    console.log(
-      '[useFavoritesList] 완료 감지 useEffect - favorites:',
-      favorites?.length,
-      'isInitialLoad:',
-      isInitialLoad
-    );
     if (favorites && favorites.length >= 0 && isInitialLoad) {
-      console.log('[useFavoritesList] isInitialLoad를 false로 설정');
       setIsInitialLoad(false);
     }
   }, [favorites, isInitialLoad]);
@@ -90,30 +79,16 @@ export const useFavoritesList = (category?: string) => {
   // 카테고리 변경 시에만 실행 (초기 로드 제외)
   const previousCategoryRef = useRef<string | undefined>(undefined);
   useEffect(() => {
-    console.log(
-      '[useFavoritesList] 카테고리 변경 useEffect - category:',
-      category,
-      'previous:',
-      previousCategoryRef.current,
-      'isInitialLoadRef.current:',
-      isInitialLoadRef.current
-    );
-
     // 이전 값과 동일하면 스킵 (중복 호출 방지)
     if (previousCategoryRef.current === category) {
-      console.log('[useFavoritesList] 동일한 category로 스킵');
       return;
     }
 
     if (isInitialLoadRef.current || categoryRef.current === undefined) {
-      console.log(
-        '[useFavoritesList] 카테고리 변경 useEffect 스킵 - 초기 로드 중이거나 category가 undefined'
-      );
       previousCategoryRef.current = category;
       return;
     }
 
-    console.log('[useFavoritesList] API 호출 시작 - 카테고리 변경');
     previousCategoryRef.current = category;
 
     const reloadByCategory = async () => {
