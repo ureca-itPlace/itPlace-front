@@ -137,7 +137,7 @@ export default function MyHistoryPage() {
                 onChange={(e) => setKeyword(e.target.value)}
                 onClear={() => setKeyword('')}
                 backgroundColor="bg-grey01"
-                className="w-[280px] h-[50px] max-xl:max-w-[220px] max-xl:h-[44px] max-xlg:max-w-[180px] max-md:w-full max-md:mb-2"
+                className="w-[280px] h-[50px] max-xl:max-w-[220px] max-xl:h-[44px] max-xlg:max-w-[180px] max-md:max-w-none max-md:w-full max-md:mb-2"
               />
               <div className="flex gap-2 items-center justify-end">
                 <button
