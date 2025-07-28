@@ -60,11 +60,11 @@ export default function FavoritesAside({
         <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-xlg:text-left">
           선택한 혜택
         </h1>
-        <div className="flex flex-col items-center justify-center mt-7">
+        <div className="flex flex-col max-lg:flex-row items-center justify-center mt-7">
           <img
             src="/images/myPage/icon-file.webp"
             alt="폴더"
-            className="w-[185px] h-auto max-xl:w-[160px] max-xlg:w-[140px]"
+            className="w-[185px] h-auto max-xl:w-[160px] max-xlg:w-[140px] max-lg:w-[100px] max-lg:mr-6"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null; // 무한 루프 방지
