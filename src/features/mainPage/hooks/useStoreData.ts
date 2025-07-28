@@ -102,9 +102,13 @@ export const useStoreData = () => {
     }
   }, [userCoords, isInitialLoad]);
 
+  // isInitialLoad 참조를 ref로 저장 (의존성 배열 최적화)
+  const isInitialLoadRef = useRef(isInitialLoad);
+  isInitialLoadRef.current = isInitialLoad;
+
   // 카테고리나 맵레벨 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
-    if (isInitialLoad || !userCoordsRef.current) {
+    if (isInitialLoadRef.current || !userCoordsRef.current) {
       return; // 초기 로드 중이거나 좌표가 없으면 스킵
     }
 
@@ -121,7 +125,7 @@ export const useStoreData = () => {
     };
 
     executeRef.current(reloadByCategory);
-  }, [selectedCategory, currentMapLevelInHook, isInitialLoad]);
+  }, [selectedCategory, currentMapLevelInHook]);
 
   /**
    * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
