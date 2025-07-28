@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getBenefitDetail } from '../../../api/benefitDetail';
 import { Platform } from '../../../types';
 import { BenefitDetailResponse } from '../../../types/api';
@@ -18,12 +18,17 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   const [detailData, setDetailData] = useState<BenefitDetailResponse | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
+  // platform 참조를 ref로 저장 (의존성 배열 최적화)
+  const platformRef = useRef(platform);
+  platformRef.current = platform;
+
   const fetchDetail = useCallback(async () => {
     const category = activeTab === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT';
     try {
+      const currentPlatform = platformRef.current;
       const res = await getBenefitDetail({
-        storeId: platform.storeId,
-        partnerId: platform.partnerId,
+        storeId: currentPlatform.storeId,
+        partnerId: currentPlatform.partnerId,
         mainCategory: category,
       });
 
@@ -37,7 +42,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       console.error('상세 혜택 API 호출 실패:', e);
       setDetailData(null);
     }
-  }, [activeTab, platform.storeId, platform.partnerId]);
+  }, [activeTab]);
 
   useEffect(() => {
     fetchDetail();

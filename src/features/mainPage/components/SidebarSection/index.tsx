@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
@@ -61,10 +61,16 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     activeTab === 'favorites' ? selectedCategory : undefined
   );
 
+  // API 호출 중복 방지를 위한 ref
+  const isLoadingRecommendationsRef = useRef(false);
+
   // AI 추천 데이터 로드
   useEffect(() => {
-    if (activeTab === 'ai') {
+    if (activeTab === 'ai' && !isLoadingRecommendationsRef.current) {
       const fetchRecommendations = async () => {
+        if (isLoadingRecommendationsRef.current) return; // 중복 호출 방지
+
+        isLoadingRecommendationsRef.current = true;
         setIsRecommendationsLoading(true);
         setRecommendationsError(null);
         try {
@@ -81,6 +87,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           setRecommendationsError(errorMessage);
         } finally {
           setIsRecommendationsLoading(false);
+          isLoadingRecommendationsRef.current = false;
         }
       };
 
