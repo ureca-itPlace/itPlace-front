@@ -255,7 +255,7 @@ const AuthLayout = () => {
       </Modal>
 
       {/* 모바일 레이아웃 (max-md: ~767px) */}
-      <div className="max-md:block hidden w-full h-screen relative fixed max-md:fixed max-md:inset-0 max-sm:block max-sm:fixed max-sm:inset-0">
+      <div className="max-md:block hidden w-full h-screen fixed max-md:fixed max-md:inset-0 max-sm:block max-sm:fixed max-sm:inset-0">
         {/* 배경 SideCard - 전체 화면 */}
         <div className="absolute top-0 left-0 w-full h-2/3">
           <AuthSideCard />
