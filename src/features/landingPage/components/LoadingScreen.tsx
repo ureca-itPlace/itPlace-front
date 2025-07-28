@@ -3,8 +3,13 @@ import { gsap } from 'gsap';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { useResponsive } from '../../../hooks/useResponsive';
+import { disableScroll, enableScroll } from '../../../utils/scrollLock';
 
-const LoadingScreen = () => {
+interface LoadingScreenProps {
+  onFinish: () => void;
+}
+
+const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
   const { progress, active } = useProgress();
   const [isVisible, setIsVisible] = useState(true);
 
@@ -18,16 +23,13 @@ const LoadingScreen = () => {
 
   useEffect(() => {
     if (isVisible) {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
+      disableScroll();
     } else {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
+      enableScroll();
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
+      enableScroll();
     };
   }, [isVisible]);
 
@@ -43,13 +45,14 @@ const LoadingScreen = () => {
             if (bgRef.current) {
               bgRef.current.style.display = 'none';
             }
+            onFinish(); // 로딩 종료
           },
         });
-      }, 5000);
+      }, 4000);
 
       return () => clearTimeout(timeout);
     }
-  }, [active, progress]);
+  }, [active, progress, onFinish]);
 
   useGSAP(
     () => {

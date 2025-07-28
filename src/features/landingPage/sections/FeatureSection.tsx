@@ -1,148 +1,182 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { useRef, useState } from 'react';
-import { featureData } from '../data/featuresData.ts';
+import { SplitText } from 'gsap/SplitText';
+import { ScrollSmoother } from 'gsap/ScrollSmoother';
+import { useRef } from 'react';
+import CustomCursor from '../components/CustomCursor';
 
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+gsap.registerPlugin(SplitText, ScrollSmoother);
 
 const FeatureSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const featureCardRefs = useRef<HTMLLIElement[]>([]);
-  const menuLinksRef = useRef<HTMLDivElement[]>([]); // `a` 태그 대신 div로 설정
-
-  const [activeIdx, setActiveIdx] = useState(0);
-
-  // 현재 카드 설정
-  const setCardRef = (el: HTMLLIElement | null, index: number) => {
-    if (el) featureCardRefs.current[index] = el;
-  };
-
-  // 현재 기능 메뉴 설정
-  const setMenuLinkRef = (el: HTMLDivElement | null, index: number) => {
-    if (el) menuLinksRef.current[index] = el;
-  };
+  const featureSectionRef = useRef<HTMLDivElement>(null);
+  const titleRefs = useRef<HTMLHeadingElement[]>([]);
+  const descRefs = useRef<HTMLParagraphElement[]>([]);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useGSAP(() => {
-    if (!sectionRef.current) return;
+    const titleSplits: SplitText[] = [];
+    const descSplits: SplitText[] = [];
 
-    // 기능 카드 초기 설정
-    featureCardRefs.current.forEach((el, idx) => {
-      if (!el) return;
-      gsap.set(el, {
-        y: idx === 0 ? '0%' : '100%',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        zIndex: featureData.length - idx,
-      });
-    });
-
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        id: 'feature-scroll',
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: `+=${featureData.length * 600}`,
-        scrub: 0.2,
-        pin: true,
-        anticipatePin: 1,
-        onUpdate: (self) => {
-          const scroll = self.scroll();
-          const step = (self.end - self.start) / (featureData.length - 1);
-          const idx = Math.round((scroll - self.start) / step);
-          setActiveMenu(idx);
+    document.fonts.ready.then(() => {
+      // ScrollTrigger 타임라인
+      const featureTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: featureSectionRef.current,
+          start: 'top 150%',
+          end: 'bottom top',
+          scrub: 0.8,
         },
-      },
-    });
+      });
 
-    featureData.forEach((_, idx) => {
-      if (idx > 0) {
-        tl.to(featureCardRefs.current[idx], { y: '0%', duration: 0.5, ease: 'none' }, idx * 1);
-        tl.to(
-          featureCardRefs.current[idx - 1],
-          { y: '-100%', duration: 0.5, ease: 'none' },
-          idx * 1
+      // 텍스트 애니메이션
+      let currentTime = 0;
+
+      titleRefs.current.forEach((titleEl, i) => {
+        const descEl = descRefs.current[i];
+        if (!titleEl || !descEl) return;
+
+        const titleSplit = new SplitText(titleEl, {
+          type: 'chars',
+          charsClass: 'char',
+        });
+        titleSplits.push(titleSplit);
+
+        const descSplit = new SplitText(descEl, {
+          type: 'lines',
+          linesClass: 'line',
+        });
+        descSplits.push(descSplit);
+
+        // 타이틀 애니메이션
+        featureTl.from(
+          titleSplit.chars,
+          {
+            xPercent: 100,
+            opacity: 0,
+            duration: 1.5,
+            ease: 'power1.out',
+            stagger: 0.03,
+            force3D: true,
+          },
+          currentTime
         );
-      } else {
-        tl.set({}, { onStart: () => setActiveMenu(0) });
-      }
 
-      // 카드가 화면의 중간에 올 때마다 메뉴 항목의 active 상태 변경
-      ScrollTrigger.create({
-        trigger: featureCardRefs.current[idx],
-        start: 'top center', // 화면의 중간에 도달할 때
-        end: 'bottom center', // 끝까지
-        onEnter: () => setActiveMenu(idx),
-        onLeaveBack: () => setActiveMenu(-1), // 카드가 다시 지나가면 active 상태를 리셋
+        // 설명 애니메이션
+        featureTl.from(
+          descSplit.lines,
+          {
+            yPercent: 100,
+            opacity: 0,
+            duration: 1.5,
+            ease: 'power3.out',
+            stagger: 0.1,
+            force3D: true,
+          },
+          currentTime + 0.3
+        );
+
+        currentTime += 0.7;
       });
     });
+
+    return () => {
+      titleSplits.forEach((split) => split.revert());
+      descSplits.forEach((split) => split.revert());
+    };
   }, []);
 
-  const setActiveMenu = (index: number) => {
-    setActiveIdx(index);
-    menuLinksRef.current.forEach((link, i) => {
-      if (link) {
-        link.classList.toggle('active', i === index);
-      }
-    });
-  };
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative w-full h-screen bg-[#000000] flex items-center overflow-hidden max-lg:flex-col max-lg:items-start"
-    >
-      <div className="z-30 h-full">
-        <div className="relative h-full w-[43dvw] z-30 overflow-hidden pl-36 max-lg:px-5 max-lg:w-full max-lg:items-center">
-          <ul className="h-full w-full flex flex-col text-[64px] justify-between py-24 whitespace-nowrap text-white max-lg:flex-row max-lg:pb-16 max-lg:gap-14 max-sm:gap-6 max-sm:pt-10 max-sm:pb-6 max-sm:text-title-4">
-            {featureData.map((feature, idx) => (
-              <li key={idx}>
-                <div
-                  ref={(el) => setMenuLinkRef(el, idx)}
-                  className={`${
-                    activeIdx === idx ? 'active text-purple04 font-bold' : 'text-white'
-                  }`}
-                >
-                  {feature.title}
-                </div>
-              </li>
-            ))}
-          </ul>
+    <div data-theme="dark" ref={featureSectionRef} className="h-[270vh] bg-[#000000]">
+      <div className="h-[90vh] flex justify-center items-center">
+        <div className="w-1/2 h-full flex justify-center items-center pr-3">
+          <img
+            ref={imgRef}
+            src="/images/landing/map-4.webp"
+            alt="기능설명1"
+            className="h-[95%] w-auto object-contain"
+          />
+        </div>
+        <div className="relative w-[40%] text-white flex flex-col ml-12 gap-20">
+          <h1
+            ref={(el) => {
+              if (el) titleRefs.current[0] = el;
+            }}
+            className="text-5xl font-bold [&_.char]:inline-block"
+          >
+            제휴처 멤버십을 지도에서 한눈에!
+          </h1>
+          <h4
+            ref={(el) => {
+              if (el) descRefs.current[0] = el;
+            }}
+            className="text-3xl leading-loose"
+          >
+            내 주변 제휴처를 지도에서 한눈에 확인하고, 다양한 혜택 정보를 바로 비교할 수 있어요.
+            원하는 조건으로 필터링하고, 클릭 한 번으로 제휴처 상세 페이지로 이동할 수 있어요.
+            즐겨찾기 기능과 맞춤 추천으로 나에게 꼭 맞는 혜택을 더 쉽게 찾을 수 있어요.
+          </h4>
         </div>
       </div>
-
-      <div className="h-[100dvh] flex-1 relative">
-        <ul className="relative w-full h-full">
-          {featureData.map((feature, idx) => (
-            <li
-              key={idx}
-              id={`feature${idx + 1}`}
-              ref={(el) => setCardRef(el, idx)}
-              className={`w-full h-full flex flex-col justify-center items-center ${
-                idx % 2 === 0 ? 'bg-gray-400' : 'bg-white'
-              }`}
-            >
-              <div className="flex items-center justify-center mb-20 mt-24 w-[88%] h-[476px] max-sm:h-[158px] max-sm:mb-16">
-                <img
-                  src={feature.image || '/images/landing/landing-feature-1.png'}
-                  alt={`기능소개${idx + 1}`}
-                  loading="lazy"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div className="flex flex-col gap-10 ml-16 mr-20 max-sm:mx-5 max-sm:gap-6 max-lg:items-center">
-                <h1 className="text-title-1 max-sm:text-title-5 text-black">{feature.title}</h1>
-                <h4 className="text-2xl leading-loose font-light pb-20 max-sm:text-body-0 max-sm:text-center text-black">
-                  {feature.description}
-                </h4>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <div className="h-[90vh] flex justify-center items-center">
+        <div className="relative w-[40%] text-white flex flex-col mr-12 gap-20">
+          <h1
+            ref={(el) => {
+              if (el) titleRefs.current[1] = el;
+            }}
+            className="text-5xl font-bold [&_.char]:inline-block"
+          >
+            제휴처 멤버십을 지도에서 한눈에!
+          </h1>
+          <h4
+            ref={(el) => {
+              if (el) descRefs.current[1] = el;
+            }}
+            className="text-3xl leading-loose"
+          >
+            내 주변 제휴처를 지도에서 한눈에 확인하고, 다양한 혜택 정보를 바로 비교할 수 있어요.
+            원하는 조건으로 필터링하고, 클릭 한 번으로 제휴처 상세 페이지로 이동할 수 있어요.
+            즐겨찾기 기능과 맞춤 추천으로 나에게 꼭 맞는 혜택을 더 쉽게 찾을 수 있어요.
+          </h4>
+        </div>
+        <div className="w-1/2 h-full flex justify-center items-center pl-3">
+          <img
+            src="/images/landing/map-4.webp"
+            alt="기능설명2"
+            className="h-full w-auto object-contain"
+          />
+        </div>
       </div>
-    </section>
+      <div className="h-[90vh] flex justify-center items-center">
+        <div className="w-1/2 h-full flex justify-center items-center pr-3">
+          <img
+            src="/images/landing/map-4.webp"
+            alt="기능설명3"
+            className="h-full w-auto object-contain "
+          />
+        </div>
+        <div className="relative w-[40%] text-white flex flex-col ml-12 gap-20">
+          <h1
+            ref={(el) => {
+              if (el) titleRefs.current[2] = el;
+            }}
+            className="text-5xl font-bold [&_.char]:inline-block"
+          >
+            제휴처 멤버십을 지도에서 한눈에!
+          </h1>
+          <h4
+            ref={(el) => {
+              if (el) descRefs.current[2] = el;
+            }}
+            className="text-3xl leading-loose"
+          >
+            내 주변 제휴처를 지도에서 한눈에 확인하고, 다양한 혜택 정보를 바로 비교할 수 있어요.
+            원하는 조건으로 필터링하고, 클릭 한 번으로 제휴처 상세 페이지로 이동할 수 있어요.
+            즐겨찾기 기능과 맞춤 추천으로 나에게 꼭 맞는 혜택을 더 쉽게 찾을 수 있어요.
+          </h4>
+        </div>
+      </div>
+      <CustomCursor />
+    </div>
   );
 };
 
