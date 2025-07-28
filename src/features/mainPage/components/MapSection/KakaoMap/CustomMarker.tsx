@@ -62,12 +62,12 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ imageUrl, name, isSelected 
         </div>
       </div>
 
-      {/* ✅ 선택된 경우 토끼 이미지 (filter 적용 안됨) */}
+      {/* ✅ 선택된 경우 별 이미지 (filter 적용 안됨) */}
       {isSelected && (
         <img
-          src="/images/landing/cta-rabbit.webp"
-          alt="토끼"
-          className="absolute -left-14 top-0.5 -translate-y-1/2 w-14"
+          src="/images/star.png"
+          alt="맵 마커"
+          className="absolute -left-2 -top-1 -translate-y-1/2 w-14"
         />
       )}
     </div>
