@@ -11,9 +11,9 @@ export const getBenefitDetail = async (
   if (isGlobalBenefitDetailLoading) {
     throw new Error('Duplicate request prevented');
   }
-  
+
   isGlobalBenefitDetailLoading = true;
-  
+
   try {
     const response = await api.get('/api/v1/benefit/map-detail', {
       params: {

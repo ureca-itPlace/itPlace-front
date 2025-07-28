@@ -12,7 +12,7 @@ export const getRecommendations = async (): Promise<RecommendationResponse> => {
   if (isGlobalRecommendationsLoading) {
     return { data: [] };
   }
-  
+
   isGlobalRecommendationsLoading = true;
   try {
     const response = await api.get('/api/v1/recommendations');

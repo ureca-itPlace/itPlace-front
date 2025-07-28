@@ -24,10 +24,14 @@ const StoreDetailHeader: React.FC<StoreDetailHeaderProps> = ({ platform, onClose
           {platform.imageUrl ? (
             <img src={platform.imageUrl} alt="로고" className="w-full h-full object-contain " />
           ) : (
-            <span className="text-purple04 text-title-5 max-md:text-title-6">{platform.name.charAt(0)}</span>
+            <span className="text-purple04 text-title-5 max-md:text-title-6">
+              {platform.name.charAt(0)}
+            </span>
           )}
         </div>
-        <h2 className="text-title-5 text-grey06 mt-3 max-md:text-title-6 max-md:mt-2">{platform.name}</h2>
+        <h2 className="text-title-5 text-grey06 mt-3 max-md:text-title-6 max-md:mt-2">
+          {platform.name}
+        </h2>
       </div>
     </>
   );
