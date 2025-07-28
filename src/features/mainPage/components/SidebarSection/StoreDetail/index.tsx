@@ -22,10 +22,21 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   const platformRef = useRef(platform);
   platformRef.current = platform;
 
+  // 중복 호출 방지를 위한 ref (다른 API들과 동일한 패턴)
+  const lastFetchParamsRef = useRef<string>('');
+
   const fetchDetail = useCallback(async () => {
     const category = activeTab === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT';
+    const currentPlatform = platformRef.current;
+
+    // 중복 호출 방지: 같은 파라미터로 이미 호출했으면 스킵
+    const currentParams = `${currentPlatform.storeId}-${currentPlatform.partnerId}-${category}`;
+    if (lastFetchParamsRef.current === currentParams) {
+      return;
+    }
+    lastFetchParamsRef.current = currentParams;
+
     try {
-      const currentPlatform = platformRef.current;
       const res = await getBenefitDetail({
         storeId: currentPlatform.storeId,
         partnerId: currentPlatform.partnerId,

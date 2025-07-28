@@ -34,9 +34,13 @@ export const useFavoritesList = (category?: string) => {
   const fetchFavoritesRef = useRef(fetchFavorites);
   fetchFavoritesRef.current = fetchFavorites;
 
+  // 카테고리 중복 호출 방지를 위한 ref
+  const lastCategoryRef = useRef<string | undefined>(undefined);
+
   // 카테고리 변경 시 즐겨찾기 목록 재로드
   useEffect(() => {
-    if (category !== undefined) {
+    if (category !== undefined && category !== lastCategoryRef.current) {
+      lastCategoryRef.current = category;
       executeRef.current(() => fetchFavoritesRef.current(category));
     }
   }, [category]);

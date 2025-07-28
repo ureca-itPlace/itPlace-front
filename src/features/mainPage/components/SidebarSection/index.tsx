@@ -61,14 +61,14 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     activeTab === 'favorites' ? selectedCategory : undefined
   );
 
-  // AI 추천 초기 로드 상태 관리 (nearby 방식과 동일)
-  const [isInitialRecommendationsLoad, setIsInitialRecommendationsLoad] = useState(true);
-  const isInitialRecommendationsLoadRef = useRef(isInitialRecommendationsLoad);
-  isInitialRecommendationsLoadRef.current = isInitialRecommendationsLoad;
+  // AI 추천 중복 호출 방지를 위한 ref (favorites 방식과 동일)
+  const lastActiveTabRef = useRef<string>('');
 
-  // AI 추천 데이터 로드 (activeTab이 'ai'일 때만 한 번 실행)
+  // AI 추천 데이터 로드
   useEffect(() => {
-    if (activeTab === 'ai') {
+    if (activeTab === 'ai' && lastActiveTabRef.current !== 'ai') {
+      lastActiveTabRef.current = 'ai';
+
       const fetchRecommendations = async () => {
         setIsRecommendationsLoading(true);
         setRecommendationsError(null);
@@ -89,20 +89,9 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         }
       };
 
-      // 첫 번째 로드에서만 실행
-      if (isInitialRecommendationsLoadRef.current) {
-        setIsInitialRecommendationsLoad(false);
-        fetchRecommendations();
-      }
+      fetchRecommendations();
     }
   }, [activeTab]);
-
-  // 초기 로드 완료 감지 (nearby 방식과 동일)
-  useEffect(() => {
-    if (activeTab === 'ai' && isInitialRecommendationsLoad) {
-      setIsInitialRecommendationsLoad(false);
-    }
-  }, [activeTab, isInitialRecommendationsLoad]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
