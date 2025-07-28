@@ -18,9 +18,6 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   const [detailData, setDetailData] = useState<BenefitDetailResponse | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
-  // 중복 호출 방지
-  const isLoadingRef = useRef(false);
-
   // platform 참조를 ref로 저장 (의존성 배열 최적화)
   const platformRef = useRef(platform);
   platformRef.current = platform;
@@ -31,17 +28,10 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   isInitialLoadRef.current = isInitialLoad;
 
   const fetchDetail = useCallback(async () => {
-    // 중복 호출 방지
-    if (isLoadingRef.current) {
-      return;
-    }
-
-    isLoadingRef.current = true;
+    const category = activeTab === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT';
+    const currentPlatform = platformRef.current;
 
     try {
-      const category = activeTab === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT';
-      const currentPlatform = platformRef.current;
-
       const res = await getBenefitDetail({
         storeId: currentPlatform.storeId,
         partnerId: currentPlatform.partnerId,
@@ -55,10 +45,12 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         setIsFavorite(res.data.isFavorite);
       }
     } catch (e) {
+      // 중복 호출 방지 에러는 무시
+      if (e instanceof Error && e.message === 'Duplicate request prevented') {
+        return;
+      }
       console.error('상세 혜택 API 호출 실패:', e);
       setDetailData(null);
-    } finally {
-      isLoadingRef.current = false;
     }
   }, [activeTab]);
 
