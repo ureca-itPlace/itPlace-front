@@ -5,29 +5,45 @@ import { useRef } from 'react';
 import PurpleCircle from '../components/PurpleCircle';
 import Video from '../components/Video';
 import { VideoSectionProps } from '../types/landing.types';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
+  const { isMobile, isTablet } = useResponsive();
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoBoxRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const circleRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLHeadingElement>(null);
-  const rockRefs = useRef<HTMLImageElement[]>([]);
+  const textRefs = useRef<HTMLHeadingElement[]>([]);
+  const h1Ref = useRef<HTMLHeadingElement>(null);
+
+  const texts = [
+    <>
+      LET'S <span className="custom-font text-purple04">EXPLORE</span>
+      <span className="align-text-top">🌍</span>TOGETHER
+    </>,
+    <>
+      FIND<span className="align-text-top">⭐</span>YOUR{' '}
+      <span className="custom-font inline-block text-purple04 border-4 px-10">MEMBERSHIP</span>
+    </>,
+    <>
+      <span className="custom-font text-purple04">BENEFITS</span> AROUND YOU
+      <span className="align-text-top">🐰</span>
+    </>,
+  ];
 
   useGSAP(() => {
     const video = videoRef.current;
     // 초기 세팅
     gsap.set(circleRef.current, { scale: 0.5 });
     gsap.set(videoBoxRef.current, { clipPath: 'circle(0% at 50% 50%)' });
-    gsap.set(rockRefs.current, { opacity: 0, rotate: 0 });
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=2400',
+        end: '+=2600',
         scrub: 0.8,
         pin: true,
         anticipatePin: 1,
@@ -35,52 +51,37 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     });
 
     // 텍스트 등장
-    tl.from(
-      textRef.current,
-      {
-        opacity: 0,
-        y: 80,
-        duration: 2,
-        ease: 'power2.out',
-        delay: 1,
-      },
-      0
-    );
+    tl.from(textRefs.current, {
+      opacity: 0,
+      y: 80,
+      duration: 2,
+      ease: 'power2.out',
+      delay: 1,
+      stagger: 0.2,
+    });
 
-    // 텍스트 x축 이동
-    tl.to(
-      textRef.current,
-      {
-        x: -2000,
-        skewX: 20,
-        duration: 8,
-        ease: 'power1.out',
-      },
-      3.2
-    );
+    // 텍스트 X축 개별 이동
+    textRefs.current.forEach((el, idx) => {
+      tl.to(
+        el,
+        {
+          x: idx % 2 === 0 ? (isMobile ? 1800 : 2400) : -(isMobile ? 2400 : 3000),
+          skewX: idx % 2 === 0 ? -20 : 20,
+          duration: 7,
+          ease: 'power1.out',
+        },
+        3.2 + idx * 0.2
+      );
+    });
 
-    // 암석 x축 이동
-    tl.to(
-      rockRefs.current,
-      {
-        opacity: 1,
-        x: -420,
-        rotate: 250,
-        duration: 10,
-        ease: 'expo.out',
-        stagger: 0.2,
-      },
-      3.2
-    );
-
-    tl.to({}, { duration: 1 });
+    tl.to(h1Ref.current, { color: 'white', duration: 2 }, 9.7);
 
     // 보라색 원 & 비디오 마스크 등장
     tl.fromTo(
       [circleRef.current, videoBoxRef.current],
       { opacity: 0 },
-      { opacity: 1, duration: 0.5, ease: 'power2.out' },
-      11.3
+      { opacity: 1, duration: 1, ease: 'power2.out' },
+      11
     );
 
     // 보라색 원 & 비디오 확대
@@ -91,7 +92,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         duration: 3,
         ease: 'none',
       },
-      12
+      12.1
     );
 
     // 비디오 재생 트리거
@@ -141,39 +142,26 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     <section
       data-theme="dark"
       ref={sectionRef}
-      className="relative w-full h-screen bg-[#000000] text-white flex items-center justify-center overflow-hidden"
+      className="relative w-full min-h-[100vh] bg-[#000000] text-white flex items-center justify-center overflow-hidden"
     >
       <Video ref={videoRef} videoBoxRef={videoBoxRef} onVideoEnd={() => setVideoEnded(true)} />
       <PurpleCircle ref={circleRef} />
-      <div className="absolute left-32 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
-        <h1 ref={textRef} className="relative custom-font text-[35vh] whitespace-nowrap">
-          LET'S EXPLORE TOGETHER
-        </h1>
-        <img
-          ref={(el) => {
-            if (el) rockRefs.current[0] = el;
-          }}
-          src="/images/landing/rock-1.webp"
-          alt="rock1"
-          className="absolute w-48 h-48 left-6 top-[-5%]"
-        />
-        <img
-          ref={(el) => {
-            if (el) rockRefs.current[1] = el;
-          }}
-          src="/images/landing/rock-2.webp"
-          alt="rock2"
-          className="absolute w-48 h-48 left-1/4 top-2/3"
-        />
-        <img
-          ref={(el) => {
-            if (el) rockRefs.current[2] = el;
-          }}
-          src="/images/landing/rock-3.webp"
-          alt="rock3"
-          className="absolute w-48 h-48 right-[45%] top-1/3"
-        />
+      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 pointer-events-none">
+        {texts.map((text, i) => (
+          <h1
+            key={i}
+            ref={(el) => {
+              if (el) textRefs.current[i] = el;
+            }}
+            className="relative custom-font pl-4 text-[22vh] whitespace-nowrap"
+          >
+            {text}
+          </h1>
+        ))}
       </div>
+      <h1 ref={h1Ref} className="custom-font text-center text-6xl px-4 text-[#000000]">
+        ARE YOU READY?
+      </h1>
     </section>
   );
 };
