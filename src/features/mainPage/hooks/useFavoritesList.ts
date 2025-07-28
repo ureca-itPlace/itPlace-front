@@ -73,21 +73,34 @@ export const useFavoritesList = (category?: string) => {
   }, [favorites, isInitialLoad]);
 
   // 카테고리 변경 시에만 실행 (초기 로드 제외)
+  const previousCategoryRef = useRef<string | undefined>(undefined);
   useEffect(() => {
     console.log(
       '[useFavoritesList] 카테고리 변경 useEffect - category:',
       category,
+      'previous:',
+      previousCategoryRef.current,
       'isInitialLoadRef.current:',
       isInitialLoadRef.current
     );
+
+    // 이전 값과 동일하면 스킵 (중복 호출 방지)
+    if (previousCategoryRef.current === category) {
+      console.log('[useFavoritesList] 동일한 category로 스킵');
+      return;
+    }
+
     if (isInitialLoadRef.current || categoryRef.current === undefined) {
       console.log(
         '[useFavoritesList] 카테고리 변경 useEffect 스킵 - 초기 로드 중이거나 category가 undefined'
       );
+      previousCategoryRef.current = category;
       return;
     }
 
     console.log('[useFavoritesList] API 호출 시작 - 카테고리 변경');
+    previousCategoryRef.current = category;
+
     const reloadByCategory = async () => {
       const data = await fetchFavoritesRef.current(categoryRef.current!);
       return data;
