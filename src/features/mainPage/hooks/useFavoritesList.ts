@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { FavoriteBenefit, FavoritesListRequest } from '../types/api';
 import { getFavoritesList } from '../api/favoritesListApi';
 import { useApiCall } from './useApiCall';
@@ -9,6 +9,10 @@ import { useApiCall } from './useApiCall';
  */
 export const useFavoritesList = (category?: string) => {
   const { data: favorites, isLoading, error, execute } = useApiCall<FavoriteBenefit[]>([]);
+
+  // 함수 참조를 ref로 저장 (의존성 배열 최적화)
+  const executeRef = useRef(execute);
+  executeRef.current = execute;
 
   /**
    * 즐겨찾기 목록 조회
@@ -29,18 +33,18 @@ export const useFavoritesList = (category?: string) => {
   // 카테고리 변경 시 즐겨찾기 목록 재로드
   useEffect(() => {
     if (category !== undefined) {
-      execute(() => fetchFavorites(category));
+      executeRef.current(() => fetchFavorites(category));
     }
-  }, [category, execute, fetchFavorites]);
+  }, [category, fetchFavorites]);
 
   /**
    * 즐겨찾기 목록 새로고침
    */
   const refreshFavorites = useCallback(() => {
     if (category !== undefined) {
-      execute(() => fetchFavorites(category));
+      executeRef.current(() => fetchFavorites(category));
     }
-  }, [category, execute, fetchFavorites]);
+  }, [category, fetchFavorites]);
 
   return {
     favorites: favorites || [], // null 방어

@@ -63,10 +63,15 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   // API 호출 중복 방지를 위한 ref
   const isLoadingRecommendationsRef = useRef(false);
+  const hasLoadedRecommendationsRef = useRef(false);
 
   // AI 추천 데이터 로드
   useEffect(() => {
-    if (activeTab === 'ai' && !isLoadingRecommendationsRef.current) {
+    if (
+      activeTab === 'ai' &&
+      !isLoadingRecommendationsRef.current &&
+      !hasLoadedRecommendationsRef.current
+    ) {
       const fetchRecommendations = async () => {
         if (isLoadingRecommendationsRef.current) return; // 중복 호출 방지
 
@@ -76,6 +81,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         try {
           const response = await getRecommendations();
           setRecommendations(response.data);
+          hasLoadedRecommendationsRef.current = true; // 로드 완료 표시
         } catch (error) {
           console.error('AI 추천 데이터 로드 실패:', error);
           // API 에러 메시지를 그대로 전달
