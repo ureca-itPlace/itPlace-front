@@ -31,3 +31,10 @@ export const getBenefitDetail = async (
     isGlobalBenefitDetailLoading = false;
   }
 };
+
+export const submitUsageAmount = (benefitId: number, amount: number) => {
+  return api.post('/benefit/usage', {
+    benefitId,
+    amount,
+  });
+};

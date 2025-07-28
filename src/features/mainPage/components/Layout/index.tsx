@@ -473,6 +473,7 @@ const MainPageLayout: React.FC = () => {
                 onKeywordSearch={handleKeywordSearch}
                 searchQuery={searchQuery}
                 onMapCenterMove={handleMapCenterMove}
+                onBenefitDetailRequest={handleBenefitDetailRequest}
               />
             </div>
           </div>

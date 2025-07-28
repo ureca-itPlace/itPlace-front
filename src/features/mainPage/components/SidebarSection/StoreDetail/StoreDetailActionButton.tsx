@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { TbHeart, TbHeartFilled } from 'react-icons/tb';
 import { RootState } from '../../../../../store';
 import { addFavorite, removeFavorite } from '../../../api/favoriteApi';
+import { submitUsageAmount } from '../../../api/benefitDetail';
 import { showToast } from '../../../../../utils/toast';
 import Modal from '../../../../../components/Modal';
 
@@ -82,17 +83,35 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     return isFavorite ? '관심 혜택 삭제' : '관심 혜택 추가';
   };
 
-  const handleUsageAmountSubmit = () => {
+  const handleUsageAmountSubmit = async () => {
     if (!usageAmount.trim()) {
       showToast('사용 금액을 입력해주세요.', 'error');
       return;
     }
 
-    // TODO: 사용 금액 제출 API 호출
-    showToast(`${partnerName}에서 ${usageAmount}원 사용 내역이 등록되었습니다.`, 'success');
+    if (!benefitId) {
+      showToast('혜택 ID가 없습니다.', 'error');
+      return;
+    }
 
-    setUsageAmount('');
-    setIsModalOpen(false);
+    try {
+      // API 호출
+      const response = await submitUsageAmount(parseInt(benefitId), parseInt(usageAmount));
+
+      // 서버에서 message 필드가 온다고 가정
+      if (response?.data?.message) {
+        showToast(response.data.message, 'success');
+      } else {
+        showToast('사용 내역이 등록되었습니다.', 'success');
+      }
+
+      // 입력값 초기화 & 모달 닫기
+      setUsageAmount('');
+      setIsModalOpen(false);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || '사용 내역 등록에 실패했습니다.';
+      showToast(errorMessage, 'error');
+    }
   };
 
   const getButtonClass = () => {
