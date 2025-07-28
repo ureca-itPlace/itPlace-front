@@ -19,7 +19,7 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
   return (
     <div className="relative">
       {/* 말풍선 본체 */}
-      <div className="bg-white border-2 border-purple04 rounded-[20px] px-5 py-4 relative max-md:px-3 max-md:py-3 max-md:rounded-[15px]">
+      <div className="bg-white border-2 border-purple04 rounded-[20px] w-[420px] max-md:w-[280px] px-5 py-4 relative max-md:px-3 max-md:py-3 max-md:rounded-[15px]">
         {/* 제목과 닫기 버튼 */}
         <div className="flex justify-between items-start mb-2 max-md:mb-1.5">
           <p className="text-body-2 text-black font-bold flex-1 pr-2 whitespace-nowrap max-md:text-body-3 max-md:whitespace-normal max-md:pr-1">
@@ -37,9 +37,7 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
         </div>
 
         {/* 메시지 텍스트 */}
-        <p className="text-body-3 text-black pr-2 max-w-[325px] max-md:text-body-4 max-md:max-w-[280px] max-md:pr-1">
-          {message}
-        </p>
+        <p className="text-body-3 text-black pr-2 max-md:text-body-4 max-md:pr-1">{message}</p>
       </div>
 
       {/* 말풍선 꼬리 - 회전된 사각형 */}

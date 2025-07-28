@@ -32,6 +32,7 @@ interface SidebarSectionProps {
   onKeywordSearch?: (keyword: string, reason?: string) => void;
   searchQuery?: string;
   onMapCenterMove?: (latitude: number, longitude: number) => void;
+  onBenefitDetailRequest?: (benefitIds: number[]) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -47,6 +48,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onKeywordSearch,
   searchQuery,
   onMapCenterMove,
+  onBenefitDetailRequest,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -286,6 +288,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                 }}
                 isLoading={isRecommendationsLoading}
                 error={recommendationsError}
+                onBenefitDetailRequest={onBenefitDetailRequest}
               />
             </div>
           )}
