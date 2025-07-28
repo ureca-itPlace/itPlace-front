@@ -87,14 +87,14 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
   // 🔹 모든등급
   if (allBenefit) {
     return (
-      <div className="w-full flex flex-col max-xlg:flex-row max-md:flex-col">
-        <div className="max-xlg:min-w-[210px] max-md:w-full">
+      <div className="w-full flex flex-col max-lg:flex-row max-md:flex-col">
+        <div className="max-lg:min-w-[210px] max-md:w-full">
           <LogoBox image={image} alt={name} />
           <div className="flex items-center justify-center h-[50px] rounded-[12px] bg-orange04 text-white text-center text-body-0 font-medium w-full mb-4 max-xl:h-[44px] max-xl:text-body-2">
             모든 등급
           </div>
         </div>
-        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2 max-xlg:ml-3 max-xlg:mt-0 max-md:ml-0 max-md:mt-4">
+        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2 max-lg:ml-3 max-lg:mt-0 max-md:ml-0 max-md:mt-4">
           {allBenefit.context}
         </p>
       </div>
@@ -106,8 +106,8 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
     const active = userGrade === 'VVIP' || userGrade === 'VIP';
     const vipContent = detail.tiers.find((b) => b.grade === 'VIP콕');
     return (
-      <div className="w-full flex flex-col max-xlg:flex-row max-md:flex-col">
-        <div className="max-xlg:min-w-[210px] max-md:w-full">
+      <div className="w-full flex flex-col max-lg:flex-row max-md:flex-col">
+        <div className="max-lg:min-w-[210px] max-md:w-full">
           <LogoBox image={image} alt={name} />
           <div
             className={`flex items-center justify-center h-[50px] rounded-[12px] text-body-0 text-center font-medium mb-4 w-full max-xl:h-[44px] max-xl:text-body-2 ${
@@ -117,7 +117,7 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
             VIP콕
           </div>
         </div>
-        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2 max-xlg:ml-3 max-xlg:mt-0 max-md:ml-0 max-md:mt-4">
+        <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2 max-lg:ml-3 max-lg:mt-0 max-md:ml-0 max-md:mt-4">
           {vipContent?.context}
         </p>
       </div>
@@ -129,10 +129,10 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
   const content = detail.tiers.find((b) => b.grade === selectedGrade);
 
   return (
-    <div className="w-full flex flex-col max-xlg:flex-row max-md:flex-col">
-      <div className="max-xlg:min-w-[210px] max-md:w-full">
+    <div className="w-full flex flex-col max-lg:flex-row max-md:flex-col">
+      <div className="max-lg:min-w-[210px] max-md:w-full">
         <LogoBox image={image} alt={name} />
-        <div className="flex w-full mb-4 bg-grey01 rounded-[12px] p-[4px] max-xlg:mb-0 max-md:mb-4">
+        <div className="flex w-full mb-4 bg-grey01 rounded-[12px] p-[4px] max-lg:mb-0 max-md:mb-4">
           {gradeTabs.map((g) => (
             <button
               key={g}
@@ -148,7 +148,7 @@ export default function BenefitDetailTabs({ benefitId, image, name, userGrade }:
           ))}
         </div>
       </div>
-      <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2 max-xlg:ml-3 max-xlg:mt-0 max-md:ml-0 max-md:mt-4">
+      <p className="mt-4 whitespace-pre-line text-body-0 text-grey05 max-xl:text-body-2 max-lg:ml-3 max-lg:mt-0 max-md:ml-0 max-md:mt-4">
         {content?.context}
       </p>
     </div>

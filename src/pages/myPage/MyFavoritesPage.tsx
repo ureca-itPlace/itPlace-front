@@ -45,7 +45,7 @@ export default function MyFavoritesPage() {
   const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   return (
-    <div className="flex flex-row gap-[28px] w-full h-full max-xlg:flex-col max-md:flex-col-reverse max-md:px-5 max-md:pb-7 max-md:pt-[20px]">
+    <div className="flex flex-row gap-[28px] w-full h-full max-lg:flex-col max-md:flex-col-reverse max-md:px-5 max-md:pb-7 max-md:pt-[20px]">
       <MyPageContentLayout
         // ✨ MainContent 영역
 
@@ -62,7 +62,7 @@ export default function MyFavoritesPage() {
               <BenefitFilterToggle
                 value={benefitFilter}
                 onChange={setBenefitFilter}
-                width="w-[300px] max-xl:w-[175px] max-xlg:w-[220px] max-md:w-full"
+                width="w-[300px] max-xl:w-[175px] max-xlg:w-[180px] max-md:w-full"
                 fontSize="text-title-7 max-xl:text-body-3"
               />
               <SearchBar

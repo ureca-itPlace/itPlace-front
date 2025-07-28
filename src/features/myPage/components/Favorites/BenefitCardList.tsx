@@ -38,7 +38,7 @@ export default function BenefitCardList({
   };
 
   return (
-    <div className="grid grid-cols-3 gap-x-10 gap-y-5 min-h-[520px] max-xl:min-h-[300px] max-xl:gap-x-5 max-lg:gap-x-3 max-md:grid-cols-2">
+    <div className="grid grid-cols-3 gap-x-10 gap-y-5 min-h-[520px] max-xl:min-h-[300px] max-xl:gap-x-5 max-xlg:gap-x-3 max-xlg:grid-cols-2">
       {items.map((item) => (
         <div
           key={item.benefitId}
