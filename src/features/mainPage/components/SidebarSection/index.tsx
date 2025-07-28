@@ -96,8 +96,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   // AI 추천 초기 로드만 (nearby 패턴과 동일)
   useEffect(() => {
+    console.log('[SidebarSection] 초기 로드 useEffect - activeTab:', activeTabRef.current);
     const initializeRecommendations = () => {
       if (activeTabRef.current === 'ai') {
+        console.log('[SidebarSection] AI 추천 API 호출 시작 - 초기 로드');
         fetchRecommendationsRef.current();
       }
     };
@@ -114,9 +116,17 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   // activeTab 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
+    console.log(
+      '[SidebarSection] activeTab 변경 useEffect - activeTab:',
+      activeTab,
+      'isInitialLoad:',
+      isInitialRecommendationsLoadRef.current
+    );
     if (isInitialRecommendationsLoadRef.current || activeTabRef.current !== 'ai') {
+      console.log('[SidebarSection] activeTab 변경 useEffect 스킵');
       return;
     }
+    console.log('[SidebarSection] AI 추천 API 호출 시작 - activeTab 변경');
     fetchRecommendationsRef.current();
   }, [activeTab]);
 

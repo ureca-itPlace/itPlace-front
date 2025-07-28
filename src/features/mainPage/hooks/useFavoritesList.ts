@@ -45,8 +45,10 @@ export const useFavoritesList = (category?: string) => {
 
   // 초기 로드만 (nearby 패턴과 동일)
   useEffect(() => {
+    console.log('[useFavoritesList] 초기 로드 useEffect 실행 - category:', categoryRef.current);
     const initializeFavorites = async () => {
       if (categoryRef.current !== undefined) {
+        console.log('[useFavoritesList] API 호출 시작 - 초기 로드');
         const data = await fetchFavoritesRef.current(categoryRef.current);
         return data;
       }
@@ -58,17 +60,34 @@ export const useFavoritesList = (category?: string) => {
 
   // 초기 로드 완료 감지 (nearby 패턴과 동일 - favorites 데이터가 로드된 후에 완료 처리)
   useEffect(() => {
+    console.log(
+      '[useFavoritesList] 완료 감지 useEffect - favorites:',
+      favorites?.length,
+      'isInitialLoad:',
+      isInitialLoad
+    );
     if (favorites && favorites.length >= 0 && isInitialLoad) {
+      console.log('[useFavoritesList] isInitialLoad를 false로 설정');
       setIsInitialLoad(false);
     }
   }, [favorites, isInitialLoad]);
 
   // 카테고리 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
+    console.log(
+      '[useFavoritesList] 카테고리 변경 useEffect - category:',
+      category,
+      'isInitialLoadRef.current:',
+      isInitialLoadRef.current
+    );
     if (isInitialLoadRef.current || categoryRef.current === undefined) {
+      console.log(
+        '[useFavoritesList] 카테고리 변경 useEffect 스킵 - 초기 로드 중이거나 category가 undefined'
+      );
       return;
     }
 
+    console.log('[useFavoritesList] API 호출 시작 - 카테고리 변경');
     const reloadByCategory = async () => {
       const data = await fetchFavoritesRef.current(categoryRef.current!);
       return data;
