@@ -103,10 +103,6 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
           setActiveTab={setActiveTab}
           detailData={detailData}
         />
-        {/* 임시 디버깅 */}
-        <div className="max-md:block hidden text-xs bg-blue-100 p-2">
-          StoreDetailCard에서 전달하는 detailData: {detailData ? 'exists' : 'null'}
-        </div>
       </div>
 
       {/* 스크롤 영역 - 이용 방법만 */}
