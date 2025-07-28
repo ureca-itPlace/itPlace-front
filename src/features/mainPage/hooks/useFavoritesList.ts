@@ -3,11 +3,15 @@ import { FavoriteBenefit, FavoritesListRequest } from '../types/api';
 import { getFavoritesList } from '../api/favoritesListApi';
 import { useApiCall } from './useApiCall';
 
+// 전역 중복 호출 방지
+let isGlobalFavoritesLoading = false;
+
 /**
  * 즐겨찾기 목록 관리 훅
  * 카테고리별 즐겨찾기 조회 및 새로고침 기능 제공
  */
 export const useFavoritesList = (category?: string) => {
+  console.log('[useFavoritesList] 훅 생성 - category:', category);
   const { data: favorites, isLoading, error, execute } = useApiCall<FavoriteBenefit[]>([]);
 
   // 함수 참조를 ref로 저장 (의존성 배열 최적화)
@@ -19,15 +23,26 @@ export const useFavoritesList = (category?: string) => {
    * 카테고리가 '전체'이거나 비어있으면 전체 조회, 그 외에는 카테고리별 조회
    */
   const fetchFavorites = useCallback(async (selectedCategory?: string) => {
-    const params: FavoritesListRequest = {};
-
-    // 카테고리 필터링 설정
-    if (selectedCategory && selectedCategory !== '전체') {
-      params.category = selectedCategory;
+    // 전역 중복 호출 방지
+    if (isGlobalFavoritesLoading) {
+      console.log('[useFavoritesList] 전역 로딩 중이라 스킵');
+      return [];
     }
 
-    const data = await getFavoritesList(params);
-    return data;
+    isGlobalFavoritesLoading = true;
+    try {
+      const params: FavoritesListRequest = {};
+
+      // 카테고리 필터링 설정
+      if (selectedCategory && selectedCategory !== '전체') {
+        params.category = selectedCategory;
+      }
+
+      const data = await getFavoritesList(params);
+      return data;
+    } finally {
+      isGlobalFavoritesLoading = false;
+    }
   }, []);
 
   // fetchFavorites 참조를 ref로 저장 (의존성 배열 최적화)

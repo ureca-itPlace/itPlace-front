@@ -57,6 +57,12 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const [recommendationsError, setRecommendationsError] = useState<string | null>(null);
 
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
+  console.log(
+    '[SidebarSection] useFavoritesList 호출 - activeTab:',
+    activeTab,
+    'selectedCategory:',
+    selectedCategory
+  );
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
     activeTab === 'favorites' ? selectedCategory : undefined
   );
