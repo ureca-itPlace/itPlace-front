@@ -63,12 +63,12 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
     initializeDetail();
   }, []); // 빈 의존성 배열로 초기 로드만
 
-  // 초기 로드 완료 감지
+  // 초기 로드 완료 감지 (nearby 패턴과 동일 - detailData가 로드된 후에 완료 처리)
   useEffect(() => {
-    if (isInitialLoad) {
+    if (detailData !== null && isInitialLoad) {
       setIsInitialLoad(false);
     }
-  }, [isInitialLoad]);
+  }, [detailData, isInitialLoad]);
 
   // activeTab 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {

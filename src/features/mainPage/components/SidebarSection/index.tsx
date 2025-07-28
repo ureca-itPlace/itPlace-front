@@ -105,12 +105,12 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     initializeRecommendations();
   }, []); // 빈 의존성 배열로 초기 로드만
 
-  // 초기 로드 완료 감지
+  // 초기 로드 완료 감지 (nearby 패턴과 동일 - recommendations 데이터가 로드된 후에 완료 처리)
   useEffect(() => {
-    if (activeTab === 'ai' && isInitialRecommendationsLoad) {
+    if (recommendations && recommendations.length >= 0 && isInitialRecommendationsLoad) {
       setIsInitialRecommendationsLoad(false);
     }
-  }, [activeTab, isInitialRecommendationsLoad]);
+  }, [recommendations, isInitialRecommendationsLoad]);
 
   // activeTab 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {

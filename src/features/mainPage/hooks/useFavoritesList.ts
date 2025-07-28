@@ -56,12 +56,12 @@ export const useFavoritesList = (category?: string) => {
     executeRef.current(initializeFavorites);
   }, []); // 빈 의존성 배열로 초기 로드만
 
-  // 초기 로드 완료 감지
+  // 초기 로드 완료 감지 (nearby 패턴과 동일 - favorites 데이터가 로드된 후에 완료 처리)
   useEffect(() => {
-    if (category !== undefined && isInitialLoad) {
+    if (favorites && favorites.length >= 0 && isInitialLoad) {
       setIsInitialLoad(false);
     }
-  }, [category, isInitialLoad]);
+  }, [favorites, isInitialLoad]);
 
   // 카테고리 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
