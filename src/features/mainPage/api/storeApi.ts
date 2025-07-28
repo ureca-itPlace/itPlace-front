@@ -49,7 +49,6 @@ export const searchStores = async (params: SearchStoresParams): Promise<StoreApi
     params: {
       lat: params.lat,
       lng: params.lng,
-      radiusMeters: params.radiusMeters,
       category: params.category,
       keyword: params.keyword,
     },
