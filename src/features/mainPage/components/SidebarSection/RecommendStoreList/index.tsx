@@ -11,6 +11,7 @@ interface RecommendStoreListProps {
   onItemClick: (store: RecommendationItem) => void;
   isLoading?: boolean;
   error?: string | null;
+  onBenefitDetailRequest?: (benefitIds: number[]) => void;
 }
 
 const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
@@ -18,6 +19,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   onItemClick,
   isLoading = false,
   error = null,
+  onBenefitDetailRequest,
 }) => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
 
@@ -198,30 +200,51 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       ) : (
         <div className="space-y-3 max-md:space-y-3 px-5 max-md:px-4 max-sm:px-3">
           {stores.map((store) => (
-            <div
-              key={`${store.partnerName}-${store.rank}`}
-              onClick={() => onItemClick(store)}
-              className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[64px] max-md:px-3 max-sm:h-[64px] max-sm:px-2"
-            >
-              {/* 왼쪽 이미지 */}
-              <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
-                <img
-                  src={store.imgUrl || '/mainPage/RecommendDefault.png'}
-                  alt={`${store.partnerName} 로고`}
-                  className="w-full h-full object-contain"
-                />
-              </div>
+            <div key={`${store.partnerName}-${store.rank}`} className="relative">
+              <div
+                onClick={() => {
+                  console.log(
+                    '추천 항목 클릭:',
+                    store.partnerName,
+                    'benefitIds:',
+                    store.benefitIds
+                  );
 
-              {/* 중앙: 이름 */}
-              <div className="flex-1">
-                <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
-                  {store.partnerName}
-                </span>
-              </div>
+                  // 항상 SpeechBubble 표시
+                  onItemClick(store);
 
-              {/* 오른쪽: 뱃지 */}
-              <div className={getBadgeClass(store.rank)}>
-                <span>{store.rank}위</span>
+                  // benefitIds가 있으면 추가로 카드도 표시 (테스트용 임시 데이터)
+                  if (store.benefitIds && store.benefitIds.length > 0) {
+                    console.log('실제 benefitIds 사용:', store.benefitIds);
+                    onBenefitDetailRequest?.(store.benefitIds);
+                  } else {
+                    // 테스트용 임시 benefitIds 추가
+                    console.log('테스트용 benefitIds 사용: [30]');
+                    onBenefitDetailRequest?.([30]);
+                  }
+                }}
+                className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[64px] max-md:px-3 max-sm:h-[64px] max-sm:px-2"
+              >
+                {/* 왼쪽 이미지 */}
+                <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
+                  <img
+                    src={store.imgUrl || '/mainPage/RecommendDefault.png'}
+                    alt={`${store.partnerName} 로고`}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+
+                {/* 중앙: 이름 */}
+                <div className="flex-1">
+                  <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
+                    {store.partnerName}
+                  </span>
+                </div>
+
+                {/* 오른쪽: 뱃지 */}
+                <div className={getBadgeClass(store.rank)}>
+                  <span>{store.rank}위</span>
+                </div>
               </div>
             </div>
           ))}

@@ -3,6 +3,7 @@ import SidebarSection from '../SidebarSection';
 import MapSection from '../MapSection';
 import SearchSection from '../SidebarSection/SearchSection';
 import SpeechBubble from '../SidebarSection/RecommendStoreList/SpeechBubble';
+import BenefitDetailCard from '../SidebarSection/RecommendStoreList/BenefitDetailCard';
 import MobileHeader from '../../../../components/MobileHeader';
 import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
@@ -35,6 +36,15 @@ const MainPageLayout: React.FC = () => {
     isVisible: false,
     message: '',
     partnerName: '',
+  });
+
+  // 혜택 상세 카드 상태
+  const [benefitDetailCard, setBenefitDetailCard] = useState<{
+    isVisible: boolean;
+    benefitIds: number[];
+  }>({
+    isVisible: false,
+    benefitIds: [],
   });
 
   // 지도 관련 상태
@@ -167,6 +177,21 @@ const MainPageLayout: React.FC = () => {
     });
   }, []);
 
+  // 혜택 상세 카드 핸들러
+  const handleBenefitDetailRequest = useCallback((benefitIds: number[]) => {
+    setBenefitDetailCard({
+      isVisible: true,
+      benefitIds,
+    });
+  }, []);
+
+  const handleBenefitDetailCardClose = useCallback(() => {
+    setBenefitDetailCard({
+      isVisible: false,
+      benefitIds: [],
+    });
+  }, []);
+
   // 바텀시트 드래그 핸들러
 
   // 상태 추가
@@ -291,6 +316,7 @@ const MainPageLayout: React.FC = () => {
             onKeywordSearch={handleKeywordSearch}
             searchQuery={searchQuery}
             onMapCenterMove={handleMapCenterMove}
+            onBenefitDetailRequest={handleBenefitDetailRequest}
           />
         </div>
 
@@ -333,6 +359,24 @@ const MainPageLayout: React.FC = () => {
             style={{ width: '190px', height: '190px' }}
           />
         </div>
+
+        {/* 혜택 상세 카드 - 말풍선 위쪽에 위치 */}
+        {benefitDetailCard.isVisible && (
+          <div
+            className="absolute z-30"
+            style={{
+              left: '500px',
+              bottom: '320px', // 말풍선보다 위쪽
+              transform: 'translateX(-20%)',
+              width: '410px',
+            }}
+          >
+            <BenefitDetailCard
+              benefitIds={benefitDetailCard.benefitIds}
+              onClose={handleBenefitDetailCardClose}
+            />
+          </div>
+        )}
 
         {/* 말풍선 - 캐릭터 위에 위치 */}
         <div

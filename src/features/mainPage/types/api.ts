@@ -144,4 +144,5 @@ export interface RecommendationItem {
   partnerName: string;
   reason: string;
   imgUrl?: string;
+  benefitIds?: number[];
 }
