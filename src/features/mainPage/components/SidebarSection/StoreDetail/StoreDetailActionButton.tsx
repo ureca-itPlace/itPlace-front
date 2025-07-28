@@ -1,21 +1,27 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { TbHeart, TbHeartFilled } from 'react-icons/tb';
 import { RootState } from '../../../../../store';
 import { addFavorite, removeFavorite } from '../../../api/favoriteApi';
 import { showToast } from '../../../../../utils/toast';
+import Modal from '../../../../../components/Modal';
 
 interface StoreDetailActionButtonProps {
   benefitId?: string;
   isFavorite: boolean;
   onFavoriteChange: (newIsFavorite: boolean) => void;
+  partnerName?: string;
 }
 
 const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   benefitId,
   isFavorite,
   onFavoriteChange,
+  partnerName = 'GS25',
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [usageAmount, setUsageAmount] = useState('');
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   const handleFavoriteToggle = async () => {
@@ -76,6 +82,19 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     return isFavorite ? '관심 혜택 삭제' : '관심 혜택 추가';
   };
 
+  const handleUsageAmountSubmit = () => {
+    if (!usageAmount.trim()) {
+      showToast('사용 금액을 입력해주세요.', 'error');
+      return;
+    }
+
+    // TODO: 사용 금액 제출 API 호출
+    showToast(`${partnerName}에서 ${usageAmount}원 사용 내역이 등록되었습니다.`, 'success');
+
+    setUsageAmount('');
+    setIsModalOpen(false);
+  };
+
   const getButtonClass = () => {
     const baseClass =
       'w-full py-3 text-body-2-bold rounded-[10px] transition-colors duration-200 max-md:py-2.5 max-md:text-body-3-bold max-md:rounded-[8px]';
@@ -89,13 +108,83 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   };
 
   return (
-    <button
-      className={getButtonClass()}
-      onClick={handleFavoriteToggle}
-      disabled={!isLoggedIn || !benefitId || isLoading}
-    >
-      {getButtonText()}
-    </button>
+    <>
+      {/* 데스크톱 버전 - 기존 버튼 */}
+      <button
+        className={`${getButtonClass()} md:block hidden`}
+        onClick={handleFavoriteToggle}
+        disabled={!isLoggedIn || !benefitId || isLoading}
+      >
+        {getButtonText()}
+      </button>
+
+      {/* 모바일 버전 - 하트 + 사용 금액 입력하기 버튼 */}
+      <div className="md:hidden flex gap-2">
+        {/* 하트 버튼 */}
+        <button
+          className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-colors ${
+            isFavorite ? 'border-purple04 bg-purple04/10' : 'border-grey03 bg-white'
+          }`}
+          onClick={handleFavoriteToggle}
+          disabled={!isLoggedIn || !benefitId || isLoading}
+        >
+          {isFavorite ? (
+            <TbHeartFilled className="w-5 h-5 text-purple04" />
+          ) : (
+            <TbHeart className="w-5 h-5 text-grey03" />
+          )}
+        </button>
+
+        {/* 사용 금액 입력하기 버튼 */}
+        <button
+          className="flex-1 py-3 bg-purple04 hover:bg-purple05 text-white text-body-3-bold rounded-lg transition-colors"
+          onClick={() => setIsModalOpen(true)}
+        >
+          사용 금액 입력하기
+        </button>
+      </div>
+
+      {/* 사용 금액 입력 모달 */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="w-full max-w-[320px] -mx-10">
+          <h2 className="text-title-7 font-bold mb-6 text-center">
+            <span className="text-purple04">{partnerName}</span> 에서 사용한 금액을 입력해주세요.
+          </h2>
+
+          <div className="mb-6">
+            <div className="flex items-center">
+              <input
+                type="number"
+                value={usageAmount}
+                onChange={(e) => setUsageAmount(e.target.value)}
+                placeholder="금액 입력"
+                className="flex-1 py-2 border border-grey03 rounded-[10px] focus:border-purple04 focus:outline-none text-center placeholder:text-center"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              className="flex-1 px-5 py-2 border border-grey02 text-grey02 hover:border-grey04 hover:text-grey04 rounded-lg font-medium transition-colors"
+              onClick={() => setIsModalOpen(false)}
+            >
+              취소
+            </button>
+            <button
+              className={`flex-1 px-5 py-2 rounded-lg font-medium transition-colors ${
+                usageAmount.trim()
+                  ? 'bg-purple04 text-white hover:bg-purple05'
+                  : 'bg-grey02 text-white cursor-not-allowed'
+              }`}
+              onClick={handleUsageAmountSubmit}
+              disabled={!usageAmount.trim()}
+            >
+              등록
+            </button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
 };
 

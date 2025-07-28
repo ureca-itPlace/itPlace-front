@@ -36,13 +36,20 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
         fontSize="text-title-7"
       />
 
-      <div className={`${detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}>
-        <h3 className="text-title-6 text-grey06 mb-2 max-md:text-title-7 max-md:mb-1.5">상세 혜택</h3>
+      <div
+        className={`${detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}
+      >
+        <h3 className="text-title-6 text-grey06 mb-2 max-md:text-title-7 max-md:mb-1.5">
+          상세 혜택
+        </h3>
 
         {detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? (
           <div className="space-y-1 max-md:space-y-0.5">
             {detailData.data.tierBenefits.map((b, i) => (
-              <div key={i} className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5">
+              <div
+                key={i}
+                className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5"
+              >
                 <TbCheck size={20} className="text-grey04 max-md:w-4 max-md:h-4" />
                 <span
                   className={`text-body-3 max-md:text-body-4 ${

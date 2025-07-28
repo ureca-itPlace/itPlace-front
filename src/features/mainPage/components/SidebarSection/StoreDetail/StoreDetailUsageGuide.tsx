@@ -1,6 +1,5 @@
 import React from 'react';
 import { BenefitDetailResponse } from '../../../types/api';
-import NoResult from '../../../../../components/NoResult';
 
 interface StoreDetailUsageGuideProps {
   detailData: BenefitDetailResponse | null;

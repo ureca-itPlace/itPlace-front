@@ -22,8 +22,12 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
           <div className="flex flex-col min-w-0">
             <span className="text-grey06 max-md:text-body-5">{roadAddress}</span>
             <div className="flex gap-14 mt-1 max-md:gap-8 max-md:mt-0.5">
-              {postCode && <span className="text-grey05 text-body-5 max-md:text-body-6">(우) {postCode}</span>}
-              {address && <span className="text-grey05 text-body-5 max-md:text-body-6">(지) {address}</span>}
+              {postCode && (
+                <span className="text-grey05 text-body-5 max-md:text-body-6">(우) {postCode}</span>
+              )}
+              {address && (
+                <span className="text-grey05 text-body-5 max-md:text-body-6">(지) {address}</span>
+              )}
             </div>
           </div>
         </div>
