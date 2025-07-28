@@ -79,7 +79,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
           {/* 왼쪽: 가맹점 정보 2줄 */}
           <div className="flex flex-col">
             {/* 1줄: 가맹점명 + 카테고리 */}
-            <div className="flex items-center gap-4 mb-2 max-md:gap-3 max-md:mb-1.5">
+            <div className="flex items-center gap-4 mb-2 truncate max-md:gap-3 max-md:mb-1.5">
               <span className="text-title-7 font-bold text-grey06 max-md:text-body-1-bold">
                 {platform.name}
               </span>

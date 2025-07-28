@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperType } from 'swiper';
 import { FreeMode } from 'swiper/modules';
 import { Category } from '../../../types';
 import { LAYOUT } from '../../../constants';
@@ -12,6 +13,8 @@ import {
   TbBook,
   TbPlane,
   TbBuildingCarousel,
+  TbChevronLeft,
+  TbChevronRight,
 } from 'react-icons/tb';
 import 'swiper/swiper-bundle.css';
 
@@ -22,6 +25,7 @@ interface CategoryTabsSectionProps {
   selectedCategory: string;
   onCategorySelect: (categoryId: string) => void;
   mode?: CategoryTabsMode;
+  showNavigationButtons?: boolean;
 }
 
 // 카테고리 색상 매핑
@@ -67,7 +71,9 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
   selectedCategory,
   onCategorySelect,
   mode = 'map',
+  showNavigationButtons = false,
 }) => {
+  const swiperRef = useRef<SwiperType | null>(null);
   // 모드별 스타일 메모이제이션
   const styles = useMemo(() => {
     const isMapMode = mode === 'map';
@@ -84,55 +90,93 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
     };
   }, [mode]);
 
+  const handlePrevSlide = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  };
+
+  const handleNextSlide = () => {
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  };
+
   // 모든 모드에서 스와이퍼 사용
   return (
-    <div
-      className={
-        mode === 'map'
-          ? 'px-0 pt-2 pb-2 h-20 max-md:h-14 max-md:pt-1 max-md:pb-1 max-sm:h-12 max-sm:pt-0.5 max-sm:pb-0.5'
-          : 'px-2 h-15 max-md:h-12 max-md:px-1 max-sm:h-10 max-sm:px-0.5 max-md:w-auto max-md:overflow-visible max-md:mx-4 max-sm:mx-3'
-      }
-    >
-      <Swiper
-        modules={[FreeMode]}
-        spaceBetween={
-          mode === 'sidebar'
-            ? window.innerWidth < 640
-              ? 12
-              : window.innerWidth < 768
-                ? 14
-                : 8
-            : window.innerWidth < 640
-              ? 6
-              : window.innerWidth < 768
-                ? 8
-                : 12
+    <div className="relative">
+      <div
+        className={
+          mode === 'map'
+            ? 'px-0 pt-2 pb-2 h-20 max-md:h-14 max-md:pt-1 max-md:pb-1 max-sm:h-12 max-sm:pt-0.5 max-sm:pb-0.5'
+            : 'px-2 h-15 max-md:h-12 max-md:px-1 max-sm:h-10 max-sm:px-0.5 max-md:w-auto max-md:overflow-visible max-md:mx-4 max-sm:mx-3'
         }
-        slidesPerView="auto"
-        freeMode={true}
-        grabCursor={true}
-        className={`category-tabs-swiper ${mode === 'map' ? 'h-16 max-md:h-12 max-sm:h-10' : 'h-14 max-md:h-10 max-sm:h-8'}`}
       >
-        {categories.map((category) => (
-          <SwiperSlide key={category.id} style={{ width: 'auto' }}>
-            <button
-              onClick={() => onCategorySelect(category.id)}
-              className={`${styles.button} ${
-                selectedCategory === category.id
-                  ? 'bg-purple04 text-white'
-                  : 'bg-white text-grey05 hover:bg-purple02'
-              }`}
-            >
-              {styles.showIcon && category.id !== '전체' && (
-                <span className="flex-shrink-0">
-                  {getCategoryIcon(category.id, selectedCategory === category.id)}
-                </span>
-              )}
-              <span className="whitespace-nowrap">{category.name}</span>
-            </button>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+        <Swiper
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+          }}
+          modules={[FreeMode]}
+          spaceBetween={
+            mode === 'sidebar'
+              ? window.innerWidth < 640
+                ? 12
+                : window.innerWidth < 768
+                  ? 14
+                  : 8
+              : window.innerWidth < 640
+                ? 6
+                : window.innerWidth < 768
+                  ? 8
+                  : 12
+          }
+          slidesPerView="auto"
+          freeMode={true}
+          grabCursor={true}
+          className={`category-tabs-swiper ${mode === 'map' ? 'h-16 max-md:h-12 max-sm:h-10' : 'h-14 max-md:h-10 max-sm:h-8'}`}
+        >
+          {categories.map((category) => (
+            <SwiperSlide key={category.id} style={{ width: 'auto' }}>
+              <button
+                onClick={() => onCategorySelect(category.id)}
+                className={`${styles.button} ${
+                  selectedCategory === category.id
+                    ? 'bg-purple04 text-white'
+                    : 'bg-white text-grey05 hover:bg-purple02'
+                }`}
+              >
+                {styles.showIcon && category.id !== '전체' && (
+                  <span className="flex-shrink-0">
+                    {getCategoryIcon(category.id, selectedCategory === category.id)}
+                  </span>
+                )}
+                <span className="whitespace-nowrap">{category.name}</span>
+              </button>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+      {/* 네비게이션 버튼 (관심혜택 모드에서만 표시) */}
+      {showNavigationButtons && (
+        <div className="flex justify-end items-center gap-1 -mt-2 px-2 max-md:px-4 max-sm:px-3">
+          <button
+            onClick={handlePrevSlide}
+            className="p-1 transition-all duration-200 hover:scale-110 active:scale-95"
+            aria-label="이전 카테고리"
+          >
+            <TbChevronLeft className="w-5 h-5 max-md:w-4 max-md:h-4 max-sm:w-3 max-sm:h-3 text-purple04 hover:text-purple05" />
+          </button>
+
+          <button
+            onClick={handleNextSlide}
+            className="p-1 transition-all duration-200 hover:scale-110 active:scale-95"
+            aria-label="다음 카테고리"
+          >
+            <TbChevronRight className="w-5 h-5 max-md:w-4 max-md:h-4 max-sm:w-3 max-sm:h-3 text-purple04 hover:text-purple05" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

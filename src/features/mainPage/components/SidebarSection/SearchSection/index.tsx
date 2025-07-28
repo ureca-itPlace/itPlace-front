@@ -1,34 +1,45 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import SearchBar from '../../../../../components/SearchBar';
 import { useDebounce } from '../../../hooks/useDebounce';
 
 interface SearchSectionProps {
   onSearchChange?: (query: string) => void;
   onKeywordSearch?: (keyword: string) => void;
-  initialQuery?: string;
+  defaultValue?: string;
 }
 
 const SearchSection: React.FC<SearchSectionProps> = React.memo(
-  ({ onSearchChange, onKeywordSearch, initialQuery }) => {
-    const [searchQuery, setSearchQuery] = useState(initialQuery || '');
+  ({ onSearchChange, onKeywordSearch, defaultValue }) => {
+    const [searchQuery, setSearchQuery] = useState(defaultValue || '');
 
     // 1초 디바운스 적용
     const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
-    // initialQuery가 변경되면 searchQuery도 업데이트
-    useEffect(() => {
-      setSearchQuery(initialQuery || '');
-    }, [initialQuery]);
+    // defaultValue는 초기값으로만 사용 (이후 업데이트 안됨)
 
-    // 디바운스된 검색어로 자동 검색
+    // 마지막으로 검색한 검색어 기억 (중복 검색 방지용)
+    const lastSearchedQuery = useRef<string>('');
+
+    // onKeywordSearch 함수 참조를 ref로 저장 (ESLint 경고 방지)
+    const onKeywordSearchRef = useRef(onKeywordSearch);
+    onKeywordSearchRef.current = onKeywordSearch;
+
+    // 디바운스된 검색어로 자동 검색 (중복 방지)
     useEffect(() => {
-      if (debouncedSearchQuery.trim() && debouncedSearchQuery !== initialQuery) {
-        onKeywordSearch?.(debouncedSearchQuery.trim());
-      } else if (!debouncedSearchQuery.trim() && initialQuery) {
-        // 검색어가 비어있고 이전에 검색어가 있었다면 전체 혜택 다시 로드
-        onKeywordSearch?.('');
+      if (debouncedSearchQuery.trim() && debouncedSearchQuery !== lastSearchedQuery.current) {
+        lastSearchedQuery.current = debouncedSearchQuery.trim();
+        onKeywordSearchRef.current?.(debouncedSearchQuery.trim());
       }
-    }, [debouncedSearchQuery, onKeywordSearch, initialQuery]);
+    }, [debouncedSearchQuery]);
+
+    // 검색어 초기화 시에만 전체 목록 로드 (사용자가 직접 지웠을 때)
+    const prevSearchQuery = useRef(searchQuery);
+    useEffect(() => {
+      if (prevSearchQuery.current.trim() && !searchQuery.trim()) {
+        onKeywordSearchRef.current?.('');
+      }
+      prevSearchQuery.current = searchQuery;
+    }, [searchQuery]);
 
     const handleSearchChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,26 +52,33 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
 
     const handleSearchClear = useCallback(() => {
       setSearchQuery('');
+      lastSearchedQuery.current = ''; // 검색 기록도 초기화
       onSearchChange?.('');
     }, [onSearchChange]);
 
     const handleSearchSubmit = useCallback(
       (e: React.FormEvent) => {
         e.preventDefault();
-        if (searchQuery.trim()) {
-          onKeywordSearch?.(searchQuery.trim());
+        if (searchQuery.trim() && searchQuery.trim() !== lastSearchedQuery.current) {
+          lastSearchedQuery.current = searchQuery.trim();
+          onKeywordSearchRef.current?.(searchQuery.trim());
         }
       },
-      [searchQuery, onKeywordSearch]
+      [searchQuery]
     );
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && searchQuery.trim()) {
-          onKeywordSearch?.(searchQuery.trim());
+        if (
+          e.key === 'Enter' &&
+          searchQuery.trim() &&
+          searchQuery.trim() !== lastSearchedQuery.current
+        ) {
+          lastSearchedQuery.current = searchQuery.trim();
+          onKeywordSearchRef.current?.(searchQuery.trim());
         }
       },
-      [searchQuery, onKeywordSearch]
+      [searchQuery]
     );
 
     return (

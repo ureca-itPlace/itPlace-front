@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { getBenefitDetail } from '../../../api/benefitDetail';
 import { Platform } from '../../../types';
 import { BenefitDetailResponse } from '../../../types/api';
@@ -18,12 +18,23 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   const [detailData, setDetailData] = useState<BenefitDetailResponse | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
+  // platform 참조를 ref로 저장 (의존성 배열 최적화)
+  const platformRef = useRef(platform);
+  platformRef.current = platform;
+
+  // 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const isInitialLoadRef = useRef(isInitialLoad);
+  isInitialLoadRef.current = isInitialLoad;
+
   const fetchDetail = useCallback(async () => {
     const category = activeTab === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT';
+    const currentPlatform = platformRef.current;
+
     try {
       const res = await getBenefitDetail({
-        storeId: platform.storeId,
-        partnerId: platform.partnerId,
+        storeId: currentPlatform.storeId,
+        partnerId: currentPlatform.partnerId,
         mainCategory: category,
       });
 
@@ -34,14 +45,42 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         setIsFavorite(res.data.isFavorite);
       }
     } catch (e) {
+      // 중복 호출 방지 에러는 무시
+      if (e instanceof Error && e.message === 'Duplicate request prevented') {
+        return;
+      }
       console.error('상세 혜택 API 호출 실패:', e);
       setDetailData(null);
     }
-  }, [activeTab, platform.storeId, platform.partnerId]);
+  }, [activeTab]);
 
+  // fetchDetail 참조를 ref로 저장 (의존성 배열 최적화)
+  const fetchDetailRef = useRef(fetchDetail);
+  fetchDetailRef.current = fetchDetail;
+
+  // 초기 로드만 (nearby 패턴과 동일)
   useEffect(() => {
-    fetchDetail();
-  }, [fetchDetail]);
+    const initializeDetail = () => {
+      fetchDetailRef.current();
+    };
+
+    initializeDetail();
+  }, []); // 빈 의존성 배열로 초기 로드만
+
+  // 초기 로드 완료 감지 (nearby 패턴과 동일 - detailData가 로드된 후에 완료 처리)
+  useEffect(() => {
+    if (detailData !== null && isInitialLoad) {
+      setIsInitialLoad(false);
+    }
+  }, [detailData, isInitialLoad]);
+
+  // activeTab 변경 시에만 실행 (초기 로드 제외)
+  useEffect(() => {
+    if (isInitialLoadRef.current) {
+      return;
+    }
+    fetchDetailRef.current();
+  }, [activeTab]);
 
   // 즐겨찾기 상태 변경 핸들러
   const handleFavoriteChange = (newIsFavorite: boolean) => {

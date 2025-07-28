@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
@@ -61,31 +61,63 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     activeTab === 'favorites' ? selectedCategory : undefined
   );
 
-  // AI 추천 데이터 로드
-  useEffect(() => {
-    if (activeTab === 'ai') {
-      const fetchRecommendations = async () => {
-        setIsRecommendationsLoading(true);
-        setRecommendationsError(null);
-        try {
-          const response = await getRecommendations();
-          setRecommendations(response.data);
-        } catch (error) {
-          console.error('AI 추천 데이터 로드 실패:', error);
-          // API 에러 메시지를 그대로 전달
-          const errorMessage =
-            (error as { response?: { data?: { message?: string } }; message?: string })?.response
-              ?.data?.message ||
-            (error as { message?: string })?.message ||
-            'AI 추천을 불러오는데 실패했습니다.';
-          setRecommendationsError(errorMessage);
-        } finally {
-          setIsRecommendationsLoading(false);
-        }
-      };
+  // AI 추천 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
+  const [isInitialRecommendationsLoad, setIsInitialRecommendationsLoad] = useState(true);
+  const isInitialRecommendationsLoadRef = useRef(isInitialRecommendationsLoad);
+  isInitialRecommendationsLoadRef.current = isInitialRecommendationsLoad;
 
-      fetchRecommendations();
+  const fetchRecommendations = useCallback(async () => {
+    setIsRecommendationsLoading(true);
+    setRecommendationsError(null);
+    try {
+      const response = await getRecommendations();
+      setRecommendations(response.data);
+    } catch (error) {
+      console.error('AI 추천 데이터 로드 실패:', error);
+      // API 에러 메시지를 그대로 전달
+      const errorMessage =
+        (error as { response?: { data?: { message?: string } }; message?: string })?.response?.data
+          ?.message ||
+        (error as { message?: string })?.message ||
+        'AI 추천을 불러오는데 실패했습니다.';
+      setRecommendationsError(errorMessage);
+    } finally {
+      setIsRecommendationsLoading(false);
     }
+  }, []);
+
+  // fetchRecommendations 참조를 ref로 저장 (의존성 배열 최적화)
+  const fetchRecommendationsRef = useRef(fetchRecommendations);
+  fetchRecommendationsRef.current = fetchRecommendations;
+
+  // activeTab 참조를 ref로 저장 (의존성 배열 최적화)
+  const activeTabRef = useRef(activeTab);
+  activeTabRef.current = activeTab;
+
+  // AI 추천 초기 로드만 (nearby 패턴과 동일)
+  useEffect(() => {
+    const initializeRecommendations = () => {
+      if (activeTabRef.current === 'ai') {
+        fetchRecommendationsRef.current();
+      }
+    };
+
+    initializeRecommendations();
+  }, []); // 빈 의존성 배열로 초기 로드만
+
+  // 초기 로드 완료 감지 (nearby 패턴과 동일 - recommendations 데이터가 로드된 후에 완료 처리)
+  useEffect(() => {
+    if (recommendations && recommendations.length >= 0 && isInitialRecommendationsLoad) {
+      setIsInitialRecommendationsLoad(false);
+    }
+  }, [recommendations, isInitialRecommendationsLoad]);
+
+  // activeTab 변경 시에만 실행 (초기 로드 제외)
+  useEffect(() => {
+    if (isInitialRecommendationsLoadRef.current || activeTabRef.current !== 'ai') {
+      return;
+    }
+    fetchRecommendationsRef.current();
   }, [activeTab]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
@@ -184,7 +216,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               <SearchSection
                 onSearchChange={handleSearchChange}
                 onKeywordSearch={onKeywordSearch}
-                initialQuery={searchQuery}
+                defaultValue={searchQuery}
               />
             </div>
 
@@ -218,12 +250,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           {activeTab === 'favorites' && (
             <>
               {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-6 max-md:mb-3">
+              <div className="mb-3 max-md:mx-0">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}
                   onCategorySelect={handleCategorySelect}
                   mode="sidebar"
+                  showNavigationButtons={true}
                 />
               </div>
 

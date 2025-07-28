@@ -118,7 +118,6 @@ export interface FavoriteResponse {
 export interface SearchStoresParams {
   lat: number;
   lng: number;
-  radiusMeters: number;
   category?: string;
   keyword: string;
 }
