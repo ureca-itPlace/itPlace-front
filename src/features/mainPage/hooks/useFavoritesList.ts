@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 import { FavoriteBenefit, FavoritesListRequest } from '../types/api';
 import { getFavoritesList } from '../api/favoritesListApi';
 import { useApiCall } from './useApiCall';
@@ -34,15 +34,41 @@ export const useFavoritesList = (category?: string) => {
   const fetchFavoritesRef = useRef(fetchFavorites);
   fetchFavoritesRef.current = fetchFavorites;
 
-  // 카테고리 중복 호출 방지를 위한 ref
-  const lastCategoryRef = useRef<string | undefined>(undefined);
+  // 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const isInitialLoadRef = useRef(isInitialLoad);
+  isInitialLoadRef.current = isInitialLoad;
 
-  // 카테고리 변경 시 즐겨찾기 목록 재로드
+  // 카테고리 변경 시 즐겨찾기 목록 재로드 (nearby 패턴과 동일)
   useEffect(() => {
-    if (category !== undefined && category !== lastCategoryRef.current) {
-      lastCategoryRef.current = category;
-      executeRef.current(() => fetchFavoritesRef.current(category));
+    if (category !== undefined) {
+      const loadFavorites = async () => {
+        const data = await fetchFavoritesRef.current(category);
+        return data;
+      };
+      executeRef.current(loadFavorites);
     }
+  }, [category]);
+
+  // 초기 로드 완료 감지
+  useEffect(() => {
+    if (category !== undefined && isInitialLoad) {
+      setIsInitialLoad(false);
+    }
+  }, [category, isInitialLoad]);
+
+  // 카테고리 변경 시에만 실행 (초기 로드 제외)
+  useEffect(() => {
+    if (isInitialLoadRef.current || category === undefined) {
+      return;
+    }
+
+    const reloadByCategory = async () => {
+      const data = await fetchFavoritesRef.current(category);
+      return data;
+    };
+
+    executeRef.current(reloadByCategory);
   }, [category]);
 
   /**

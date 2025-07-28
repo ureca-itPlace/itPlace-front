@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
@@ -61,37 +61,52 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     activeTab === 'favorites' ? selectedCategory : undefined
   );
 
-  // AI 추천 중복 호출 방지를 위한 ref (favorites 방식과 동일)
-  const lastActiveTabRef = useRef<string>('');
+  // AI 추천 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
+  const [isInitialRecommendationsLoad, setIsInitialRecommendationsLoad] = useState(true);
+  const isInitialRecommendationsLoadRef = useRef(isInitialRecommendationsLoad);
+  isInitialRecommendationsLoadRef.current = isInitialRecommendationsLoad;
 
-  // AI 추천 데이터 로드
+  const fetchRecommendations = useCallback(async () => {
+    setIsRecommendationsLoading(true);
+    setRecommendationsError(null);
+    try {
+      const response = await getRecommendations();
+      setRecommendations(response.data);
+    } catch (error) {
+      console.error('AI 추천 데이터 로드 실패:', error);
+      // API 에러 메시지를 그대로 전달
+      const errorMessage =
+        (error as { response?: { data?: { message?: string } }; message?: string })?.response?.data
+          ?.message ||
+        (error as { message?: string })?.message ||
+        'AI 추천을 불러오는데 실패했습니다.';
+      setRecommendationsError(errorMessage);
+    } finally {
+      setIsRecommendationsLoading(false);
+    }
+  }, []);
+
+  // AI 추천 초기 로드 (nearby 패턴과 동일)
   useEffect(() => {
-    if (activeTab === 'ai' && lastActiveTabRef.current !== 'ai') {
-      lastActiveTabRef.current = 'ai';
-
-      const fetchRecommendations = async () => {
-        setIsRecommendationsLoading(true);
-        setRecommendationsError(null);
-        try {
-          const response = await getRecommendations();
-          setRecommendations(response.data);
-        } catch (error) {
-          console.error('AI 추천 데이터 로드 실패:', error);
-          // API 에러 메시지를 그대로 전달
-          const errorMessage =
-            (error as { response?: { data?: { message?: string } }; message?: string })?.response
-              ?.data?.message ||
-            (error as { message?: string })?.message ||
-            'AI 추천을 불러오는데 실패했습니다.';
-          setRecommendationsError(errorMessage);
-        } finally {
-          setIsRecommendationsLoading(false);
-        }
-      };
-
+    if (activeTab === 'ai') {
       fetchRecommendations();
     }
-  }, [activeTab]);
+  }, [activeTab, fetchRecommendations]);
+
+  // 초기 로드 완료 감지
+  useEffect(() => {
+    if (activeTab === 'ai' && isInitialRecommendationsLoad) {
+      setIsInitialRecommendationsLoad(false);
+    }
+  }, [activeTab, isInitialRecommendationsLoad]);
+
+  // activeTab 변경 시에만 실행 (초기 로드 제외)
+  useEffect(() => {
+    if (isInitialRecommendationsLoadRef.current || activeTab !== 'ai') {
+      return;
+    }
+    fetchRecommendations();
+  }, [activeTab, fetchRecommendations]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
