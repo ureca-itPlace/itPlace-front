@@ -25,7 +25,7 @@ export default function RightAside({
   return (
     <aside
       className={
-        'w-[476px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:w-[390px] max-xl:pt-[56px] max-md:w-full max-md:p-6' +
+        'w-full max-w-[476px] min-w-[400px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:max-w-[390px] max-xl:min-w-[320px] max-xl:pt-[56px] max-xlg:max-w-none max-xlg:w-full max-xlg:pt-[36px] max-xlg:pb-[32px] max-xlg:px-[28px] max-md:w-full max-md:p-6 ' +
         (isSimpleLayout ? ' max-md:hidden' : '')
       }
     >
@@ -34,7 +34,7 @@ export default function RightAside({
 
       {/* 아래쪽 토끼 이미지 영역 */}
       {imgSrc && (
-        <div className="mt-auto flex justify-center mb-[-30px] max-md:hidden">
+        <div className="mt-auto flex justify-center mb-[-30px] max-xlg:hidden">
           <img
             src={imgSrc}
             alt={bottomImageAlt ?? '하단 이미지'}

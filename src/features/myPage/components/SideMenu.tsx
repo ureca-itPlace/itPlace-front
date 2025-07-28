@@ -33,8 +33,8 @@ export default function SideMenu() {
   return (
     <>
       {/* ✅ 데스크탑용 사이드 메뉴*/}
-      <aside className="w-[370px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-3 max-xl:w-[310px] max-xl:pt-[56px] max-md:hidden">
-        <h1 className="text-title-1 text-purple06 pl-[34px] pb-[80px] max-xl:text-title-2 max-xl:pb-[60px]">
+      <aside className="w-full max-w-[370px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-3 max-xl:max-w-[310px] max-xl:pt-[56px] max-xlg:max-w-[220px] max-xlg:pt-[36px] max-md:hidden">
+        <h1 className="text-title-1 text-purple06 pl-[34px] pb-[80px] max-xl:text-title-2 max-xl:pb-[60px] max-xlg:pl-[28px]">
           MY PAGE
         </h1>
         <nav className="flex flex-col gap-5 max-xl:gap-2">
@@ -56,15 +56,15 @@ export default function SideMenu() {
                 {({ isActive }) => (
                   <>
                     {isActive ? (
-                      <div className="pl-3 pr-1">
+                      <div className="pl-3 pr-1 max-xlg:hidden">
                         <ActiveIcon size={24} strokeWidth={1} />
                       </div>
                     ) : (
-                      <div className="pl-3 pr-1">
+                      <div className="pl-3 pr-1 max-xlg:hidden">
                         <Icon size={24} strokeWidth={1} />
                       </div>
                     )}
-                    <span>{item.label}</span>
+                    <span className="max-xlg:mx-auto">{item.label}</span>
                   </>
                 )}
               </NavLink>
