@@ -34,21 +34,27 @@ export const useFavoritesList = (category?: string) => {
   const fetchFavoritesRef = useRef(fetchFavorites);
   fetchFavoritesRef.current = fetchFavorites;
 
+  // category 참조를 ref로 저장 (의존성 배열 최적화)
+  const categoryRef = useRef(category);
+  categoryRef.current = category;
+
   // 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const isInitialLoadRef = useRef(isInitialLoad);
   isInitialLoadRef.current = isInitialLoad;
 
-  // 카테고리 변경 시 즐겨찾기 목록 재로드 (nearby 패턴과 동일)
+  // 초기 로드만 (nearby 패턴과 동일)
   useEffect(() => {
-    if (category !== undefined) {
-      const loadFavorites = async () => {
-        const data = await fetchFavoritesRef.current(category);
+    const initializeFavorites = async () => {
+      if (categoryRef.current !== undefined) {
+        const data = await fetchFavoritesRef.current(categoryRef.current);
         return data;
-      };
-      executeRef.current(loadFavorites);
-    }
-  }, [category]);
+      }
+      return [];
+    };
+
+    executeRef.current(initializeFavorites);
+  }, []); // 빈 의존성 배열로 초기 로드만
 
   // 초기 로드 완료 감지
   useEffect(() => {
@@ -59,12 +65,12 @@ export const useFavoritesList = (category?: string) => {
 
   // 카테고리 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
-    if (isInitialLoadRef.current || category === undefined) {
+    if (isInitialLoadRef.current || categoryRef.current === undefined) {
       return;
     }
 
     const reloadByCategory = async () => {
-      const data = await fetchFavoritesRef.current(category);
+      const data = await fetchFavoritesRef.current(categoryRef.current!);
       return data;
     };
 

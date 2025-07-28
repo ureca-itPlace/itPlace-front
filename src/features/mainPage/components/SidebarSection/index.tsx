@@ -86,12 +86,24 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     }
   }, []);
 
-  // AI 추천 초기 로드 (nearby 패턴과 동일)
+  // fetchRecommendations 참조를 ref로 저장 (의존성 배열 최적화)
+  const fetchRecommendationsRef = useRef(fetchRecommendations);
+  fetchRecommendationsRef.current = fetchRecommendations;
+
+  // activeTab 참조를 ref로 저장 (의존성 배열 최적화)
+  const activeTabRef = useRef(activeTab);
+  activeTabRef.current = activeTab;
+
+  // AI 추천 초기 로드만 (nearby 패턴과 동일)
   useEffect(() => {
-    if (activeTab === 'ai') {
-      fetchRecommendations();
-    }
-  }, [activeTab, fetchRecommendations]);
+    const initializeRecommendations = () => {
+      if (activeTabRef.current === 'ai') {
+        fetchRecommendationsRef.current();
+      }
+    };
+
+    initializeRecommendations();
+  }, []); // 빈 의존성 배열로 초기 로드만
 
   // 초기 로드 완료 감지
   useEffect(() => {
@@ -102,11 +114,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   // activeTab 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
-    if (isInitialRecommendationsLoadRef.current || activeTab !== 'ai') {
+    if (isInitialRecommendationsLoadRef.current || activeTabRef.current !== 'ai') {
       return;
     }
-    fetchRecommendations();
-  }, [activeTab, fetchRecommendations]);
+    fetchRecommendationsRef.current();
+  }, [activeTab]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {

@@ -50,10 +50,18 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
     }
   }, [activeTab]);
 
-  // 초기 로드 (nearby 패턴과 동일)
+  // fetchDetail 참조를 ref로 저장 (의존성 배열 최적화)
+  const fetchDetailRef = useRef(fetchDetail);
+  fetchDetailRef.current = fetchDetail;
+
+  // 초기 로드만 (nearby 패턴과 동일)
   useEffect(() => {
-    fetchDetail();
-  }, [fetchDetail]);
+    const initializeDetail = () => {
+      fetchDetailRef.current();
+    };
+
+    initializeDetail();
+  }, []); // 빈 의존성 배열로 초기 로드만
 
   // 초기 로드 완료 감지
   useEffect(() => {
@@ -67,8 +75,8 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
     if (isInitialLoadRef.current) {
       return;
     }
-    fetchDetail();
-  }, [activeTab, fetchDetail]);
+    fetchDetailRef.current();
+  }, [activeTab]);
 
   // 즐겨찾기 상태 변경 핸들러
   const handleFavoriteChange = (newIsFavorite: boolean) => {
