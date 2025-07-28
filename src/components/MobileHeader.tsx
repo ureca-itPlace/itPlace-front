@@ -65,7 +65,7 @@ const MobileHeader = ({
     <>
       <header
         className={
-          `w-full h-[54px] fixed top-0 left-0 flex items-center px-4 z-[9999] border-grey01 max-md:flex ${backgroundColor}` +
+          `w-full h-[54px] fixed top-0 left-0 flex items-center px-4 z-[9999] border-grey01 max-md:flex ${backgroundColor} ` +
           (isMain ? 'border-b-none' : 'border-b')
         }
       >

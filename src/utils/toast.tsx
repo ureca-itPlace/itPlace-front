@@ -65,9 +65,12 @@ export function showToast(
     ...options?.style, // 여기에 사용자가 넘긴 width만 덮어쓰기
   };
 
+  // ✅ 모바일인지 아닌지 판별 (500px 이하를 모바일로 간주)
+  const isMobile = window.innerWidth <= 500;
+
   toast(message, {
     ...options, // ✅ 먼저 사용자가 전달한 옵션을 펼치기
-    position: options?.position || 'top-center',
+    position: options?.position || (isMobile ? 'bottom-center' : 'top-center'),
     icon,
     ...toastStyles[type],
     style: customStyle, // ✅ 맨 마지막에 최종 스타일을 덮어쓰기
