@@ -31,14 +31,14 @@ export default function FavoritesAside({
   if (favorites.length === 0) {
     return (
       <>
-        <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+        <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-xlg:text-left">
           선택한 혜택
         </h1>
         <div className="flex flex-col items-center justify-center mt-20 max-xl:mt-10">
           <img
             src="/images/myPage/icon-nothing.webp"
             alt="텅빈 찜 보관함"
-            className="w-[300px] h-auto max-xl:w-[260px]"
+            className="w-[300px] h-auto max-xl:w-[260px] max-xlg:w-[160px]"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
@@ -57,14 +57,14 @@ export default function FavoritesAside({
   if (isEditing) {
     return (
       <FadeWrapper changeKey={selectedItems.length}>
-        <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+        <h1 className="text-title-2 text-black mb-4 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-xlg:text-left">
           선택한 혜택
         </h1>
         <div className="flex flex-col items-center justify-center mt-7">
           <img
             src="/images/myPage/icon-file.webp"
             alt="폴더"
-            className="w-[185px] h-auto max-xl:w-[160px]"
+            className="w-[185px] h-auto max-xl:w-[160px] max-xlg:w-[140px]"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null; // 무한 루프 방지
@@ -87,7 +87,7 @@ export default function FavoritesAside({
     <FadeWrapper changeKey={selectedId}>
       {selectedId ? (
         <>
-          <h1 className="text-title-2 text-black mb-5 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold">
+          <h1 className="text-title-2 text-black mb-5 text-center max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-xlg:text-left">
             상세 혜택
           </h1>
           <BenefitDetailTabs
