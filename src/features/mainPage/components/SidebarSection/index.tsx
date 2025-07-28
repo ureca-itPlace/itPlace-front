@@ -61,27 +61,20 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     activeTab === 'favorites' ? selectedCategory : undefined
   );
 
-  // API 호출 중복 방지를 위한 ref
-  const isLoadingRecommendationsRef = useRef(false);
-  const hasLoadedRecommendationsRef = useRef(false);
+  // AI 추천 초기 로드 상태 관리 (nearby 방식과 동일)
+  const [isInitialRecommendationsLoad, setIsInitialRecommendationsLoad] = useState(true);
+  const isInitialRecommendationsLoadRef = useRef(isInitialRecommendationsLoad);
+  isInitialRecommendationsLoadRef.current = isInitialRecommendationsLoad;
 
-  // AI 추천 데이터 로드
+  // AI 추천 데이터 로드 (activeTab이 'ai'일 때만 한 번 실행)
   useEffect(() => {
-    if (
-      activeTab === 'ai' &&
-      !isLoadingRecommendationsRef.current &&
-      !hasLoadedRecommendationsRef.current
-    ) {
+    if (activeTab === 'ai') {
       const fetchRecommendations = async () => {
-        if (isLoadingRecommendationsRef.current) return; // 중복 호출 방지
-
-        isLoadingRecommendationsRef.current = true;
         setIsRecommendationsLoading(true);
         setRecommendationsError(null);
         try {
           const response = await getRecommendations();
           setRecommendations(response.data);
-          hasLoadedRecommendationsRef.current = true; // 로드 완료 표시
         } catch (error) {
           console.error('AI 추천 데이터 로드 실패:', error);
           // API 에러 메시지를 그대로 전달
@@ -93,13 +86,23 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           setRecommendationsError(errorMessage);
         } finally {
           setIsRecommendationsLoading(false);
-          isLoadingRecommendationsRef.current = false;
         }
       };
 
-      fetchRecommendations();
+      // 첫 번째 로드에서만 실행
+      if (isInitialRecommendationsLoadRef.current) {
+        setIsInitialRecommendationsLoad(false);
+        fetchRecommendations();
+      }
     }
   }, [activeTab]);
+
+  // 초기 로드 완료 감지 (nearby 방식과 동일)
+  useEffect(() => {
+    if (activeTab === 'ai' && isInitialRecommendationsLoad) {
+      setIsInitialRecommendationsLoad(false);
+    }
+  }, [activeTab, isInitialRecommendationsLoad]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {

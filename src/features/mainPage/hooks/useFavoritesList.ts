@@ -30,21 +30,25 @@ export const useFavoritesList = (category?: string) => {
     return data;
   }, []);
 
+  // fetchFavorites 참조를 ref로 저장 (의존성 배열 최적화)
+  const fetchFavoritesRef = useRef(fetchFavorites);
+  fetchFavoritesRef.current = fetchFavorites;
+
   // 카테고리 변경 시 즐겨찾기 목록 재로드
   useEffect(() => {
     if (category !== undefined) {
-      executeRef.current(() => fetchFavorites(category));
+      executeRef.current(() => fetchFavoritesRef.current(category));
     }
-  }, [category, fetchFavorites]);
+  }, [category]);
 
   /**
    * 즐겨찾기 목록 새로고침
    */
   const refreshFavorites = useCallback(() => {
     if (category !== undefined) {
-      executeRef.current(() => fetchFavorites(category));
+      executeRef.current(() => fetchFavoritesRef.current(category));
     }
-  }, [category, fetchFavorites]);
+  }, [category]);
 
   return {
     favorites: favorites || [], // null 방어
