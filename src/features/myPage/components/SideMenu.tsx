@@ -78,7 +78,7 @@ export default function SideMenu() {
         className="
           hidden
           max-md:flex
-          sticky top-0 z-50
+          fixed top-0 z-50 mt-[53px]
           w-full
           bg-white
           border-b border-grey03
