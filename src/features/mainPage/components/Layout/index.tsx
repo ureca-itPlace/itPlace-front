@@ -368,7 +368,7 @@ const MainPageLayout: React.FC = () => {
               left: '500px',
               bottom: '320px', // 말풍선보다 위쪽
               transform: 'translateX(-20%)',
-              width: '400px',
+              width: '410px',
             }}
           >
             <BenefitDetailCard
