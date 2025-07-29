@@ -96,7 +96,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   return (
     <div className="w-full bg-white rounded-t-[20px] shadow-lg flex flex-col h-full max-md:bg-none max-md:shadow-none max-md:rounded-t-[15px]">
       {/* 고정 영역 */}
-      <div className="px-6 pt-6 flex-shrink-0 max-md:px-4 max-md:pt-4">
+      <div className="px-6 pt-6 flex-shrink-0 max-md:px-4 max-md:pt-4 max-md:overflow-y-auto">
         <StoreDetailHeader platform={platform} onClose={onClose} />
         <StoreDetailInfo
           url={detailData?.data.url}
