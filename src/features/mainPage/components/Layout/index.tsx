@@ -354,7 +354,7 @@ const MainPageLayout: React.FC = () => {
 
         {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
         <div
-          className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
+          className="absolute bottom-0 pointer-events-none z-30 overflow-hidden"
           style={{
             left: '400px',
             transform: 'translateX(-20%)',

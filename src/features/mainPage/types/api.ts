@@ -11,6 +11,7 @@ export interface StoreData {
   store: Store;
   partner: Partner;
   tierBenefit: TierBenefit[];
+  distance: number;
 }
 
 export interface Store {

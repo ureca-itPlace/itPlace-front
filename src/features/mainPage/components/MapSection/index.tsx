@@ -3,11 +3,13 @@ import { Platform, Category, MapLocation } from '../../types';
 import CategoryTabsSection from '../SidebarSection/CategoryTabsSection';
 import KakaoMap from './KakaoMap';
 import MapControls from './MapControls';
+import RoadviewContainer from './Roadview/RoadviewContainer';
+import { showToast } from '../../../../utils/toast';
 
 interface MapSectionProps {
   platforms: Platform[];
   selectedPlatform?: Platform | null;
-  onPlatformSelect: (platform: Platform) => void;
+  onPlatformSelect: (platform: Platform | null) => void;
   onLocationChange?: (location: MapLocation) => void;
   onMapCenterChange?: (location: MapLocation) => void;
   onLocationMove: (latitude: number, longitude: number) => void;
@@ -36,6 +38,11 @@ const MapSection: React.FC<MapSectionProps> = ({
   activeTab,
 }) => {
   const [showSearchButton, setShowSearchButton] = useState(false);
+  const [isRoadviewMode, setIsRoadviewMode] = useState(false);
+  const [roadviewClickedLatLng, setRoadviewClickedLatLng] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   // 지도 중심 변경 핸들러 (드래그 감지)
   const handleMapCenterChange = (location: MapLocation) => {
@@ -48,6 +55,32 @@ const MapSection: React.FC<MapSectionProps> = ({
   const handleSearchInMap = () => {
     setShowSearchButton(false); // 검색하면 버튼 숨김
     onSearchInMap?.();
+  };
+
+  // 로드뷰 토글 핸들러
+  const handleRoadviewToggle = () => {
+    if (isRoadviewMode) {
+      // 로드뷰 모드 끄기
+      setIsRoadviewMode(false);
+      setRoadviewClickedLatLng(null);
+    } else {
+      // 로드뷰 모드 켜기
+      setIsRoadviewMode(true);
+      showToast('지도를 클릭하면 해당 위치의 로드뷰를 확인할 수 있어요!', 'info');
+    }
+  };
+
+  // 지도 클릭 핸들러 (로드뷰 모드일 때만)
+  const handleMapClick = (lat: number, lng: number) => {
+    if (isRoadviewMode) {
+      setRoadviewClickedLatLng({ lat, lng });
+      setIsRoadviewMode(false); // 로드뷰 표시 후 모드 해제
+    }
+  };
+
+  // 로드뷰 닫기 핸들러
+  const handleRoadviewClose = () => {
+    setRoadviewClickedLatLng(null);
   };
 
   return (
@@ -74,13 +107,27 @@ const MapSection: React.FC<MapSectionProps> = ({
         onMapCenterChange={handleMapCenterChange}
         centerLocation={centerLocation}
         onMapLevelChange={onMapLevelChange}
+        isRoadviewMode={isRoadviewMode}
+        onMapClick={handleMapClick}
       />
 
       <MapControls
         onLocationMove={onLocationMove}
         onSearchInMap={handleSearchInMap}
         showSearchButton={showSearchButton}
+        isRoadviewMode={isRoadviewMode}
+        onRoadviewToggle={handleRoadviewToggle}
       />
+
+      {/* 로드뷰 컨테이너 */}
+      {roadviewClickedLatLng && (
+        <RoadviewContainer
+          clickedLatLng={roadviewClickedLatLng}
+          onClose={handleRoadviewClose}
+          onPlatformSelect={onPlatformSelect}
+          selectedPlatform={selectedPlatform}
+        />
+      )}
     </div>
   );
 };
