@@ -175,7 +175,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     switch (activeTab) {
       case 'nearby':
         return {
-          message: '근처 제휴처만 안내해드릴게요 !',
+          message: '근처 제휴처를 안내해드릴게요 !',
           highlightText: '근처 제휴처',
         };
       case 'favorites':
@@ -190,8 +190,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       default:
         return {
-          message: '근처 제휴처만 안내해드릴게요 !',
-          highlightText: '근처 제휴처만',
+          message: '근처 제휴처를 안내해드릴게요 !',
+          highlightText: '근처 제휴처',
         };
     }
   };
