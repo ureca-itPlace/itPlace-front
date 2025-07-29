@@ -120,6 +120,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
           isFavorite={isFavorite}
           onFavoriteChange={handleFavoriteChange}
           partnerName={detailData?.data?.benefitName}
+          distance={platform.distance}
         />
       </div>
     </div>

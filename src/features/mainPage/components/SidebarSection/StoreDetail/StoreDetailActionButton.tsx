@@ -13,13 +13,15 @@ interface StoreDetailActionButtonProps {
   isFavorite: boolean;
   onFavoriteChange: (newIsFavorite: boolean) => void;
   partnerName?: string;
+  distance: number;
 }
 
 const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   benefitId,
   isFavorite,
   onFavoriteChange,
-  partnerName = 'GS25',
+  partnerName,
+  distance,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +32,11 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     const formattedValue = formatNumberWithCommas(e.target.value);
     setUsageAmount(formattedValue);
   };
+
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+
+  // 거리 조건 체크 (0.1km 이하만 사용 가능)
+  const isDistanceValid = distance <= 0.5;
 
   const handleFavoriteToggle = async () => {
     if (!isLoggedIn) {
@@ -167,10 +173,15 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
 
         {/* 사용 금액 입력하기 버튼 */}
         <button
-          className="flex-1 py-3 bg-purple04 hover:bg-purple05 text-white text-body-3-bold rounded-lg transition-colors"
-          onClick={() => setIsModalOpen(true)}
+          className={`flex-1 py-3 text-body-3-bold rounded-lg transition-colors ${
+            isDistanceValid
+              ? 'bg-purple04 hover:bg-purple05 text-white'
+              : 'bg-grey03 text-grey04 cursor-not-allowed'
+          }`}
+          onClick={() => isDistanceValid && setIsModalOpen(true)}
+          disabled={!isDistanceValid}
         >
-          사용 금액 입력하기
+          {isDistanceValid ? '사용 금액 입력하기' : '사용하기에 너무 멀어요'}
         </button>
       </div>
 
@@ -178,7 +189,8 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="w-full max-w-[320px] -mx-10">
           <h2 className="text-title-7 font-bold mb-6 text-center">
-            <span className="text-purple04">{partnerName}</span> 에서 사용한 금액을 입력해주세요.
+            <span className="text-purple04">{partnerName || '해당 가맹점'}</span> 에서 사용한 금액을
+            입력해주세요.
           </h2>
 
           <div className="mb-6">
