@@ -141,7 +141,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     if (selectedPlatform && viewMode === 'list') {
       setViewMode('detail');
     }
-  }, [selectedPlatform, viewMode]);
+  }, [selectedPlatform, viewMode, activeTab]);
 
   // 플랫폼 선택이 해제되면 리스트 모드로 돌아가기
   useEffect(() => {

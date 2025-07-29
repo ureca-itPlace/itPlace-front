@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import SidebarSection from '../SidebarSection';
 import MapSection from '../MapSection';
 import SearchSection from '../SidebarSection/SearchSection';
@@ -279,6 +279,11 @@ const MainPageLayout: React.FC = () => {
     animateTo(closestSnapPoint);
   }, [bottomSheetHeight]);
 
+  // platforms 배열 안정화
+  const stablePlatforms = useMemo(() => {
+    return filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms;
+  }, [filteredPlatforms, apiPlatforms]);
+
   // 모바일에서 body 스크롤 방지
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
@@ -305,7 +310,7 @@ const MainPageLayout: React.FC = () => {
           }}
         >
           <SidebarSection
-            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
             onPlatformSelect={handlePlatformSelect}
             currentLocation={currentLocation}
@@ -322,7 +327,7 @@ const MainPageLayout: React.FC = () => {
 
         <div className="flex-1 h-full">
           <MapSection
-            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
             onPlatformSelect={handlePlatformSelect}
             onLocationChange={handleLocationChange}
@@ -415,7 +420,7 @@ const MainPageLayout: React.FC = () => {
         {/* 지도 - 전체 화면 */}
         <div className="absolute inset-0">
           <MapSection
-            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
             onPlatformSelect={handlePlatformSelect}
             onLocationChange={handleLocationChange}
@@ -462,7 +467,7 @@ const MainPageLayout: React.FC = () => {
             {/* 사이드바 콘텐츠 */}
             <div className="flex-1 min-h-0">
               <SidebarSection
-                platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+                platforms={stablePlatforms}
                 selectedPlatform={selectedPlatform}
                 onPlatformSelect={handlePlatformSelect}
                 currentLocation={currentLocation}

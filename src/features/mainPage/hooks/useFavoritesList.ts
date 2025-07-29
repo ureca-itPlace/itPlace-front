@@ -22,9 +22,10 @@ export const useFavoritesList = (category?: string) => {
    * 카테고리가 '전체'이거나 비어있으면 전체 조회, 그 외에는 카테고리별 조회
    */
   const fetchFavorites = useCallback(async (selectedCategory?: string) => {
-    // 전역 중복 호출 방지
+    // 전역 중복 호출 방지 - 100ms 후 재시도
     if (isGlobalFavoritesLoading) {
-      return [];
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return fetchFavorites(selectedCategory); // 재귀 호출로 재시도
     }
 
     isGlobalFavoritesLoading = true;
