@@ -33,7 +33,7 @@ export const getBenefitDetail = async (
 };
 
 export const submitUsageAmount = (benefitId: number, amount: number) => {
-  return api.post('/benefit/usage', {
+  return api.post('/api/v1/membership-history/use', {
     benefitId,
     amount,
   });
