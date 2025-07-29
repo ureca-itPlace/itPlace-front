@@ -13,7 +13,7 @@ const MobileEarthSection = () => {
 
     gsap.set(earthRef.current, { scale: 1, opacity: 1 });
 
-    gsap.to(earthRef.current, {
+    const floatTween = gsap.to(earthRef.current, {
       y: -20,
       duration: 2,
       ease: 'sine.inOut',
@@ -52,7 +52,7 @@ const MobileEarthSection = () => {
 
     return () => {
       tl.kill();
-      gsap.killTweensOf(earthRef.current);
+      floatTween.kill();
     };
   }, []);
 
