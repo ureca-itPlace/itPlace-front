@@ -43,12 +43,12 @@ export interface KakaoEvent {
   addListener(
     target: KakaoMap | KakaoMarker | KakaoRoadview,
     type: string,
-    handler: (...args: any[]) => void
+    handler: (...args: unknown[]) => void
   ): void;
   removeListener?(
     target: KakaoMap | KakaoMarker | KakaoRoadview,
     type: string,
-    handler: (...args: any[]) => void
+    handler: (...args: unknown[]) => void
   ): void;
 }
 
