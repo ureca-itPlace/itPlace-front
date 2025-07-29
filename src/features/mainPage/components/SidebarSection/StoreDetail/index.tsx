@@ -113,13 +113,13 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
 
       {/* 스크롤 영역 - 이용 방법만 */}
       <div
-        className={`flex-1 overflow-y-auto ${detailData?.data.manual ? 'px-6 max-md:px-4' : ''}`}
+        className={`flex-1 overflow-y-auto pb-6 max-md:overflow-y-visible ${detailData?.data.manual ? 'px-6 max-md:px-4' : ''}`}
       >
         <StoreDetailUsageGuide detailData={detailData} />
       </div>
 
       {/* 고정 버튼 */}
-      <div className="px-6 pb-2 mt-2 flex-shrink-0 max-md:px-4 max-md:pb-2">
+      <div className="px-6 pb-2 mt-2 flex-shrink-0 max-md:px-4 max-md:pb-2 max-md:fixed max-md:bottom-0 max-md:w-full max-md:bg-white">
         <StoreDetailActionButton
           benefitId={detailData?.data?.benefitId}
           isFavorite={isFavorite}
