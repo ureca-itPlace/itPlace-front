@@ -109,7 +109,7 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
         className={
           mode === 'map'
             ? 'px-0 pt-2 pb-2 h-20 max-md:h-14 max-md:pt-1 max-md:pb-1 max-sm:h-12 max-sm:pt-0.5 max-sm:pb-0.5'
-            : 'px-2 h-15 max-md:h-12 max-md:px-1 max-sm:h-10 max-sm:px-0.5 max-md:w-auto max-md:overflow-visible max-md:mx-4 max-sm:mx-3'
+            : 'px-2 h-15 max-md:h-12 max-md:px-1 max-sm:h-10 max-sm:px-0.5 max-sm:mx-3  max-md:w-auto max-md:overflow-visible max-md:mx-4 '
         }
       >
         <Swiper
@@ -133,7 +133,7 @@ const CategoryTabsSection: React.FC<CategoryTabsSectionProps> = ({
           slidesPerView="auto"
           freeMode={true}
           grabCursor={true}
-          className={`category-tabs-swiper ${mode === 'map' ? 'h-16 max-md:h-12 max-sm:h-10' : 'h-14 max-md:h-10 max-sm:h-8'}`}
+          className={`category-tabs-swiper ${mode === 'map' ? 'h-16 max-md:h-12 max-sm:h-10' : 'h-14 max-md:h-10 max-sm:h-10'}`}
         >
           {categories.map((category) => (
             <SwiperSlide key={category.id} style={{ width: 'auto' }}>
