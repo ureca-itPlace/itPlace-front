@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
-import LoadingSpinner from '../../../../components/LoadingSpinner';
 import SearchSection from './SearchSection';
 import InfoBannerSection from './InfoBannerSection';
 import NavigationTabsSection from './NavigationTabsSection';
@@ -195,17 +194,6 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
     }
   };
-
-  if (isLoading && activeTab === 'nearby') {
-    return (
-      // <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic"> 혹시 몰라서 남겨놓음
-      <div className="w-full h-full flex flex-col items-center justify-center max-md:mt-24">
-        <LoadingSpinner />
-        <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
-      </div>
-      // </div>
-    );
-  }
 
   return (
     <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic max-md:bg-transparent max-md:rounded-none max-md:drop-shadow-none max-md:overflow-visible">
