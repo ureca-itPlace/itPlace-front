@@ -1,21 +1,23 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { lazy, useEffect, useLayoutEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
-import StartCTASection from '../features/landingPage/sections/StartCTASection';
 import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
 import { debounce } from 'lodash';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-// const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
+import EarthSection from '../features/landingPage/sections/EarthSection';
+import { useResponsive } from '../hooks/useResponsive';
+import MobileEarthSection from '../features/landingPage/sections/MobileEarthSection';
 const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
 const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
 const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
-// const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
+const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
 
 const LandingPage = () => {
+  const { isMobile, isTablet } = useResponsive();
   // 지구 로드 상태
   const [isLoaded, setIsLoaded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
@@ -36,6 +38,7 @@ const LandingPage = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  // 비디오 종료 후 스크롤 맨 아래로 이동
   useEffect(() => {
     if (videoEnded) {
       console.log('비디오 종료');
@@ -50,13 +53,18 @@ const LandingPage = () => {
   return (
     <div className="relative bg-white z-20 overflow-x-hidden">
       {/* 지구 */}
-      {/* <EarthSection onLoaded={() => setIsLoaded(true)} /> */}
+      {isMobile || isTablet ? (
+        <MobileEarthSection />
+      ) : (
+        <Suspense fallback={<div>지구 에러 바운더리</div>}>
+          <EarthSection onLoaded={() => setIsLoaded(true)} />
+        </Suspense>
+      )}
 
       {/* 헤더 */}
-      {/* {isLoaded && (isMobile || isTablet ? <MobileHeader /> : <Header variant="glass" />)} */}
       {isLoaded && <MobileHeader theme={theme} />}
       {/* 더미 박스 */}
-      <div className="h-[65vh]" />
+      {/* <div className="h-[65vh]" /> */}
       {/* 지도 */}
       <MapSection />
       {/* 기능 설명 */}
@@ -64,7 +72,9 @@ const LandingPage = () => {
       {/* 비디오 & CTA */}
       <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
       {/* CTA */}
-      {videoEnded && <StartCTASection />}
+      <div style={{ display: videoEnded ? 'block' : 'none' }}>
+        <StartCTASection />
+      </div>
     </div>
   );
 };
