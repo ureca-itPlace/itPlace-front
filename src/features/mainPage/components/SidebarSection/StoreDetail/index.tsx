@@ -52,6 +52,11 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       }
       console.error('상세 혜택 API 호출 실패:', e);
       setDetailData(null);
+
+      // API 호출 실패해도 초기 로드는 완료된 것으로 처리
+      if (isInitialLoadRef.current) {
+        setIsInitialLoad(false);
+      }
     }
   }, [activeTab]);
 
@@ -68,7 +73,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
     initializeDetail();
   }, []); // 빈 의존성 배열로 초기 로드만
 
-  // 초기 로드 완료 감지 (nearby 패턴과 동일 - detailData가 로드된 후에 완료 처리)
+  // 초기 로드 완료 감지 (nearby 패턴과 동일 - API 호출 완료 후 처리)
   useEffect(() => {
     if (detailData !== null && isInitialLoad) {
       setIsInitialLoad(false);

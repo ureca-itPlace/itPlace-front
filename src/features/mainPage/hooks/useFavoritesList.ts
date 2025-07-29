@@ -24,7 +24,7 @@ export const useFavoritesList = (category?: string) => {
   const fetchFavorites = useCallback(async (selectedCategory?: string) => {
     // 전역 중복 호출 방지 - 100ms 후 재시도
     if (isGlobalFavoritesLoading) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       return fetchFavorites(selectedCategory); // 재귀 호출로 재시도
     }
 
