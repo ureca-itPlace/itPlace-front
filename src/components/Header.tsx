@@ -54,7 +54,7 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
     <>
       <aside
         className={clsx(
-          'fixed z-30 left-0 top-0 h-screen w-[81px] flex flex-col items-center py-4 rounded-tr-xl rounded-br-xl',
+          'fixed z-30 left-0 top-0 h-screen overflow-y-auto scrollbar-hide w-[81px] flex flex-col items-center py-4 rounded-tr-xl rounded-br-xl',
           variant === 'glass' ? 'header-glass bg-[rgba(255,255,255,0.05)]' : 'bg-gradient-header'
         )}
       >
@@ -97,7 +97,7 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
         </nav>
 
         {/* 로그인 / 로그아웃 */}
-        <div className="mb-1">
+        <div className="mb-1 mt-9">
           {isLoggedIn ? (
             <button
               className="flex flex-col items-center text-white text-sm hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.6)]"

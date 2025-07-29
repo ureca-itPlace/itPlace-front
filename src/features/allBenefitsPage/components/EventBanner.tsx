@@ -49,7 +49,7 @@ const EventBanner: React.FC = () => {
               <img
                 src={src}
                 alt={`benefit-${idx + 1}`}
-                className="object-fill rounded-[12px] max-xl:rounded-[10px] w-full h-full max-md:rounded-none"
+                className="object-fill rounded-[12px] max-xl:rounded-[10px] w-full h-full max-md:rounded-none max-md:object-cover"
               />
             </a>
           </SwiperSlide>
