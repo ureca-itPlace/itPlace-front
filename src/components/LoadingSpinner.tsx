@@ -27,8 +27,23 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   className = 'h-8 w-8 border-4 border-purple04 border-t-transparent',
 }) => {
   return (
-    <div className={`animate-spin rounded-full ${className}`} role="status" aria-live="polite">
+    <div
+      className={`rounded-full ${className}`}
+      style={{
+        animation: 'spin 1s linear infinite',
+      }}
+      role="status"
+      aria-live="polite"
+    >
       <span className="sr-only">Loading...</span>
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };
