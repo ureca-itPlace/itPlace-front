@@ -65,7 +65,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       tl.to(
         el,
         {
-          x: idx % 2 === 0 ? (isMobile ? 1800 : 2400) : -(isMobile ? 2400 : 3000),
+          x: idx % 2 === 0 ? (isMobile ? 1800 : 2400) : -(isMobile ? 2400 : isTablet ? 3200 : 3000),
           skewX: idx % 2 === 0 ? -20 : 20,
           duration: 7,
           ease: 'power1.out',
