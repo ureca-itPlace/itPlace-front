@@ -403,6 +403,15 @@ const MainPageLayout: React.FC = () => {
 
       {/* 모바일 레이아웃 */}
       <div className="flex md:hidden flex-col h-screen bg-grey01 overflow-hidden">
+        {/* 토스트 컨테이너 z-index 조정 */}
+        <style>
+          {`
+            .Toastify__toast-container {
+              z-index: 50000 !important;
+            }
+          `}
+        </style>
+
         {/* 투명 MobileHeader with SearchSection */}
         <div className="absolute top-0 left-0 right-0 z-[10000]">
           <MobileHeader
