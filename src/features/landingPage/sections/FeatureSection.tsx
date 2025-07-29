@@ -2,10 +2,8 @@
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { useEffect, useRef } from 'react';
-import CustomCursor from '../components/CustomCursor';
+import { useRef } from 'react';
 import FeatureItem from '../components/FeatureItem';
-import { debounce } from 'lodash';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -71,14 +69,6 @@ const FeatureSection = () => {
     }, featureSectionRef);
 
     return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
-    const handleResize = debounce(() => {
-      ScrollTrigger.refresh();
-    }, 300);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (
