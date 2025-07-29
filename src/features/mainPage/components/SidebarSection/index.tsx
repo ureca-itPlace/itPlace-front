@@ -12,6 +12,7 @@ import StoreDetailCard from './StoreDetail';
 import CategoryTabsSection from './CategoryTabsSection';
 import { useFavoritesList } from '../../hooks/useFavoritesList';
 import { getRecommendations } from '../../api/recommendationApi';
+import { getFavoritesList } from '../../api/favoritesListApi';
 
 interface Tab {
   id: string;
@@ -61,6 +62,22 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
     activeTab === 'favorites' ? selectedCategory : undefined
   );
+  const [allFavorites, setAllFavorites] = useState<FavoriteBenefit[]>([]);
+
+  useEffect(() => {
+    const fetchAllFavorites = async () => {
+      if (activeTab !== 'favorites') return;
+      try {
+        const data = await getFavoritesList({}); // 전체 카테고리
+        setAllFavorites(data);
+      } catch (error) {
+        console.error('전체 즐겨찾기 조회 실패:', error);
+        setAllFavorites([]);
+      }
+    };
+
+    fetchAllFavorites();
+  }, [activeTab]);
 
   // AI 추천 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
   const [isInitialRecommendationsLoad, setIsInitialRecommendationsLoad] = useState(true);
@@ -257,6 +274,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               >
                 <FavoriteStoreList
                   favorites={favorites}
+                  totalFavoritesCount={allFavorites.length}
                   onItemClick={handleFavoriteClick}
                   isLoading={isFavoritesLoading}
                 />

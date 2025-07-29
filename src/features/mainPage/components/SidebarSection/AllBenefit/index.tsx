@@ -64,9 +64,9 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
 
         <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
           <NoResult
-            message1="검색 결과가 없어요!"
-            message2="다른 키워드나 지역에서 검색해보세요!"
-            message1FontSize="text-title-6"
+            message1="주변 제휴처가 없어요!"
+            message2="다른 키워드나 지역에서 검색해보세요."
+            message1FontSize="text-title-6 "
             message2FontSize="text-body-3"
             isLoginRequired={false}
           />
