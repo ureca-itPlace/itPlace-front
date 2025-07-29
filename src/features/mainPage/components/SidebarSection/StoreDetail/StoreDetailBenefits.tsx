@@ -20,7 +20,30 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
   const membershipGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
 
   const isUserGrade = (grade: string) => {
-    return grade.toLowerCase() === membershipGrade?.toLowerCase();
+    if (!membershipGrade) return false;
+
+    const userGrade = membershipGrade.toLowerCase();
+    const benefitGrade = grade.toLowerCase();
+
+    console.log('🔍 Grade 디버깅:', {
+      activeTab,
+      userGrade,
+      benefitGrade,
+      membershipGrade,
+    });
+
+    // VIP콕 탭에서는 VIP 이상 등급(VIP, VVIP)에 대해 하이라이트
+    if (activeTab === 'vipkok') {
+      const shouldHighlight =
+        (userGrade === 'vip' || userGrade === 'vvip') && benefitGrade === 'vip콕';
+      console.log('VIP콕 하이라이트 결과:', shouldHighlight);
+      return shouldHighlight;
+    }
+
+    // 기본 탭에서는 완전 일치
+    const shouldHighlight = benefitGrade === userGrade;
+    console.log('기본 하이라이트 결과:', shouldHighlight);
+    return shouldHighlight;
   };
 
   const getGradeDisplayName = (grade: string) => {

@@ -10,7 +10,7 @@ let isGlobalRecommendationsLoading = false;
 export const getRecommendations = async (): Promise<RecommendationResponse> => {
   // 전역 중복 호출 방지 - 100ms 후 재시도
   if (isGlobalRecommendationsLoading) {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     return getRecommendations(); // 재귀 호출로 재시도
   }
 
