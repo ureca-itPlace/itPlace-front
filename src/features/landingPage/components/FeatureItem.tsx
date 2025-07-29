@@ -1,4 +1,5 @@
 import React from 'react';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 interface FeatureItemProps {
   reverse?: boolean;
@@ -6,6 +7,7 @@ interface FeatureItemProps {
   alt: string;
   title: React.ReactNode;
   description: string;
+  imageRef?: React.RefObject<HTMLImageElement>;
 }
 
 const FeatureItem: React.FC<FeatureItemProps> = ({
@@ -14,16 +16,23 @@ const FeatureItem: React.FC<FeatureItemProps> = ({
   alt,
   title,
   description,
+  imageRef,
 }) => {
+  const { isMobile, isTablet } = useResponsive();
+
+  const isVertical = isMobile || isTablet;
+  const layoutDirection = isVertical ? 'flex-col' : reverse ? 'flex-row-reverse' : 'flex-row';
+
   return (
     <div
-      className={`flex max-lg:flex-col items-center justify-center h-[90vh] gap-6 max-sm:h-[80vh] max-lg:gap-10 ${
-        reverse ? 'flex-row-reverse' : ''
-      }`}
+      className={`flex items-center justify-center h-[90vh] gap-6 max-sm:h-[80vh] ${
+        layoutDirection
+      } ${isVertical ? 'gap-10' : ''}`}
     >
       {/* 이미지 영역 */}
       <div className="flex justify-center items-center w-1/2 h-full px-3 max-lg:w-full max-lg:h-fit max-lg:px-0">
         <img
+          ref={imageRef}
           src={imageSrc}
           alt={alt}
           className="feature-image w-auto h-auto max-h-[80vh] object-contain"

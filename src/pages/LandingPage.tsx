@@ -1,4 +1,5 @@
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { lazy, useEffect, useLayoutEffect, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
@@ -6,7 +7,7 @@ import StartCTASection from '../features/landingPage/sections/StartCTASection';
 import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
 import { debounce } from 'lodash';
 
-gsap.registerPlugin(ScrollToPlugin);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 // const EarthSection = lazy(() => import('../features/landingPage/sections/EarthSection'));
 const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
