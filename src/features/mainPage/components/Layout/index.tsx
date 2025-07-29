@@ -86,6 +86,11 @@ const MainPageLayout: React.FC = () => {
   // 플랫폼 선택 핸들러
   const handlePlatformSelect = useCallback((platform: Platform | null) => {
     setSelectedPlatform(platform);
+
+    // 모바일에서 마커 클릭 시 바텀시트 자동으로 올리기
+    if (platform && window.innerWidth < 768) {
+      animateTo(300); // 중간 높이로 올리기
+    }
   }, []);
 
   // 사용자 위치 변경 핸들러 (초기 위치)
