@@ -8,9 +8,10 @@ let isGlobalRecommendationsLoading = false;
  * AI 추천 목록 조회
  */
 export const getRecommendations = async (): Promise<RecommendationResponse> => {
-  // 전역 중복 호출 방지
+  // 전역 중복 호출 방지 - 100ms 후 재시도
   if (isGlobalRecommendationsLoading) {
-    return { data: [] };
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    return getRecommendations(); // 재귀 호출로 재시도
   }
 
   isGlobalRecommendationsLoading = true;
