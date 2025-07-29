@@ -25,7 +25,7 @@ export default function RightAside({
   return (
     <aside
       className={
-        'w-full max-w-[476px] min-w-[400px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:max-w-[390px] max-xl:min-w-[320px] max-xl:pt-[56px] max-xlg:max-w-none max-xlg:w-full max-xlg:min-w-[240px] max-xlg:pt-[36px] max-xlg:pb-[32px] max-xlg:px-[28px] max-md:w-full max-md:p-6 ' +
+        'max-h-[891px] w-full max-w-[476px] min-w-[400px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-[40px] flex flex-col max-xl:max-w-[390px] max-xl:min-w-[320px] max-xl:pt-[56px] max-xlg:max-w-none max-xlg:w-full max-xlg:min-w-[240px] max-xlg:pt-[36px] max-xlg:pb-[32px] max-xlg:px-[28px] max-md:w-full max-md:p-6 ' +
         (isSimpleLayout ? ' max-md:hidden' : '')
       }
     >

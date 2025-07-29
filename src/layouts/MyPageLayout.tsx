@@ -15,7 +15,7 @@ export default function MyPageLayout() {
   const isHistory = pathname.startsWith('/mypage/history');
 
   // ✅ 모바일 레이아웃을 위한 조건분기
-  const isSimpleLayout =
+  const isWhiteLayout =
     pathname.startsWith('/mypage/favorites') || pathname.startsWith('/mypage/history');
 
   // ✅ Redux에서 로그인 상태 가져오기
@@ -47,8 +47,8 @@ export default function MyPageLayout() {
 
       <div
         className={
-          `min-h-screen bg-grey01 p-[28px] flex gap-[28px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
-          (isSimpleLayout ? ' max-md:gap-0 max-md:bg-white' : '')
+          `min-h-screen bg-grey01 mx-auto p-[28px] flex gap-[28px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
+          (isWhiteLayout ? ' max-md:gap-0 max-md:bg-white' : '')
         }
       >
         {/* 좌측 메뉴 */}
