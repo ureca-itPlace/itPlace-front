@@ -26,17 +26,24 @@ const UplusLinkModal: React.FC<UplusLinkModalProps> = ({
   const handleLink = async () => {
     setLoading(true);
     try {
-      const res: AxiosResponse<UplusSuccessResponse> = await api.post('api/v1/auth/loadUplusData', {
-        name,
-        phoneNumber: phone,
-      });
-      if (res.data.code === 'UPLUS_DATA_FOUND') {
-        showToast('유플러스 정보 연동에 성공했습니다!', 'success');
-        onVerified(); // ✅ MyInfoPage에서 fetchUser 실행
+      const res: AxiosResponse<UplusSuccessResponse> = await api.get(
+        '/api/v1/users/linkUplusData',
+        {
+          params: {
+            name,
+            phoneNumber: phone,
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        showToast('유플러스 회원 정보를 불러왔습니다!', 'success');
+        onVerified();
         onClose();
+      } else {
+        showToast('유플러스 정보를 불러오지 못했습니다.', 'error');
       }
     } catch (err: unknown) {
-      // 서버가 400일 때
       if (
         typeof err === 'object' &&
         err !== null &&
@@ -44,10 +51,10 @@ const UplusLinkModal: React.FC<UplusLinkModalProps> = ({
         (err as { response?: { data?: UplusErrorResponse } }).response?.data
       ) {
         const data = (err as { response: { data: UplusErrorResponse } }).response.data;
-        console.log(data.message);
+        console.error('🔴 서버 응답:', data.message);
         showToast('유플러스 회원이 아니신가요? 정보를 불러오지 못했습니다.', 'error');
       } else {
-        showToast('유플러스 정보 연동 중 알 수 없는 오류가 발생했습니다.', 'error');
+        showToast('유플러스 정보 연동 중 오류가 발생했습니다.', 'error');
       }
     } finally {
       setLoading(false);
