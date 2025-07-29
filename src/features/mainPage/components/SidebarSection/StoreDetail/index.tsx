@@ -45,8 +45,9 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         setIsFavorite(res.data.isFavorite);
       }
     } catch (e) {
-      // 중복 호출 방지 에러는 무시
+      // 중복 호출 방지 에러는 100ms 후 재시도
       if (e instanceof Error && e.message === 'Duplicate request prevented') {
+        setTimeout(() => fetchDetailRef.current(), 100);
         return;
       }
       console.error('상세 혜택 API 호출 실패:', e);
