@@ -237,12 +237,20 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         }
       };
 
-      window.kakao.maps.event.addListener(mapRef.current, 'click', clickListener);
+      window.kakao.maps.event.addListener(
+        mapRef.current,
+        'click',
+        clickListener as (...args: unknown[]) => void
+      );
     }
 
     return () => {
       if (clickListener && mapRef.current && window.kakao.maps.event.removeListener) {
-        window.kakao.maps.event.removeListener(mapRef.current, 'click', clickListener);
+        window.kakao.maps.event.removeListener(
+          mapRef.current,
+          'click',
+          clickListener as (...args: unknown[]) => void
+        );
       }
     };
   }, [isRoadviewMode, onMapClick]);
