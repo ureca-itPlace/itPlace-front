@@ -1,25 +1,19 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
-import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
+import { lazy, useEffect, useLayoutEffect, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
 import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
 import { debounce } from 'lodash';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-import EarthSection from '../features/landingPage/sections/EarthSection';
-import { useResponsive } from '../hooks/useResponsive';
-import MobileEarthSection from '../features/landingPage/sections/MobileEarthSection';
 const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
 const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
 const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
 const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
 
 const LandingPage = () => {
-  const { isMobile, isTablet } = useResponsive();
-  // 지구 로드 상태
-  const [isLoaded, setIsLoaded] = useState(false);
   const [videoEnded, setVideoEnded] = useState(false);
   // 헤더 색상 변경을 위한 섹션 색상 감지
   const [theme, setTheme] = useState<string>('light');
@@ -52,17 +46,8 @@ const LandingPage = () => {
 
   return (
     <div className="relative bg-white z-20 overflow-x-hidden">
-      {/* 지구 */}
-      {isMobile || isTablet ? (
-        <MobileEarthSection />
-      ) : (
-        <Suspense fallback={<div>지구 에러 바운더리</div>}>
-          <EarthSection onLoaded={() => setIsLoaded(true)} />
-        </Suspense>
-      )}
-
       {/* 헤더 */}
-      {isLoaded && <MobileHeader theme={theme} />}
+      <MobileHeader theme={theme} />
       {/* 더미 박스 */}
       {/* <div className="h-[65vh]" /> */}
       {/* 지도 */}
