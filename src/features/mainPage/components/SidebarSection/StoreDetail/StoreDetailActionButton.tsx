@@ -5,6 +5,7 @@ import { RootState } from '../../../../../store';
 import { addFavorite, removeFavorite } from '../../../api/favoriteApi';
 import { submitUsageAmount } from '../../../api/benefitDetail';
 import { showToast } from '../../../../../utils/toast';
+import { formatNumberWithCommas, removeCommas } from '../../../utils/numberFormat';
 import Modal from '../../../../../components/Modal';
 
 interface StoreDetailActionButtonProps {
@@ -23,6 +24,12 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [usageAmount, setUsageAmount] = useState('');
+
+  // input 값 변경 핸들러 (콤마 포맷팅 적용)
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatNumberWithCommas(e.target.value);
+    setUsageAmount(formattedValue);
+  };
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
   const handleFavoriteToggle = async () => {
@@ -95,8 +102,10 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     }
 
     try {
+      // 콤마 제거 후 숫자로 변환
+      const numericAmount = parseInt(removeCommas(usageAmount));
       // API 호출
-      const response = await submitUsageAmount(parseInt(benefitId), parseInt(usageAmount));
+      const response = await submitUsageAmount(parseInt(benefitId), numericAmount);
 
       // 서버에서 message 필드가 온다고 가정
       if (response?.data?.message) {
@@ -108,8 +117,10 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       // 입력값 초기화 & 모달 닫기
       setUsageAmount('');
       setIsModalOpen(false);
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || '사용 내역 등록에 실패했습니다.';
+    } catch (error) {
+      const errorMessage =
+        (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
+        '사용 내역 등록에 실패했습니다.';
       showToast(errorMessage, 'error');
     }
   };
@@ -171,14 +182,15 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
           </h2>
 
           <div className="mb-6">
-            <div className="flex items-center">
+            <div className="flex items-center relative">
               <input
-                type="number"
+                type="text"
                 value={usageAmount}
-                onChange={(e) => setUsageAmount(e.target.value)}
+                onChange={handleAmountChange}
                 placeholder="금액 입력"
-                className="flex-1 py-2 border border-grey03 rounded-[10px] focus:border-purple04 focus:outline-none text-center placeholder:text-center"
+                className="flex-1 py-2 pr-8 border border-grey03 rounded-[10px] focus:border-purple04 focus:outline-none text-center placeholder:text-center"
               />
+              <span className="absolute right-3 text-grey04 pointer-events-none">원</span>
             </div>
           </div>
 
