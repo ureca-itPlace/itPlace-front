@@ -113,7 +113,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
 
       {/* 스크롤 영역 - 이용 방법만 */}
       <div
-        className={`flex-1 overflow-y-auto pb-6 max-md:overflow-y-visible ${detailData?.data.manual ? 'px-6 max-md:px-4' : ''}`}
+        className={`flex-1 overflow-y-auto pb-6 max-md:pb-24 max-md:overflow-y-visible ${detailData?.data.manual ? 'px-6 max-md:px-4' : ''}`}
       >
         <StoreDetailUsageGuide detailData={detailData} />
       </div>
