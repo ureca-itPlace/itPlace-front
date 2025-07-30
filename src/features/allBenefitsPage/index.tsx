@@ -291,48 +291,43 @@ const AllBenefitsLayout: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* 모바일 헤더 */}
       <div className="fixed top-0 left-0 w-full z-[9999] max-md:block hidden">
         <MobileHeader title="전체 혜택" />
       </div>
 
-      {/* 이벤트 배너 - 모바일에서만 별도 표시 */}
-      <div className="max-md:block hidden max-md:-mx-5 max-md:mb-4">
+      {/* 모바일 이벤트 배너 */}
+      <div className="max-md:block hidden w-full mb-4">
         <EventBanner />
       </div>
 
-      {/* 데스크탑/태블릿/노트북 레이아웃 */}
-      <div className="p-7 flex gap-7 items-start max-xl:gap-5 max-xl:p-5 max-md:flex-col max-md:p-0 ">
-        <div className="max-md:hidden">
-          <EventBanner />
+      {/* 전체 레이아웃 컨테이너 */}
+      <div className="px-7 max-w-[1783px] w-full mx-auto max-md:px-0 max-md:mx-0 max-md:max-w-none">
+        {/* 이벤트 배너 + 랭킹 */}
+        <div className="pt-7 flex gap-7 items-start max-xl:gap-5 max-xl:pt-5 max-md:flex-col max-md:pt-0 max-md:px-5">
+          <div className="w-full max-md:hidden">
+            <EventBanner />
+          </div>
+          <SimpleRanking />
         </div>
-        <SimpleRanking />
-      </div>
 
-      {/* 모바일: 랭킹 아래 토글버튼
-      <div className="max-md:block hidden px-4 pt-2">
-        <BenefitFilterToggle value={filter} onChange={setFilter} />
-      </div> */}
-
-      {/* 데스크탑: 기존 토글버튼 위치 */}
-      <div className="pt-7 px-7 max-xl:pt-5 max-xl:px-0 max-xl:pl-5 max-xl:pr-8 max-md:pt-16 max-md:px-0">
-        <div className="w-[1783px] max-xl:w-full flex items-start justify-between max-xl:gap-4 max-md:flex-col max-md:w-full">
+        {/* 토글 / 검색 / 정렬 */}
+        <div className="pt-16 flex flex-wrap justify-between gap-4 max-md:pt-14 max-md:px-5 max-md:gap-0 max-md:mb-4">
           <BenefitFilterToggle
             value={filter}
             onChange={setFilter}
-            width="w-[300px] max-xl:w-[220px] max-md:w-full max-md:mb-0"
+            width="w-[300px] max-xl:w-[220px] max-md:w-full max-md:mb-3"
           />
-          <div className="flex gap-2 max-xl:gap-1 max-md:mb-6 max-md:w-full ">
+          <div className="flex gap-2 max-md:w-full">
             <SearchBar
               placeholder="제휴처 검색"
               value={searchTerm}
               onChange={handleSearchChange}
               onClear={() => setSearchTerm('')}
-              className="w-[350px] h-[50px] max-md:w-full max-xl:w-full max-md:h-[44px]"
+              className="w-[350px] h-[50px] max-md:w-full max-md:h-[44px]"
               backgroundColor="bg-grey01"
             />
-            {/* 정렬 필터 드롭다운 */}
             <div className="relative max-md:hidden" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -357,7 +352,9 @@ const AllBenefitsLayout: React.FC = () => {
                       onClick={() => handleSortFilterChange(option)}
                       className={`w-full px-4 py-2 text-left hover:bg-grey01 transition-colors text-black ${
                         option === sortOptions[0] ? 'rounded-t-[10px]' : ''
-                      } ${option === sortOptions[sortOptions.length - 1] ? 'rounded-b-[10px]' : ''}`}
+                      } ${
+                        option === sortOptions[sortOptions.length - 1] ? 'rounded-b-[10px]' : ''
+                      }`}
                     >
                       {option}
                     </button>
@@ -367,47 +364,40 @@ const AllBenefitsLayout: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 카테고리 필터 */}
-      <div className="px-8 pb-7 max-xl:w-full max-xl:pl-5 max-xl:pr-8 max-xl:pb-5 max-md:-mx-5 max-md:px-0">
-        {/* PC: 기존 고정형, 노트북: 축소, 모바일: 가로 스크롤 */}
-        <div className="bg-grey01 rounded-[10px] w-[1783px] max-xl:w-full h-[70px] max-xl:h-[52px] flex items-center px-6 max-xl:px-4 gap-[60px] max-xl:gap-[32px] max-md:w-screen max-md:h-[55px] max-md:rounded-none max-md:px-6 max-md:overflow-x-auto max-md:gap-4 max-md:pr-4">
-          <div className="flex items-center gap-[60px] max-xl:gap-[32px] max-md:gap-10 max-md:flex-nowrap max-md:min-w-max">
-            {categories.map((category) => (
-              <span
-                key={category}
-                onClick={() => handleCategoryChange(category)}
-                className={`text-body-1 max-md:text-body-2 max-xl:text-body-2 cursor-pointer transition-colors whitespace-nowrap ${
-                  selectedCategory === category
-                    ? 'text-purple04'
-                    : 'text-grey04 hover:text-purple04'
-                }`}
-              >
-                {category}
-              </span>
-            ))}
+        {/* 카테고리 필터 */}
+        <div className="mt-1">
+          <div className="bg-grey01 px-6 rounded-[10px] w-full max-w-[1783px] mx-auto h-[70px] flex items-center gap-[60px] max-xl:gap-[32px] max-md:rounded-none max-md:mx-0 max-md:max-w-none max-md:h-[55px] max-md:overflow-x-auto">
+            <div className="flex gap-10 whitespace-nowrap">
+              {categories.map((category) => (
+                <span
+                  key={category}
+                  onClick={() => handleCategoryChange(category)}
+                  className={`cursor-pointer transition-colors text-body-1 max-md:text-body-2 whitespace-nowrap ${
+                    selectedCategory === category
+                      ? 'text-purple04'
+                      : 'text-grey04 hover:text-purple04'
+                  }`}
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* 카드 그리드 */}
-      <div className="px-7 pb-7 max-xl:px-5 max-xl:pb-5 max-md:px-0">
-        <div className="relative">
-          <div className="w-[1783px] max-xl:w-full grid grid-cols-3 gap-[17px] max-xl:gap-x-[2px] max-xl:gap-y-[20px] min-h-[400px] max-xl:min-h-[260px] max-md:w-full max-md:grid-cols-1 max-md:gap-4">
+        {/* 카드 그리드 */}
+        <div className="mt-7 max-md:px-5">
+          <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 w-full max-w-[1783px] mx-auto max-md:mx-0 max-md:max-w-none">
             {isLoading ? (
-              // 로딩 중일 때 스피너 표시
-              <div className="col-span-3 flex items-center justify-center h-[400px] max-xl:h-[320px] max-md:col-span-1">
-                <div className="flex flex-col items-center gap-4 max-xl:gap-2">
-                  <LoadingSpinner className="h-10 w-10 max-xl:h-8 max-xl:w-8 border-4 border-purple04 border-t-transparent" />
-                </div>
+              <div className="col-span-3 flex justify-center items-center h-[400px]">
+                <LoadingSpinner />
               </div>
             ) : benefits.length > 0 ? (
-              // 혜택 카드들 표시
               benefits.map((benefit) => (
                 <div
                   key={benefit.benefitId}
-                  className="w-[583px] max-xl:w-[460px] h-[227px] max-xl:h-[168px] bg-white rounded-[18px] max-xl:rounded-[13px] drop-shadow-basic p-8 max-xl:p-5 flex justify-between relative cursor-pointer hover:drop-shadow-hover transition-shadow max-md:w-full max-md:h-[180px]"
+                  className="w-full max-w-[583px] h-[227px] max-xl:h-[168px] bg-white rounded-[18px] max-xl:rounded-[13px] drop-shadow-basic p-8 max-xl:p-5 flex justify-between relative cursor-pointer hover:drop-shadow-hover transition-shadow max-md:w-full max-md:h-[180px]"
                   onClick={() => handleCardClick(benefit)}
                 >
                   {/* 왼쪽 콘텐츠 */}
@@ -429,13 +419,10 @@ const AllBenefitsLayout: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* 오른쪽 로고 및 즐겨찾기 */}
                   <div className="flex flex-col items-end">
-                    {/* 즐겨찾기 버튼 */}
                     <button
                       onClick={(e) => {
-                        e.stopPropagation(); // 카드 클릭 이벤트 중단
+                        e.stopPropagation();
                         toggleFavorite(benefit.benefitId);
                       }}
                       className="mb-4 max-xl:mb-2 text-orange03 hover:scale-110 transition-transform"
@@ -446,11 +433,9 @@ const AllBenefitsLayout: React.FC = () => {
                         <TbStar className="w-6 h-6 max-xl:w-5 max-xl:h-5" />
                       )}
                     </button>
-
-                    {/* 로고 이미지 */}
                     <div className="w-[80px] max-xl:w-[64px] h-[80px] max-xl:h-[64px] flex items-center justify-center max-md:w-[56px] max-md:h-[56px]">
                       <img
-                        src={benefit.image || '/images/mock/cgv.png'} // 이미지가 없을 경우 기본 이미지
+                        src={benefit.image || '/images/mock/cgv.png'}
                         alt={`${benefit.benefitName} 로고`}
                         className="max-w-full max-h-full object-contain"
                       />
@@ -459,13 +444,10 @@ const AllBenefitsLayout: React.FC = () => {
                 </div>
               ))
             ) : (
-              // 검색 결과가 없을 때 표시
-              <div className="col-span-3 flex items-center justify-center h-[400px] max-xl:h-[320px] max-md:col-span-1">
+              <div className="col-span-3 flex justify-center items-center h-[400px]">
                 <NoResult
                   message1="앗! 일치하는 결과를 찾을 수 없어요!"
                   message2="다른 키워드나 혜택으로 다시 찾아보세요."
-                  message1FontSize="max-md:text-title-6"
-                  message2FontSize="max-md:text-body-3"
                 />
               </div>
             )}
@@ -473,7 +455,7 @@ const AllBenefitsLayout: React.FC = () => {
         </div>
 
         {/* 페이지네이션 */}
-        <div className="flex justify-center mt-8 max-xl:mt-6 max-md:w-[calc(100vw-56px)]">
+        <div className="flex justify-center mt-8">
           <Pagination
             currentPage={currentPage}
             itemsPerPage={itemsPerPage}
@@ -484,7 +466,7 @@ const AllBenefitsLayout: React.FC = () => {
         </div>
       </div>
 
-      {/* 제휴처 상세정보 모달 */}
+      {/* 상세 모달 */}
       <BenefitDetailModal
         isOpen={isModalOpen}
         benefit={selectedBenefit}
