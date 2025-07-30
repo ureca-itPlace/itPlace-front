@@ -13,7 +13,6 @@ const HeroSection = () => {
   const subtitleRef = useRef(null);
   const titleRef = useRef(null);
   const whiteOverlayRef = useRef(null);
-  const starRef = useRef(null);
 
   // Map Refs
   const mapContainerRef = useRef(null);
@@ -46,7 +45,6 @@ const HeroSection = () => {
       gsap.set(subtitleRef.current, { y: 100, opacity: 0 });
       gsap.set(titleRef.current, { y: 100, opacity: 0 });
       gsap.set(whiteOverlayRef.current, { opacity: 0, pointerEvents: 'none' });
-      gsap.set(starRef.current, { opacity: 0 });
       gsap.set(mapContainerRef.current, { opacity: 0, visibility: 'hidden' });
       gsap.set(
         [
@@ -70,16 +68,7 @@ const HeroSection = () => {
       });
       tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
       tl.to(titleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
-      tl.to(starRef.current, {
-        opacity: 1,
-        scale: 1.2,
-        x: '-42vw',
-        y: '68vh',
-        rotation: 180,
-        duration: 5,
-        ease: 'power2.out',
-      });
-      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '+=0.5');
+      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '+=0.3');
       tl.to(
         heroRef.current,
         {
@@ -102,17 +91,17 @@ const HeroSection = () => {
         .to(
           firstMapImageRef.current,
           { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'none' },
-          '+=2.5'
+          '+=2'
         )
         .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '>-0.5')
-        .to({}, { duration: 2.5 })
+        .to({}, { duration: 2 })
         .to(
           secondMapImageRef.current,
           { scale: 1.7, x: 80, opacity: 0, duration: 2, filter: 'blur(3px)' },
           '+=1.2'
         )
         .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '+=0.5')
-        .to({}, { duration: 2.5 })
+        .to({}, { duration: 2 })
         .to(
           thirdMapImageRef.current,
           { scale: 1.5, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
@@ -122,15 +111,19 @@ const HeroSection = () => {
         .to(
           fourthMapImageRef.current,
           {
+            borderRadius: 6,
             scale: 0.6,
-            rotation: -8,
+            opacity: 0,
             transformOrigin: 'center center',
             duration: 3,
           },
           '+=1.5'
         )
-        .from(mapTextRef.current, { opacity: 0, y: -40, duration: 1 })
-        .to(mapTextRef.current, { color: '#7638FA', duration: 1 });
+        .from(mapTextRef.current, {
+          opacity: 0,
+          y: 60,
+          duration: 1,
+        });
 
       tl.to({}, { duration: 2 });
     }, wrapperRef);
@@ -149,12 +142,6 @@ const HeroSection = () => {
           ref={windowRef}
           src="/images/landing/hero-window-1.png"
           className="absolute inset-0 w-full h-full object-cover z-40 max-md:hidden"
-        />
-        <img
-          ref={starRef}
-          src="/images/landing/map-star.png"
-          alt="별"
-          className="star-shooting absolute top-[20%] right-[40%] w-[5vw] z-50"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
@@ -191,9 +178,9 @@ const HeroSection = () => {
           src="/images/landing/map-4.webp"
           className="absolute inset-0 w-full h-screen object-cover"
         />
-        <div className="flex items-center justify-center w-full h-full text-[15vw] text-white z-30">
+        <div className="flex items-center justify-center w-full h-full text-[15vw] text-purple04 z-30">
           <div ref={mapTextRef} className="custom-font">
-            OUR LOCATION
+            OUR <span className="custom-font">LOCATION</span>
           </div>
         </div>
       </div>
