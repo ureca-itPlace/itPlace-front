@@ -255,17 +255,15 @@ const MainPageLayout: React.FC = () => {
     if (!isMobile) return;
 
     const reset = () => {
-      // 스크롤 위치 초기화
       window.scrollTo({ top: 0, behavior: 'auto' });
-
-      // 바텀시트 닫기
       setBottomSheetHeight(MIN_HEIGHT);
     };
 
-    // viewport가 완전히 바뀌고 나서 실행되도록 조금 더 여유 있는 시간
-    const timeoutId = setTimeout(reset, 200); // ← 기존 100ms보다 여유있게
+    const timeoutId = setTimeout(() => {
+      requestAnimationFrame(reset); // 👈 이 한 줄 차이!
+    }, 150);
 
-    return () => clearTimeout(timeoutId); // 언마운트 시 정리
+    return () => clearTimeout(timeoutId);
   }, [location.pathname]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
