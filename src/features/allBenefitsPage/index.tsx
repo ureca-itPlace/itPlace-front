@@ -473,7 +473,7 @@ const AllBenefitsLayout: React.FC = () => {
         </div>
 
         {/* 페이지네이션 */}
-        <div className="flex justify-center mt-8 max-xl:mt-6 max-md:w-[calc(100vw-56px)]">
+        <div className="flex justify-center mt-8 max-xl:mt-6 max-md:w-[calc(100vw-56px)] max-md:mb-6">
           <Pagination
             currentPage={currentPage}
             itemsPerPage={itemsPerPage}

@@ -166,7 +166,7 @@ export default function MyFavoritesPage() {
               (keyword.trim() && currentItems.length === 0) || // 검색 중이고 결과가 0
               (!keyword.trim() && allFavorites.length === 0) // 검색 안 했는데 전체도 0
             ) && (
-              <div className="mt-auto relative flex justify-center items-end max-md:mt-3 max-md:mb-2">
+              <div className="mt-auto relative flex justify-center items-end max-md:mt-3 max-md:mb-6">
                 <Pagination
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
