@@ -23,7 +23,7 @@ const HeroSection = () => {
   const mapTextRef = useRef(null);
 
   const { isMobile, isTablet, isLaptop } = useResponsive();
-  const xDistance = isMobile ? 50 : isTablet ? 180 : isLaptop ? 100 : 400;
+  const xDistance = isMobile ? 50 : isTablet ? 180 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
 
   useLayoutEffect(() => {
@@ -68,12 +68,13 @@ const HeroSection = () => {
       });
       tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
       tl.to(titleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
-      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power2.inOut' }, '+=0.5');
+      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '+=0.5');
       tl.to(
         heroRef.current,
         {
           opacity: 0,
-          ease: 'power2.inOut',
+          duration: 1.2,
+          ease: 'power1.inOut',
         },
         '+=0.2'
       );
@@ -81,38 +82,42 @@ const HeroSection = () => {
       // Map 애니메이션
       tl.set(mapContainerRef.current, { visibility: 'visible', scale: 1 })
         .to(mapContainerRef.current, { opacity: 1, duration: 0.5 }, '<0.5')
-        .to(whiteOverlayRef.current, { opacity: 0, duration: 0.8, ease: 'power2.out' }, '<')
+        .to(whiteOverlayRef.current, { opacity: 0, duration: 0.5, ease: 'power2.out' }, '<')
         .to(
           firstMapImageRef.current,
-          { opacity: 1, filter: 'blur(0px)', duration: 2, ease: 'power1.out' },
+          { opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power1.out' },
           '<'
         )
         .to(
           firstMapImageRef.current,
           { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'none' },
-          '+=1.5'
+          '+=2.5'
         )
         .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '>-0.5')
-        .to({}, { duration: 1.5 })
+        .to({}, { duration: 2.5 })
         .to(
           secondMapImageRef.current,
           { scale: 1.7, x: 80, opacity: 0, duration: 2, filter: 'blur(3px)' },
           '+=1.2'
         )
         .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '+=0.5')
-        .to({}, { duration: 1.5 })
+        .to({}, { duration: 2.5 })
         .to(
           thirdMapImageRef.current,
-          { scale: 1.7, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
+          { scale: 1.5, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
           '+=1.2'
         )
         .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '+=0.2')
-        .to(fourthMapImageRef.current, {
-          scale: 0.6,
-          rotation: -8,
-          transformOrigin: 'center center',
-          duration: 3,
-        })
+        .to(
+          fourthMapImageRef.current,
+          {
+            scale: 0.6,
+            rotation: -8,
+            transformOrigin: 'center center',
+            duration: 3,
+          },
+          '+=1.5'
+        )
         .from(mapTextRef.current, { opacity: 0, y: -40, duration: 1 })
         .to(mapTextRef.current, { color: '#7638FA', duration: 1 });
 
@@ -124,6 +129,7 @@ const HeroSection = () => {
 
   return (
     <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
+      {/* 우주 토끼 섹션 */}
       <div
         ref={heroRef}
         className="relative w-full h-full bg-[url('/images/landing/hero-bg.png')] bg-no-repeat bg-cover bg-center"
@@ -146,7 +152,7 @@ const HeroSection = () => {
           className="absolute inset-0 w-full h-full bg-white z-50 pointer-events-none"
         />
       </div>
-
+      {/* 지도 섹션 */}
       <div ref={mapContainerRef} className="absolute inset-0 w-full h-full bg-white z-60">
         <img
           ref={firstMapImageRef}
@@ -173,6 +179,11 @@ const HeroSection = () => {
             OUR LOCATION
           </div>
         </div>
+        <img
+          src="/images/landing/hero-star.png"
+          alt="별"
+          className="absolute top-[15%] left-[5%] w-[20vw] z-20"
+        />
       </div>
     </section>
   );
