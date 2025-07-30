@@ -69,6 +69,10 @@ const MainPageLayout: React.FC = () => {
     userCoords, // 사용자 초기 위치
   } = useStoreData();
 
+  // ItPlace AI 추천 결과 상태 (SidebarSection에서 올려받음)
+  const [itplaceAiResults, setItplaceAiResults] = useState<Platform[]>([]);
+  const [isShowingItplaceAiResults, setIsShowingItplaceAiResults] = useState(false);
+
   /**
    * 카테고리 선택 처리
    * 카테고리 변경 시 선택된 가맹점 및 검색 결과 초기화
@@ -310,10 +314,19 @@ const MainPageLayout: React.FC = () => {
     animateTo(closestSnapPoint);
   }, [bottomSheetHeight]);
 
-  // platforms 배열 안정화
+  // ItPlace AI 추천 결과 핸들러
+  const handleItplaceAiResults = useCallback((results: Platform[], isShowing: boolean) => {
+    setItplaceAiResults(results);
+    setIsShowingItplaceAiResults(isShowing);
+  }, []);
+
+  // platforms 배열 안정화 (ItPlace AI 결과 우선 표시)
   const stablePlatforms = useMemo(() => {
+    if (isShowingItplaceAiResults && itplaceAiResults.length > 0) {
+      return itplaceAiResults;
+    }
     return filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms;
-  }, [filteredPlatforms, apiPlatforms]);
+  }, [filteredPlatforms, apiPlatforms, itplaceAiResults, isShowingItplaceAiResults]);
 
   // 모바일에서 body 스크롤 방지
   useEffect(() => {
@@ -367,6 +380,7 @@ const MainPageLayout: React.FC = () => {
               onBenefitDetailRequest={handleBenefitDetailRequest}
               onShowSpeechBubble={handleShowSpeechBubble}
               userCoords={userCoords}
+              onItplaceAiResults={handleItplaceAiResults}
             />
           </div>
         </div>
@@ -559,6 +573,7 @@ const MainPageLayout: React.FC = () => {
                 onMapCenterMove={handleMapCenterMove}
                 onBenefitDetailRequest={handleBenefitDetailRequest}
                 userCoords={userCoords}
+                onItplaceAiResults={handleItplaceAiResults}
               />
             </div>
           </div>

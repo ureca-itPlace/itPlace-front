@@ -37,6 +37,7 @@ interface SidebarSectionProps {
   onBenefitDetailRequest?: (benefitIds: number[]) => void;
   onShowSpeechBubble?: (message: string, partnerName: string) => void;
   userCoords?: { lat: number; lng: number } | null;
+  onItplaceAiResults?: (results: Platform[], isShowing: boolean) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -55,6 +56,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onBenefitDetailRequest,
   onShowSpeechBubble,
   userCoords,
+  onItplaceAiResults,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -65,10 +67,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const [recommendationsError, setRecommendationsError] = useState<string | null>(null);
 
   // ItPlace AI 추천 결과 상태
-  const [itplaceAiResults, setItplaceAiResults] = useState<Platform[]>([]);
   const [isItplaceAiLoading, setIsItplaceAiLoading] = useState(false);
   const [itplaceAiError, setItplaceAiError] = useState<string | null>(null);
-  const [isShowingItplaceAiResults, setIsShowingItplaceAiResults] = useState(false);
 
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
@@ -153,11 +153,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   // 탭 변경 시 ItPlace AI 결과 초기화 (AI 추천에서 다른 탭으로 갈 때만)
   useEffect(() => {
     if (activeTab !== 'nearby' && activeTab !== 'ai') {
-      setItplaceAiResults([]);
       setItplaceAiError(null);
-      setIsShowingItplaceAiResults(false);
+      onItplaceAiResults?.([], false);
     }
-  }, [activeTab]);
+  }, [activeTab, onItplaceAiResults]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
@@ -241,14 +240,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           imageUrl: item.partner.image,
         }));
 
-        setItplaceAiResults(transformedData);
+        onItplaceAiResults?.(transformedData, true);
       } else {
         // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
-        setItplaceAiResults([]);
+        onItplaceAiResults?.([], true);
       }
-
-      // AI 추천 결과 표시 상태로 변경
-      setIsShowingItplaceAiResults(true);
 
       // 주변혜택 탭으로 전환
       onActiveTabChange('nearby');
@@ -332,7 +328,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           {/* 컨텐츠 영역 - 탭에 따라 다른 컴포넌트 렌더링 */}
           {activeTab === 'nearby' && (
             <StoreCardsSection
-              platforms={isShowingItplaceAiResults ? itplaceAiResults : platforms}
+              platforms={platforms}
               selectedPlatform={selectedPlatform}
               onPlatformSelect={handleCardClick}
               currentLocation={currentLocation}
