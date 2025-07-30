@@ -90,7 +90,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
       .map((benefit) => {
         const gradeText =
           benefit.grade === 'BASIC'
-            ? 'BASIC'
+            ? '우수'
             : benefit.grade === 'VIP'
               ? 'VIP'
               : benefit.grade === 'VVIP'
