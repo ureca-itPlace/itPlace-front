@@ -9,6 +9,7 @@ import { RootState } from './store';
 import { logout } from './store/authSlice';
 import { persistor } from './store';
 import { refreshToken } from './features/loginPage/apis/auth';
+import { ScrollRestoration } from 'react-router-dom';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,7 @@ const App = () => {
   return (
     <>
       <RouterProvider router={router} />
+      <ScrollRestoration getKey={() => null} />
       <ToastProvider />
     </>
   );

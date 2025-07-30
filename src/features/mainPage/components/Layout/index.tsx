@@ -254,13 +254,18 @@ const MainPageLayout: React.FC = () => {
     const isMobile = window.innerWidth < 768;
     if (!isMobile) return;
 
-    setTimeout(() => {
-      // ✅ 바텀시트를 닫힌 상태로 초기화
-      setBottomSheetHeight(MIN_HEIGHT);
+    const reset = () => {
+      // 스크롤 위치 초기화
+      window.scrollTo({ top: 0, behavior: 'auto' });
 
-      // ✅ 스크롤 위치 초기화
-      window.scrollTo(0, 0);
-    }, 100); // viewport 갱신 대기 시간
+      // 바텀시트 닫기
+      setBottomSheetHeight(MIN_HEIGHT);
+    };
+
+    // viewport가 완전히 바뀌고 나서 실행되도록 조금 더 여유 있는 시간
+    const timeoutId = setTimeout(reset, 200); // ← 기존 100ms보다 여유있게
+
+    return () => clearTimeout(timeoutId); // 언마운트 시 정리
   }, [location.pathname]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
