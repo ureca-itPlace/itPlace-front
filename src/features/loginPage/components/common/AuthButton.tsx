@@ -19,6 +19,7 @@ const AuthButton = ({ label, onClick, variant = 'default', className }: AuthButt
 
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={variant === 'disabled'}
       className={clsx(baseClasses, variantClasses[variant], className)}
