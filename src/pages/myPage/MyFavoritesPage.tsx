@@ -42,10 +42,10 @@ export default function MyFavoritesPage() {
   } = useFavorites(6);
 
   const userGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   return (
-    <>
+    <div className="flex flex-row gap-[28px] w-full h-full max-lg:flex-col max-md:flex-col-reverse max-md:px-5 max-md:pb-7 max-md:pt-[20px]">
       <MyPageContentLayout
         // ✨ MainContent 영역
 
@@ -62,7 +62,7 @@ export default function MyFavoritesPage() {
               <BenefitFilterToggle
                 value={benefitFilter}
                 onChange={setBenefitFilter}
-                width="w-[300px] max-xl:w-[220px] max-md:w-full"
+                width="w-[300px] max-xl:w-[175px] max-xlg:w-[180px] max-md:w-full"
                 fontSize="text-title-7 max-xl:text-body-3"
               />
               <SearchBar
@@ -71,7 +71,7 @@ export default function MyFavoritesPage() {
                 onChange={(e) => setKeyword(e.target.value)}
                 onClear={() => setKeyword('')}
                 backgroundColor="bg-grey01"
-                className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px] max-md:w-full max-md:-mt-2"
+                className="w-[280px] h-[50px] max-xl:w-[220px] max-xl:h-[44px] max-lg:w-[220px] max-md:w-full max-md:-mt-2"
               />
             </div>
             {/* 편집/전체선택 컨트롤 */}
@@ -166,7 +166,7 @@ export default function MyFavoritesPage() {
               (keyword.trim() && currentItems.length === 0) || // 검색 중이고 결과가 0
               (!keyword.trim() && allFavorites.length === 0) // 검색 안 했는데 전체도 0
             ) && (
-              <div className="mt-auto relative flex justify-center items-end max-md:mt-3">
+              <div className="mt-auto relative flex justify-center items-end max-md:mt-3 max-md:mb-6">
                 <Pagination
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
@@ -226,7 +226,7 @@ export default function MyFavoritesPage() {
               setIsEditing(false);
               setSelectedItems([]);
             }}
-            className="px-7 py-3 rounded-[12px] bg-white border border-grey02 text-grey03 text-body-2 font-medium"
+            className="px-7 py-3 rounded-[12px] bg-white border border-grey02 text-grey03 text-body-3 font-medium"
           >
             취소
           </button>
@@ -239,7 +239,7 @@ export default function MyFavoritesPage() {
                 setIsDeleteModalOpen(true);
               }
             }}
-            className={`flex-1 py-3 ml-3 rounded-[12px] text-body-1 font-medium text-white transition-colors ${
+            className={`flex-1 py-3 ml-3 rounded-[12px] text-body-3 font-medium text-white transition-colors ${
               selectedItems.length > 0 ? 'bg-purple04' : 'bg-grey03 text-grey04'
             }`}
           >
@@ -275,6 +275,6 @@ export default function MyFavoritesPage() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -20,7 +20,21 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
   const membershipGrade = useSelector((state: RootState) => state.auth.user?.membershipGrade);
 
   const isUserGrade = (grade: string) => {
-    return grade.toLowerCase() === membershipGrade?.toLowerCase();
+    if (!membershipGrade) return false;
+
+    const userGrade = membershipGrade.toLowerCase();
+    const benefitGrade = grade.toLowerCase();
+
+    // VIP콕 탭에서는 VIP 이상 등급(VIP, VVIP)에 대해 하이라이트
+    if (activeTab === 'vipkok') {
+      const shouldHighlight =
+        (userGrade === 'vip' || userGrade === 'vvip') && benefitGrade === 'vip콕';
+      return shouldHighlight;
+    }
+
+    // 기본 탭에서는 완전 일치
+    const shouldHighlight = benefitGrade === userGrade;
+    return shouldHighlight;
   };
 
   const getGradeDisplayName = (grade: string) => {
@@ -36,13 +50,20 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
         fontSize="text-title-7"
       />
 
-      <div className={`${detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}>
-        <h3 className="text-title-6 text-grey06 mb-2 max-md:text-title-7 max-md:mb-1.5">상세 혜택</h3>
+      <div
+        className={`${detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}
+      >
+        <h3 className="text-title-6 text-grey06 mb-2 max-md:text-title-7 max-md:mb-1.5">
+          상세 혜택
+        </h3>
 
         {detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? (
           <div className="space-y-1 max-md:space-y-0.5">
             {detailData.data.tierBenefits.map((b, i) => (
-              <div key={i} className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5">
+              <div
+                key={i}
+                className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5"
+              >
                 <TbCheck size={20} className="text-grey04 max-md:w-4 max-md:h-4" />
                 <span
                   className={`text-body-3 max-md:text-body-4 ${
@@ -62,10 +83,12 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
             ))}
           </div>
         ) : (
-          <div>
+          <div className="mt-2">
             <NoResult
               message1="혜택 정보가 없어요!"
               message2={`${activeTab === 'vipkok' ? 'VIP콕' : '기본'} 혜택이 존재하지 않아요`}
+              message1FontSize="text-title-6"
+              message2FontSize="text-body-3"
               isLoginRequired={false}
             />
           </div>

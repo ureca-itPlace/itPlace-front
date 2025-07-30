@@ -1,87 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { renderToString } from 'react-dom/server';
 import { Platform, MapLocation } from '../../../types';
+import {
+  KakaoMap as KakaoMapType,
+  KakaoMarker,
+  KakaoMarkerClusterer,
+  KakaoCustomOverlay,
+  KakaoMouseEvent,
+} from '../../../types/kakao';
 import CustomMarker from './CustomMarker';
-
-interface KakaoLatLng {
-  getLat(): number;
-  getLng(): number;
-}
-
-interface KakaoMap {
-  getLevel(): number;
-  setCenter(latlng: KakaoLatLng): void;
-  getCenter(): KakaoLatLng;
-  relayout(): void;
-}
-
-interface KakaoMarker {
-  setMap(map: KakaoMap | null): void;
-}
-
-interface KakaoMarkerClusterer {
-  clear(): void;
-  addMarkers(markers: KakaoMarker[]): void;
-}
-
-interface KakaoCustomOverlay {
-  setContent(content: HTMLElement): void;
-  setMap(map: KakaoMap | null): void;
-}
-
-interface KakaoInfoWindow {
-  open(map: KakaoMap, marker: KakaoMarker): void;
-}
-
-interface KakaoMaps {
-  maps: {
-    LatLng: new (lat: number, lng: number) => KakaoLatLng;
-    Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => KakaoMap;
-    Marker: new (options: { position: KakaoLatLng; map?: KakaoMap }) => KakaoMarker;
-    MarkerClusterer?: new (options: {
-      map: KakaoMap;
-      averageCenter: boolean;
-      minLevel: number;
-      disableClickZoom: boolean;
-      styles: Array<{
-        width: string;
-        height: string;
-        background: string;
-        borderRadius: string;
-        color: string;
-        textAlign: string;
-        lineHeight: string;
-        fontSize: string;
-        fontWeight: string;
-      }>;
-    }) => KakaoMarkerClusterer;
-    CustomOverlay: new (options: {
-      position: KakaoLatLng;
-      content: string;
-      yAnchor: number;
-      zIndex?: number;
-    }) => KakaoCustomOverlay;
-    InfoWindow: new (options: { content: string }) => KakaoInfoWindow;
-    event: {
-      addListener(target: KakaoMap | KakaoMarker, type: string, handler: () => void): void;
-    };
-  };
-}
-
-declare global {
-  interface Window {
-    kakao: KakaoMaps;
-  }
-}
 
 interface KakaoMapProps {
   platforms: Platform[];
   selectedPlatform?: Platform | null;
-  onPlatformSelect: (platform: Platform) => void;
+  onPlatformSelect: (platform: Platform | null) => void;
   onLocationChange?: (location: MapLocation) => void;
   onMapCenterChange?: (location: MapLocation) => void;
   centerLocation?: { latitude: number; longitude: number } | null;
   onMapLevelChange?: (mapLevel: number) => void;
+  isRoadviewMode?: boolean;
+  onMapClick?: (lat: number, lng: number) => void;
 }
 
 const KakaoMap: React.FC<KakaoMapProps> = ({
@@ -92,9 +30,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   onMapCenterChange,
   centerLocation,
   onMapLevelChange,
+  isRoadviewMode = false,
+  onMapClick,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<KakaoMap | null>(null);
+  const mapRef = useRef<KakaoMapType | null>(null);
   const markersRef = useRef<KakaoCustomOverlay[]>([]);
   const clustererRef = useRef<KakaoMarkerClusterer | null>(null);
   const debounceTimerRef = useRef<number | null>(null);
@@ -155,10 +95,23 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         const clusterer = new window.kakao.maps.MarkerClusterer({
           map: map,
           averageCenter: true,
-          minLevel: 6, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
+          minLevel: 7, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
           disableClickZoom: false,
           styles: [
             {
+              // 1-9개 마커 (작은 크기)
+              width: '40px',
+              height: '40px',
+              background: 'rgba(118, 56, 250, 0.8)',
+              borderRadius: '20px',
+              color: '#fff',
+              textAlign: 'center',
+              lineHeight: '40px',
+              fontSize: '12px',
+              fontWeight: 'bold',
+            },
+            {
+              // 50-60개 마커 (중간 크기)
               width: '50px',
               height: '50px',
               background: 'rgba(118, 56, 250, 0.8)',
@@ -169,8 +122,35 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
               fontSize: '14px',
               fontWeight: 'bold',
             },
+            {
+              // 60개 이상 마커 (큰 크기)
+              width: '70px',
+              height: '70px',
+              background: 'rgba(118, 56, 250, 0.8)',
+              borderRadius: '30px',
+              color: '#fff',
+              textAlign: 'center',
+              lineHeight: '60px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+            },
+            {
+              // 100개 이상 마커 (큰 크기)
+              width: '90px',
+              height: '90px',
+              background: 'rgba(118, 56, 250, 0.8)',
+              borderRadius: '30px',
+              color: '#fff',
+              textAlign: 'center',
+              lineHeight: '60px',
+              fontSize: '16px',
+              fontWeight: 'bold',
+            },
           ],
         });
+
+        // minClusterSize 설정 (1개부터 클러스터링)
+        clusterer.setMinClusterSize(1);
         clustererRef.current = clusterer;
       }
 
@@ -241,6 +221,40 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
   }, [userLocation, onMapCenterChange, onMapLevelChange, isMapInitialized]);
 
+  // 로드뷰 모드 클릭 이벤트 관리
+  useEffect(() => {
+    if (!mapRef.current || !onMapClick) return;
+
+    let clickListener: ((mouseEvent?: KakaoMouseEvent) => void) | null = null;
+
+    if (isRoadviewMode) {
+      clickListener = (mouseEvent?: KakaoMouseEvent) => {
+        if (mouseEvent && mouseEvent.latLng) {
+          const clickedLatLng = mouseEvent.latLng;
+          const lat = clickedLatLng.getLat();
+          const lng = clickedLatLng.getLng();
+          onMapClick(lat, lng);
+        }
+      };
+
+      window.kakao.maps.event.addListener(
+        mapRef.current,
+        'click',
+        clickListener as (...args: unknown[]) => void
+      );
+    }
+
+    return () => {
+      if (clickListener && mapRef.current && window.kakao.maps.event.removeListener) {
+        window.kakao.maps.event.removeListener(
+          mapRef.current,
+          'click',
+          clickListener as (...args: unknown[]) => void
+        );
+      }
+    };
+  }, [isRoadviewMode, onMapClick]);
+
   // 플랫폼 마커 표시
   useEffect(() => {
     if (!mapRef.current) return;
@@ -259,6 +273,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
     const newMarkers: KakaoMarker[] = [];
 
+    // 클러스터링 활성화 여부 확인
+    const isClusteringActive = currentZoomLevel >= 7 && clustererRef.current;
+
     platforms.forEach((platform) => {
       // 좌표가 없는 가맹점은 마커 표시 안함
       if (
@@ -271,11 +288,10 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       }
 
       const markerPosition = new window.kakao.maps.LatLng(platform.latitude, platform.longitude);
-      const isSelected = selectedPlatform?.id === platform.id;
 
       // 줌 레벨에 따라 클러스터링 또는 개별 표시
-      if (currentZoomLevel >= 7 && clustererRef.current) {
-        // 클러스터링용 일반 마커 생성
+      if (isClusteringActive) {
+        // 클러스터링용 일반 마커 생성 (지도에 표시하지 않음)
         const clusterMarker = new window.kakao.maps.Marker({
           position: markerPosition,
         });
@@ -287,6 +303,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
         newMarkers.push(clusterMarker);
       } else {
+        // 개별 커스텀 마커만 표시 (클러스터링 비활성화 시에만)
+        const isSelected = selectedPlatform?.id === platform.id;
+
         // React 컴포넌트를 HTML로 렌더링
         const markerHTML = renderToString(
           <CustomMarker imageUrl={platform.imageUrl} name={platform.name} isSelected={isSelected} />
@@ -343,7 +362,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
   return (
     <div className="w-full h-full">
-      <div ref={mapContainer} className="w-full h-full rounded-[18px]" style={{}} />
+      <div
+        ref={mapContainer}
+        className="w-full h-full rounded-[18px] max-md:rounded-none"
+        style={{}}
+      />
     </div>
   );
 };

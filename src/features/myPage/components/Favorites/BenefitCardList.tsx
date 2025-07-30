@@ -38,7 +38,7 @@ export default function BenefitCardList({
   };
 
   return (
-    <div className="grid grid-cols-3 gap-x-12 gap-y-5 min-h-[520px] max-xl:min-h-[300px] max-xl:gap-x-6 max-md:grid-cols-2">
+    <div className="grid grid-cols-3 gap-x-10 gap-y-5 min-h-[520px] max-xl:min-h-[300px] max-xl:gap-x-5 max-xlg:gap-x-3 max-xlg:grid-cols-2">
       {items.map((item) => (
         <div
           key={item.benefitId}
@@ -49,7 +49,7 @@ export default function BenefitCardList({
               setSelectedId(item.benefitId); // 상세보기
             }
           }}
-          className={`relative p-4 border flex flex-col items-center rounded-[18px] aspect-[12/13] w-full max-md:aspect-[4/3] max-sm:aspect-[12/13] cursor-pointer border-none shadow-[0px_3px_12px_rgba(0,0,0,0.15)] ${
+          className={`relative p-4 border flex flex-col items-center rounded-[18px] aspect-[12/13] w-full max-xl:aspect-[1/1] max-xlg:max-h-[150px] max-md:max-h-none max-md:aspect-[4/3] max-sm:aspect-[12/13] cursor-pointer border-none shadow-[0px_3px_12px_rgba(0,0,0,0.15)] ${
             isEditing
               ? selectedItems.includes(item.benefitId)
                 ? 'ring-2 ring-purple04'
@@ -93,10 +93,10 @@ export default function BenefitCardList({
           <img
             src={item.partnerImage}
             alt={item.benefitName}
-            className="h-[108px] w-auto object-contain mt-6 max-xl:h-[68px] max-md:h-[98px] max-sm:h-[60px]"
+            className="h-[108px] w-auto object-contain mt-6 max-xl:h-[60px] max-xlg:mt-1 max-md:h-[98px] max-sm:h-[60px]"
           />
           <div className="flex flex-grow" />
-          <p className="text-grey05 text-title-5 text-center mt-3 max-xl:text-title-7 max-md:text-title-6 max-sm:text-title-7 line-clamp-2 min-h-[3rem]">
+          <p className="text-grey05 text-title-5 text-center mt-2 line-clamp-2 max-xlg:mt-3 max-xlg:line-clamp-3 min-h-[4rem] max-xl:text-title-7 max-lg:text-title-8 max-md:text-title-6 max-sm:text-title-7 ">
             {item.benefitName}
           </p>
         </div>

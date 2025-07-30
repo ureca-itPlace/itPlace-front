@@ -7,11 +7,11 @@ const images = ['/images/allBenefits/event1.png', '/images/allBenefits/event2.pn
 const images2 = ['/images/allBenefits/event1-1.png', '/images/allBenefits/event2-2.png'];
 
 const EventBanner: React.FC = () => {
-  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 500);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 767);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 500); // max-sm 기준
+      setIsMobile(window.innerWidth <= 767); // max-md 기준
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -20,7 +20,7 @@ const EventBanner: React.FC = () => {
   const renderImages = isMobile ? images2 : images;
 
   return (
-    <div className="rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic flex items-center justify-center w-[1200px] max-xl:w-[950px] h-[250px] max-xl:h-[200px] max-md:w-full max-md:h-[100px] max-md:rounded-none max-md:drop-shadow-none">
+    <div className="rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic flex items-center justify-center w-[1190px] max-xl:w-[950px] h-[250px] max-xl:h-[200px] max-xlg:w-full max-md:w-full max-md:h-[100px] max-md:rounded-none max-md:drop-shadow-none">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={30}
@@ -49,7 +49,7 @@ const EventBanner: React.FC = () => {
               <img
                 src={src}
                 alt={`benefit-${idx + 1}`}
-                className="object-fill rounded-[12px] max-xl:rounded-[10px] w-full h-full max-md:rounded-none"
+                className="object-fill rounded-[12px] max-xl:rounded-[10px] w-full h-full max-md:rounded-none max-md:object-cover"
               />
             </a>
           </SwiperSlide>

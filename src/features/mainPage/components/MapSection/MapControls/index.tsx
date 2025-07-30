@@ -1,12 +1,15 @@
 import React from 'react';
 import SearchInMapButton from './SearchInMapButton';
 import CurrentLocationButton from './CurrentLocationButton';
+import RoadviewButton from './RoadviewButton';
 
 interface MapControlsProps {
   onLocationMove: (latitude: number, longitude: number) => void;
   onMapCenterMove?: (latitude: number, longitude: number) => void;
   onSearchInMap?: () => void;
   showSearchButton?: boolean;
+  isRoadviewMode?: boolean;
+  onRoadviewToggle?: () => void;
 }
 
 const MapControls: React.FC<MapControlsProps> = ({
@@ -14,6 +17,8 @@ const MapControls: React.FC<MapControlsProps> = ({
   onMapCenterMove,
   onSearchInMap,
   showSearchButton = false,
+  isRoadviewMode = false,
+  onRoadviewToggle,
 }) => {
   return (
     <>
@@ -26,9 +31,15 @@ const MapControls: React.FC<MapControlsProps> = ({
         </div>
       )}
 
-      {/* 현재 위치로 이동 버튼 */}
-      <div className="absolute bottom-6 right-6 z-10 pointer-events-none max-md:bottom-4 max-md:right-4">
-        <div className="pointer-events-auto">
+      {/* 로드뷰 버튼과 현재 위치 버튼 */}
+      <div className="absolute bottom-6 max-md:bottom-[100px] right-6 max-md:right-4 z-10 pointer-events-none">
+        <div className="pointer-events-auto flex flex-col gap-3 max-md:flex-row max-md:gap-2">
+          {/* 로드뷰 버튼 */}
+          {onRoadviewToggle && (
+            <RoadviewButton isRoadviewMode={isRoadviewMode} onToggle={onRoadviewToggle} />
+          )}
+
+          {/* 현재 위치로 이동 버튼 */}
           <CurrentLocationButton
             onLocationMove={onLocationMove}
             onMapCenterMove={onMapCenterMove}

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
-import LoadingSpinner from '../../../../components/LoadingSpinner';
 import SearchSection from './SearchSection';
 import InfoBannerSection from './InfoBannerSection';
 import NavigationTabsSection from './NavigationTabsSection';
@@ -13,6 +12,9 @@ import StoreDetailCard from './StoreDetail';
 import CategoryTabsSection from './CategoryTabsSection';
 import { useFavoritesList } from '../../hooks/useFavoritesList';
 import { getRecommendations } from '../../api/recommendationApi';
+import { getFavoritesList } from '../../api/favoritesListApi';
+import { getItplaceAiStores } from '../../api/itplaceAiApi';
+import { StoreData } from '../../types/api';
 
 interface Tab {
   id: string;
@@ -29,9 +31,13 @@ interface SidebarSectionProps {
   onSearchChange?: (query: string) => void;
   activeTab: string;
   onActiveTabChange: (tab: string) => void;
-  onKeywordSearch?: (keyword: string, reason?: string) => void;
+  onKeywordSearch?: (keyword: string) => void;
   searchQuery?: string;
   onMapCenterMove?: (latitude: number, longitude: number) => void;
+  onBenefitDetailRequest?: (benefitIds: number[]) => void;
+  onShowSpeechBubble?: (message: string, partnerName: string) => void;
+  userCoords?: { lat: number; lng: number } | null;
+  onItplaceAiResults?: (results: Platform[], isShowing: boolean) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -47,6 +53,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onKeywordSearch,
   searchQuery,
   onMapCenterMove,
+  onBenefitDetailRequest,
+  onShowSpeechBubble,
+  userCoords,
+  onItplaceAiResults,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -56,37 +66,97 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const [isRecommendationsLoading, setIsRecommendationsLoading] = useState(false);
   const [recommendationsError, setRecommendationsError] = useState<string | null>(null);
 
+  // ItPlace AI 추천 결과 상태
+  const [isItplaceAiLoading, setIsItplaceAiLoading] = useState(false);
+  const [itplaceAiError, setItplaceAiError] = useState<string | null>(null);
+
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
     activeTab === 'favorites' ? selectedCategory : undefined
   );
+  const [allFavorites, setAllFavorites] = useState<FavoriteBenefit[]>([]);
 
-  // AI 추천 데이터 로드
   useEffect(() => {
-    if (activeTab === 'ai') {
-      const fetchRecommendations = async () => {
-        setIsRecommendationsLoading(true);
-        setRecommendationsError(null);
-        try {
-          const response = await getRecommendations();
-          setRecommendations(response.data);
-        } catch (error) {
-          console.error('AI 추천 데이터 로드 실패:', error);
-          // API 에러 메시지를 그대로 전달
-          const errorMessage =
-            (error as { response?: { data?: { message?: string } }; message?: string })?.response
-              ?.data?.message ||
-            (error as { message?: string })?.message ||
-            'AI 추천을 불러오는데 실패했습니다.';
-          setRecommendationsError(errorMessage);
-        } finally {
-          setIsRecommendationsLoading(false);
-        }
-      };
+    const fetchAllFavorites = async () => {
+      if (activeTab !== 'favorites') return;
+      try {
+        const data = await getFavoritesList({}); // 전체 카테고리
+        setAllFavorites(data);
+      } catch (error) {
+        console.error('전체 즐겨찾기 조회 실패:', error);
+        setAllFavorites([]);
+      }
+    };
 
-      fetchRecommendations();
-    }
+    fetchAllFavorites();
   }, [activeTab]);
+
+  // AI 추천 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
+  const [isInitialRecommendationsLoad, setIsInitialRecommendationsLoad] = useState(true);
+  const isInitialRecommendationsLoadRef = useRef(isInitialRecommendationsLoad);
+  isInitialRecommendationsLoadRef.current = isInitialRecommendationsLoad;
+
+  const fetchRecommendations = useCallback(async () => {
+    setIsRecommendationsLoading(true);
+    setRecommendationsError(null);
+    try {
+      const response = await getRecommendations();
+      setRecommendations(response.data);
+    } catch (error) {
+      console.error('AI 추천 데이터 로드 실패:', error);
+      // API 에러 메시지를 그대로 전달
+      const errorMessage =
+        (error as { response?: { data?: { message?: string } }; message?: string })?.response?.data
+          ?.message ||
+        (error as { message?: string })?.message ||
+        'AI 추천을 불러오는데 실패했습니다.';
+      setRecommendationsError(errorMessage);
+    } finally {
+      setIsRecommendationsLoading(false);
+    }
+  }, []);
+
+  // fetchRecommendations 참조를 ref로 저장 (의존성 배열 최적화)
+  const fetchRecommendationsRef = useRef(fetchRecommendations);
+  fetchRecommendationsRef.current = fetchRecommendations;
+
+  // activeTab 참조를 ref로 저장 (의존성 배열 최적화)
+  const activeTabRef = useRef(activeTab);
+  activeTabRef.current = activeTab;
+
+  // AI 추천 초기 로드만 (nearby 패턴과 동일)
+  useEffect(() => {
+    const initializeRecommendations = () => {
+      if (activeTabRef.current === 'ai') {
+        fetchRecommendationsRef.current();
+      }
+    };
+
+    initializeRecommendations();
+  }, []); // 빈 의존성 배열로 초기 로드만
+
+  // 초기 로드 완료 감지 (nearby 패턴과 동일 - recommendations 데이터가 로드된 후에 완료 처리)
+  useEffect(() => {
+    if (recommendations && recommendations.length >= 0 && isInitialRecommendationsLoad) {
+      setIsInitialRecommendationsLoad(false);
+    }
+  }, [recommendations, isInitialRecommendationsLoad]);
+
+  // activeTab 변경 시에만 실행 (초기 로드 제외)
+  useEffect(() => {
+    if (isInitialRecommendationsLoadRef.current || activeTabRef.current !== 'ai') {
+      return;
+    }
+    fetchRecommendationsRef.current();
+  }, [activeTab]);
+
+  // 탭 변경 시 ItPlace AI 결과 초기화 (AI 추천에서 다른 탭으로 갈 때만)
+  useEffect(() => {
+    if (activeTab !== 'nearby' && activeTab !== 'ai') {
+      setItplaceAiError(null);
+      onItplaceAiResults?.([], false);
+    }
+  }, [activeTab, onItplaceAiResults]);
 
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
@@ -107,7 +177,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     if (selectedPlatform && viewMode === 'list') {
       setViewMode('detail');
     }
-  }, [selectedPlatform, viewMode]);
+  }, [selectedPlatform, viewMode, activeTab]);
 
   // 플랫폼 선택이 해제되면 리스트 모드로 돌아가기
   useEffect(() => {
@@ -131,6 +201,69 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     onKeywordSearch?.(favorite.partnerName);
   };
 
+  // ItPlace AI 추천 클릭 핸들러
+  const handleRecommendationClick = async (store: RecommendationItem) => {
+    try {
+      setIsItplaceAiLoading(true);
+      setItplaceAiError(null);
+
+      // 사용자 위치 정보 확인
+      if (!userCoords) {
+        setItplaceAiError('위치 정보를 가져올 수 없습니다.');
+        return;
+      }
+
+      const response = await getItplaceAiStores(store.partnerName, userCoords.lat, userCoords.lng);
+
+      // API 응답이 있으면 매장 목록 표시
+      if (response.data && response.data.length > 0) {
+        // API 응답을 Platform 형식으로 변환
+        const transformedData: Platform[] = response.data.map((item: StoreData) => ({
+          id: `${item.store.storeId}-${item.partner.partnerId}`,
+          storeId: item.store.storeId,
+          partnerId: item.partner.partnerId,
+          name: item.store.storeName,
+          category: item.partner.category,
+          business: item.store.business,
+          city: item.store.city,
+          town: item.store.town,
+          legalDong: item.store.legalDong,
+          address: item.store.address,
+          roadName: item.store.roadName,
+          roadAddress: item.store.roadAddress,
+          postCode: item.store.postCode,
+          latitude: item.store.latitude,
+          longitude: item.store.longitude,
+          benefits: item.tierBenefit.map((benefit) => `${benefit.grade}: ${benefit.context}`),
+          rating: 0, // API에서 제공하지 않으므로 기본값
+          distance: item.distance,
+          imageUrl: item.partner.image,
+        }));
+
+        onItplaceAiResults?.(transformedData, true);
+      } else {
+        // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
+        onItplaceAiResults?.([], true);
+      }
+
+      // 주변혜택 탭으로 전환
+      onActiveTabChange('nearby');
+
+      // SpeechBubble 표시 (추천 이유 설명)
+      onShowSpeechBubble?.(store.reason, store.partnerName);
+
+      // BenefitDetailCard 표시를 위해 RecommendationItem의 benefitIds 사용
+      if (store.benefitIds && store.benefitIds.length > 0 && onBenefitDetailRequest) {
+        onBenefitDetailRequest(store.benefitIds);
+      }
+    } catch (error) {
+      console.error('ItPlace AI API 호출 실패:', error);
+      setItplaceAiError('매장 정보를 불러오는데 실패했습니다.');
+    } finally {
+      setIsItplaceAiLoading(false);
+    }
+  };
+
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
     // 카테고리 변경은 useFavoritesList 내부의 useEffect에서 자동 처리됨
@@ -141,7 +274,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     switch (activeTab) {
       case 'nearby':
         return {
-          message: '근처 제휴처만 안내해드릴게요 !',
+          message: '근처 제휴처를 안내해드릴게요 !',
           highlightText: '근처 제휴처',
         };
       case 'favorites':
@@ -156,22 +289,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       default:
         return {
-          message: '근처 제휴처만 안내해드릴게요 !',
-          highlightText: '근처 제휴처만',
+          message: '근처 제휴처를 안내해드릴게요 !',
+          highlightText: '근처 제휴처',
         };
     }
   };
-
-  if (isLoading && activeTab === 'nearby') {
-    return (
-      // <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic"> 혹시 몰라서 남겨놓음
-      <div className="w-full h-full flex flex-col items-center justify-center max-md:mt-24">
-        <LoadingSpinner />
-        <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
-      </div>
-      // </div>
-    );
-  }
 
   return (
     <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic max-md:bg-transparent max-md:rounded-none max-md:drop-shadow-none max-md:overflow-visible">
@@ -184,7 +306,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               <SearchSection
                 onSearchChange={handleSearchChange}
                 onKeywordSearch={onKeywordSearch}
-                initialQuery={searchQuery}
+                defaultValue={searchQuery}
               />
             </div>
 
@@ -210,20 +332,21 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               selectedPlatform={selectedPlatform}
               onPlatformSelect={handleCardClick}
               currentLocation={currentLocation}
-              isLoading={isLoading}
-              error={error}
+              isLoading={isLoading || isItplaceAiLoading}
+              error={error || itplaceAiError}
             />
           )}
 
           {activeTab === 'favorites' && (
             <>
               {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-6 max-md:mb-3">
+              <div className="mb-3 max-md:mx-0">
                 <CategoryTabsSection
                   categories={CATEGORIES}
                   selectedCategory={selectedCategory}
                   onCategorySelect={handleCategorySelect}
                   mode="sidebar"
+                  showNavigationButtons={true}
                 />
               </div>
 
@@ -234,6 +357,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               >
                 <FavoriteStoreList
                   favorites={favorites}
+                  totalFavoritesCount={allFavorites.length}
                   onItemClick={handleFavoriteClick}
                   isLoading={isFavoritesLoading}
                 />
@@ -248,11 +372,9 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
             >
               <RecommendStoreList
                 stores={recommendations}
-                onItemClick={(store) => {
-                  onKeywordSearch?.(store.partnerName, store.reason);
-                }}
-                isLoading={isRecommendationsLoading}
-                error={recommendationsError}
+                onItemClick={handleRecommendationClick}
+                isLoading={isRecommendationsLoading || isItplaceAiLoading}
+                error={recommendationsError || itplaceAiError}
               />
             </div>
           )}

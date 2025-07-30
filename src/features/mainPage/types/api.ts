@@ -11,6 +11,7 @@ export interface StoreData {
   store: Store;
   partner: Partner;
   tierBenefit: TierBenefit[];
+  distance: number;
 }
 
 export interface Store {
@@ -118,7 +119,6 @@ export interface FavoriteResponse {
 export interface SearchStoresParams {
   lat: number;
   lng: number;
-  radiusMeters: number;
   category?: string;
   keyword: string;
 }
@@ -145,4 +145,14 @@ export interface RecommendationItem {
   partnerName: string;
   reason: string;
   imgUrl?: string;
+  benefitIds?: number[];
+}
+
+// ItPlace AI API 전용 응답 타입 (기존 StoreData 타입 재사용)
+export interface ItplaceAiResponse {
+  code: string;
+  status: string;
+  message: string;
+  data: StoreData[]; // 기존 StoreData 타입 재사용
+  timestamp: string;
 }

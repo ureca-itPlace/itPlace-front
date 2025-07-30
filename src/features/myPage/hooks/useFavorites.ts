@@ -13,7 +13,7 @@ export function useFavorites(itemsPerPageInit = 6) {
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   // 페이지네이션
   const [currentPage, setCurrentPage] = useState(1);

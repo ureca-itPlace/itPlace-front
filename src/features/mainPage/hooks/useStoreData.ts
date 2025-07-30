@@ -43,7 +43,7 @@ export const useStoreData = () => {
         ? await getStoreListByCategory({ lat, lng, radiusMeters: radius, category })
         : await getStoreList({ lat, lng, radiusMeters: radius });
 
-      return transformStoreDataToPlatforms(storeResponse.data, lat, lng);
+      return transformStoreDataToPlatforms(storeResponse.data);
     },
     []
   );
@@ -63,15 +63,23 @@ export const useStoreData = () => {
     }
   }, []);
 
+  // 함수 참조를 ref로 저장 (의존성 배열 최적화)
+  const executeRef = useRef(execute);
+  executeRef.current = execute;
+  const loadStoresByCategoryRef = useRef(loadStoresByCategory);
+  loadStoresByCategoryRef.current = loadStoresByCategory;
+  const updateLocationInfoRef = useRef(updateLocationInfo);
+  updateLocationInfoRef.current = updateLocationInfo;
+
   // 초기 데이터 로드 (컴포넌트 마운트 시에만)
   useEffect(() => {
     const initializeData = async () => {
       // 1. 현재 위치 가져오기
       const coords = await getCurrentLocation();
-      await updateLocationInfo(coords.lat, coords.lng);
+      await updateLocationInfoRef.current(coords.lat, coords.lng);
 
-      // 2. 주변 가맹점 데이터 로드 (초기에는 전체 카테고리)
-      const platforms = await loadStoresByCategory(
+      // 2. 근처 제휴처 데이터 로드 (초기에는 전체 카테고리)
+      const platforms = await loadStoresByCategoryRef.current(
         coords.lat,
         coords.lng,
         DEFAULT_RADIUS,
@@ -81,8 +89,8 @@ export const useStoreData = () => {
       return platforms; // 데이터 반환
     };
 
-    execute(initializeData);
-  }, [execute, loadStoresByCategory, updateLocationInfo]); // 필요한 의존성 추가
+    executeRef.current(initializeData);
+  }, []); // 빈 의존성 배열로 초기 로드만 실행
 
   // 카테고리 변경 시에만 반응하는 useEffect (초기 로드 제외)
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -94,16 +102,20 @@ export const useStoreData = () => {
     }
   }, [userCoords, isInitialLoad]);
 
+  // isInitialLoad 참조를 ref로 저장 (의존성 배열 최적화)
+  const isInitialLoadRef = useRef(isInitialLoad);
+  isInitialLoadRef.current = isInitialLoad;
+
   // 카테고리나 맵레벨 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
-    if (isInitialLoad || !userCoordsRef.current) {
+    if (isInitialLoadRef.current || !userCoordsRef.current) {
       return; // 초기 로드 중이거나 좌표가 없으면 스킵
     }
 
     // 카테고리 변경 시에만 실행되는 재로드
     const reloadByCategory = async () => {
       const coords = userCoordsRef.current!; // ref에서 최신 값 사용
-      const platforms = await loadStoresByCategory(
+      const platforms = await loadStoresByCategoryRef.current(
         coords.lat,
         coords.lng,
         getRadiusByMapLevel(currentMapLevelInHook),
@@ -112,8 +124,8 @@ export const useStoreData = () => {
       return platforms;
     };
 
-    execute(reloadByCategory);
-  }, [selectedCategory, currentMapLevelInHook, isInitialLoad, loadStoresByCategory, execute]);
+    executeRef.current(reloadByCategory);
+  }, [selectedCategory, currentMapLevelInHook]);
 
   /**
    * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
@@ -145,7 +157,7 @@ export const useStoreData = () => {
         const radius = getRadiusByMapLevel(mapLevel);
 
         // 가맹점 검색
-        const platforms = await loadStoresByCategory(
+        const platforms = await loadStoresByCategoryRef.current(
           centerLat,
           centerLng,
           radius,
@@ -153,14 +165,14 @@ export const useStoreData = () => {
         );
 
         // 위치 정보 업데이트
-        await updateLocationInfo(centerLat, centerLng);
+        await updateLocationInfoRef.current(centerLat, centerLng);
 
         return platforms;
       };
 
-      await execute(searchInMap);
+      await executeRef.current(searchInMap);
     },
-    [selectedCategory, execute, loadStoresByCategory, updateLocationInfo]
+    [selectedCategory]
   );
 
   /**
@@ -189,25 +201,23 @@ export const useStoreData = () => {
                   radiusMeters: radius,
                 });
 
-          return transformStoreDataToPlatforms(storeResponse.data, searchLat, searchLng);
+          return transformStoreDataToPlatforms(storeResponse.data);
         }
 
         // 키워드 검색 API 호출
         const storeResponse = await searchStores({
           lat: searchLat,
           lng: searchLng,
-          radiusMeters: radius,
           category: selectedCategory || undefined,
           keyword: keyword.trim(),
         });
 
-        return transformStoreDataToPlatforms(storeResponse.data, searchLat, searchLng);
+        return transformStoreDataToPlatforms(storeResponse.data);
       };
 
-      await execute(keywordSearch);
+      await executeRef.current(keywordSearch);
     },
-    // userCoords 의존성 제거 - 지도 드래그 시 재검색 방지
-    [selectedCategory, execute]
+    [selectedCategory]
   );
 
   return {

@@ -1,12 +1,13 @@
 // src/layouts/MobileLayout.tsx
-import { Outlet } from 'react-router-dom';
-import MobileHeader from '../components/MobileHeader';
+import { Outlet, useLocation } from 'react-router-dom';
 
 const MobileLayout = () => {
+  const location = useLocation();
+  const isAllBenefitsPage = location.pathname === '/benefits';
+
   return (
     <div className="max-md:block hidden bg-white min-h-screen">
-      <MobileHeader />
-      <main className="px-5">
+      <main className={`${isAllBenefitsPage ? '' : 'px-5'} mt-[54px]`}>
         <Outlet />
       </main>
     </div>

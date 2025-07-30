@@ -1,12 +1,16 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import SidebarSection from '../SidebarSection';
 import MapSection from '../MapSection';
 import SearchSection from '../SidebarSection/SearchSection';
 import SpeechBubble from '../SidebarSection/RecommendStoreList/SpeechBubble';
+import BenefitDetailCard from '../SidebarSection/RecommendStoreList/BenefitDetailCard';
 import MobileHeader from '../../../../components/MobileHeader';
 import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
+import { TbChevronLeft, TbChevronRight } from 'react-icons/tb';
+import { useLocation } from 'react-router-dom';
+import { useLayoutEffect } from 'react';
 
 /**
  * 메인페이지 레이아웃 컴포넌트
@@ -19,12 +23,34 @@ const MainPageLayout: React.FC = () => {
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]); // 검색 결과 가맹점 목록
   const [activeTab, setActiveTab] = useState<string>('nearby'); // 사이드바 활성 탭 ('주변 혜택', '관심 혜택', '잏AI 추천')
   const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false); // 사이드바 접힘 상태
 
   // 바텀시트 상태 관리
-  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(20); // 바텀시트 높이
+  const MIN_HEIGHT = 90;
+  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(MIN_HEIGHT); // 바텀시트 높이
   const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
   const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
   const [startHeight, setStartHeight] = useState<number>(0); // 드래그 시작 시 높이
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const location = useLocation();
+
+  const getMaxHeight = useCallback(() => {
+    return window.innerHeight - 105;
+  }, []);
+
+  // 스냅 포인트로 이동할 때 부드럽게 애니메이션
+  const animateTo = useCallback(
+    (target: number) => {
+      const clampedTarget = Math.min(target, getMaxHeight());
+      setIsAnimating(true);
+      setBottomSheetHeight(clampedTarget);
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 300);
+    },
+    [getMaxHeight]
+  );
 
   // 말풍선 상태
   const [speechBubble, setSpeechBubble] = useState<{
@@ -35,6 +61,15 @@ const MainPageLayout: React.FC = () => {
     isVisible: false,
     message: '',
     partnerName: '',
+  });
+
+  // 혜택 상세 카드 상태
+  const [benefitDetailCard, setBenefitDetailCard] = useState<{
+    isVisible: boolean;
+    benefitIds: number[];
+  }>({
+    isVisible: false,
+    benefitIds: [],
   });
 
   // 지도 관련 상태
@@ -57,6 +92,10 @@ const MainPageLayout: React.FC = () => {
     userCoords, // 사용자 초기 위치
   } = useStoreData();
 
+  // ItPlace AI 추천 결과 상태 (SidebarSection에서 올려받음)
+  const [itplaceAiResults, setItplaceAiResults] = useState<Platform[]>([]);
+  const [isShowingItplaceAiResults, setIsShowingItplaceAiResults] = useState(false);
+
   /**
    * 카테고리 선택 처리
    * 카테고리 변경 시 선택된 가맹점 및 검색 결과 초기화
@@ -74,9 +113,28 @@ const MainPageLayout: React.FC = () => {
   );
 
   // 플랫폼 선택 핸들러
-  const handlePlatformSelect = useCallback((platform: Platform | null) => {
-    setSelectedPlatform(platform);
-  }, []);
+  const handlePlatformSelect = useCallback(
+    (platform: Platform | null) => {
+      setSelectedPlatform(platform);
+
+      // 마커 클릭 시 동작
+      if (platform) {
+        // 모바일에서 마커 클릭 시 바텀시트 자동으로 올리기
+        if (window.innerWidth < 768) {
+          animateTo(300); // 중간 높이로 올리기
+        }
+        // 데스크톱에서 마커 클릭 시 사이드바가 접혀있으면 펼치기
+        else if (isSidebarCollapsed) {
+          setIsSidebarCollapsed(false);
+          // 지도 리사이즈를 위한 지연 처리
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+          }, 300);
+        }
+      }
+    },
+    [isSidebarCollapsed, animateTo]
+  );
 
   // 사용자 위치 변경 핸들러 (초기 위치)
   const handleLocationChange = useCallback((location: MapLocation) => {
@@ -122,22 +180,22 @@ const MainPageLayout: React.FC = () => {
     setCurrentMapLevel(mapLevel);
   }, []);
 
-  // 키워드 검색 핸들러 (AI 추천에서 reason과 함께 호출되는 경우 포함)
+  // 마지막 검색어 추적 (중복 검색 방지용)
+  const lastSearchedKeywordRef = useRef<string>('');
+
+  // 키워드 검색 핸들러
   const handleKeywordSearch = useCallback(
-    (keyword: string, reason?: string) => {
+    (keyword: string) => {
+      // 동일한 검색어로 중복 검색 방지
+      if (keyword === lastSearchedKeywordRef.current) {
+        return;
+      }
+
+      lastSearchedKeywordRef.current = keyword;
       setSelectedPlatform(null); // 선택된 가맹점 초기화
       setFilteredPlatforms([]); // 검색 결과 초기화
       setSearchQuery(keyword); // 검색어 저장 (빈 문자열도 포함)
       setActiveTab('nearby'); // 주변 혜택 탭으로 전환
-
-      // AI 추천의 reason이 있으면 말풍선 표시
-      if (reason) {
-        setSpeechBubble({
-          isVisible: true,
-          message: reason,
-          partnerName: keyword,
-        });
-      }
 
       // 현재 지도 중심이 있으면 사용, 없으면 사용자 초기 위치 사용
       if (currentMapCenter) {
@@ -149,6 +207,15 @@ const MainPageLayout: React.FC = () => {
     [searchByKeyword, currentMapLevel, currentMapCenter, userCoords]
   );
 
+  // 말풍선 표시 핸들러 (검색 없이 말풍선만 표시)
+  const handleShowSpeechBubble = useCallback((message: string, partnerName: string) => {
+    setSpeechBubble({
+      isVisible: true,
+      message,
+      partnerName,
+    });
+  }, []);
+
   // 말풍선 닫기 핸들러
   const handleSpeechBubbleClose = useCallback(() => {
     setSpeechBubble({
@@ -158,57 +225,72 @@ const MainPageLayout: React.FC = () => {
     });
   }, []);
 
+  // 혜택 상세 카드 핸들러
+  const handleBenefitDetailRequest = useCallback((benefitIds: number[]) => {
+    setBenefitDetailCard({
+      isVisible: true,
+      benefitIds,
+    });
+  }, []);
+
+  const handleBenefitDetailCardClose = useCallback(() => {
+    setBenefitDetailCard({
+      isVisible: false,
+      benefitIds: [],
+    });
+  }, []);
+
+  // 사이드바 토글 핸들러
+  const handleSidebarToggle = useCallback(() => {
+    setIsSidebarCollapsed((prev) => !prev);
+
+    // 지도 리사이즈를 위한 지연 처리
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300); // 애니메이션 완료 후
+  }, []);
+
   // 바텀시트 드래그 핸들러
 
-  // 상태 추가
-  const [isAnimating, setIsAnimating] = useState(false);
+  // 바텀시트가 항상 탭바까지만 보이게
+  // 🔥 useLayoutEffect에서 무조건 스크롤 + 바텀시트 초기화
+  useLayoutEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (!isMobile) return;
 
-  // 스냅 포인트로 이동할 때 부드럽게 애니메이션
-  const animateTo = (target: number) => {
-    setIsAnimating(true);
-    setBottomSheetHeight(target);
-    // transition이 끝난 뒤 끄기
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 300); // transition duration과 동일
+    const reset = () => {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      setBottomSheetHeight(MIN_HEIGHT);
+    };
+
+    const timeoutId = setTimeout(() => {
+      requestAnimationFrame(reset); // 👈 이 한 줄 차이!
+    }, 150);
+
+    return () => clearTimeout(timeoutId);
+  }, [location.pathname]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setStartY(e.touches[0].clientY);
+    setStartHeight(bottomSheetHeight);
   };
 
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      setIsDragging(true);
-      setStartY(e.touches[0].clientY);
-      setStartHeight(bottomSheetHeight);
-    },
-    [bottomSheetHeight]
-  );
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const deltaY = startY - e.touches[0].clientY;
+    const newHeight = Math.max(MIN_HEIGHT, Math.min(getMaxHeight(), startHeight + deltaY));
+    setBottomSheetHeight(newHeight);
+  };
 
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
-      if (!isDragging) return;
-
-      const currentY = e.touches[0].clientY;
-      const deltaY = startY - currentY; // 위로 드래그하면 양수, 아래로 드래그하면 음수
-      const newHeight = Math.max(20, Math.min(window.innerHeight - 120, startHeight + deltaY));
-
-      setBottomSheetHeight(newHeight);
-    },
-    [isDragging, startY, startHeight]
-  );
-
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = () => {
     setIsDragging(false);
-
-    // 스냅 포인트 설정
-    const windowHeight = window.innerHeight;
-    const snapPoints = [90, 300, windowHeight - 120]; // 최소, 중간, 최대 높이
-
-    // 가장 가까운 스냅 포인트로 이동
-    const closestSnapPoint = snapPoints.reduce((prev, curr) =>
-      Math.abs(curr - bottomSheetHeight) < Math.abs(prev - bottomSheetHeight) ? curr : prev
+    const snapPoints = [MIN_HEIGHT, 300, getMaxHeight()];
+    const closest = snapPoints.reduce((a, b) =>
+      Math.abs(b - bottomSheetHeight) < Math.abs(a - bottomSheetHeight) ? b : a
     );
-
-    animateTo(closestSnapPoint);
-  }, [bottomSheetHeight]);
+    animateTo(closest);
+  };
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -243,7 +325,21 @@ const MainPageLayout: React.FC = () => {
     );
 
     animateTo(closestSnapPoint);
-  }, [bottomSheetHeight]);
+  }, [bottomSheetHeight, animateTo]);
+
+  // ItPlace AI 추천 결과 핸들러
+  const handleItplaceAiResults = useCallback((results: Platform[], isShowing: boolean) => {
+    setItplaceAiResults(results);
+    setIsShowingItplaceAiResults(isShowing);
+  }, []);
+
+  // platforms 배열 안정화 (ItPlace AI 결과 우선 표시)
+  const stablePlatforms = useMemo(() => {
+    if (isShowingItplaceAiResults && itplaceAiResults.length > 0) {
+      return itplaceAiResults;
+    }
+    return filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms;
+  }, [filteredPlatforms, apiPlatforms, itplaceAiResults, isShowingItplaceAiResults]);
 
   // 모바일에서 body 스크롤 방지
   useEffect(() => {
@@ -262,32 +358,69 @@ const MainPageLayout: React.FC = () => {
   return (
     <>
       {/* 데스크톱 레이아웃 */}
-      <div className="hidden md:flex h-screen gap-6 bg-grey01 p-6 relative">
+      <div className="hidden md:flex h-screen bg-grey01 p-6 relative overflow-hidden">
+        {/* 사이드바 컨테이너 */}
         <div
-          className="flex-shrink-0 h-full"
+          className={`flex-shrink-0 h-full transition-all duration-300 ease-in-out ${
+            isSidebarCollapsed ? '-ml-6' : ''
+          }`}
           style={{
-            flexBasis: `${LAYOUT.SIDEBAR_WIDTH}px`,
-            minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
+            width: isSidebarCollapsed ? '0px' : `${LAYOUT.SIDEBAR_WIDTH + 24}px`, // padding 포함
+            minWidth: isSidebarCollapsed ? '0px' : `${LAYOUT.SIDEBAR_MIN_WIDTH + 24}px`,
           }}
         >
-          <SidebarSection
-            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
-            selectedPlatform={selectedPlatform}
-            onPlatformSelect={handlePlatformSelect}
-            currentLocation={currentLocation}
-            isLoading={isLoading}
-            error={error}
-            activeTab={activeTab}
-            onActiveTabChange={setActiveTab}
-            onKeywordSearch={handleKeywordSearch}
-            searchQuery={searchQuery}
-            onMapCenterMove={handleMapCenterMove}
-          />
+          <div
+            className={`h-full transition-all duration-300 ease-in-out ${
+              isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+            style={{
+              width: `${LAYOUT.SIDEBAR_WIDTH}px`,
+              minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
+            }}
+          >
+            <SidebarSection
+              platforms={stablePlatforms}
+              selectedPlatform={selectedPlatform}
+              onPlatformSelect={handlePlatformSelect}
+              currentLocation={currentLocation}
+              isLoading={isLoading}
+              error={error}
+              activeTab={activeTab}
+              onActiveTabChange={setActiveTab}
+              onKeywordSearch={handleKeywordSearch}
+              searchQuery={searchQuery}
+              onMapCenterMove={handleMapCenterMove}
+              onBenefitDetailRequest={handleBenefitDetailRequest}
+              onShowSpeechBubble={handleShowSpeechBubble}
+              userCoords={userCoords}
+              onItplaceAiResults={handleItplaceAiResults}
+            />
+          </div>
         </div>
 
-        <div className="flex-1 h-full">
+        {/* 사이드바 토글 버튼 */}
+        <button
+          onClick={handleSidebarToggle}
+          className={`absolute top-40 z-40 bg-white rounded-[18px] drop-shadow-basic px-1 py-3 hover:bg-grey01 transition-all duration-300 ease-in-out transform -translate-y-1/2 ${
+            isSidebarCollapsed ? 'left-[0px]' : 'left-[395px]'
+          }`}
+          style={{ width: '24px', height: '60px' }}
+        >
+          {isSidebarCollapsed ? (
+            <TbChevronRight size={14} className="text-grey05" />
+          ) : (
+            <TbChevronLeft size={14} className="text-grey05" />
+          )}
+        </button>
+
+        {/* 맵 영역 */}
+        <div
+          className={`flex-1 h-full transition-all duration-300 ease-in-out ${
+            isSidebarCollapsed ? 'pl-6' : ''
+          }`}
+        >
           <MapSection
-            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
             onPlatformSelect={handlePlatformSelect}
             onLocationChange={handleLocationChange}
@@ -309,9 +442,11 @@ const MainPageLayout: React.FC = () => {
 
         {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
         <div
-          className="absolute bottom-0 pointer-events-none z-10 overflow-hidden"
+          className={`absolute bottom-0 pointer-events-none z-30 overflow-hidden transition-all duration-300 ease-in-out ${
+            isSidebarCollapsed ? 'opacity-0' : 'opacity-100'
+          }`}
           style={{
-            left: '400px',
+            left: isSidebarCollapsed ? '20px' : '400px',
             transform: 'translateX(-20%)',
             width: '380px',
             height: '200px', // 허리까지만 보이도록 절반 높이
@@ -325,26 +460,55 @@ const MainPageLayout: React.FC = () => {
           />
         </div>
 
+        {/* 혜택 상세 카드 - 말풍선 위쪽에 위치 */}
+        {benefitDetailCard.isVisible && !isSidebarCollapsed && (
+          <div
+            className="absolute z-30 transition-all duration-300 ease-in-out"
+            style={{
+              left: isSidebarCollapsed ? '120px' : '500px',
+              bottom: '350px', // 말풍선보다 위쪽
+              transform: 'translateX(-20%)',
+              width: '410px',
+            }}
+          >
+            <BenefitDetailCard
+              benefitIds={benefitDetailCard.benefitIds}
+              onClose={handleBenefitDetailCardClose}
+            />
+          </div>
+        )}
+
         {/* 말풍선 - 캐릭터 위에 위치 */}
-        <div
-          className="absolute z-20"
-          style={{
-            left: '500px',
-            bottom: '200px', // 캐릭터 머리 위쪽
-            transform: 'translateX(-20%)',
-          }}
-        >
-          <SpeechBubble
-            message={speechBubble.message}
-            partnerName={speechBubble.partnerName}
-            isVisible={speechBubble.isVisible}
-            onClose={handleSpeechBubbleClose}
-          />
-        </div>
+        {!isSidebarCollapsed && (
+          <div
+            className="absolute z-20 transition-all duration-300 ease-in-out"
+            style={{
+              left: isSidebarCollapsed ? '120px' : '500px',
+              bottom: '200px', // 캐릭터 머리 위쪽
+              transform: 'translateX(-20%)',
+            }}
+          >
+            <SpeechBubble
+              message={speechBubble.message}
+              partnerName={speechBubble.partnerName}
+              isVisible={speechBubble.isVisible}
+              onClose={handleSpeechBubbleClose}
+            />
+          </div>
+        )}
       </div>
 
       {/* 모바일 레이아웃 */}
       <div className="flex md:hidden flex-col h-screen bg-grey01 overflow-hidden">
+        {/* 토스트 컨테이너 z-index 조정 */}
+        <style>
+          {`
+            .Toastify__toast-container {
+              z-index: 50000 !important;
+            }
+          `}
+        </style>
+
         {/* 투명 MobileHeader with SearchSection */}
         <div className="absolute top-0 left-0 right-0 z-[10000]">
           <MobileHeader
@@ -353,7 +517,7 @@ const MainPageLayout: React.FC = () => {
               <SearchSection
                 onSearchChange={(query) => setSearchQuery(query)}
                 onKeywordSearch={handleKeywordSearch}
-                initialQuery={searchQuery}
+                defaultValue={searchQuery}
               />
             }
           />
@@ -362,7 +526,7 @@ const MainPageLayout: React.FC = () => {
         {/* 지도 - 전체 화면 */}
         <div className="absolute inset-0">
           <MapSection
-            platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+            platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
             onPlatformSelect={handlePlatformSelect}
             onLocationChange={handleLocationChange}
@@ -389,7 +553,9 @@ const MainPageLayout: React.FC = () => {
             style={{
               height: `${bottomSheetHeight}px`,
               bottom: 0,
-              minHeight: '90px',
+              minHeight: `${MIN_HEIGHT}px`,
+              maxHeight: `${getMaxHeight()}px`,
+              transition: isAnimating ? 'all 0.3s ease-out' : 'none',
             }}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -407,9 +573,9 @@ const MainPageLayout: React.FC = () => {
             </div>
 
             {/* 사이드바 콘텐츠 */}
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 overflow-auto max-h-full">
               <SidebarSection
-                platforms={filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms}
+                platforms={stablePlatforms}
                 selectedPlatform={selectedPlatform}
                 onPlatformSelect={handlePlatformSelect}
                 currentLocation={currentLocation}
@@ -420,6 +586,9 @@ const MainPageLayout: React.FC = () => {
                 onKeywordSearch={handleKeywordSearch}
                 searchQuery={searchQuery}
                 onMapCenterMove={handleMapCenterMove}
+                onBenefitDetailRequest={handleBenefitDetailRequest}
+                userCoords={userCoords}
+                onItplaceAiResults={handleItplaceAiResults}
               />
             </div>
           </div>

@@ -99,8 +99,42 @@ export default function MyInfoPage() {
     );
   }
 
+  const handleUplusLink = async () => {
+    if (!user?.name || !user?.phoneNumber) {
+      showToast('유저 정보가 올바르지 않습니다.', 'error');
+      return;
+    }
+
+    try {
+      await api.get('/api/v1/users/checkUplusData', {
+        params: {
+          name: user.name,
+          phoneNumber: user.phoneNumber,
+        },
+      });
+
+      // ✅ 유플러스 회원인 경우
+      showToast('유플러스 회원 정보를 불러왔습니다!', 'success');
+      setShowUplusModal(true);
+    } catch (err) {
+      // 타입 단언
+      const axiosError = err as AxiosError;
+
+      const status = axiosError.response?.status;
+
+      if (status === 400) {
+        // ✅ 유플러스 회원 아님 (정상적인 흐름)
+        showToast('유플러스 회원이 아니신가요? 정보를 불러오지 못했습니다.', 'error');
+      } else {
+        // ❌ 예기치 못한 에러
+        console.error('유플러스 데이터 확인 실패:', err);
+        showToast('회원 확인 중 오류가 발생했습니다.', 'error');
+      }
+    }
+  };
+
   return (
-    <div className="flex flex-row gap-[28px] w-full h-full max-md:flex-col-reverse max-md:px-5 max-md:pb-7">
+    <div className="flex flex-row gap-[28px] w-full h-full max-lg:flex-col max-md:flex-col-reverse max-md:px-5 max-md:pb-7 max-md:pt-[20px]">
       <MyPageContentLayout
         main={
           <div>
@@ -123,7 +157,7 @@ export default function MyInfoPage() {
             <MembershipInfo
               name={user.name}
               grade={user.membershipGrade}
-              onClickLink={() => setShowUplusModal(true)}
+              onClickLink={handleUplusLink}
             />
           </FadeWrapper>
         }
