@@ -36,11 +36,9 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
         showToast('로그인에 성공하셨습니다!', 'success');
         navigate('/main');
       } else {
-        console.log('Login failed - else block');
         showToast('로그인에 실패하셨습니다.', 'error');
       }
-    } catch (error) {
-      console.log('Login failed - catch block', error);
+    } catch {
       showToast('로그인에 실패하셨습니다.', 'error');
     }
   };
