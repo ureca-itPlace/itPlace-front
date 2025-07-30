@@ -303,7 +303,7 @@ const AllBenefitsLayout: React.FC = () => {
       </div>
 
       {/* 전체 레이아웃 컨테이너 */}
-      <div className="px-7 max-w-[1783px] w-full mx-auto max-md:px-0 max-md:mx-0 max-md:max-w-none">
+      <div className="px-2 max-w-[1783px] w-full mx-auto max-md:px-0 max-md:mx-0 max-md:max-w-none">
         {/* 이벤트 배너 + 랭킹 */}
         <div className="pt-7 flex gap-7 items-start max-xl:gap-5 max-xl:pt-5 max-md:flex-col max-md:pt-0 max-md:px-5">
           <div className="w-full max-md:hidden">
