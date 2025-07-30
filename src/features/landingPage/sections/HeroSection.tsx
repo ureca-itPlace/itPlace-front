@@ -13,6 +13,7 @@ const HeroSection = () => {
   const subtitleRef = useRef(null);
   const titleRef = useRef(null);
   const whiteOverlayRef = useRef(null);
+  const starRef = useRef(null);
 
   // Map Refs
   const mapContainerRef = useRef(null);
@@ -45,6 +46,7 @@ const HeroSection = () => {
       gsap.set(subtitleRef.current, { y: 100, opacity: 0 });
       gsap.set(titleRef.current, { y: 100, opacity: 0 });
       gsap.set(whiteOverlayRef.current, { opacity: 0, pointerEvents: 'none' });
+      gsap.set(starRef.current, { opacity: 0 });
       gsap.set(mapContainerRef.current, { opacity: 0, visibility: 'hidden' });
       gsap.set(
         [
@@ -68,6 +70,15 @@ const HeroSection = () => {
       });
       tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
       tl.to(titleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
+      tl.to(starRef.current, {
+        opacity: 1,
+        scale: 1.2,
+        x: '-42vw',
+        y: '68vh',
+        rotation: 180,
+        duration: 5,
+        ease: 'power2.out',
+      });
       tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '+=0.5');
       tl.to(
         heroRef.current,
@@ -139,6 +150,12 @@ const HeroSection = () => {
           src="/images/landing/hero-window-1.png"
           className="absolute inset-0 w-full h-full object-cover z-40 max-md:hidden"
         />
+        <img
+          ref={starRef}
+          src="/images/landing/map-star.png"
+          alt="별"
+          className="star-shooting absolute top-[20%] right-[40%] w-[5vw] z-50"
+        />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
             EXPLORE THE
@@ -179,11 +196,6 @@ const HeroSection = () => {
             OUR LOCATION
           </div>
         </div>
-        <img
-          src="/images/landing/hero-star.png"
-          alt="별"
-          className="absolute top-[15%] left-[5%] w-[20vw] z-20"
-        />
       </div>
     </section>
   );
