@@ -1,7 +1,8 @@
 # It Place: 잇플레이스
 
 > “사람과 혜택을 잇는 장소” – 통신사 멤버십 제휴처 혜택을 쉽고 스마트하게 탐색하는 지도 기반 플랫폼
-> ![It Place 타이틀 화면](./demo/Readme-title.png)
+
+![It Place 타이틀 화면](./demo/Readme-title.png)
 
 </br>
 
