@@ -147,3 +147,12 @@ export interface RecommendationItem {
   imgUrl?: string;
   benefitIds?: number[];
 }
+
+// ItPlace AI API 전용 응답 타입 (기존 StoreData 타입 재사용)
+export interface ItplaceAiResponse {
+  code: string;
+  status: string;
+  message: string;
+  data: StoreData[]; // 기존 StoreData 타입 재사용
+  timestamp: string;
+}
