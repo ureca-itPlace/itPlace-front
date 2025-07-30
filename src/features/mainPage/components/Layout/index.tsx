@@ -559,7 +559,7 @@ const MainPageLayout: React.FC = () => {
             </div>
 
             {/* 사이드바 콘텐츠 */}
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 overflow-auto max-h-full">
               <SidebarSection
                 platforms={stablePlatforms}
                 selectedPlatform={selectedPlatform}
