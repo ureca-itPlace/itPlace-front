@@ -7,28 +7,26 @@ import FeatureItem from '../components/FeatureItem';
 gsap.registerPlugin(ScrollTrigger);
 const FeatureSection = () => {
   const featureSectionRef = useRef<HTMLDivElement>(null);
-  const planeRef = useRef<HTMLImageElement>(null);
-
-  useGSAP(() => {
-    const assets = gsap.utils.toArray('.floating-star') as HTMLElement[];
-
-    assets.forEach((asset) => {
-      gsap.to(asset, {
-        y: -30,
-        duration: gsap.utils.random(2, 4),
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-        delay: gsap.utils.random(0, 1),
-      });
-    });
-  }, []);
+  const starsRef = useRef<HTMLImageElement>(null);
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
       const images = gsap.utils.toArray('.feature-image');
       const titles = gsap.utils.toArray('.feature-title');
       const descs = gsap.utils.toArray('.feature-desc');
+
+      gsap.to(starsRef.current, {
+        x: '-200vw',
+        y: '150vh',
+        opacity: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: featureSectionRef.current,
+          start: 'top 80%',
+          end: 'bottom center',
+          scrub: 0.5,
+        },
+      });
 
       // 이미지 애니메이션
       images.forEach((image, index) => {
@@ -134,27 +132,12 @@ const FeatureSection = () => {
         }
         description="간단한 금액 입력만으로 제휴처에서 사용한 내역과 혜택 현황을 쉽게 조회할 수 있어요. 소비 패턴 분석과 맞춤형 혜택 관리까지 한 번에 가능합니다."
       />
-      <div className="floating-star-layer z-0 pointer-events-none">
+      <div className="z-0 pointer-events-none">
         <img
-          ref={planeRef}
-          src="/images/landing/plane.webp"
-          alt="종이비행기"
-          className="floating-star absolute top-[20%] left-[15%] w-[17vw] h-auto"
-        />
-        <img
-          src="/images/landing/key.webp"
-          alt="열쇠"
-          className="floating-star absolute top-[42%] right-[15%] w-[20vw]"
-        />
-        <img
-          src="/images/landing/feature-star.webp"
+          ref={starsRef}
+          src="/images/landing/stars.webp"
           alt="별"
-          className="floating-star absolute bottom-[22%] left-[15%] w-[20vw]"
-        />
-        <img
-          src="/images/landing/coin.webp"
-          alt="동전"
-          className="floating-star absolute bottom-[0%] right-[15%] w-[20vw]"
+          className="absolute top-[5%] left-full w-[25vw] h-auto"
         />
       </div>
     </section>
