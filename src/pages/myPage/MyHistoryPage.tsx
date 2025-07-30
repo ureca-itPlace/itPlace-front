@@ -126,18 +126,18 @@ export default function MyHistoryPage() {
         main={
           <div className="flex flex-col h-full">
             {/* 상단 타이틀 */}
-            <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:mb-4 max-xl:font-semibold max-md:hidden">
+            <h1 className="text-title-2 text-black mb-7 max-xl:text-title-4 max-xl:font-semibold max-md:hidden">
               혜택 사용 이력
             </h1>
             {/* 🔎 검색바 + 날짜필터 */}
-            <div className="flex justify-between mb-8 gap-2 max-md:flex-col max-md:-mt-8">
+            <div className="flex justify-between mb-8 gap-2 max-xlg:flex-col max-md:-mt-8">
               <SearchBar
                 placeholder="혜택명으로 검색하기"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 onClear={() => setKeyword('')}
                 backgroundColor="bg-grey01"
-                className="w-[280px] h-[50px] max-xl:max-w-[220px] max-xl:h-[44px] max-xlg:max-w-[180px] max-md:max-w-none max-md:w-full max-md:mb-2"
+                className="w-[280px] h-[50px] max-xl:max-w-[220px] max-xl:h-[44px] max-xlg:max-w-none max-xlg:w-full max-md:mb-2"
               />
               <div className="flex gap-2 items-center justify-end">
                 <button
@@ -154,7 +154,7 @@ export default function MyHistoryPage() {
                   onChange={(date) => setStartDate(date)}
                   dateFormat="yyyy-MM-dd"
                   placeholderText="시작 날짜"
-                  className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[90px] max-xlg:w-[80px] max-md:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                  className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[90px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
                 />
                 <span className="text-grey05">~</span>
                 <DatePicker
@@ -162,7 +162,7 @@ export default function MyHistoryPage() {
                   onChange={(date) => setEndDate(date)}
                   dateFormat="yyyy-MM-dd"
                   placeholderText="종료 날짜"
-                  className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[90px] max-xlg:w-[80px] max-md:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                  className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[90px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
                 />
               </div>
             </div>
@@ -223,11 +223,11 @@ export default function MyHistoryPage() {
                           key={idx}
                           className="flex items-center border border-purple02 rounded-[10px] p-2"
                         >
-                          <div className="flex items-center gap-4 flex-1 min-w-0">
+                          <div className="flex items-center gap-4 flex-1 min-w-0 min-h-[40px]">
                             <img
                               src={item.image}
                               alt={item.benefitName}
-                              className="h-[70px] w-auto object-contain flex-shrink-0 ml-3 max-xl:h-[50px]"
+                              className="h-[70px] w-auto object-contain flex-shrink-0 ml-3 max-xl:h-[50px] max-lg:hidden"
                             />
                             <span
                               className="ml-2 text-purple05 text-title-5 font-semibold overflow-hidden text-ellipsis whitespace-nowrap block max-xl:text-title-7 max-xl:font-semibold"
@@ -280,14 +280,14 @@ export default function MyHistoryPage() {
                   <img
                     src="/images/myPage/icon-money.webp"
                     alt="혜택 사용 이력 아이콘"
-                    className="w-[250px] h-auto max-xl:w-[160px] max-lg:w-[130px]"
+                    className="w-[250px] h-auto max-xl:w-[160px] max-lg:w-[100px]"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.onerror = null;
                       target.src = '/images/myPage/icon-money.png';
                     }}
                   />
-                  <p className="text-[36px] font-semibold text-grey05 pt-10 max-xl:text-[28px] max-xl:pt-6">
+                  <p className="text-[36px] font-semibold text-grey05 pt-10 max-xl:text-[28px] max-xl:pt-6 max-xlg:text-[24px]">
                     <span className="text-orange04">{totalAmount.toLocaleString()}</span>
                     원 <br className="max-lg:hidden" /> 할인 받았어요!
                   </p>

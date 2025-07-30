@@ -46,7 +46,7 @@ export default function MyPageLayout() {
 
       <div
         className={
-          `min-h-screen bg-grey01 mx-auto p-[28px] flex gap-[28px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
+          `min-h-screen bg-grey01 mx-auto p-[28px] flex gap-[28px] max-lg:gap-[16px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
           (isWhiteLayout ? ' max-md:gap-0 max-md:bg-white' : '')
         }
       >
