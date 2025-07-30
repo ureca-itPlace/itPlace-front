@@ -8,6 +8,7 @@ import MobileHeader from '../../../../components/MobileHeader';
 import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
+import { TbChevronLeft, TbChevronRight } from 'react-icons/tb';
 
 /**
  * 메인페이지 레이아웃 컴포넌트
@@ -20,6 +21,7 @@ const MainPageLayout: React.FC = () => {
   const [filteredPlatforms, setFilteredPlatforms] = useState<Platform[]>([]); // 검색 결과 가맹점 목록
   const [activeTab, setActiveTab] = useState<string>('nearby'); // 사이드바 활성 탭 ('주변 혜택', '관심 혜택', '잏AI 추천')
   const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false); // 사이드바 접힘 상태
 
   // 바텀시트 상태 관리
   const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(20); // 바텀시트 높이
@@ -84,14 +86,28 @@ const MainPageLayout: React.FC = () => {
   );
 
   // 플랫폼 선택 핸들러
-  const handlePlatformSelect = useCallback((platform: Platform | null) => {
-    setSelectedPlatform(platform);
+  const handlePlatformSelect = useCallback(
+    (platform: Platform | null) => {
+      setSelectedPlatform(platform);
 
-    // 모바일에서 마커 클릭 시 바텀시트 자동으로 올리기
-    if (platform && window.innerWidth < 768) {
-      animateTo(300); // 중간 높이로 올리기
-    }
-  }, []);
+      // 마커 클릭 시 동작
+      if (platform) {
+        // 모바일에서 마커 클릭 시 바텀시트 자동으로 올리기
+        if (window.innerWidth < 768) {
+          animateTo(300); // 중간 높이로 올리기
+        }
+        // 데스크톱에서 마커 클릭 시 사이드바가 접혀있으면 펼치기
+        else if (isSidebarCollapsed) {
+          setIsSidebarCollapsed(false);
+          // 지도 리사이즈를 위한 지연 처리
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+          }, 300);
+        }
+      }
+    },
+    [isSidebarCollapsed]
+  );
 
   // 사용자 위치 변경 핸들러 (초기 위치)
   const handleLocationChange = useCallback((location: MapLocation) => {
@@ -195,6 +211,16 @@ const MainPageLayout: React.FC = () => {
       isVisible: false,
       benefitIds: [],
     });
+  }, []);
+
+  // 사이드바 토글 핸들러
+  const handleSidebarToggle = useCallback(() => {
+    setIsSidebarCollapsed((prev) => !prev);
+
+    // 지도 리사이즈를 위한 지연 처리
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 300); // 애니메이션 완료 후
   }, []);
 
   // 바텀시트 드래그 핸들러
@@ -306,33 +332,66 @@ const MainPageLayout: React.FC = () => {
   return (
     <>
       {/* 데스크톱 레이아웃 */}
-      <div className="hidden md:flex h-screen gap-6 bg-grey01 p-6 relative">
+      <div className="hidden md:flex h-screen bg-grey01 p-6 relative overflow-hidden">
+        {/* 사이드바 컨테이너 */}
         <div
-          className="flex-shrink-0 h-full"
+          className={`flex-shrink-0 h-full transition-all duration-300 ease-in-out ${
+            isSidebarCollapsed ? '-ml-6' : ''
+          }`}
           style={{
-            flexBasis: `${LAYOUT.SIDEBAR_WIDTH}px`,
-            minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
+            width: isSidebarCollapsed ? '0px' : `${LAYOUT.SIDEBAR_WIDTH + 24}px`, // padding 포함
+            minWidth: isSidebarCollapsed ? '0px' : `${LAYOUT.SIDEBAR_MIN_WIDTH + 24}px`,
           }}
         >
-          <SidebarSection
-            platforms={stablePlatforms}
-            selectedPlatform={selectedPlatform}
-            onPlatformSelect={handlePlatformSelect}
-            currentLocation={currentLocation}
-            isLoading={isLoading}
-            error={error}
-            activeTab={activeTab}
-            onActiveTabChange={setActiveTab}
-            onKeywordSearch={handleKeywordSearch}
-            searchQuery={searchQuery}
-            onMapCenterMove={handleMapCenterMove}
-            onBenefitDetailRequest={handleBenefitDetailRequest}
-            onShowSpeechBubble={handleShowSpeechBubble}
-            userCoords={userCoords}
-          />
+          <div
+            className={`h-full transition-all duration-300 ease-in-out ${
+              isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+            style={{
+              width: `${LAYOUT.SIDEBAR_WIDTH}px`,
+              minWidth: `${LAYOUT.SIDEBAR_MIN_WIDTH}px`,
+            }}
+          >
+            <SidebarSection
+              platforms={stablePlatforms}
+              selectedPlatform={selectedPlatform}
+              onPlatformSelect={handlePlatformSelect}
+              currentLocation={currentLocation}
+              isLoading={isLoading}
+              error={error}
+              activeTab={activeTab}
+              onActiveTabChange={setActiveTab}
+              onKeywordSearch={handleKeywordSearch}
+              searchQuery={searchQuery}
+              onMapCenterMove={handleMapCenterMove}
+              onBenefitDetailRequest={handleBenefitDetailRequest}
+              onShowSpeechBubble={handleShowSpeechBubble}
+              userCoords={userCoords}
+            />
+          </div>
         </div>
 
-        <div className="flex-1 h-full">
+        {/* 사이드바 토글 버튼 */}
+        <button
+          onClick={handleSidebarToggle}
+          className={`absolute top-40 z-40 bg-white rounded-[18px] drop-shadow-basic px-1 py-3 hover:bg-grey01 transition-all duration-300 ease-in-out transform -translate-y-1/2 ${
+            isSidebarCollapsed ? 'left-[0px]' : 'left-[395px]'
+          }`}
+          style={{ width: '24px', height: '60px' }}
+        >
+          {isSidebarCollapsed ? (
+            <TbChevronRight size={14} className="text-grey05" />
+          ) : (
+            <TbChevronLeft size={14} className="text-grey05" />
+          )}
+        </button>
+
+        {/* 맵 영역 */}
+        <div
+          className={`flex-1 h-full transition-all duration-300 ease-in-out ${
+            isSidebarCollapsed ? 'pl-6' : ''
+          }`}
+        >
           <MapSection
             platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
@@ -356,9 +415,11 @@ const MainPageLayout: React.FC = () => {
 
         {/* 캐릭터 이미지 - 사이드바와 맵 사이 */}
         <div
-          className="absolute bottom-0 pointer-events-none z-30 overflow-hidden"
+          className={`absolute bottom-0 pointer-events-none z-30 overflow-hidden transition-all duration-300 ease-in-out ${
+            isSidebarCollapsed ? 'opacity-0' : 'opacity-100'
+          }`}
           style={{
-            left: '400px',
+            left: isSidebarCollapsed ? '20px' : '400px',
             transform: 'translateX(-20%)',
             width: '380px',
             height: '200px', // 허리까지만 보이도록 절반 높이
@@ -373,11 +434,11 @@ const MainPageLayout: React.FC = () => {
         </div>
 
         {/* 혜택 상세 카드 - 말풍선 위쪽에 위치 */}
-        {benefitDetailCard.isVisible && (
+        {benefitDetailCard.isVisible && !isSidebarCollapsed && (
           <div
-            className="absolute z-30"
+            className="absolute z-30 transition-all duration-300 ease-in-out"
             style={{
-              left: '500px',
+              left: isSidebarCollapsed ? '120px' : '500px',
               bottom: '350px', // 말풍선보다 위쪽
               transform: 'translateX(-20%)',
               width: '410px',
@@ -391,21 +452,23 @@ const MainPageLayout: React.FC = () => {
         )}
 
         {/* 말풍선 - 캐릭터 위에 위치 */}
-        <div
-          className="absolute z-20"
-          style={{
-            left: '500px',
-            bottom: '200px', // 캐릭터 머리 위쪽
-            transform: 'translateX(-20%)',
-          }}
-        >
-          <SpeechBubble
-            message={speechBubble.message}
-            partnerName={speechBubble.partnerName}
-            isVisible={speechBubble.isVisible}
-            onClose={handleSpeechBubbleClose}
-          />
-        </div>
+        {!isSidebarCollapsed && (
+          <div
+            className="absolute z-20 transition-all duration-300 ease-in-out"
+            style={{
+              left: isSidebarCollapsed ? '120px' : '500px',
+              bottom: '200px', // 캐릭터 머리 위쪽
+              transform: 'translateX(-20%)',
+            }}
+          >
+            <SpeechBubble
+              message={speechBubble.message}
+              partnerName={speechBubble.partnerName}
+              isVisible={speechBubble.isVisible}
+              onClose={handleSpeechBubbleClose}
+            />
+          </div>
+        )}
       </div>
 
       {/* 모바일 레이아웃 */}
