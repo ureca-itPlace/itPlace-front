@@ -1,88 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { renderToString } from 'react-dom/server';
 import { Platform, MapLocation } from '../../../types';
+import {
+  KakaoMap as KakaoMapType,
+  KakaoMarker,
+  KakaoMarkerClusterer,
+  KakaoCustomOverlay,
+  KakaoMouseEvent,
+} from '../../../types/kakao';
 import CustomMarker from './CustomMarker';
-
-interface KakaoLatLng {
-  getLat(): number;
-  getLng(): number;
-}
-
-interface KakaoMap {
-  getLevel(): number;
-  setCenter(latlng: KakaoLatLng): void;
-  getCenter(): KakaoLatLng;
-  relayout(): void;
-}
-
-interface KakaoMarker {
-  setMap(map: KakaoMap | null): void;
-}
-
-interface KakaoMarkerClusterer {
-  clear(): void;
-  addMarkers(markers: KakaoMarker[]): void;
-  setMinClusterSize(size: number): void;
-}
-
-interface KakaoCustomOverlay {
-  setContent(content: HTMLElement): void;
-  setMap(map: KakaoMap | null): void;
-}
-
-interface KakaoInfoWindow {
-  open(map: KakaoMap, marker: KakaoMarker): void;
-}
-
-interface KakaoMaps {
-  maps: {
-    LatLng: new (lat: number, lng: number) => KakaoLatLng;
-    Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => KakaoMap;
-    Marker: new (options: { position: KakaoLatLng; map?: KakaoMap }) => KakaoMarker;
-    MarkerClusterer?: new (options: {
-      map: KakaoMap;
-      averageCenter: boolean;
-      minLevel: number;
-      disableClickZoom: boolean;
-      styles: Array<{
-        width: string;
-        height: string;
-        background: string;
-        borderRadius: string;
-        color: string;
-        textAlign: string;
-        lineHeight: string;
-        fontSize: string;
-        fontWeight: string;
-      }>;
-    }) => KakaoMarkerClusterer;
-    CustomOverlay: new (options: {
-      position: KakaoLatLng;
-      content: string;
-      yAnchor: number;
-      zIndex?: number;
-    }) => KakaoCustomOverlay;
-    InfoWindow: new (options: { content: string }) => KakaoInfoWindow;
-    event: {
-      addListener(target: KakaoMap | KakaoMarker, type: string, handler: () => void): void;
-    };
-  };
-}
-
-declare global {
-  interface Window {
-    kakao: KakaoMaps;
-  }
-}
 
 interface KakaoMapProps {
   platforms: Platform[];
   selectedPlatform?: Platform | null;
-  onPlatformSelect: (platform: Platform) => void;
+  onPlatformSelect: (platform: Platform | null) => void;
   onLocationChange?: (location: MapLocation) => void;
   onMapCenterChange?: (location: MapLocation) => void;
   centerLocation?: { latitude: number; longitude: number } | null;
   onMapLevelChange?: (mapLevel: number) => void;
+  isRoadviewMode?: boolean;
+  onMapClick?: (lat: number, lng: number) => void;
 }
 
 const KakaoMap: React.FC<KakaoMapProps> = ({
@@ -93,9 +30,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   onMapCenterChange,
   centerLocation,
   onMapLevelChange,
+  isRoadviewMode = false,
+  onMapClick,
 }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<KakaoMap | null>(null);
+  const mapRef = useRef<KakaoMapType | null>(null);
   const markersRef = useRef<KakaoCustomOverlay[]>([]);
   const clustererRef = useRef<KakaoMarkerClusterer | null>(null);
   const debounceTimerRef = useRef<number | null>(null);
@@ -281,6 +220,40 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       return () => clearInterval(checkKakaoMaps);
     }
   }, [userLocation, onMapCenterChange, onMapLevelChange, isMapInitialized]);
+
+  // 로드뷰 모드 클릭 이벤트 관리
+  useEffect(() => {
+    if (!mapRef.current || !onMapClick) return;
+
+    let clickListener: ((mouseEvent?: KakaoMouseEvent) => void) | null = null;
+
+    if (isRoadviewMode) {
+      clickListener = (mouseEvent?: KakaoMouseEvent) => {
+        if (mouseEvent && mouseEvent.latLng) {
+          const clickedLatLng = mouseEvent.latLng;
+          const lat = clickedLatLng.getLat();
+          const lng = clickedLatLng.getLng();
+          onMapClick(lat, lng);
+        }
+      };
+
+      window.kakao.maps.event.addListener(
+        mapRef.current,
+        'click',
+        clickListener as (...args: unknown[]) => void
+      );
+    }
+
+    return () => {
+      if (clickListener && mapRef.current && window.kakao.maps.event.removeListener) {
+        window.kakao.maps.event.removeListener(
+          mapRef.current,
+          'click',
+          clickListener as (...args: unknown[]) => void
+        );
+      }
+    };
+  }, [isRoadviewMode, onMapClick]);
 
   // 플랫폼 마커 표시
   useEffect(() => {

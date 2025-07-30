@@ -4,15 +4,14 @@ interface CustomMarkerProps {
   imageUrl?: string;
   name?: string;
   isSelected?: boolean;
+  distance?: number; // 거리 추가 (미터 단위)
 }
 
 const CustomMarker: React.FC<CustomMarkerProps> = ({ imageUrl, name, isSelected = false }) => {
   return (
     <div
-      className="relative cursor-pointer"
+      className="relative cursor-pointer w-[68px] h-[84px]"
       style={{
-        width: '68px',
-        height: '84px',
         zIndex: isSelected ? 1000 : 1,
         animation: isSelected ? 'bounceScale 2s ease-in-out infinite' : 'none',
         transformOrigin: 'center bottom',
@@ -31,7 +30,6 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ imageUrl, name, isSelected 
         </style>
       )}
 
-      {/* ✅ filter 전용 래퍼 */}
       <div
         className="w-full h-full"
         style={{
@@ -62,7 +60,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({ imageUrl, name, isSelected 
         </div>
       </div>
 
-      {/* ✅ 선택된 경우 별 이미지 (filter 적용 안됨) */}
+      {/* ✅ 선택된 경우 별 이미지 (filter 적용 안됨) - 고정 크기 */}
       {isSelected && (
         <img
           src="/images/star.png"

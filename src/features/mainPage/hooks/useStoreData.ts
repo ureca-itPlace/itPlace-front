@@ -43,7 +43,7 @@ export const useStoreData = () => {
         ? await getStoreListByCategory({ lat, lng, radiusMeters: radius, category })
         : await getStoreList({ lat, lng, radiusMeters: radius });
 
-      return transformStoreDataToPlatforms(storeResponse.data, lat, lng);
+      return transformStoreDataToPlatforms(storeResponse.data);
     },
     []
   );
@@ -201,7 +201,7 @@ export const useStoreData = () => {
                   radiusMeters: radius,
                 });
 
-          return transformStoreDataToPlatforms(storeResponse.data, searchLat, searchLng);
+          return transformStoreDataToPlatforms(storeResponse.data);
         }
 
         // 키워드 검색 API 호출
@@ -212,7 +212,7 @@ export const useStoreData = () => {
           keyword: keyword.trim(),
         });
 
-        return transformStoreDataToPlatforms(storeResponse.data, searchLat, searchLng);
+        return transformStoreDataToPlatforms(storeResponse.data);
       };
 
       await executeRef.current(keywordSearch);

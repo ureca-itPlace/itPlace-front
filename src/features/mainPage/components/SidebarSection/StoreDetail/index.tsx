@@ -50,7 +50,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         setTimeout(() => fetchDetailRef.current(), 100);
         return;
       }
-      console.error('상세 혜택 API 호출 실패:', e);
+      // API 호출 실패 시 조용히 처리
       setDetailData(null);
 
       // API 호출 실패해도 초기 로드는 완료된 것으로 처리
@@ -64,14 +64,14 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   const fetchDetailRef = useRef(fetchDetail);
   fetchDetailRef.current = fetchDetail;
 
-  // 초기 로드만 (nearby 패턴과 동일)
+  // platform 변경 시 데이터 로드
   useEffect(() => {
     const initializeDetail = () => {
       fetchDetailRef.current();
     };
 
     initializeDetail();
-  }, []); // 빈 의존성 배열로 초기 로드만
+  }, [platform.storeId, platform.partnerId]); // platform 변경 시에도 재로드
 
   // 초기 로드 완료 감지 (nearby 패턴과 동일 - API 호출 완료 후 처리)
   useEffect(() => {
