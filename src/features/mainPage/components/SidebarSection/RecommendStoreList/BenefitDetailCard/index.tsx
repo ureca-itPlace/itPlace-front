@@ -24,6 +24,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
     const loadBenefitDetails = async () => {
       setIsLoading(true);
       setError(null);
+      setCurrentIndex(0); // benefitIds 변경 시 페이지를 첫 번째로 리셋
 
       try {
         const details = await Promise.all(benefitIds.map((id) => getBenefitDetail(id)));
