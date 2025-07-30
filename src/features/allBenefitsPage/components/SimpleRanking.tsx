@@ -80,14 +80,14 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
 
   return (
     <div
-      className={`bg-orange01 rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic p-6 max-xl:p-6 max-md:pt-4 w-[760px] max-xl:w-[550px] h-[250px] max-xl:h-[200px] max-md:drop-shadow-none max-md:w-full max-md:h-[100px] pr-8 max-xl:pr-6 max-md:px-0 max-md:-mt-2 max-md:-mb-5 max-md:bg-white ${className}`}
+      className={`bg-orange01 rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic p-6 max-xl:p-6 max-xlg:pt-4 w-[760px] max-xl:w-[550px] h-[250px] max-xl:h-[200px] max-xlg:drop-shadow-none max-xlg:w-full max-xlg:h-[100px] pr-8 max-xl:pr-6 max-md:px-0 max-xlg:-mt-2 max-xlg:-mb-5 max-xlg:bg-white ${className}`}
     >
       {/* PC: 전체 리스트, 모바일: 슬라이드 */}
       <h3 className="text-title-3 max-xl:text-title-5 max-xl:font-semibold text-black mb-6 max-xl:mb-4 max-md:text-title-6 max-md:mb-4">
         {title}
       </h3>
       {/* PC (md 이상) */}
-      <div className="space-y-6 max-xl:space-y-4 max-md:hidden">
+      <div className="space-y-6 max-xl:space-y-4 max-xlg:hidden">
         {data.map((item, index) => (
           <div key={index} className="flex items-center justify-between ">
             <div className="flex items-center gap-4 max-xl:gap-2">
@@ -122,7 +122,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
         ))}
       </div>
       {/* 모바일 (md 이하) */}
-      <div className="hidden max-md:block">
+      <div className="hidden max-xlg:block">
         {data.length > 0 && (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 max-xl:gap-2">

@@ -303,9 +303,9 @@ const AllBenefitsLayout: React.FC = () => {
       </div>
 
       {/* 전체 레이아웃 컨테이너 */}
-      <div className="px-2 max-w-[1783px] w-full mx-auto max-xl:max-w-[1440px] max-xl:px-7 max-md:px-0 max-md:mx-0 max-md:max-w-none">
+      <div className="px-2 max-w-[1783px] w-full mx-auto max-xl:max-w-[1440px] max-xl:px-7 max-xlg:w-[calc(100vw-81px)] max-md:w-auto max-md:px-0 max-md:mx-0 max-md:max-w-none">
         {/* 이벤트 배너 + 랭킹 */}
-        <div className="pt-7 flex gap-7 items-start max-xl:gap-0 max-xl:pt-5 max-md:flex-col max-md:pt-0 max-md:px-5">
+        <div className="pt-7 flex gap-7 items-start max-xl:gap-0 max-xl:pt-5 max-xlg:gap-7 max-xlg:flex-col max-md:gap-0 max-md:pt-0 max-md:px-5">
           <div className="w-full max-md:hidden">
             <EventBanner />
           </div>
@@ -313,13 +313,13 @@ const AllBenefitsLayout: React.FC = () => {
         </div>
 
         {/* 토글 / 검색 / 정렬 */}
-        <div className="pt-16 flex flex-wrap justify-between gap-4 max-md:pt-14 max-md:px-5 max-md:gap-0 max-md:mb-4">
+        <div className="pt-16 flex flex-wrap justify-between gap-4 max-md:pt-14 max-md:px-5 max-xlg:gap-0 max-md:mb-4">
           <BenefitFilterToggle
             value={filter}
             onChange={setFilter}
             width="w-[300px] max-xl:w-[220px] max-md:w-full max-md:mb-3"
           />
-          <div className="flex gap-2 max-md:w-full">
+          <div className="flex gap-2 max-xlg:mb-5 max-md:mb-0 max-md:w-full">
             <SearchBar
               placeholder="제휴처 검색"
               value={searchTerm}
@@ -367,13 +367,13 @@ const AllBenefitsLayout: React.FC = () => {
 
         {/* 카테고리 필터 */}
         <div className="mt-1">
-          <div className="bg-grey01 px-6 rounded-[10px] w-full max-w-[1783px] mx-auto h-[70px] flex items-center gap-[60px] max-xl:h-[60px] max-xl:gap-[32px] max-md:rounded-none max-md:mx-0 max-md:max-w-none max-md:h-[55px] max-md:overflow-x-auto">
+          <div className="bg-grey01 px-6 rounded-[10px] w-full max-w-[1783px] mx-auto h-[70px] flex items-center gap-[60px] max-xl:h-[60px] max-xl:gap-[32px] max-md:rounded-none max-md:mx-0 max-md:max-w-none max-md:h-[55px] overflow-x-auto">
             <div className="flex gap-10 whitespace-nowrap">
               {categories.map((category) => (
                 <span
                   key={category}
                   onClick={() => handleCategoryChange(category)}
-                  className={`cursor-pointer transition-colors text-body-1 max-md:text-body-2 whitespace-nowrap ${
+                  className={`cursor-pointer transition-colors text-body-1 max-xl:text-body-2 whitespace-nowrap ${
                     selectedCategory === category
                       ? 'text-purple04'
                       : 'text-grey04 hover:text-purple04'
@@ -388,7 +388,7 @@ const AllBenefitsLayout: React.FC = () => {
 
         {/* 카드 그리드 */}
         <div className="mt-7 max-md:px-5">
-          <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 w-full max-w-[1783px] mx-auto max-md:mx-0 max-md:max-w-none">
+          <div className="grid grid-cols-3 gap-4 max-xlg:grid-cols-2 max-md:grid-cols-1 w-full max-w-[1783px] mx-auto max-md:mx-0 max-md:max-w-none">
             {isLoading ? (
               <div className="col-span-3 flex justify-center items-center h-[400px]">
                 <LoadingSpinner />
