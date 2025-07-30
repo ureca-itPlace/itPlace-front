@@ -1,4 +1,3 @@
-import { useProgress } from '@react-three/drei';
 import { gsap } from 'gsap';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
@@ -10,7 +9,6 @@ interface LoadingScreenProps {
 }
 
 const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
-  const { progress, active } = useProgress();
   const [isVisible, setIsVisible] = useState(true);
 
   const logoRef = useRef<HTMLHeadingElement | null>(null);
@@ -24,6 +22,7 @@ const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
   useEffect(() => {
     if (isVisible) {
       disableScroll();
+      window.scrollTo(0, 0);
     } else {
       enableScroll();
     }
@@ -34,25 +33,22 @@ const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
   }, [isVisible]);
 
   useLayoutEffect(() => {
-    if (!active && progress === 100 && bgRef.current) {
-      const timeout = setTimeout(() => {
-        gsap.to(bgRef.current, {
-          opacity: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-          onComplete: () => {
-            setIsVisible(false);
-            if (bgRef.current) {
-              bgRef.current.style.display = 'none';
-            }
-            onFinish(); // 로딩 종료
-          },
-        });
-      }, 4000);
+    const timeout = setTimeout(() => {
+      gsap.to(bgRef.current, {
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.out',
+        onComplete: () => {
+          gsap.set(bgRef.current, { display: 'none' });
+          setIsVisible(false);
+          window.scrollTo(0, 0);
+          onFinish();
+        },
+      });
+    }, 3000);
 
-      return () => clearTimeout(timeout);
-    }
-  }, [active, progress, onFinish]);
+    return () => clearTimeout(timeout);
+  }, [onFinish]);
 
   useGSAP(
     () => {
@@ -120,10 +116,10 @@ const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
       ref={bgRef}
       className="fixed top-0 left-0 w-full h-screen bg-white text-[#000000] flex flex-col justify-center items-center z-[9999] overflow-hidden"
     >
-      <h1 ref={logoRef} className="custom-font text-[194px] max-sm:text-8xl">
+      <h1 ref={logoRef} className="custom-font text-8xl max-sm:text-6xl">
         IT:PLACE
       </h1>
-      <p ref={descRef} className="text-5xl text-center max-sm:text-body-1">
+      <p ref={descRef} className="text-2xl text-center max-sm:text-body-1">
         혜택을 지도에서, 빠르고 간편하게
       </p>
     </div>
