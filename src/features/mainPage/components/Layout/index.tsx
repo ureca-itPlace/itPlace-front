@@ -140,11 +140,11 @@ const MainPageLayout: React.FC = () => {
   // 마지막 검색어 추적 (중복 검색 방지용)
   const lastSearchedKeywordRef = useRef<string>('');
 
-  // 키워드 검색 핸들러 (AI 추천에서 reason과 함께 호출되는 경우 포함)
+  // 키워드 검색 핸들러
   const handleKeywordSearch = useCallback(
-    (keyword: string, reason?: string) => {
+    (keyword: string) => {
       // 동일한 검색어로 중복 검색 방지
-      if (keyword === lastSearchedKeywordRef.current && !reason) {
+      if (keyword === lastSearchedKeywordRef.current) {
         return;
       }
 
@@ -153,15 +153,6 @@ const MainPageLayout: React.FC = () => {
       setFilteredPlatforms([]); // 검색 결과 초기화
       setSearchQuery(keyword); // 검색어 저장 (빈 문자열도 포함)
       setActiveTab('nearby'); // 주변 혜택 탭으로 전환
-
-      // AI 추천의 reason이 있으면 말풍선 표시
-      if (reason) {
-        setSpeechBubble({
-          isVisible: true,
-          message: reason,
-          partnerName: keyword,
-        });
-      }
 
       // 현재 지도 중심이 있으면 사용, 없으면 사용자 초기 위치 사용
       if (currentMapCenter) {
@@ -172,6 +163,15 @@ const MainPageLayout: React.FC = () => {
     },
     [searchByKeyword, currentMapLevel, currentMapCenter, userCoords]
   );
+
+  // 말풍선 표시 핸들러 (검색 없이 말풍선만 표시)
+  const handleShowSpeechBubble = useCallback((message: string, partnerName: string) => {
+    setSpeechBubble({
+      isVisible: true,
+      message,
+      partnerName,
+    });
+  }, []);
 
   // 말풍선 닫기 핸들러
   const handleSpeechBubbleClose = useCallback(() => {
@@ -327,6 +327,8 @@ const MainPageLayout: React.FC = () => {
             searchQuery={searchQuery}
             onMapCenterMove={handleMapCenterMove}
             onBenefitDetailRequest={handleBenefitDetailRequest}
+            onShowSpeechBubble={handleShowSpeechBubble}
+            userCoords={userCoords}
           />
         </div>
 
@@ -493,6 +495,7 @@ const MainPageLayout: React.FC = () => {
                 searchQuery={searchQuery}
                 onMapCenterMove={handleMapCenterMove}
                 onBenefitDetailRequest={handleBenefitDetailRequest}
+                userCoords={userCoords}
               />
             </div>
           </div>
