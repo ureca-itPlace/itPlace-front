@@ -29,7 +29,30 @@ const MainPageLayout: React.FC = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
   const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
   const [startHeight, setStartHeight] = useState<number>(0); // 드래그 시작 시 높이
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const location = useLocation();
+
+  const getViewportHeight = () =>
+    typeof window !== 'undefined' ? window.visualViewport?.height || window.innerHeight : 800;
+
+  const MIN_HEIGHT = 90;
+  const getMaxHeight = useCallback(() => {
+    return getViewportHeight() - 105;
+  }, []);
+
+  // 스냅 포인트로 이동할 때 부드럽게 애니메이션
+  const animateTo = useCallback(
+    (target: number) => {
+      const clampedTarget = Math.min(target, getMaxHeight());
+      setIsAnimating(true);
+      setBottomSheetHeight(clampedTarget);
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, 300);
+    },
+    [getMaxHeight]
+  );
 
   // 말풍선 상태
   const [speechBubble, setSpeechBubble] = useState<{
@@ -108,7 +131,7 @@ const MainPageLayout: React.FC = () => {
         }
       }
     },
-    [isSidebarCollapsed]
+    [isSidebarCollapsed, animateTo]
   );
 
   // 사용자 위치 변경 핸들러 (초기 위치)
@@ -227,56 +250,35 @@ const MainPageLayout: React.FC = () => {
 
   // 바텀시트 드래그 핸들러
 
-  // 상태 추가
-  const [isAnimating, setIsAnimating] = useState(false);
+  // 바텀시트가 항상 탭바까지만 보이게
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setBottomSheetHeight(MIN_HEIGHT);
+    }
+  }, [location.pathname]);
 
-  // 스냅 포인트로 이동할 때 부드럽게 애니메이션
-  const animateTo = (target: number) => {
-    const clampedTarget = Math.min(target, window.innerHeight - 105);
-    setIsAnimating(true);
-    setBottomSheetHeight(clampedTarget);
-    // transition이 끝난 뒤 끄기
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 300); // transition duration과 동일
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    setStartY(e.touches[0].clientY);
+    setStartHeight(bottomSheetHeight);
   };
 
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      setIsDragging(true);
-      setStartY(e.touches[0].clientY);
-      setStartHeight(bottomSheetHeight);
-    },
-    [bottomSheetHeight]
-  );
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return;
+    const deltaY = startY - e.touches[0].clientY;
+    const newHeight = Math.max(MIN_HEIGHT, Math.min(getMaxHeight(), startHeight + deltaY));
+    setBottomSheetHeight(newHeight);
+  };
 
-  const handleTouchMove = useCallback(
-    (e: React.TouchEvent) => {
-      if (!isDragging) return;
-
-      const currentY = e.touches[0].clientY;
-      const deltaY = startY - currentY; // 위로 드래그하면 양수, 아래로 드래그하면 음수
-      const newHeight = Math.max(90, Math.min(window.innerHeight - 105, startHeight + deltaY));
-
-      setBottomSheetHeight(newHeight);
-    },
-    [isDragging, startY, startHeight]
-  );
-
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = () => {
     setIsDragging(false);
-
-    // 스냅 포인트 설정
-    const windowHeight = window.innerHeight;
-    const snapPoints = [90, 300, windowHeight - 120]; // 최소, 중간, 최대 높이
-
-    // 가장 가까운 스냅 포인트로 이동
-    const closestSnapPoint = snapPoints.reduce((prev, curr) =>
-      Math.abs(curr - bottomSheetHeight) < Math.abs(prev - bottomSheetHeight) ? curr : prev
+    const snapPoints = [MIN_HEIGHT, 300, getMaxHeight()];
+    const closest = snapPoints.reduce((a, b) =>
+      Math.abs(b - bottomSheetHeight) < Math.abs(a - bottomSheetHeight) ? b : a
     );
-
-    animateTo(closestSnapPoint);
-  }, [bottomSheetHeight]);
+    animateTo(closest);
+  };
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -311,15 +313,7 @@ const MainPageLayout: React.FC = () => {
     );
 
     animateTo(closestSnapPoint);
-  }, [bottomSheetHeight]);
-
-  // 바텀시트가 항상 탭바까지만 보이게
-  useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      setBottomSheetHeight(90);
-    }
-  }, [location.pathname]);
+  }, [bottomSheetHeight, animateTo]);
 
   // platforms 배열 안정화
   const stablePlatforms = useMemo(() => {
@@ -328,7 +322,7 @@ const MainPageLayout: React.FC = () => {
 
   // 모바일에서 body 스크롤 방지
   useEffect(() => {
-    const isMobile = window.innerWidth < 767;
+    const isMobile = window.innerWidth < 768;
     if (isMobile) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
@@ -537,8 +531,8 @@ const MainPageLayout: React.FC = () => {
             style={{
               height: `${bottomSheetHeight}px`,
               bottom: 0,
-              minHeight: '90px',
-              maxHeight: 'calc(100dvh - 105px)',
+              minHeight: `${MIN_HEIGHT}px`,
+              maxHeight: `${getMaxHeight()}px`,
             }}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
