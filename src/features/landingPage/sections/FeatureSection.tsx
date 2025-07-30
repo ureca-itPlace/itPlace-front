@@ -1,4 +1,3 @@
-// sections/FeatureSection.tsx
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -6,9 +5,24 @@ import { useRef } from 'react';
 import FeatureItem from '../components/FeatureItem';
 
 gsap.registerPlugin(ScrollTrigger);
-
 const FeatureSection = () => {
   const featureSectionRef = useRef<HTMLDivElement>(null);
+  const planeRef = useRef<HTMLImageElement>(null);
+
+  useGSAP(() => {
+    const assets = gsap.utils.toArray('.floating-star') as HTMLElement[];
+
+    assets.forEach((asset) => {
+      gsap.to(asset, {
+        y: -30,
+        duration: gsap.utils.random(2, 4),
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: gsap.utils.random(0, 1),
+      });
+    });
+  }, []);
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -75,8 +89,20 @@ const FeatureSection = () => {
     <section
       ref={featureSectionRef}
       data-theme="dark"
-      className="max-h-[300svh] px-5 py-12 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
+      className="relative max-h-[400vh] px-5 py-12 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
     >
+      <FeatureItem
+        reverse
+        imageSrc="/images/landing/feature-1.webp"
+        alt="기능설명-1"
+        title={
+          <>
+            내 주변의 모든 멤버십 혜택을 <span className="text-purple04">지도</span> 위에서 한눈에
+            확인하세요!
+          </>
+        }
+        description="지도를 통해 주변에 있는 모든 제휴처의 멤버십 혜택을 간편하게 확인할 수 있어요. 원하는 혜택을 빠르게 찾고, 할인 정보와 제휴 내용을 쉽게 비교해보세요."
+      />
       <FeatureItem
         imageSrc="/images/landing/feature-2.webp"
         alt="기능설명-2"
@@ -108,6 +134,29 @@ const FeatureSection = () => {
         }
         description="간단한 금액 입력만으로 제휴처에서 사용한 내역과 혜택 현황을 쉽게 조회할 수 있어요. 소비 패턴 분석과 맞춤형 혜택 관리까지 한 번에 가능합니다."
       />
+      <div className="floating-star-layer z-0 pointer-events-none">
+        <img
+          ref={planeRef}
+          src="/images/landing/plane.webp"
+          alt="종이비행기"
+          className="floating-star absolute top-[20%] left-[15%] w-[17vw] h-auto"
+        />
+        <img
+          src="/images/landing/key.webp"
+          alt="열쇠"
+          className="floating-star absolute top-[42%] right-[15%] w-[20vw]"
+        />
+        <img
+          src="/images/landing/feature-star.webp"
+          alt="별"
+          className="floating-star absolute bottom-[22%] left-[15%] w-[20vw]"
+        />
+        <img
+          src="/images/landing/coin.webp"
+          alt="동전"
+          className="floating-star absolute bottom-[0%] right-[15%] w-[20vw]"
+        />
+      </div>
     </section>
   );
 };
