@@ -376,7 +376,7 @@ const MainPageLayout: React.FC = () => {
             className="absolute z-30"
             style={{
               left: '500px',
-              bottom: '320px', // 말풍선보다 위쪽
+              bottom: '350px', // 말풍선보다 위쪽
               transform: 'translateX(-20%)',
               width: '410px',
             }}

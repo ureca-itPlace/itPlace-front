@@ -21,12 +21,12 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
           <TbMapPin size={16} className="mt-[2px] flex-shrink-0 max-md:w-4 max-md:h-4" />
           <div className="flex flex-col min-w-0">
             <span className="text-grey06 max-md:text-body-5">{roadAddress}</span>
-            <div className="flex gap-14 mt-1 max-md:gap-8 max-md:mt-0.5">
+            <div className="flex gap-14 mt-1 max-md:gap-8 max-md:mt-0.5 max-md:mb-1">
               {postCode && (
-                <span className="text-grey05 text-body-5 max-md:text-body-6">(우) {postCode}</span>
+                <span className="text-grey05 text-body-4 max-md:text-body-6">(우) {postCode}</span>
               )}
               {address && (
-                <span className="text-grey05 text-body-5 max-md:text-body-6">(지) {address}</span>
+                <span className="text-grey05 text-body-4 max-md:text-body-6">(지) {address}</span>
               )}
             </div>
           </div>
