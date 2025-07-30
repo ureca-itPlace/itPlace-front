@@ -1,125 +1,177 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLayoutEffect, useRef } from 'react';
+import { useResponsive } from '../../../hooks/useResponsive';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const HeroSection = () => {
-  const imageRef = useRef(null);
-  const sectionRef = useRef(null);
-  const planetRef = useRef(null);
-  const groundRef = useRef(null);
+  // Hero Refs
+  const wrapperRef = useRef(null);
+  const heroRef = useRef(null);
+  const windowRef = useRef(null);
   const subtitleRef = useRef(null);
   const titleRef = useRef(null);
+  const whiteOverlayRef = useRef(null);
+
+  // Map Refs
+  const mapContainerRef = useRef(null);
+  const firstMapImageRef = useRef(null);
+  const secondMapImageRef = useRef(null);
+  const thirdMapImageRef = useRef(null);
+  const fourthMapImageRef = useRef(null);
+  const mapTextRef = useRef(null);
+
+  const { isMobile, isTablet, isLaptop } = useResponsive();
+  const xDistance = isMobile ? 50 : isTablet ? 180 : isLaptop ? 100 : 400;
+  const yDistance = isMobile ? -150 : 50;
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: sectionRef.current,
+          trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=3200',
-          scrub: 1,
+          end: '+=6000',
+          scrub: 0.8,
           pin: true,
           anticipatePin: 1,
-          markers: true,
+          markers: false,
         },
       });
 
-      // 초기 상태
-      gsap.set(imageRef.current, {
-        scale: 1,
-        transformOrigin: 'center center',
-      });
-      gsap.set(planetRef.current, {
-        y: 500,
-        opacity: 0,
-        scale: 1,
-        transformOrigin: 'center center',
-      });
-      gsap.set(groundRef.current, { y: 300 });
+      // 초기 세팅
+      gsap.set(windowRef.current, { scale: 1, transformOrigin: 'center center' });
       gsap.set(subtitleRef.current, { y: 100, opacity: 0 });
       gsap.set(titleRef.current, { y: 100, opacity: 0 });
-
-      // 1. 지구 올라오기
-      tl.to(planetRef.current, {
-        y: 0,
-        opacity: 1,
-        ease: 'power2.out',
-      });
-
-      // 2. 배경 이미지 확대
-      tl.to(imageRef.current, {
-        scale: 3.55,
-        ease: 'none',
-      });
-
-      // 3. 땅 올라오기
-      tl.to(groundRef.current, {
-        y: 0,
-        ease: 'power2.out',
-      });
-
-      // 4. 지구 확대 + 이동
-      tl.to(
-        planetRef.current,
+      gsap.set(whiteOverlayRef.current, { opacity: 0, pointerEvents: 'none' });
+      gsap.set(mapContainerRef.current, { opacity: 0, visibility: 'hidden' });
+      gsap.set(
+        [
+          firstMapImageRef.current,
+          secondMapImageRef.current,
+          thirdMapImageRef.current,
+          fourthMapImageRef.current,
+        ],
         {
-          x: '20vw',
-          y: '2vh',
-          scale: 1.6,
-          ease: 'power2.out',
-        },
-        '<'
+          scale: 1,
+          opacity: 0,
+          filter: 'blur(10px)',
+        }
       );
 
-      // 5. subtitle 올라오기
-      tl.to(subtitleRef.current, {
-        opacity: 1,
-        y: 0,
-        ease: 'power2.out',
+      // Hero 애니메이션
+      tl.to(windowRef.current, {
+        scale: 3.55,
+        duration: 2.5,
+        ease: 'power1.inOut',
       });
+      tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
+      tl.to(titleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
+      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power2.inOut' }, '+=0.5');
+      tl.to(
+        heroRef.current,
+        {
+          opacity: 0,
+          ease: 'power2.inOut',
+        },
+        '+=0.2'
+      );
 
-      // 6. title 올라오기
-      tl.to(titleRef.current, {
-        opacity: 1,
-        y: 0,
-        ease: 'power2.out',
-      });
-    }, sectionRef);
+      // Map 애니메이션
+      tl.set(mapContainerRef.current, { visibility: 'visible', scale: 1 })
+        .to(mapContainerRef.current, { opacity: 1, duration: 0.5 }, '<0.5')
+        .to(whiteOverlayRef.current, { opacity: 0, duration: 0.8, ease: 'power2.out' }, '<')
+        .to(
+          firstMapImageRef.current,
+          { opacity: 1, filter: 'blur(0px)', duration: 2, ease: 'power1.out' },
+          '<'
+        )
+        .to(
+          firstMapImageRef.current,
+          { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'none' },
+          '+=1.5'
+        )
+        .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '>-0.5')
+        .to({}, { duration: 1.5 })
+        .to(
+          secondMapImageRef.current,
+          { scale: 1.7, x: 80, opacity: 0, duration: 2, filter: 'blur(3px)' },
+          '+=1.2'
+        )
+        .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '+=0.5')
+        .to({}, { duration: 1.5 })
+        .to(
+          thirdMapImageRef.current,
+          { scale: 1.7, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
+          '+=1.2'
+        )
+        .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '+=0.2')
+        .to(fourthMapImageRef.current, {
+          scale: 0.6,
+          rotation: -8,
+          transformOrigin: 'center center',
+          duration: 3,
+        })
+        .from(mapTextRef.current, { opacity: 0, y: -40, duration: 1 })
+        .to(mapTextRef.current, { color: '#7638FA', duration: 1 });
+
+      tl.to({}, { duration: 2 });
+    }, wrapperRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [xDistance, yDistance]);
 
   return (
-    <section
-      ref={sectionRef}
-      data-theme="dark"
-      className="relative w-full min-h-[100vh] flex items-center justify-center overflow-hidden bg-[url('/images/landing/hero-bg.jpg')] bg-cover bg-no-repeat"
-    >
-      <img
-        ref={imageRef}
-        src="/images/landing/hero-window-1.png"
-        alt="우주를바라보는토끼"
-        className="absolute inset-0 w-full h-full object-cover z-40"
-      />
-      <img
-        ref={planetRef}
-        src="/images/landing/hero-planet.webp"
-        alt="보라색행성"
-        className="absolute top-[23vw] left-[49.5%] -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[70vh] object-contain z-20"
-      />
-      <img
-        ref={groundRef}
-        src="/images/landing/hero-ground.png"
-        alt="땅"
-        className="absolute bottom-0 z-30 w-full"
-      />
-      <div className="flex flex-col flex-1 px-24 pb-8">
-        <div ref={subtitleRef} className="custom-font text-[5vw] text-white leading-none">
-          EXPLORE THE
+    <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
+      <div
+        ref={heroRef}
+        className="relative w-full h-full bg-[url('/images/landing/hero-bg.png')] bg-no-repeat bg-cover bg-center"
+      >
+        <img
+          ref={windowRef}
+          src="/images/landing/hero-window-1.png"
+          className="absolute inset-0 w-full h-full object-cover z-40 max-md:hidden"
+        />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
+          <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
+            EXPLORE THE
+          </div>
+          <div ref={titleRef} className="custom-font text-[12vw] text-white leading-none">
+            ITPLACE
+          </div>
         </div>
-        <div ref={titleRef} className="custom-font text-[12vw] text-white leading-none">
-          ITPLACE
+        <div
+          ref={whiteOverlayRef}
+          className="absolute inset-0 w-full h-full bg-white z-50 pointer-events-none"
+        />
+      </div>
+
+      <div ref={mapContainerRef} className="absolute inset-0 w-full h-full bg-white z-60">
+        <img
+          ref={firstMapImageRef}
+          src="/images/landing/map-1.webp"
+          className="absolute inset-0 w-full h-screen object-cover"
+        />
+        <img
+          ref={secondMapImageRef}
+          src="/images/landing/map-2.webp"
+          className="absolute inset-0 w-full h-screen object-cover"
+        />
+        <img
+          ref={thirdMapImageRef}
+          src="/images/landing/map-3.webp"
+          className="absolute inset-0 w-full h-screen object-cover"
+        />
+        <img
+          ref={fourthMapImageRef}
+          src="/images/landing/map-4.webp"
+          className="absolute inset-0 w-full h-screen object-cover"
+        />
+        <div className="flex items-center justify-center w-full h-full text-[15vw] text-white z-30">
+          <div ref={mapTextRef} className="custom-font">
+            OUR LOCATION
+          </div>
         </div>
       </div>
     </section>
