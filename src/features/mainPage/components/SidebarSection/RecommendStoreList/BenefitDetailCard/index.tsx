@@ -59,7 +59,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
   if (isLoading) {
     return (
       <div
-        className={`bg-white rounded-[20px] border-2 border-purple04 ${className} w-[420px] max-md:w-[280px] max-h-[300px] flex flex-col`}
+        className={`bg-white drop-shadow-basic rounded-[12px] border-2 border-purple01 ${className} h-[290px] w-[420px] max-md:w-[280px] max-h-[300px] flex flex-col`}
       >
         {/* 고정 헤더 - SpeechBubble과 동일한 패딩 */}
         <div className="px-5 pt-4 pb-0 flex-shrink-0 max-md:px-3 max-md:pt-3">
@@ -90,7 +90,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
   if (error || !currentBenefit) {
     return (
       <div
-        className={`bg-white rounded-[20px] border-2 border-purple04 ${className} w-[420px] max-md:w-[280px] max-h-[300px] flex flex-col`}
+        className={`bg-white drop-shadow-basic rounded-[12px] border-2 border-purple01 ${className} h-[290px] w-[420px] max-md:w-[280px] max-h-[300px] flex flex-col`}
       >
         {/* 고정 헤더 - SpeechBubble과 동일한 패딩 */}
         <div className="px-5 pt-4 pb-0 flex-shrink-0 max-md:px-3 max-md:pt-3">
@@ -116,7 +116,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
   return (
     <div
       // 전체 카드 스타일 - 배경색, 테두리, 높이 설정, SpeechBubble과 동일한 고정 너비
-      className={`bg-white rounded-[20px] border-2 border-purple04 pb-4 ${className} w-[420px] max-md:w-[280px] max-h-[350px] flex flex-col`}
+      className={`bg-white drop-shadow-basic rounded-[12px] border-2 border-purple01 pb-4 ${className} h-[290px] w-[420px] max-md:w-[280px] max-h-[350px] flex flex-col`}
     >
       {/* 헤더 영역 - 이미지, 파트너명, 페이지네이션, X버튼 위치, SpeechBubble과 동일한 패딩 */}
       <div className="px-5 pt-4 pb-0 flex-shrink-0 max-md:px-3 max-md:pt-3">
@@ -128,7 +128,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
                 // 파트너 이미지 크기 및 스타일
                 src={currentBenefit.image}
                 alt={currentBenefit.partnerName}
-                className="w-12 h-12 rounded-lg object-cover"
+                className="w-12 h-12 rounded-lg object-contain"
               />
             )}
             {/* 파트너명 텍스트 스타일 */}
@@ -171,11 +171,13 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
       </div>
 
       {/* 스크롤 콘텐츠 영역 - SpeechBubble과 동일한 패딩, 스크롤 설정 */}
-      <div className="px-5 pb-4 pt-4 overflow-y-auto flex-1 min-h-0 max-md:px-3 max-md:pb-3">
+      <div className="px-5 pb-4 pt-1 overflow-y-auto flex-1 min-h-0 max-md:px-3 max-md:pb-3">
         {/* 혜택 설명 텍스트 */}
         {currentBenefit.description && (
           <div className="mb-4">
-            <p className="text-body-3 text-grey05 leading-relaxed">{currentBenefit.description}</p>
+            <p className="text-body-2 text-purple06 leading-relaxed">
+              {currentBenefit.description}
+            </p>
           </div>
         )}
 
@@ -203,7 +205,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
         {currentBenefit.benefitLimit && (
           <div className="mb-4">
             <h4 className="text-title-8 text-black mb-1">이용 한도</h4>
-            <p className="text-body-4 text-grey04">{currentBenefit.benefitLimit}</p>
+            <p className="text-body-3 text-grey04">{currentBenefit.benefitLimit}</p>
           </div>
         )}
 
@@ -211,7 +213,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
         {currentBenefit.manual && (
           <div className="mb-4">
             <h4 className="text-title-8 text-black mb-1">이용 방법</h4>
-            <p className="text-body-4 text-grey04 whitespace-pre-line">{currentBenefit.manual}</p>
+            <p className="text-body-3 text-grey04 whitespace-pre-line">{currentBenefit.manual}</p>
           </div>
         )}
 
@@ -222,7 +224,7 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
               href={currentBenefit.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-body-4 text-purple04 hover:text-purple05 transition-colors"
+              className="inline-flex items-center text-body-3 text-purple04 hover:text-purple05 transition-colors"
             >
               자세히 보기
               <svg className="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">

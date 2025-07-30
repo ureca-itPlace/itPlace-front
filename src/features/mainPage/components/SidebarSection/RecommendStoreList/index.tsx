@@ -185,7 +185,13 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
         </div>
       ) : error ? (
         <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
-          <NoResult message1={error} message2={getErrorSummary(error)} isLoginRequired={false} />
+          <NoResult
+            message1={error}
+            message2={getErrorSummary(error)}
+            isLoginRequired={false}
+            message1FontSize="text-title-6"
+            message2FontSize="text-body-3"
+          />
         </div>
       ) : !stores || stores.length === 0 ? (
         <div className="flex-1 flex items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">

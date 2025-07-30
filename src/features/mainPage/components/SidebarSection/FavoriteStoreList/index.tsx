@@ -7,12 +7,14 @@ import NoResult from '../../../../../components/NoResult';
 
 interface FavoriteStoreListProps {
   favorites: FavoriteBenefit[];
+  totalFavoritesCount: number;
   onItemClick: (favorite: FavoriteBenefit) => void;
   isLoading?: boolean;
 }
 
 const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   favorites,
+  totalFavoritesCount,
   onItemClick,
   isLoading = false,
 }) => {
@@ -46,13 +48,23 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
     );
   }
 
-  // 로그인했지만 즐겨찾기가 없는 경우
+  // 1. 로그인했지만 즐겨찾기가 없는 경우 2. 즐겨찾기는 있지만 카테고리에 해당하는게 없는 경우
   if (!favorites || favorites.length === 0) {
+    const noResultProps =
+      totalFavoritesCount === 0
+        ? {
+            message1: '아직 관심 혜택이 없어요!',
+            message2: '마음에 드는 혜택을 담아보세요',
+          }
+        : {
+            message1: '카테고리에 해당하는 혜택이 없어요!',
+            message2: '다른 카테고리로 검색해보세요.',
+          };
+
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-0 max-md:min-h-56 max-md:mt-4">
         <NoResult
-          message1="아직 관심 혜택이 없어요!"
-          message2="마음에 드는 혜택을 담아보세요"
+          {...noResultProps}
           message1FontSize="text-title-6"
           message2FontSize="text-body-3"
           isLoginRequired={false}

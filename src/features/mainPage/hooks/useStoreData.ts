@@ -78,7 +78,7 @@ export const useStoreData = () => {
       const coords = await getCurrentLocation();
       await updateLocationInfoRef.current(coords.lat, coords.lng);
 
-      // 2. 주변 가맹점 데이터 로드 (초기에는 전체 카테고리)
+      // 2. 근처 제휴처 데이터 로드 (초기에는 전체 카테고리)
       const platforms = await loadStoresByCategoryRef.current(
         coords.lat,
         coords.lng,

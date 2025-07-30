@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
-import LoadingSpinner from '../../../../components/LoadingSpinner';
 import SearchSection from './SearchSection';
 import InfoBannerSection from './InfoBannerSection';
 import NavigationTabsSection from './NavigationTabsSection';
@@ -13,6 +12,7 @@ import StoreDetailCard from './StoreDetail';
 import CategoryTabsSection from './CategoryTabsSection';
 import { useFavoritesList } from '../../hooks/useFavoritesList';
 import { getRecommendations } from '../../api/recommendationApi';
+import { getFavoritesList } from '../../api/favoritesListApi';
 
 interface Tab {
   id: string;
@@ -62,6 +62,22 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
     activeTab === 'favorites' ? selectedCategory : undefined
   );
+  const [allFavorites, setAllFavorites] = useState<FavoriteBenefit[]>([]);
+
+  useEffect(() => {
+    const fetchAllFavorites = async () => {
+      if (activeTab !== 'favorites') return;
+      try {
+        const data = await getFavoritesList({}); // 전체 카테고리
+        setAllFavorites(data);
+      } catch (error) {
+        console.error('전체 즐겨찾기 조회 실패:', error);
+        setAllFavorites([]);
+      }
+    };
+
+    fetchAllFavorites();
+  }, [activeTab]);
 
   // AI 추천 초기 로드 상태 관리 (nearby 방식과 완전히 동일)
   const [isInitialRecommendationsLoad, setIsInitialRecommendationsLoad] = useState(true);
@@ -175,7 +191,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     switch (activeTab) {
       case 'nearby':
         return {
-          message: '근처 제휴처만 안내해드릴게요 !',
+          message: '근처 제휴처를 안내해드릴게요 !',
           highlightText: '근처 제휴처',
         };
       case 'favorites':
@@ -190,22 +206,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       default:
         return {
-          message: '근처 제휴처만 안내해드릴게요 !',
-          highlightText: '근처 제휴처만',
+          message: '근처 제휴처를 안내해드릴게요 !',
+          highlightText: '근처 제휴처',
         };
     }
   };
-
-  if (isLoading && activeTab === 'nearby') {
-    return (
-      // <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic"> 혹시 몰라서 남겨놓음
-      <div className="w-full h-full flex flex-col items-center justify-center max-md:mt-24">
-        <LoadingSpinner />
-        <div className="mt-4 text-grey04 text-sm">주변 가맹점을 찾는 중...</div>
-      </div>
-      // </div>
-    );
-  }
 
   return (
     <div className="bg-white flex flex-col overflow-hidden w-full h-full rounded-[18px] drop-shadow-basic max-md:bg-transparent max-md:rounded-none max-md:drop-shadow-none max-md:overflow-visible">
@@ -269,6 +274,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
               >
                 <FavoriteStoreList
                   favorites={favorites}
+                  totalFavoritesCount={allFavorites.length}
                   onItemClick={handleFavoriteClick}
                   isLoading={isFavoritesLoading}
                 />

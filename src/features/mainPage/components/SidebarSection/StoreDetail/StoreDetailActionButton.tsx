@@ -155,7 +155,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       </button>
 
       {/* 모바일 버전 - 하트 + 사용 금액 입력하기 버튼 */}
-      <div className="md:hidden flex gap-2">
+      <div className="md:hidden flex gap-2 max-md:mt-2">
         {/* 하트 버튼 */}
         <button
           className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-colors ${

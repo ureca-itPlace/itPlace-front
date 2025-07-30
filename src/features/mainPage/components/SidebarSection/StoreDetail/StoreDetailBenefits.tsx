@@ -92,10 +92,12 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
             ))}
           </div>
         ) : (
-          <div>
+          <div className="mt-2">
             <NoResult
               message1="혜택 정보가 없어요!"
               message2={`${activeTab === 'vipkok' ? 'VIP콕' : '기본'} 혜택이 존재하지 않아요`}
+              message1FontSize="text-title-6"
+              message2FontSize="text-body-3"
               isLoginRequired={false}
             />
           </div>
