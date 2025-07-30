@@ -32,7 +32,6 @@ export default function MyPageLayout() {
         isOpen={showLoginModal}
         onClose={() => {
           setShowLoginModal(false);
-          // 필요하다면 다른 로직
         }}
       />
     );

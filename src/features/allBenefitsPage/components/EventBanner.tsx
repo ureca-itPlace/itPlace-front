@@ -11,7 +11,7 @@ const EventBanner: React.FC = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 767); // max-sm 기준
+      setIsMobile(window.innerWidth <= 767); // max-md 기준
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);

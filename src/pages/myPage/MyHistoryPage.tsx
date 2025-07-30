@@ -252,7 +252,7 @@ export default function MyHistoryPage() {
 
             {/* 페이지네이션 */}
             {
-              <div className="mt-auto flex justify-center">
+              <div className="mt-auto flex justify-center max-md:mb-6">
                 <Pagination
                   currentPage={currentPage + 1} // 0-based → 1-based
                   itemsPerPage={size}
