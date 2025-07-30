@@ -303,9 +303,9 @@ const AllBenefitsLayout: React.FC = () => {
       </div>
 
       {/* 전체 레이아웃 컨테이너 */}
-      <div className="px-2 max-w-[1783px] w-full mx-auto max-md:px-0 max-md:mx-0 max-md:max-w-none">
+      <div className="px-2 max-w-[1783px] w-full mx-auto max-xl:max-w-[1440px] max-xl:px-7 max-md:px-0 max-md:mx-0 max-md:max-w-none">
         {/* 이벤트 배너 + 랭킹 */}
-        <div className="pt-7 flex gap-7 items-start max-xl:gap-5 max-xl:pt-5 max-md:flex-col max-md:pt-0 max-md:px-5">
+        <div className="pt-7 flex gap-7 items-start max-xl:gap-0 max-xl:pt-5 max-md:flex-col max-md:pt-0 max-md:px-5">
           <div className="w-full max-md:hidden">
             <EventBanner />
           </div>
@@ -325,13 +325,13 @@ const AllBenefitsLayout: React.FC = () => {
               value={searchTerm}
               onChange={handleSearchChange}
               onClear={() => setSearchTerm('')}
-              className="w-[350px] h-[50px] max-md:w-full max-md:h-[44px]"
+              className="w-[350px] h-[50px] max-md:w-full max-xl:h-[44px]"
               backgroundColor="bg-grey01"
             />
             <div className="relative max-md:hidden" ref={dropdownRef}>
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className={`flex items-center gap-2 px-4 py-3 border border-grey02 rounded-[10px] hover:bg-grey01 transition-colors min-w-[120px] justify-between ${
+                className={`flex items-center gap-2 px-4 py-3 border border-grey02 rounded-[10px] hover:bg-grey01 transition-colors min-w-[120px] max-xl:max-h-[44px] justify-between ${
                   sortFilter !== '전체' ? 'bg-purple01' : 'bg-white'
                 }`}
               >
@@ -367,7 +367,7 @@ const AllBenefitsLayout: React.FC = () => {
 
         {/* 카테고리 필터 */}
         <div className="mt-1">
-          <div className="bg-grey01 px-6 rounded-[10px] w-full max-w-[1783px] mx-auto h-[70px] flex items-center gap-[60px] max-xl:gap-[32px] max-md:rounded-none max-md:mx-0 max-md:max-w-none max-md:h-[55px] max-md:overflow-x-auto">
+          <div className="bg-grey01 px-6 rounded-[10px] w-full max-w-[1783px] mx-auto h-[70px] flex items-center gap-[60px] max-xl:h-[60px] max-xl:gap-[32px] max-md:rounded-none max-md:mx-0 max-md:max-w-none max-md:h-[55px] max-md:overflow-x-auto">
             <div className="flex gap-10 whitespace-nowrap">
               {categories.map((category) => (
                 <span
@@ -402,10 +402,10 @@ const AllBenefitsLayout: React.FC = () => {
                 >
                   {/* 왼쪽 콘텐츠 */}
                   <div className="flex flex-col flex-1 mr-4 max-xl:mr-2 overflow-hidden">
-                    <h3 className="text-title-4 max-xl:text-title-5 text-black mb-2 max-xl:mb-1 truncate max-md:text-title-6">
+                    <h3 className="text-title-4 max-xl:text-title-6 text-black mb-2 max-xl:mb-1 truncate max-md:text-title-6">
                       {benefit.benefitName}
                     </h3>
-                    <div className="text-body-0 max-xl:text-body-2 text-grey05 overflow-hidden max-md:text-body-2">
+                    <div className="text-body-0 max-xl:mt-2 max-xl:text-body-3 text-grey05 overflow-hidden max-md:text-body-2">
                       <div
                         className="line-clamp-4 max-xl:line-clamp-3"
                         style={{
