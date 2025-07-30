@@ -6,7 +6,8 @@ const Button = ({ children, variant = 'primary', onClick }: ButtonProps) => {
 
   const variants = {
     primary: 'bg-purple04 text-white hover:bg-purple05',
-    outline: 'border-2 border-purple04 text-purple05 bg-white hover:bg-purple01',
+    outline:
+      'border-2 border-purple04 text-purple05 bg-white hover:bg-purple05 hover:text-white hover:border-purple05',
   };
 
   return (
