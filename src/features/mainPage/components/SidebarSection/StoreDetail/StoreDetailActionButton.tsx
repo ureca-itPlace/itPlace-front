@@ -174,7 +174,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
         {/* 사용 금액 입력하기 버튼 */}
         <button
           className={`flex-1 py-3 text-body-3-bold rounded-lg transition-colors ${
-            isDistanceValid && isLoggedIn
+            isDistanceValid && isLoggedIn && benefitId
               ? 'bg-purple04 hover:bg-purple05 text-white'
               : 'bg-grey03 text-grey04 cursor-not-allowed'
           }`}
@@ -183,17 +183,23 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
               showToast('로그인이 필요한 서비스입니다.', 'error');
               return;
             }
+            if (!benefitId) {
+              showToast('혜택 정보가 없습니다.', 'error');
+              return;
+            }
             if (isDistanceValid) {
               setIsModalOpen(true);
             }
           }}
-          disabled={!isDistanceValid || !isLoggedIn}
+          disabled={!isDistanceValid || !isLoggedIn || !benefitId}
         >
           {!isLoggedIn
             ? '로그인이 필요해요'
-            : isDistanceValid
-              ? '사용 금액 입력하기'
-              : '사용하기에 너무 멀어요'}
+            : !benefitId
+              ? '혜택 정보가 없어요'
+              : isDistanceValid
+                ? '사용 금액 입력하기'
+                : '사용하기에 너무 멀어요'}
         </button>
       </div>
 
