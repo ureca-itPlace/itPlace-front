@@ -311,6 +311,14 @@ const MainPageLayout: React.FC = () => {
     animateTo(closestSnapPoint);
   }, [bottomSheetHeight]);
 
+  // 바텀시트가 항상 탭바까지만 보이게
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setBottomSheetHeight(90);
+    }
+  }, []);
+
   // platforms 배열 안정화
   const stablePlatforms = useMemo(() => {
     return filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms;
