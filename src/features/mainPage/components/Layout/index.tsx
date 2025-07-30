@@ -255,7 +255,16 @@ const MainPageLayout: React.FC = () => {
   useLayoutEffect(() => {
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
-      setBottomSheetHeight(MIN_HEIGHT);
+      // 1. 강제 스크롤 초기화
+      window.scrollTo(0, 0);
+
+      // 2. 강제 리사이즈 이벤트 발생
+      window.dispatchEvent(new Event('resize'));
+
+      // 3. 약간 딜레이 후 바텀시트 높이 재조정
+      setTimeout(() => {
+        setBottomSheetHeight(90); // 또는 MIN_HEIGHT
+      }, 50); // 50~100ms 정도
     }
   }, [location.pathname]);
 
