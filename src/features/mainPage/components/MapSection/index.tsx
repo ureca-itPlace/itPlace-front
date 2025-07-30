@@ -66,7 +66,7 @@ const MapSection: React.FC<MapSectionProps> = ({
     } else {
       // 로드뷰 모드 켜기
       setIsRoadviewMode(true);
-      showToast('지도를 클릭하면 해당 위치의 로드뷰를 확인할 수 있어요!', 'info');
+      showToast('지도를 클릭하면 로드뷰를 확인할 수 있어요!', 'info');
     }
   };
 

@@ -11,10 +11,10 @@ const RoadviewButton: React.FC<RoadviewButtonProps> = ({ isRoadviewMode, onToggl
     <button
       onClick={onToggle}
       className={`
-        flex items-center justify-center w-12 h-12 rounded-lg transition-colors duration-200 shadow-lg max-md:w-10 max-md:h-10
+        flex items-center justify-center w-12 h-12 max-md:w-10 max-md:h-10 rounded-lg transition-colors duration-200 shadow-lg
         ${
           isRoadviewMode
-            ? 'bg-orange04 text-white hover:bg-orange05'
+            ? 'bg-purple03 text-white hover:bg-purple04'
             : 'bg-white text-grey04 hover:bg-grey01 border-2 border-grey02'
         }
       `}

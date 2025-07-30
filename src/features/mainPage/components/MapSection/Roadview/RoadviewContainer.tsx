@@ -50,9 +50,17 @@ const RoadviewContainer: React.FC<RoadviewContainerProps> = ({
 
           // 컨테이너 (최상위 div) 스타일 업데이트
           overlayElement.style.zIndex = isSelected ? '1000' : '1';
-          overlayElement.style.animation = isSelected
-            ? 'bounceScale 2s ease-in-out infinite'
-            : 'none';
+
+          // 애니메이션 강제 중지를 위한 처리
+          if (!isSelected) {
+            overlayElement.style.animation = 'none';
+            overlayElement.style.transform = 'scale(1) translateY(0px)';
+            // 강제로 reflow 발생시켜 애니메이션 즉시 중지
+            void overlayElement.offsetHeight;
+          } else {
+            overlayElement.style.animation = 'bounceScale 2s ease-in-out infinite';
+          }
+
           overlayElement.style.transformOrigin = 'center bottom';
           overlayElement.style.transition = 'transform 0.3s ease';
 
@@ -62,6 +70,23 @@ const RoadviewContainer: React.FC<RoadviewContainerProps> = ({
             filterWrapper.style.filter = isSelected
               ? 'drop-shadow(0px 0px 12px rgba(255, 160, 35, 0.9))'
               : 'drop-shadow(2px 2px 8px rgba(0, 0, 0, 0.35))';
+          }
+
+          // 별 이미지 DOM 직접 조작으로 즉시 렌더링
+          const existingStarImg = overlayElement.querySelector('img[alt="맵 마커"]');
+
+          if (isSelected && !existingStarImg) {
+            // 별 이미지 추가 (원래대로 고정 크기)
+            const starImg = document.createElement('img');
+            starImg.src = '/images/star.png';
+            starImg.alt = '맵 마커';
+            starImg.className = 'absolute -left-2 -top-1 -translate-y-1/2 w-14';
+            starImg.style.zIndex = '20'; // 높은 z-index 설정
+
+            overlayElement.appendChild(starImg);
+          } else if (!isSelected && existingStarImg) {
+            // 별 이미지 제거
+            existingStarImg.remove();
           }
         }
       }
@@ -214,6 +239,19 @@ const RoadviewContainer: React.FC<RoadviewContainerProps> = ({
             0%, 100% { transform: scale(1.2) translateY(0px); }
             50% { transform: scale(1.2) translateY(-8px); }
           }
+          
+          /* 모바일에서 카카오 로드뷰 기본 컨트롤 숨기기 */
+          @media (max-width: 768px) {
+            button[id*="_zoomout_button_"],
+            button[id*="_zoomin_button_"],
+            button[id*="_compass_button_"],
+            div[id*="bundlewrap"],
+            div[id*="_box_util_903"],
+            .bundlewrap,
+            [class*="bundlewrap_904"] {
+              display: none !important;
+            }
+          }
         `}
       </style>
 
@@ -223,9 +261,9 @@ const RoadviewContainer: React.FC<RoadviewContainerProps> = ({
       {/* 로드뷰 닫기 버튼 */}
       <button
         onClick={() => onCloseRef.current()}
-        className="absolute top-4 left-4 z-[1001] bg-black/70 text-white px-4 py-2 rounded-lg hover:bg-black/80 transition-colors"
+        className="absolute top-4 right-4 max-md:top-[60px] max-md:px-3 max-md:py-1.5 max-md:text-xs z-[1001] bg-black/70 text-white px-4 py-2 rounded-lg hover:bg-black/80 transition-colors"
       >
-        로드뷰 닫기
+        돌아가기
       </button>
     </div>
   );
