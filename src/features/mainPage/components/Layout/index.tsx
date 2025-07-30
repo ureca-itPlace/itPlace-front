@@ -24,7 +24,7 @@ const MainPageLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false); // 사이드바 접힘 상태
 
   // 바텀시트 상태 관리
-  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(20); // 바텀시트 높이
+  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(90); // 바텀시트 높이
   const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
   const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
   const [startHeight, setStartHeight] = useState<number>(0); // 드래그 시작 시 높이
