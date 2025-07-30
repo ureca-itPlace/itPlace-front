@@ -89,7 +89,7 @@ const FeatureSection = () => {
     <section
       ref={featureSectionRef}
       data-theme="dark"
-      className="relative max-h-[400vh] px-5 py-12 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
+      className="relative max-h-[400svh] px-5 py-12 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
     >
       <FeatureItem
         reverse
