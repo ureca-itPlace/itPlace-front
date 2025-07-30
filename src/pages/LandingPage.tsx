@@ -1,19 +1,23 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { debounce } from 'lodash';
 import { lazy, useEffect, useLayoutEffect, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
 import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
-import { debounce } from 'lodash';
+import CustomCursor from '../features/landingPage/components/CustomCursor';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+import HeroSection from '../features/landingPage/sections/HeroSection';
+import LoadingScreen from '../features/landingPage/components/LoadingScreen';
 const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
 const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
 const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
 const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
 
 const LandingPage = () => {
+  const [showIntro, setShowIntro] = useState(true);
   const [videoEnded, setVideoEnded] = useState(false);
   // 헤더 색상 변경을 위한 섹션 색상 감지
   const [theme, setTheme] = useState<string>('light');
@@ -45,22 +49,23 @@ const LandingPage = () => {
   }, [videoEnded]);
 
   return (
-    <div className="relative bg-white z-20 overflow-x-hidden">
-      {/* 헤더 */}
-      <MobileHeader theme={theme} />
-      {/* 더미 박스 */}
-      {/* <div className="h-[65vh]" /> */}
-      {/* 지도 */}
-      <MapSection />
-      {/* 기능 설명 */}
-      <FeatureSection />
-      {/* 비디오 & CTA */}
-      <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
-      {/* CTA */}
-      <div style={{ display: videoEnded ? 'block' : 'none' }}>
-        <StartCTASection />
-      </div>
-    </div>
+    <>
+      {showIntro ? (
+        <LoadingScreen onFinish={() => setShowIntro(false)} />
+      ) : (
+        <div className="relative bg-white z-20 overflow-x-hidden">
+          <MobileHeader theme={theme} backgroundColor="transparent" />
+          <HeroSection />
+          <MapSection />
+          <FeatureSection />
+          <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
+          <div style={{ display: videoEnded ? 'block' : 'none' }}>
+            <StartCTASection />
+          </div>
+          <CustomCursor />
+        </div>
+      )}
+    </>
   );
 };
 
