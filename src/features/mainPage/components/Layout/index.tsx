@@ -34,12 +34,9 @@ const MainPageLayout: React.FC = () => {
 
   const location = useLocation();
 
-  const getViewportHeight = () =>
-    typeof window !== 'undefined' ? window.visualViewport?.height || window.innerHeight : 800;
-
   const MIN_HEIGHT = 90;
   const getMaxHeight = useCallback(() => {
-    return getViewportHeight() - 105;
+    return window.innerHeight - 105;
   }, []);
 
   // 스냅 포인트로 이동할 때 부드럽게 애니메이션
@@ -254,18 +251,13 @@ const MainPageLayout: React.FC = () => {
   // 바텀시트가 항상 탭바까지만 보이게
   useLayoutEffect(() => {
     const isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      // 1. 강제 스크롤 초기화
-      window.scrollTo(0, 0);
+    if (!isMobile) return;
 
-      // 2. 강제 리사이즈 이벤트 발생
-      window.dispatchEvent(new Event('resize'));
+    // 화면 진입 시 바텀시트 최소 높이로 초기화
+    setBottomSheetHeight(MIN_HEIGHT);
 
-      // 3. 약간 딜레이 후 바텀시트 높이 재조정
-      setTimeout(() => {
-        setBottomSheetHeight(90); // 또는 MIN_HEIGHT
-      }, 50); // 50~100ms 정도
-    }
+    // 스크롤 위치도 초기화
+    window.scrollTo(0, 0);
   }, [location.pathname]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
