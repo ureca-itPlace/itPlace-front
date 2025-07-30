@@ -20,7 +20,7 @@ const EventBanner: React.FC = () => {
   const renderImages = isMobile ? images2 : images;
 
   return (
-    <div className="rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic flex items-center justify-center w-[1190px] max-xl:w-[950px] h-[250px] max-xl:h-[200px] max-md:w-full max-md:h-[100px] max-md:rounded-none max-md:drop-shadow-none">
+    <div className="rounded-[18px] max-xl:rounded-[14px] drop-shadow-basic flex items-center justify-center w-[1190px] max-xl:w-[950px] h-[250px] max-xl:h-[200px] max-xlg:w-full max-md:w-full max-md:h-[100px] max-md:rounded-none max-md:drop-shadow-none">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={30}
