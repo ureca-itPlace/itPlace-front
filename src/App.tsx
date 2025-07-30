@@ -3,6 +3,7 @@ import './App.css';
 import { RouterProvider } from 'react-router-dom';
 import router from './routes';
 import ToastProvider from './components/ToastProvider';
+import ScrollToTop from './components/ScrollToTop';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store';
@@ -37,6 +38,7 @@ const App = () => {
 
   return (
     <>
+      <ScrollToTop />
       <RouterProvider router={router} />
       <ToastProvider />
     </>
