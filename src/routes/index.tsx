@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     element: <ResponsiveLayout />, // DefaultLayout 대신 ResponsiveLayout 사용
     children: [
       {
-        path: '*', // 모든 경로 변화에서 작동
+        path: '*', // 모든 경로 변화에서 스크롤 초기화 작동
         element: <ScrollToTopHandler />,
       },
       { path: '/', element: <LandingPage /> }, // 기본 라우터
