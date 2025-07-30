@@ -10,6 +10,7 @@ import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
 import { TbChevronLeft, TbChevronRight } from 'react-icons/tb';
 import { useLocation } from 'react-router-dom';
+import { useLayoutEffect } from 'react';
 
 /**
  * 메인페이지 레이아웃 컴포넌트
@@ -251,7 +252,7 @@ const MainPageLayout: React.FC = () => {
   // 바텀시트 드래그 핸들러
 
   // 바텀시트가 항상 탭바까지만 보이게
-  useEffect(() => {
+  useLayoutEffect(() => {
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
       setBottomSheetHeight(MIN_HEIGHT);
@@ -533,6 +534,7 @@ const MainPageLayout: React.FC = () => {
               bottom: 0,
               minHeight: `${MIN_HEIGHT}px`,
               maxHeight: `${getMaxHeight()}px`,
+              transition: isAnimating ? 'all 0.3s ease-out' : 'none',
             }}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
