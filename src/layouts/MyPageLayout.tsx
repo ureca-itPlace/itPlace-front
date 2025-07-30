@@ -28,12 +28,17 @@ export default function MyPageLayout() {
   if (!isLoggedIn) {
     // ✅ 로그인 안된 경우, 뒤쪽 컨텐츠를 전혀 렌더하지 않고 모달만 반환
     return (
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => {
-          setShowLoginModal(false);
-        }}
-      />
+      <>
+        <div className="hidden fixed top-0 left-0 w-full z-[9999] max-md:block">
+          <MobileHeader title="마이잇플" />
+        </div>
+        <LoginRequiredModal
+          isOpen={showLoginModal}
+          onClose={() => {
+            setShowLoginModal(false);
+          }}
+        />
+      </>
     );
   }
 
