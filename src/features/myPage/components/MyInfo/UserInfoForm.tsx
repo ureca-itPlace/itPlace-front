@@ -22,7 +22,7 @@ const UserInfoForm: React.FC<Props> = ({
 }) => {
   return (
     <div className="flex justify-center mt-[100px] max-xl:mt-[60px] max-xlg:mt-[30px] max-md:mt-0">
-      <div className="flex flex-col gap-4 w-full max-w-[690px] min-w-[590px] max-xl:max-w-[30.625rem] max-xl:min-w-[370px] max-xlg:w-full">
+      <div className="flex flex-col gap-4 w-full max-w-[690px] min-w-[590px] max-xl:max-w-[30.625rem] max-xl:min-w-[370px] max-xlg:w-full max-md:min-w-0">
         <InfoRow label="이름" value={name} />
         <InfoRow label="성별" value={gender === 'MALE' ? '남성' : '여성'} />
         <InfoRow label="생년월일" value={birthday.replace(/-/g, '.')} />

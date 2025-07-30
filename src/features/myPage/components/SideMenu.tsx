@@ -33,7 +33,7 @@ export default function SideMenu() {
   return (
     <>
       {/* ✅ 데스크탑용 사이드 메뉴*/}
-      <aside className="max-h-[891px] w-full max-w-[370px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-3 max-xl:max-w-[310px] max-xl:pt-[56px] max-xlg:max-w-[220px] max-xlg:min-w-[180px] max-xlg:pt-[36px] max-md:hidden">
+      <aside className="max-h-[891px] max-xlg:max-h-none w-full max-w-[370px] bg-white rounded-[18px] drop-shadow-basic pt-[76px] pb-[56px] px-3 max-xl:max-w-[310px] max-xl:pt-[56px] max-xlg:max-w-[220px] max-xlg:min-w-[180px] max-xlg:pt-[36px] max-md:hidden">
         <h1 className="text-title-1 text-purple06 pl-[34px] pb-[80px] max-xl:text-title-2 max-xl:pb-[60px] max-xlg:pl-4 max-lg:pl-2">
           MY PAGE
         </h1>
