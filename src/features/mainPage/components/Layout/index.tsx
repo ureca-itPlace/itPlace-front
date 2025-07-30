@@ -26,7 +26,8 @@ const MainPageLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false); // 사이드바 접힘 상태
 
   // 바텀시트 상태 관리
-  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(90); // 바텀시트 높이
+  const MIN_HEIGHT = 90;
+  const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(MIN_HEIGHT); // 바텀시트 높이
   const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
   const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
   const [startHeight, setStartHeight] = useState<number>(0); // 드래그 시작 시 높이
@@ -34,7 +35,6 @@ const MainPageLayout: React.FC = () => {
 
   const location = useLocation();
 
-  const MIN_HEIGHT = 90;
   const getMaxHeight = useCallback(() => {
     return window.innerHeight - 105;
   }, []);
@@ -249,15 +249,18 @@ const MainPageLayout: React.FC = () => {
   // 바텀시트 드래그 핸들러
 
   // 바텀시트가 항상 탭바까지만 보이게
+  // 🔥 useLayoutEffect에서 무조건 스크롤 + 바텀시트 초기화
   useLayoutEffect(() => {
     const isMobile = window.innerWidth < 768;
     if (!isMobile) return;
 
-    // 화면 진입 시 바텀시트 최소 높이로 초기화
-    setBottomSheetHeight(MIN_HEIGHT);
+    setTimeout(() => {
+      // ✅ 바텀시트를 닫힌 상태로 초기화
+      setBottomSheetHeight(MIN_HEIGHT);
 
-    // 스크롤 위치도 초기화
-    window.scrollTo(0, 0);
+      // ✅ 스크롤 위치 초기화
+      window.scrollTo(0, 0);
+    }, 100); // viewport 갱신 대기 시간
   }, [location.pathname]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
