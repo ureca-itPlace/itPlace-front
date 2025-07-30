@@ -35,7 +35,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         alt="위치"
         className="inline-block h-[27vh] w-auto pb-4"
       />
-      YOUR <span className="custom-font inline-block text-purple04 border-2 px-10">MEMBERSHIP</span>
+      YOUR <span className="custom-font inline-block text-purple04 px-10">MEMBERSHIP</span>
     </>,
     <>
       <span className="custom-font text-purple04">BENEFITS</span> AROUND YOU
@@ -174,7 +174,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
           </h1>
         ))}
       </div>
-      <h1 ref={h1Ref} className="custom-font text-center text-6xl px-4 text-white">
+      <h1 ref={h1Ref} className="custom-font text-center text-[10vw] px-4 text-white">
         ARE YOU READY?
       </h1>
     </section>
