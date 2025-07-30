@@ -9,6 +9,7 @@ import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
 import { TbChevronLeft, TbChevronRight } from 'react-icons/tb';
+import { useLocation } from 'react-router-dom';
 
 /**
  * 메인페이지 레이아웃 컴포넌트
@@ -28,6 +29,7 @@ const MainPageLayout: React.FC = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
   const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
   const [startHeight, setStartHeight] = useState<number>(0); // 드래그 시작 시 높이
+  const location = useLocation();
 
   // 말풍선 상태
   const [speechBubble, setSpeechBubble] = useState<{
@@ -317,7 +319,7 @@ const MainPageLayout: React.FC = () => {
     if (isMobile) {
       setBottomSheetHeight(90);
     }
-  }, []);
+  }, [location.pathname]);
 
   // platforms 배열 안정화
   const stablePlatforms = useMemo(() => {
