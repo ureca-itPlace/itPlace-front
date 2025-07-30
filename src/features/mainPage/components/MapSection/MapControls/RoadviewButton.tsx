@@ -1,5 +1,5 @@
 import React from 'react';
-import { TbCameraUp } from 'react-icons/tb';
+import { TbDeviceComputerCamera } from 'react-icons/tb';
 
 interface RoadviewButtonProps {
   isRoadviewMode: boolean;
@@ -20,7 +20,7 @@ const RoadviewButton: React.FC<RoadviewButtonProps> = ({ isRoadviewMode, onToggl
       `}
       aria-label={isRoadviewMode ? '로드뷰 끄기' : '로드뷰 켜기'}
     >
-      <TbCameraUp size={24} className="max-md:w-5 max-md:h-5" />
+      <TbDeviceComputerCamera size={24} className="max-md:w-5 max-md:h-5" />
     </button>
   );
 };
