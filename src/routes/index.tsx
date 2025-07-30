@@ -12,6 +12,7 @@ import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import OAuthRedirectHandler from '../features/loginPage/layouts/OAuthRedirectHandler';
 import PublicRoute from '../features/loginPage/layouts/PublicRoute'; // PublicRoute import
+import ScrollToTopHandler from '../pages/ScrollToTopHandler';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> }, // 기본 라우터
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     element: <ResponsiveLayout />, // DefaultLayout 대신 ResponsiveLayout 사용
     children: [
+      {
+        path: '*', // 모든 경로 변화에서 작동
+        element: <ScrollToTopHandler />,
+      },
       { path: '/', element: <LandingPage /> }, // 기본 라우터
       {
         // 로그인된 사용자는 접근 불가
