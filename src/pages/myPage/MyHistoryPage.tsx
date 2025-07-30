@@ -48,7 +48,7 @@ export default function MyHistoryPage() {
   // 로딩 상태
   const [loading, setLoading] = useState(false);
 
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
 
   // ✅ 혜택 사용 이력 API 호출 (페이지/필터 변화 시 재호출)
   useEffect(() => {

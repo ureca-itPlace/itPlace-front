@@ -291,7 +291,7 @@ const MainPageLayout: React.FC = () => {
 
   // 모바일에서 body 스크롤 방지
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
+    const isMobile = window.innerWidth < 767;
     if (isMobile) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';

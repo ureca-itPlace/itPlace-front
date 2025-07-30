@@ -11,7 +11,7 @@ import { useMediaQuery } from 'react-responsive';
 export default function MyPageLayout() {
   const { pathname } = useLocation();
 
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const isHistory = pathname.startsWith('/mypage/history');
 
   // ✅ 모바일 레이아웃을 위한 조건분기

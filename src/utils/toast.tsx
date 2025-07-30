@@ -65,8 +65,8 @@ export function showToast(
     ...options?.style, // 여기에 사용자가 넘긴 width만 덮어쓰기
   };
 
-  // ✅ 모바일인지 아닌지 판별 (500px 이하를 모바일로 간주)
-  const isMobile = window.innerWidth <= 500;
+  // ✅ 모바일인지 아닌지 판별 (767px 이하를 모바일로 간주)
+  const isMobile = window.innerWidth <= 767;
 
   toast(message, {
     ...options, // ✅ 먼저 사용자가 전달한 옵션을 펼치기
