@@ -21,16 +21,12 @@ const BenefitDetailCard: React.FC<BenefitDetailCardProps> = ({
 
   // 모든 혜택 상세 정보 로드
   useEffect(() => {
-    console.log('BenefitDetailCard useEffect 실행, benefitIds:', benefitIds);
-
     const loadBenefitDetails = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        console.log('API 호출 시작, benefitIds:', benefitIds);
         const details = await Promise.all(benefitIds.map((id) => getBenefitDetail(id)));
-        console.log('API 응답:', details);
         setBenefitDetails(details);
       } catch (err) {
         setError('혜택 정보를 불러오는데 실패했습니다.');

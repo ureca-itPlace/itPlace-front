@@ -208,7 +208,6 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
             <div key={`${store.partnerName}-${store.rank}`} className="relative">
               <div
                 onClick={() => {
-                  console.log('추천 항목 클릭:', store.partnerName);
                   onItemClick(store);
                 }}
                 className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[64px] max-md:px-3 max-sm:h-[64px] max-sm:px-2"
