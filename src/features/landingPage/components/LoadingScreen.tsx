@@ -17,7 +17,7 @@ const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
 
   const { isMobile } = useResponsive();
 
-  const descFadeOutDistance = isMobile ? '-20' : '0';
+  const descFadeOutDistance = isMobile ? '-20' : '-10';
 
   useEffect(() => {
     if (isVisible) {
