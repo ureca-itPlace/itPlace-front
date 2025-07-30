@@ -230,8 +230,9 @@ const MainPageLayout: React.FC = () => {
 
   // 스냅 포인트로 이동할 때 부드럽게 애니메이션
   const animateTo = (target: number) => {
+    const clampedTarget = Math.min(target, window.innerHeight - 105);
     setIsAnimating(true);
-    setBottomSheetHeight(target);
+    setBottomSheetHeight(clampedTarget);
     // transition이 끝난 뒤 끄기
     setTimeout(() => {
       setIsAnimating(false);
@@ -253,7 +254,7 @@ const MainPageLayout: React.FC = () => {
 
       const currentY = e.touches[0].clientY;
       const deltaY = startY - currentY; // 위로 드래그하면 양수, 아래로 드래그하면 음수
-      const newHeight = Math.max(20, Math.min(window.innerHeight - 120, startHeight + deltaY));
+      const newHeight = Math.max(90, Math.min(window.innerHeight - 105, startHeight + deltaY));
 
       setBottomSheetHeight(newHeight);
     },
@@ -527,6 +528,7 @@ const MainPageLayout: React.FC = () => {
               height: `${bottomSheetHeight}px`,
               bottom: 0,
               minHeight: '90px',
+              maxHeight: 'calc(100dvh - 105px)',
             }}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
