@@ -11,7 +11,7 @@ import { useMediaQuery } from 'react-responsive';
 export default function MyPageLayout() {
   const { pathname } = useLocation();
 
-  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+  const isMobile = useMediaQuery({ query: '(max-width: 767px)' });
   const isHistory = pathname.startsWith('/mypage/history');
 
   // ✅ 모바일 레이아웃을 위한 조건분기
@@ -28,13 +28,17 @@ export default function MyPageLayout() {
   if (!isLoggedIn) {
     // ✅ 로그인 안된 경우, 뒤쪽 컨텐츠를 전혀 렌더하지 않고 모달만 반환
     return (
-      <LoginRequiredModal
-        isOpen={showLoginModal}
-        onClose={() => {
-          setShowLoginModal(false);
-          // 필요하다면 다른 로직
-        }}
-      />
+      <>
+        <div className="hidden fixed top-0 left-0 w-full z-[9999] max-md:block">
+          <MobileHeader title="마이잇플" />
+        </div>
+        <LoginRequiredModal
+          isOpen={showLoginModal}
+          onClose={() => {
+            setShowLoginModal(false);
+          }}
+        />
+      </>
     );
   }
 
@@ -47,7 +51,7 @@ export default function MyPageLayout() {
 
       <div
         className={
-          `min-h-screen bg-grey01 mx-auto p-[28px] flex gap-[28px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
+          `min-h-screen bg-grey01 mx-auto p-[28px] flex gap-[28px] max-lg:gap-[16px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
           (isWhiteLayout ? ' max-md:gap-0 max-md:bg-white' : '')
         }
       >

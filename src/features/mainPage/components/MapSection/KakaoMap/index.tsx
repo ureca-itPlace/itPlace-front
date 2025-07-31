@@ -362,7 +362,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
   return (
     <div className="w-full h-full">
-      <div ref={mapContainer} className="w-full h-full rounded-[18px]" style={{}} />
+      <div
+        ref={mapContainer}
+        className="w-full h-full rounded-[18px] max-md:rounded-none"
+        style={{}}
+      />
     </div>
   );
 };

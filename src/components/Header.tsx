@@ -54,7 +54,7 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
     <>
       <aside
         className={clsx(
-          'fixed z-30 left-0 top-0 h-screen overflow-y-auto scrollbar-hide w-[81px] flex flex-col items-center py-4 rounded-tr-xl rounded-br-xl',
+          'fixed z-30 left-0 top-0 h-full overflow-y-auto scrollbar-hide w-[81px] flex flex-col items-center py-4 rounded-tr-xl rounded-br-xl',
           variant === 'glass' ? 'header-glass bg-[rgba(255,255,255,0.05)]' : 'bg-gradient-header'
         )}
       >

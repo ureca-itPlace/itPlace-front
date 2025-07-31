@@ -166,7 +166,7 @@ export default function MyFavoritesPage() {
               (keyword.trim() && currentItems.length === 0) || // 검색 중이고 결과가 0
               (!keyword.trim() && allFavorites.length === 0) // 검색 안 했는데 전체도 0
             ) && (
-              <div className="mt-auto relative flex justify-center items-end max-md:mt-3">
+              <div className="mt-auto relative flex justify-center items-end max-md:mt-3 max-md:mb-6">
                 <Pagination
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
@@ -226,7 +226,7 @@ export default function MyFavoritesPage() {
               setIsEditing(false);
               setSelectedItems([]);
             }}
-            className="px-7 py-3 rounded-[12px] bg-white border border-grey02 text-grey03 text-body-2 font-medium"
+            className="px-7 py-3 rounded-[12px] bg-white border border-grey02 text-grey03 text-body-3 font-medium"
           >
             취소
           </button>
@@ -239,7 +239,7 @@ export default function MyFavoritesPage() {
                 setIsDeleteModalOpen(true);
               }
             }}
-            className={`flex-1 py-3 ml-3 rounded-[12px] text-body-1 font-medium text-white transition-colors ${
+            className={`flex-1 py-3 ml-3 rounded-[12px] text-body-3 font-medium text-white transition-colors ${
               selectedItems.length > 0 ? 'bg-purple04' : 'bg-grey03 text-grey04'
             }`}
           >

@@ -22,6 +22,11 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      showToast('이메일 및 비밀번호를 입력해주세요', 'error');
+      return;
+    }
+
     try {
       const response = await login(email, password);
       const { code, data } = response.data;
@@ -43,6 +48,12 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
     window.location.href = kakaoLoginUrl;
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div>
       <h2 className="text-title-1 max-xl:text-title-2 max-lg:text-title-3 max-md:text-title-2 max-sm:text-title-2 mb-[40px] max-xl:mb-[34px] max-lg:mb-[27px] max-md:mb-[32px] max-sm:mb-[32px]">
@@ -57,6 +68,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
             placeholder="이메일"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
 
@@ -68,6 +80,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
             placeholder="비밀번호"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
 

@@ -7,6 +7,7 @@ type AuthInputProps = {
   placeholder?: string;
   value: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   className?: string;
   bgColor?: string; // 기본값: grey01
   textColor?: string; // 기본값: black
@@ -21,6 +22,7 @@ const AuthInput = ({
   placeholder = '',
   value,
   onChange,
+  onKeyDown,
   className,
   bgColor = 'bg-grey01',
   textColor = 'text-black',
@@ -39,6 +41,7 @@ const AuthInput = ({
       placeholder={placeholder}
       value={value}
       onChange={disabled ? undefined : onChange}
+      onKeyDown={disabled ? undefined : onKeyDown}
       disabled={disabled}
       className={clsx(
         'w-[320px] max-xl:w-[274px] max-lg:w-[205px] max-md:w-full max-sm:w-full h-[50px] max-xl:h-[43px] max-lg:h-[34px] max-md:h-[48px] max-sm:h-[48px] rounded-[18px] max-xl:rounded-[15px] max-lg:rounded-[12px] max-md:rounded-[16px] max-sm:rounded-[16px] px-[16px] max-xl:px-[14px] max-lg:px-[11px] max-md:px-[16px] max-sm:px-[16px] text-body-2 max-xl:text-body-3 max-lg:text-body-4 max-md:text-body-3 max-sm:text-body-3 placeholder:text-body-2 placeholder:max-xl:text-body-3 placeholder:max-lg:text-body-4 placeholder:max-md:text-body-3 placeholder:max-sm:text-body-3',
