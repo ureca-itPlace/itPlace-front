@@ -95,7 +95,7 @@ const FeatureSection = () => {
       <img
         src="/images/landing/feature/wave.png"
         alt="물결"
-        className="absolute top-0 left-0 w-full h-auto z-10"
+        className="absolute top-0 left-0 w-full h-auto z-10 pointer-events-none"
       />
       <FeatureItem
         number={1}

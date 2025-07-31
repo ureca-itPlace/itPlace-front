@@ -207,7 +207,7 @@ const HeroSection = () => {
         <img
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
-          className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center"
+          className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
@@ -227,25 +227,25 @@ const HeroSection = () => {
         <img
           ref={firstMapImageRef}
           src="/images/landing/hero/map-1.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <img
           ref={secondMapImageRef}
           src="/images/landing/hero/map-2.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <img
           ref={thirdMapImageRef}
           src="/images/landing/hero/map-3.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <img
           ref={fourthMapImageRef}
           src="/images/landing/hero/map-4.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <div className="flex flex-col items-center justify-center w-full h-full text-[15vw] text-purple04 z-30">
@@ -266,7 +266,7 @@ const HeroSection = () => {
               if (el) benefitImagesRef.current[index] = el;
             }}
             src={`/images/landing/hero/${logo.name}.svg`}
-            className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-16`}
+            className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-16 pointer-events-none`}
             loading="lazy"
             alt={logo.name}
           />

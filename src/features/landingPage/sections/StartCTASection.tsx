@@ -17,7 +17,7 @@ const StartCTASection = () => {
           src="/images/landing/cta/cta-rabbit.webp"
           alt="CTA토끼"
           loading="lazy"
-          className="object-cover"
+          className="object-cover pointer-events-none"
         />
       </div>
 
