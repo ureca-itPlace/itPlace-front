@@ -82,6 +82,24 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
       [searchQuery]
     );
 
+    const handleBlur = useCallback(() => {
+      // 모바일에서 확대된 뷰포트 원래대로 복원
+      if (window.innerWidth < 768) {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          // 뷰포트 메타 태그 임시 조작으로 확대 해제
+          const viewport = document.querySelector('meta[name=viewport]');
+          if (viewport) {
+            const content = viewport.getAttribute('content');
+            viewport.setAttribute('content', content + ',user-scalable=0');
+            setTimeout(() => {
+              viewport.setAttribute('content', content || '');
+            }, 300);
+          }
+        }, 100);
+      }
+    }, []);
+
     return (
       <div className="mb-4 w-[330px] max-md:w-full max-md:mb-0 max-md:flex max-md:items-center">
         <form onSubmit={handleSearchSubmit} className="w-full">
@@ -93,6 +111,7 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
             backgroundColor="bg-grey01"
             className="w-full h-[50px] max-md:h-[40px] max-md:ml-1"
             onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
           />
         </form>
       </div>
