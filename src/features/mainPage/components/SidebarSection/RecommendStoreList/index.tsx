@@ -1,4 +1,5 @@
 import React from 'react';
+import ChatRoom from './ChatRoom/ChatRoom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../store';
 import { RecommendationItem } from '../../../types/api';
@@ -12,6 +13,8 @@ interface RecommendStoreListProps {
   isLoading?: boolean;
   error?: string | null;
   onBenefitDetailRequest?: (benefitIds: number[]) => void;
+  onSearchPartner?: (partnerName: string) => void;
+  onChangeTab?: (tabId: string) => void;
 }
 
 const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
@@ -19,8 +22,12 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   onItemClick,
   isLoading = false,
   error = null,
+  onSearchPartner,
+  onChangeTab,
 }) => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
+  // 채팅방 UI 상태
+  const [isChatOpen, setIsChatOpen] = React.useState(false);
 
   const animatedText = useAnimatedLoadingText({
     messages: [
@@ -31,6 +38,18 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       '혜택 가득한 제휴처를 열심히 골라오는 중이에요',
     ],
   });
+
+  // 채팅방 열기/닫기 핸들러
+  const handleChatOpen = () => {
+    setIsChatOpen(true);
+  };
+
+  const handleChatClose = () => {
+    setIsChatOpen(false);
+  };
+
+  // ...existing code...
+
   // 에러 메시지에 따른 요약 생성
   const getErrorSummary = (errorMessage: string) => {
     if (
@@ -151,6 +170,11 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
             #a7623d 100%
           );
         }
+
+        /* 채팅방이 열려있을 때 body 스크롤 방지 (선택적) */
+        .chat-open {
+          overflow: hidden;
+        }
       `}</style>
 
       {!isLoggedIn ? (
@@ -204,37 +228,54 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
         </div>
       ) : (
         <div className="space-y-3 max-md:space-y-3 px-5 max-md:px-4 max-sm:px-3">
-          {stores.map((store) => (
-            <div key={`${store.partnerName}-${store.rank}`} className="relative">
-              <div
-                onClick={() => {
-                  onItemClick(store);
-                }}
-                className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[64px] max-md:px-3 max-sm:h-[64px] max-sm:px-2"
+          <div>
+            {isChatOpen ? (
+              <ChatRoom
+                onClose={handleChatClose}
+                onSearchPartner={onSearchPartner}
+                onChangeTab={onChangeTab}
+              />
+            ) : (
+              <button
+                className="w-[328px] h-[48px] bg-purple04 text-white rounded-[10px] px-4 flex items-center justify-center cursor-pointer font-bold shadow hover:bg-purple03 transition-colors mb-2 max-md:w-full max-md:h-[64px] max-md:px-3 max-sm:h-[35px] max-sm:px-2"
+                onClick={handleChatOpen}
               >
-                {/* 왼쪽 이미지 */}
-                <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
-                  <img
-                    src={store.imgUrl || '/mainPage/RecommendDefault.png'}
-                    alt={`${store.partnerName} 로고`}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
+                잇플AI에게 질문하기
+              </button>
+            )}
+          </div>
+          {!isChatOpen &&
+            stores.map((store) => (
+              <div key={`${store.partnerName}-${store.rank}`} className="relative">
+                <div
+                  onClick={() => {
+                    onItemClick(store);
+                  }}
+                  className="w-[330px] h-[60px] bg-grey01 rounded-[10px] px-4 flex items-center cursor-pointer hover:bg-purple01 transition-colors overflow-x-hidden max-md:w-auto max-md:h-[64px] max-md:px-3 max-sm:h-[64px] max-sm:px-2"
+                >
+                  {/* 왼쪽 이미지 */}
+                  <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
+                    <img
+                      src={store.imgUrl || '/mainPage/RecommendDefault.png'}
+                      alt={`${store.partnerName} 로고`}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
 
-                {/* 중앙: 이름 */}
-                <div className="flex-1">
-                  <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
-                    {store.partnerName}
-                  </span>
-                </div>
+                  {/* 중앙: 이름 */}
+                  <div className="flex-1">
+                    <span className="text-body-3-bold text-grey06 max-md:text-body-4-bold">
+                      {store.partnerName}
+                    </span>
+                  </div>
 
-                {/* 오른쪽: 뱃지 */}
-                <div className={getBadgeClass(store.rank)}>
-                  <span>{store.rank}위</span>
+                  {/* 오른쪽: 뱃지 */}
+                  <div className={getBadgeClass(store.rank)}>
+                    <span>{store.rank}위</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
     </>

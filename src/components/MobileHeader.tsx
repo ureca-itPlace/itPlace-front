@@ -44,6 +44,7 @@ const MobileHeader = ({
       // 성공 토스트 표시
       showToast('로그아웃 되었습니다.', 'success');
       setIsSidebarOpen(false);
+      sessionStorage.removeItem('chatMessages');
       // 페이지 이동
       navigate('/main');
     } catch (err) {
