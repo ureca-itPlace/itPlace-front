@@ -23,7 +23,7 @@ const HeroSection = () => {
   const mapTextRef = useRef(null);
 
   const { isMobile, isTablet, isLaptop } = useResponsive();
-  const xDistance = isMobile ? 50 : isTablet ? 180 : isLaptop ? 100 : 300;
+  const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
 
   useLayoutEffect(() => {
