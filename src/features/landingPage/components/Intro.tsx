@@ -3,10 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { useResponsive } from '../../../hooks/useResponsive';
 import { disableScroll, enableScroll } from '../../../utils/scrollLock';
-
-interface IntroProps {
-  onFinish: () => void;
-}
+import { IntroProps } from '../types/landing.types';
 
 const Intro = ({ onFinish }: IntroProps) => {
   const [isVisible, setIsVisible] = useState(true);

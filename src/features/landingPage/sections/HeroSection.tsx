@@ -204,7 +204,7 @@ const HeroSection = () => {
             EXPLORE THE
           </div>
           <div ref={titleRef} className="custom-font text-[12vw] text-white leading-none">
-            ITPLACE
+            IT:PLACE
           </div>
         </div>
         <div

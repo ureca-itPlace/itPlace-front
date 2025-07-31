@@ -1,15 +1,6 @@
 import React from 'react';
 import { useResponsive } from '../../../hooks/useResponsive';
-
-interface FeatureItemProps {
-  reverse?: boolean;
-  imageSrc: string;
-  alt: string;
-  title: React.ReactNode;
-  description: string;
-  imageRef?: React.RefObject<HTMLImageElement>;
-  number?: number;
-}
+import { FeatureItemProps } from '../types/landing.types';
 
 const FeatureItem: React.FC<FeatureItemProps> = ({
   reverse = false,

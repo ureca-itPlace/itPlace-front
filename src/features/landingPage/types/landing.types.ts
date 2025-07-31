@@ -1,8 +1,17 @@
-// 로딩 타입 정의
-export interface LoadingScreenProps {
-  logoRef: React.RefObject<HTMLHeadingElement | null>;
-  descRef: React.RefObject<HTMLParagraphElement | null>;
-  bgRef: React.RefObject<HTMLElement | null>;
+// 인트로 타입 정의
+export interface IntroProps {
+  onFinish: () => void;
+}
+
+// 기능 설명 섹션 타입 정의
+export interface FeatureItemProps {
+  reverse?: boolean;
+  imageSrc: string;
+  alt: string;
+  title: React.ReactNode;
+  description: string;
+  imageRef?: React.RefObject<HTMLImageElement>;
+  number?: number;
 }
 
 // 비디오 섹션 타입 정의
@@ -14,16 +23,6 @@ export interface VideoProps {
 export interface VideoSectionProps {
   videoEnded: boolean;
   setVideoEnded: (ended: boolean) => void;
-}
-
-// 지구 섹션 타입 정의
-export interface EarthModelProps {
-  trigger: HTMLElement | null;
-  canvasWrapperRef: React.RefObject<HTMLDivElement | null>;
-}
-
-export interface EarthSceneProps {
-  earthAnimationTrigger: React.RefObject<HTMLElement | null>;
 }
 
 // 버튼 컴포넌트 타입 정의
