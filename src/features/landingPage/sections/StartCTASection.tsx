@@ -12,12 +12,12 @@ const StartCTASection = () => {
       data-theme="light"
       className="relative w-full min-h-[100vh] overflow-hidden flex items-center justify-center max-lg:px-6 bg-white"
     >
-      <div className="absolute left-[-11%] top-[5%] max-xl:hidden">
+      <div className="absolute left-[-18%] top-[5%] w-[50%] h-[85%] max-lg:hidden">
         <img
           src="/images/landing/cta/cta-rabbit.webp"
           alt="CTA토끼"
           loading="lazy"
-          className="object-cover pointer-events-none"
+          className="w-full h-full object-contain pointer-events-none"
         />
       </div>
 
