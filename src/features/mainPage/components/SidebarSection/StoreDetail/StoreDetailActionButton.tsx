@@ -27,7 +27,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [usageAmount, setUsageAmount] = useState('');
-  
+
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
 
   // input 값 변경 핸들러 (콤마 포맷팅 적용)
@@ -136,10 +136,10 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
         {/* 하트 버튼 */}
         <button
           className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-colors max-md:w-12 max-md:h-12 md:w-14 md:h-14 ${
-            isFavorite 
-              ? 'border-purple04 bg-purple04/10' 
-              : isLoggedIn 
-                ? 'border-purple04 bg-white' 
+            isFavorite
+              ? 'border-purple04 bg-purple04/10'
+              : isLoggedIn
+                ? 'border-purple04 bg-white'
                 : 'border-grey03 bg-white'
           }`}
           onClick={handleFavoriteToggle}
@@ -148,7 +148,9 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
           {isFavorite ? (
             <TbHeartFilled className="w-5 h-5 text-purple04 max-md:w-5 max-md:h-5 md:w-6 md:h-6" />
           ) : (
-            <TbHeart className={`w-5 h-5 max-md:w-5 max-md:h-5 md:w-6 md:h-6 ${isLoggedIn ? 'text-purple04' : 'text-grey03'}`} />
+            <TbHeart
+              className={`w-5 h-5 max-md:w-5 max-md:h-5 md:w-6 md:h-6 ${isLoggedIn ? 'text-purple04' : 'text-grey03'}`}
+            />
           )}
         </button>
 
@@ -183,7 +185,9 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
             : !benefitId
               ? '혜택 정보가 없어요'
               : isDistanceValid
-                ? isDesktop ? '모바일에서 사용 가능해요!' : '사용 금액 입력하기'
+                ? isDesktop
+                  ? '모바일에서 사용 가능해요!'
+                  : '사용 금액 입력하기'
                 : '사용하기에 너무 멀어요'}
         </button>
       </div>

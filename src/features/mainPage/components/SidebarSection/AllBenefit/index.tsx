@@ -11,6 +11,10 @@ interface StoreCardsSectionProps {
   currentLocation: string;
   isLoading: boolean;
   error?: string | null;
+  backButton?: {
+    onBack: () => void;
+    label: string;
+  };
 }
 
 const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
@@ -20,6 +24,7 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
   currentLocation,
   isLoading,
   error,
+  backButton,
 }) => {
   if (isLoading) {
     return (
@@ -77,9 +82,30 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
 
   return (
     <div className="flex-1 flex flex-col">
-      <h3 className="text-lg font-bold text-grey06 mb-4 max-md:text-title-7 max-md:mb-3 max-sm:text-title-7 max-sm:mb-2 max-md:px-4 max-sm:px-3">
-        {currentLocation}
-      </h3>
+      {/* 현재 위치와 뒤로가기 버튼 */}
+      <div
+        className={`${backButton ? 'flex items-center justify-between' : ''} mb-4 max-md:mb-3 max-sm:mb-2 max-md:px-4 max-sm:px-3`}
+      >
+        <h3 className="text-lg font-bold text-grey06 max-md:text-title-7 max-sm:text-title-7">
+          {currentLocation}
+        </h3>
+        {backButton && (
+          <button
+            onClick={backButton.onBack}
+            className="flex items-center text-grey05 hover:text-grey06 transition-colors"
+          >
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <span className="text-body-4 font-medium">{backButton.label}</span>
+          </button>
+        )}
+      </div>
 
       {/* 현재 위치 아래 구분선 */}
       <div className="border-b border-grey03 w-[330px] mb-0 max-md:mx-4 max-sm:mx-3 max-md:w-auto" />
