@@ -141,7 +141,8 @@ const FeatureSection = () => {
         alt="기능 설명-4"
         title={
           <>
-            <span className="text-purple04 font-bold">금액 입력</span>만으로 내 혜택을 정리해드려요!
+            간단한 <span className="text-purple04 font-bold">금액 입력</span>만으로 내가 받은 혜택을
+            자동으로 정리해드려요.
           </>
         }
         description="간단한 금액 입력만으로 제휴처에서 사용한 내역과 혜택 현황을 쉽게 조회할 수 있어요. 소비 패턴 분석과 맞춤형 혜택 관리까지 한 번에 가능합니다."
