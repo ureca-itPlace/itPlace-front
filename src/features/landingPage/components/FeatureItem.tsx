@@ -8,6 +8,7 @@ interface FeatureItemProps {
   title: React.ReactNode;
   description: string;
   imageRef?: React.RefObject<HTMLImageElement>;
+  number?: number;
 }
 
 const FeatureItem: React.FC<FeatureItemProps> = ({
@@ -17,6 +18,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({
   title,
   description,
   imageRef,
+  number,
 }) => {
   const { isMobile, isTablet } = useResponsive();
 
@@ -41,6 +43,11 @@ const FeatureItem: React.FC<FeatureItemProps> = ({
 
       {/* 텍스트 영역 */}
       <div className="flex flex-col justify-center text-white text-left w-[40%] h-full pt-0 gap-12 px-12 max-lg:text-center max-lg:px-2 max-lg:w-full max-lg:h-fit max-lg:pt-4 max-lg:gap-6">
+        {number !== undefined && (
+          <span className="text-white text-5xl font-bold max-lg:text-4xl">
+            {number.toString().padStart(2, '0')}
+          </span>
+        )}
         <h1 className="feature-title text-4xl font-bold leading-normal max-md:text-3xl max-sm:text-2xl max-xl:leading-normal max-md:leading-normal max-sm:leading-normal">
           {title}
         </h1>
