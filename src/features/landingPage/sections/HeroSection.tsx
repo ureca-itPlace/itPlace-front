@@ -7,24 +7,33 @@ gsap.registerPlugin(ScrollTrigger);
 
 const HeroSection = () => {
   // Hero Refs
-  const wrapperRef = useRef(null);
-  const heroRef = useRef(null);
-  const windowRef = useRef(null);
-  const subtitleRef = useRef(null);
-  const titleRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const windowRef = useRef<HTMLImageElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLDivElement>(null);
   const whiteOverlayRef = useRef(null);
 
   // Map Refs
-  const mapContainerRef = useRef(null);
-  const firstMapImageRef = useRef(null);
-  const secondMapImageRef = useRef(null);
-  const thirdMapImageRef = useRef(null);
-  const fourthMapImageRef = useRef(null);
-  const mapTextRef = useRef(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const firstMapImageRef = useRef<HTMLImageElement>(null);
+  const secondMapImageRef = useRef<HTMLImageElement>(null);
+  const thirdMapImageRef = useRef<HTMLImageElement>(null);
+  const fourthMapImageRef = useRef<HTMLImageElement>(null);
+  const locationTextRef = useRef<HTMLDivElement>(null);
+  const benefitTextRef = useRef<HTMLDivElement>(null);
+  const benefitImagesRef = useRef<HTMLImageElement[]>([]);
 
   const { isMobile, isTablet, isLaptop } = useResponsive();
   const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
+
+  const logos = [
+    { name: 'gs25', left: 'left-[3%]', width: 'w-[12vw]' },
+    { name: 'cgv', left: 'left-[35%]', width: 'w-[12vw]' },
+    { name: 'baskin-robbins', left: 'left-[65%]', width: 'w-[5vw]' },
+    { name: 'domino', left: 'left-[85%]', width: 'w-[12vw]' },
+  ];
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -59,6 +68,11 @@ const HeroSection = () => {
           filter: 'blur(10px)',
         }
       );
+
+      gsap.set(benefitImagesRef.current, {
+        y: '-150%',
+        opacity: 0,
+      });
 
       // Hero 애니메이션
       tl.to(windowRef.current, {
@@ -107,25 +121,66 @@ const HeroSection = () => {
           { scale: 1.5, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
           '+=1.2'
         )
-        .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '+=0.2')
+        .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '+=0.2') // 네 번째 지도 등장
+        .from(
+          locationTextRef.current, // location 텍스트 등장
+          {
+            opacity: 0,
+            y: 60,
+            duration: 1,
+          },
+          '+=0.5'
+        )
         .to(
-          fourthMapImageRef.current,
+          fourthMapImageRef.current, // 지도 사라짐
           {
             borderRadius: 6,
             scale: 0.6,
             opacity: 0,
             transformOrigin: 'center center',
-            duration: 3,
+            duration: 1.5,
+            ease: 'power2.in',
           },
           '+=1.5'
         )
-        .from(mapTextRef.current, {
-          opacity: 0,
-          y: 60,
-          duration: 1,
-        });
+        .to(
+          locationTextRef.current, // location 텍스트 사라짐
+          {
+            opacity: 0,
+            y: -60,
+            duration: 1,
+          },
+          '+=0.5'
+        )
+        .fromTo(
+          benefitTextRef.current,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: 'power2.out',
+            onComplete: () => {
+              // 이미지 애니메이션 자동 실행
+              benefitImagesRef.current.forEach((el, index) => {
+                gsap.fromTo(
+                  el,
+                  { y: '-150%' },
+                  {
+                    y: '150vh',
+                    opacity: 1,
+                    duration: 2.5,
+                    ease: 'power2.out',
+                    delay: index * 0.1,
+                  }
+                );
+              });
+            },
+          },
+          '+=0.2'
+        );
 
-      tl.to({}, { duration: 2 });
+      tl.to({}, { duration: 4 });
     }, wrapperRef);
 
     return () => ctx.revert();
@@ -182,11 +237,29 @@ const HeroSection = () => {
           className="absolute inset-0 w-full h-screen object-cover"
           loading="lazy"
         />
-        <div className="flex items-center justify-center w-full h-full text-[15vw] text-purple04 z-30">
-          <div ref={mapTextRef} className="custom-font">
-            OUR <span className="custom-font">LOCATION</span>
+        <div className="flex flex-col items-center justify-center w-full h-full text-[15vw] text-purple04 z-30">
+          <div ref={locationTextRef} className="custom-font">
+            OUR LOCATION
+          </div>
+          <div
+            ref={benefitTextRef}
+            className="custom-font absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap z-30"
+          >
+            OUR BENEFITS
           </div>
         </div>
+        {logos.map((logo, index) => (
+          <img
+            key={logo.name}
+            ref={(el) => {
+              if (el) benefitImagesRef.current[index] = el;
+            }}
+            src={`/images/landing/${logo.name}.svg`}
+            className={`absolute top-[-10%] ${logo.left} ${logo.width} h-auto`}
+            loading="lazy"
+            alt={logo.name}
+          />
+        ))}
       </div>
     </section>
   );
