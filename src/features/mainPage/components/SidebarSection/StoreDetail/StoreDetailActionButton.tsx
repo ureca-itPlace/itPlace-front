@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useMediaQuery } from 'react-responsive';
 import { TbHeart, TbHeartFilled } from 'react-icons/tb';
 import { RootState } from '../../../../../store';
 import { addFavorite, removeFavorite } from '../../../api/favoriteApi';
@@ -26,6 +27,8 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [usageAmount, setUsageAmount] = useState('');
+  
+  const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
 
   // input 값 변경 핸들러 (콤마 포맷팅 적용)
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,11 +94,6 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     }
   };
 
-  const getButtonText = () => {
-    if (isLoading) return '처리 중...';
-    return isFavorite ? '관심 혜택 삭제' : '관심 혜택 추가';
-  };
-
   const handleUsageAmountSubmit = async () => {
     if (!usageAmount.trim()) {
       showToast('사용 금액을 입력해주세요.', 'error');
@@ -131,50 +129,33 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     }
   };
 
-  const getButtonClass = () => {
-    const baseClass =
-      'w-full py-3 text-body-2-bold rounded-[10px] transition-colors duration-200 max-md:py-2.5 max-md:text-body-3-bold max-md:rounded-[8px]';
-
-    if (!isLoggedIn || !benefitId) {
-      return `${baseClass} bg-grey03 text-grey04 cursor-not-allowed`;
-    }
-
-    // 추가든 삭제든 모두 같은 보라색으로 통일
-    return `${baseClass} bg-purple04 hover:bg-purple05 text-white`;
-  };
-
   return (
     <>
-      {/* 데스크톱 버전 - 기존 버튼 */}
-      <button
-        className={`${getButtonClass()} md:block hidden`}
-        onClick={handleFavoriteToggle}
-        disabled={!isLoggedIn || !benefitId || isLoading}
-      >
-        {getButtonText()}
-      </button>
-
-      {/* 모바일 버전 - 하트 + 사용 금액 입력하기 버튼 */}
-      <div className="md:hidden flex gap-2 max-md:mt-2">
+      {/* 웹/모바일 공통 - 하트 + 사용 금액 입력하기 버튼 */}
+      <div className="flex gap-2 max-md:mt-2">
         {/* 하트 버튼 */}
         <button
-          className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-colors ${
-            isFavorite ? 'border-purple04 bg-purple04/10' : 'border-grey03 bg-white'
+          className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-colors max-md:w-12 max-md:h-12 md:w-14 md:h-14 ${
+            isFavorite 
+              ? 'border-purple04 bg-purple04/10' 
+              : isLoggedIn 
+                ? 'border-purple04 bg-white' 
+                : 'border-grey03 bg-white'
           }`}
           onClick={handleFavoriteToggle}
           disabled={!isLoggedIn || !benefitId || isLoading}
         >
           {isFavorite ? (
-            <TbHeartFilled className="w-5 h-5 text-purple04" />
+            <TbHeartFilled className="w-5 h-5 text-purple04 max-md:w-5 max-md:h-5 md:w-6 md:h-6" />
           ) : (
-            <TbHeart className="w-5 h-5 text-grey03" />
+            <TbHeart className={`w-5 h-5 max-md:w-5 max-md:h-5 md:w-6 md:h-6 ${isLoggedIn ? 'text-purple04' : 'text-grey03'}`} />
           )}
         </button>
 
         {/* 사용 금액 입력하기 버튼 */}
         <button
-          className={`flex-1 py-3 text-body-3-bold rounded-lg transition-colors ${
-            isDistanceValid && isLoggedIn && benefitId
+          className={`flex-1 py-3 text-body-3-bold rounded-lg transition-colors max-md:text-body-3-bold md:text-body-2-bold max-md:py-3 md:py-3 ${
+            !isDesktop && isDistanceValid && isLoggedIn && benefitId
               ? 'bg-purple04 hover:bg-purple05 text-white'
               : 'bg-grey03 text-grey04 cursor-not-allowed'
           }`}
@@ -187,18 +168,22 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
               showToast('혜택 정보가 없습니다.', 'error');
               return;
             }
+            if (isDesktop) {
+              // 웹 버전에서는 모달을 열지 않음
+              return;
+            }
             if (isDistanceValid) {
               setIsModalOpen(true);
             }
           }}
-          disabled={!isDistanceValid || !isLoggedIn || !benefitId}
+          disabled={isDesktop || !isDistanceValid || !isLoggedIn || !benefitId}
         >
           {!isLoggedIn
             ? '로그인이 필요해요'
             : !benefitId
               ? '혜택 정보가 없어요'
               : isDistanceValid
-                ? '사용 금액 입력하기'
+                ? isDesktop ? '모바일에서 사용 가능해요!' : '사용 금액 입력하기'
                 : '사용하기에 너무 멀어요'}
         </button>
       </div>
