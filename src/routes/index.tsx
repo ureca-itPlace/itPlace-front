@@ -49,7 +49,7 @@ const router = createBrowserRouter([
         ],
       },
       { path: '/benefits', element: <AllBenefitsPage /> },
-      { path: '/event', element: <EventPage /> }, 
+      { path: '/event', element: <div>이벤트 페이지입니다.</div> },
     ],
   },
 ]);
