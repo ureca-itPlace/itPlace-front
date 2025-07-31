@@ -85,18 +85,24 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
     const handleBlur = useCallback(() => {
       // 모바일에서 확대된 뷰포트 원래대로 복원
       if (window.innerWidth < 768) {
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          // 뷰포트 메타 태그 임시 조작으로 확대 해제
-          const viewport = document.querySelector('meta[name=viewport]');
-          if (viewport) {
-            const content = viewport.getAttribute('content');
-            viewport.setAttribute('content', content + ',user-scalable=0');
-            setTimeout(() => {
-              viewport.setAttribute('content', content || '');
-            }, 300);
-          }
-        }, 100);
+        const viewport = document.querySelector('meta[name=viewport]');
+        if (viewport) {
+          const originalContent = viewport.getAttribute('content');
+          // 즉시 확대 해제를 위한 설정
+          viewport.setAttribute(
+            'content',
+            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+          );
+
+          // 즉시 원래 설정으로 복원
+          requestAnimationFrame(() => {
+            viewport.setAttribute(
+              'content',
+              originalContent || 'width=device-width, initial-scale=1.0'
+            );
+            window.scrollTo(0, 0);
+          });
+        }
       }
     }, []);
 
