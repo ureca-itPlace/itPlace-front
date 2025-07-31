@@ -77,8 +77,8 @@ const HeroSection = () => {
 
       // Hero 애니메이션
       tl.to(windowRef.current, {
-        scale: 3.55,
-        duration: 2.5,
+        scale: 4.5,
+        duration: 3,
         ease: 'power1.inOut',
       });
       tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
@@ -196,7 +196,7 @@ const HeroSection = () => {
       >
         <img
           ref={windowRef}
-          src="/images/landing/hero-window-1.png"
+          src="/images/landing/hero-window-3.png"
           className="absolute inset-0 w-full h-full object-cover z-40 max-lg:hidden"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
