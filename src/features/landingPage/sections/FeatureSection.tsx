@@ -12,6 +12,7 @@ const FeatureSection = () => {
   useGSAP(() => {
     const ctx = gsap.context(() => {
       const images = gsap.utils.toArray('.feature-image');
+      const numbers = gsap.utils.toArray('.feature-index');
       const titles = gsap.utils.toArray('.feature-title');
       const descs = gsap.utils.toArray('.feature-desc');
 
@@ -41,6 +42,21 @@ const FeatureSection = () => {
             start: 'top 90%',
             end: 'top 60%',
             scrub: 1.2,
+          },
+        });
+      });
+
+      numbers.forEach((number) => {
+        gsap.from(number as HTMLHeadingElement, {
+          opacity: 0,
+          y: 10,
+          duration: 1,
+          ease: 'power1.out',
+          scrollTrigger: {
+            trigger: number as HTMLHeadingElement,
+            start: 'top 75%',
+            end: 'top 45%',
+            scrub: 0.6,
           },
         });
       });
@@ -87,7 +103,7 @@ const FeatureSection = () => {
     <section
       ref={featureSectionRef}
       data-theme="dark"
-      className="relative max-h-[400svh] px-5 py-12 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
+      className="relative max-h-[400svh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden border-4"
     >
       <img
         src="/images/landing/wave.png"
@@ -96,7 +112,6 @@ const FeatureSection = () => {
       />
       <FeatureItem
         number={1}
-        reverse
         imageSrc="/images/landing/feature-1.webp"
         alt="기능설명-1"
         title={
@@ -109,6 +124,7 @@ const FeatureSection = () => {
       />
       <FeatureItem
         number={2}
+        reverse
         imageSrc="/images/landing/feature-2.webp"
         alt="기능설명-2"
         title={
@@ -118,9 +134,9 @@ const FeatureSection = () => {
         }
         description="사용 내역과 관심사를 AI가 분석하여 가장 적합한 혜택을 맞춤 추천해드립니다. 더 이상 어렵게 찾지 말고 나만을 위한 혜택을 빠르게 받아보세요."
       />
+
       <FeatureItem
         number={3}
-        reverse
         imageSrc="/images/landing/feature-3.webp"
         alt="기능설명-3"
         title={
@@ -132,6 +148,7 @@ const FeatureSection = () => {
       />
       <FeatureItem
         number={4}
+        reverse
         imageSrc="/images/landing/feature-4-web.webp"
         alt="기능 설명-4"
         title={
@@ -141,12 +158,21 @@ const FeatureSection = () => {
         }
         description="간단한 금액 입력만으로 제휴처에서 사용한 내역과 혜택 현황을 쉽게 조회할 수 있어요. 소비 패턴 분석과 맞춤형 혜택 관리까지 한 번에 가능합니다."
       />
+      {/* <div>
+        <div className="h-24 bg-purple03 w-[120vw] relative left-1/2 -translate-x-1/2 text-6xl">
+          텍스트가흘려요 텍스트가흘려요 텍스트가흘려요
+        </div>
+        <div className="h-24 bg-white w-[120vw] relative left-1/2 -translate-x-1/2 text-6xl">
+          텍스트가흘려요 텍스트가흘려요 텍스트가흘려요
+        </div>
+      </div> */}
+
       <div className="z-0 pointer-events-none">
         <img
           ref={starsRef}
           src="/images/landing/stars.webp"
           alt="별"
-          className="absolute top-[5%] left-full w-[25vw] h-auto"
+          className="absolute top-[8%] left-full w-[25vw] h-auto"
         />
       </div>
     </section>

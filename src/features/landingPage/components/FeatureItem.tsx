@@ -44,7 +44,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({
       {/* 텍스트 영역 */}
       <div className="flex flex-col justify-center text-white text-left w-[40%] h-full pt-0 gap-12 px-12 max-lg:text-center max-lg:px-2 max-lg:w-full max-lg:h-fit max-lg:pt-4 max-lg:gap-6">
         {number !== undefined && (
-          <span className="text-white text-5xl font-bold max-lg:text-4xl">
+          <span className="feature-index text-white text-5xl font-bold max-lg:text-4xl">
             {number.toString().padStart(2, '0')}
           </span>
         )}
