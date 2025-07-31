@@ -181,7 +181,7 @@ const HeroSection = () => {
           '+=0.2'
         );
 
-      tl.to({}, { duration: 4 });
+      tl.to({}, { duration: 5.5 });
     }, wrapperRef);
 
     return () => ctx.revert();
@@ -197,7 +197,7 @@ const HeroSection = () => {
         <img
           ref={windowRef}
           src="/images/landing/hero-window-1.png"
-          className="absolute inset-0 w-full h-full object-cover z-40 max-md:hidden"
+          className="absolute inset-0 w-full h-full object-cover z-40 max-lg:hidden"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
@@ -256,7 +256,7 @@ const HeroSection = () => {
               if (el) benefitImagesRef.current[index] = el;
             }}
             src={`/images/landing/${logo.name}.svg`}
-            className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-12`}
+            className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-16`}
             loading="lazy"
             alt={logo.name}
           />
