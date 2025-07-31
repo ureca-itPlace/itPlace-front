@@ -444,10 +444,12 @@ const AllBenefitsLayout: React.FC = () => {
                 </div>
               ))
             ) : (
-              <div className="col-span-3 flex justify-center items-center h-[400px]">
+              <div className="col-span-3 flex justify-center items-center h-[400px] max-xl:h-[300px]">
                 <NoResult
                   message1="앗! 일치하는 결과를 찾을 수 없어요!"
                   message2="다른 키워드나 혜택으로 다시 찾아보세요."
+                  message1FontSize="text-title-4 max-xl:text-title-6"
+                  message2FontSize="text-body-1 max-xl:text-body-3"
                 />
               </div>
             )}
