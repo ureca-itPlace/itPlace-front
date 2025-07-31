@@ -136,7 +136,7 @@ const HeroSection = () => {
       {/* 우주 토끼 섹션 */}
       <div
         ref={heroRef}
-        className="relative w-full h-full bg-[url('/images/landing/hero-bg.png')] bg-no-repeat bg-cover bg-center"
+        className="relative w-full h-full bg-[url('/images/landing/hero-bg.webp')] bg-no-repeat bg-cover bg-center"
       >
         <img
           ref={windowRef}
@@ -162,21 +162,25 @@ const HeroSection = () => {
           ref={firstMapImageRef}
           src="/images/landing/map-1.webp"
           className="absolute inset-0 w-full h-screen object-cover"
+          loading="lazy"
         />
         <img
           ref={secondMapImageRef}
           src="/images/landing/map-2.webp"
           className="absolute inset-0 w-full h-screen object-cover"
+          loading="lazy"
         />
         <img
           ref={thirdMapImageRef}
           src="/images/landing/map-3.webp"
           className="absolute inset-0 w-full h-screen object-cover"
+          loading="lazy"
         />
         <img
           ref={fourthMapImageRef}
           src="/images/landing/map-4.webp"
           className="absolute inset-0 w-full h-screen object-cover"
+          loading="lazy"
         />
         <div className="flex items-center justify-center w-full h-full text-[15vw] text-purple04 z-30">
           <div ref={mapTextRef} className="custom-font">
