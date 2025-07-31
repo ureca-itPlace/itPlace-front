@@ -38,6 +38,7 @@ interface SidebarSectionProps {
   onShowSpeechBubble?: (message: string, partnerName: string) => void;
   userCoords?: { lat: number; lng: number } | null;
   onItplaceAiResults?: (results: Platform[], isShowing: boolean) => void;
+  onSearchPartner?: (partnerName: string) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -57,6 +58,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onShowSpeechBubble,
   userCoords,
   onItplaceAiResults,
+  onSearchPartner,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -375,6 +377,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                 onItemClick={handleRecommendationClick}
                 isLoading={isRecommendationsLoading || isItplaceAiLoading}
                 error={recommendationsError || itplaceAiError}
+                onSearchPartner={onSearchPartner}
+                onChangeTab={onActiveTabChange}
               />
             </div>
           )}

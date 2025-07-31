@@ -394,6 +394,7 @@ const MainPageLayout: React.FC = () => {
               onShowSpeechBubble={handleShowSpeechBubble}
               userCoords={userCoords}
               onItplaceAiResults={handleItplaceAiResults}
+              onSearchPartner={handleKeywordSearch}
             />
           </div>
         </div>
@@ -595,6 +596,7 @@ const MainPageLayout: React.FC = () => {
                 onBenefitDetailRequest={handleBenefitDetailRequest}
                 userCoords={userCoords}
                 onItplaceAiResults={handleItplaceAiResults}
+                onSearchPartner={handleKeywordSearch}
               />
             </div>
           </div>

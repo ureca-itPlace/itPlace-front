@@ -13,6 +13,8 @@ interface RecommendStoreListProps {
   isLoading?: boolean;
   error?: string | null;
   onBenefitDetailRequest?: (benefitIds: number[]) => void;
+  onSearchPartner?: (partnerName: string) => void;
+  onChangeTab?: (tabId: string) => void;
 }
 
 const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
@@ -20,6 +22,8 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   onItemClick,
   isLoading = false,
   error = null,
+  onSearchPartner,
+  onChangeTab,
 }) => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
   // 채팅방 UI 상태
@@ -226,7 +230,11 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
         <div className="space-y-3 max-md:space-y-3 px-5 max-md:px-4 max-sm:px-3">
           <div>
             {isChatOpen ? (
-              <ChatRoom onClose={handleChatClose} />
+              <ChatRoom
+                onClose={handleChatClose}
+                onSearchPartner={onSearchPartner}
+                onChangeTab={onChangeTab}
+              />
             ) : (
               <button
                 className="w-[328px] h-[48px] bg-purple04 text-white rounded-[10px] px-4 flex items-center justify-center cursor-pointer font-bold shadow hover:bg-purple03 transition-colors mb-2 max-md:w-full max-md:h-[64px] max-md:px-3 max-sm:h-[35px] max-sm:px-2"

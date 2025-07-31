@@ -16,9 +16,11 @@ interface Message {
 
 interface ChatRoomProps {
   onClose: () => void;
+  onSearchPartner?: (partnerName: string) => void;
+  onChangeTab?: (tabId: string) => void;
 }
 
-const ChatRoom: React.FC<ChatRoomProps> = ({ onClose }) => {
+const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeTab }) => {
   const [isBotLoading, setIsBotLoading] = React.useState(false);
   const [input, setInput] = React.useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -184,6 +186,36 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose }) => {
     setMessages((prev) => [...prev, { sender: 'user', text: question }]);
     setIsBotLoading(true);
 
+    // 더미 데이터로 테스트 (첫 번째 질문일 때만)
+    if (question === '근처 맛집 추천해줘') {
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: 'bot',
+            text: '현재 위치 근처에서 추천하는 맛집들이에요! 아래 제휴업체들을 확인해보세요.',
+            partners: [
+              {
+                partnerName: '스타벅스',
+                imgUrl: '/images/admin/baskin.png',
+              },
+              {
+                partnerName: 'CGV',
+                imgUrl: '/images/admin/CGV.png',
+              },
+              {
+                partnerName: 'GS25',
+                imgUrl: '/images/admin/GS25.png',
+              },
+            ],
+          },
+        ]);
+        setIsBotLoading(false);
+        setInput('');
+      }, 1500);
+      return;
+    }
+
     try {
       // 현재 위치 가져오기 (실패 시 기본 위치 사용)
       let location;
@@ -262,6 +294,18 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose }) => {
     '영화관 어디 있지?',
   ];
 
+  // 제휴업체 카드 클릭 처리
+  const handlePartnerClick = (partnerName: string) => {
+    if (onSearchPartner) {
+      onSearchPartner(partnerName);
+    }
+    if (onChangeTab) {
+      onChangeTab('nearby'); // 주변 혜택 탭으로 변경
+    }
+    // 채팅방 닫기
+    onClose();
+  };
+
   return (
     <div
       className="bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center relative"
@@ -313,12 +357,12 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose }) => {
 
             {/* 예시 질문 버튼들 */}
             <div className="ml-9 space-y-2">
-              <div className="text-body-4 text-grey04 mb-2">예시 질문:</div>
+              <div className="text-body-4 text-grey04 mb-2">아래와 같이 질문해보세요 🐰</div>
               {exampleQuestions.map((question, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleExampleClick(question)}
-                  className="block w-full text-left px-3 py-2 bg-purple01 hover:bg-purple02 text-purple04 text-body-4 rounded-[8px] transition-colors"
+                  className="block w-full text-left px-3 py-2 bg-white hover:bg-purple01 text-purple04 text-body-4 rounded-[10px] transition-colors"
                 >
                   {question}
                 </button>
@@ -363,6 +407,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose }) => {
                         <div
                           key={partnerIdx}
                           className="bg-white border border-grey02 rounded-[10px] p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                          onClick={() => handlePartnerClick(partner.partnerName)}
                         >
                           <div className="flex items-center gap-3">
                             <img
