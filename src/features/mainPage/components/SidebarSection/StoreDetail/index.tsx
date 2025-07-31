@@ -128,6 +128,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       <div className="px-6 pb-2 mt-2 flex-shrink-0 max-md:px-4 max-md:pb-2 max-md:fixed max-md:bottom-0 max-md:w-full max-md:bg-white">
         <StoreDetailActionButton
           benefitId={detailData?.data?.benefitId}
+          storeId={platform.storeId}
           isFavorite={isFavorite}
           onFavoriteChange={handleFavoriteChange}
           partnerName={detailData?.data?.benefitName}
