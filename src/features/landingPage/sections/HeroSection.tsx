@@ -12,7 +12,7 @@ const HeroSection = () => {
   const windowRef = useRef<HTMLImageElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
-  const whiteOverlayRef = useRef(null);
+  const whiteOverlayRef = useRef<HTMLDivElement>(null);
 
   // Map Refs
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -29,10 +29,11 @@ const HeroSection = () => {
   const yDistance = isMobile ? -150 : 50;
 
   const logos = [
-    { name: 'gs25', left: 'left-[3%]', width: 'w-[12vw]' },
-    { name: 'cgv', left: 'left-[35%]', width: 'w-[12vw]' },
-    { name: 'baskin-robbins', left: 'left-[65%]', width: 'w-[5vw]' },
-    { name: 'domino', left: 'left-[85%]', width: 'w-[12vw]' },
+    { name: 'gs25', top: 'top-[-5%]', left: 'left-[3%]', width: 'w-[12vw]' },
+    { name: 'cgv', top: 'top-[-5%]', left: 'left-[35%]', width: 'w-[12vw]' },
+    { name: 'baskin-robbins', top: 'top-[-5%]', left: 'left-[65%]', width: 'w-[5vw]' },
+    { name: 'domino', top: 'top-[-5%]', left: 'left-[85%]', width: 'w-[12vw]' },
+    { name: 'megabox', top: 'top-[-15%]', left: 'left-[25%]', width: 'w-[12vw]' },
   ];
 
   useLayoutEffect(() => {
@@ -169,8 +170,8 @@ const HeroSection = () => {
                   {
                     y: '150vh',
                     opacity: 1,
-                    duration: 2.5,
-                    ease: 'power2.out',
+                    duration: 3,
+                    ease: 'power3.out',
                     delay: index * 0.1,
                   }
                 );
@@ -255,7 +256,7 @@ const HeroSection = () => {
               if (el) benefitImagesRef.current[index] = el;
             }}
             src={`/images/landing/${logo.name}.svg`}
-            className={`absolute top-[-10%] ${logo.left} ${logo.width} h-auto`}
+            className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-12`}
             loading="lazy"
             alt={logo.name}
           />
