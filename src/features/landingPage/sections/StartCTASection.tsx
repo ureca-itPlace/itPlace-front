@@ -12,7 +12,7 @@ const StartCTASection = () => {
       data-theme="light"
       className="relative w-full min-h-[100vh] overflow-hidden flex items-center justify-center max-lg:px-6 bg-white"
     >
-      <div className="absolute left-[-18%] top-[5%] w-[50%] h-[85%] max-lg:hidden">
+      <div className="absolute left-[-18%] top-[5%] w-[45%] h-[85%] max-lg:hidden">
         <img
           src="/images/landing/cta/cta-rabbit.webp"
           alt="CTA토끼"
@@ -22,7 +22,7 @@ const StartCTASection = () => {
       </div>
 
       <div className="text-center z-10">
-        <h1 className="custom-font text-[200px] text-purple04 drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)] tracking-wide max-xl:text-[150px] max-sm:text-[52px]">
+        <h1 className="custom-font text-[200px] text-purple04 drop-shadow-[0_10px_10px_rgba(0,0,0,0.3)] tracking-wide max-xl:text-[130px] max-sm:text-[52px]">
           LET’S START
           <br />
           IT PLACE!
