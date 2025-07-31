@@ -27,13 +27,17 @@ const HeroSection = () => {
   const { isMobile, isTablet, isLaptop } = useResponsive();
   const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
+  const bgImage =
+    isMobile || isTablet
+      ? '/images/landing/hero/hero-bg-mobile.png'
+      : '/images/landing/hero/hero-bg.webp';
 
   const logos = [
-    { name: 'gs25', top: 'top-[-5%]', left: 'left-[3%]', width: 'w-[12vw]' },
-    { name: 'cgv', top: 'top-[-5%]', left: 'left-[35%]', width: 'w-[12vw]' },
-    { name: 'baskin-robbins', top: 'top-[-5%]', left: 'left-[65%]', width: 'w-[5vw]' },
-    { name: 'domino', top: 'top-[-5%]', left: 'left-[85%]', width: 'w-[12vw]' },
-    { name: 'megabox', top: 'top-[-15%]', left: 'left-[25%]', width: 'w-[12vw]' },
+    { name: 'gs25', top: 'top-[-5%]', left: 'left-[3%]', width: 'w-[14vw]' },
+    { name: 'cgv', top: 'top-[-5%]', left: 'left-[35%]', width: 'w-[14vw]' },
+    { name: 'baskin-robbins', top: 'top-[-5%]', left: 'left-[65%]', width: 'w-[6vw]' },
+    { name: 'domino', top: 'top-[-5%]', left: 'left-[85%]', width: 'w-[14vw]' },
+    { name: 'megabox', top: 'top-[-15%]', left: 'left-[25%]', width: 'w-[14vw]' },
   ];
 
   useLayoutEffect(() => {
@@ -77,7 +81,7 @@ const HeroSection = () => {
 
       // Hero 애니메이션
       tl.to(windowRef.current, {
-        scale: 4.5,
+        scale: 6.5,
         duration: 3,
         ease: 'power1.inOut',
       });
@@ -192,12 +196,15 @@ const HeroSection = () => {
       {/* 우주 토끼 섹션 */}
       <div
         ref={heroRef}
-        className="relative w-full h-full bg-[url('/images/landing/hero/hero-bg.webp')] bg-no-repeat bg-cover bg-center"
+        className="relative w-full h-full bg-no-repeat bg-cover bg-center pointer-events-none"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+        }}
       >
         <img
           ref={windowRef}
-          src="/images/landing/hero/spaceship-window.png"
-          className="absolute inset-0 w-full h-full object-cover z-40 max-lg:hidden"
+          src="/images/landing/hero/spaceship-window.webp"
+          className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
