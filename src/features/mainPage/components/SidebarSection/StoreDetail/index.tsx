@@ -38,6 +38,12 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         mainCategory: category,
       });
 
+      // 응답 코드가 BENEFIT_DETAIL_NOT_FOUND면 데이터 없음으로 처리
+      if (res?.code === 'BENEFIT_DETAIL_NOT_FOUND') {
+        setDetailData(null);
+        return;
+      }
+
       setDetailData(res);
 
       // API 응답에서 isFavorite 상태 업데이트
@@ -99,7 +105,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       <div className="px-6 pt-6 flex-shrink-0 max-md:px-4 max-md:pt-4 max-md:overflow-y-scroll">
         <StoreDetailHeader platform={platform} onClose={onClose} />
         <StoreDetailInfo
-          url={detailData?.data.url}
+          url={detailData?.data?.url}
           roadAddress={platform.roadAddress}
           address={platform.address}
           postCode={platform.postCode}
@@ -113,7 +119,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
 
       {/* 스크롤 영역 - 이용 방법만 */}
       <div
-        className={`flex-1 overflow-y-auto pb-6 max-md:pb-24 max-md:overflow-y-visible ${detailData?.data.manual ? 'px-6 max-md:px-4' : ''}`}
+        className={`flex-1 overflow-y-auto pb-6 max-md:pb-24 max-md:overflow-y-visible ${detailData?.data?.manual ? 'px-6 max-md:px-4' : ''}`}
       >
         <StoreDetailUsageGuide detailData={detailData} />
       </div>

@@ -7,7 +7,7 @@ interface RankingItem {
   partnerName: string;
   searchCount: number;
   trend: 'up' | 'down' | 'keep';
-  rankChange: number | null;
+  rankChange: number;
 }
 
 // API 응답을 RankingItem으로 변환하는 함수
@@ -51,9 +51,9 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
   useEffect(() => {
     const fetchRankingData = async () => {
       try {
-        // 제휴처 검색 순위 데이터 조회 (상위 3개)
-        const searchRankingResponse = await getPartnersSearchRanking('7d', 3);
-        const searchRankingItems = convertToRankingItem(searchRankingResponse.data.searchRanking);
+        // 제휴처 검색 순위 데이터 조회 (최근 2일, 이전 3일 기준으로 상위 3개)
+        const searchRankingResponse = await getPartnersSearchRanking(2, 3);
+        const searchRankingItems = convertToRankingItem(searchRankingResponse.data.slice(0, 3));
         setData(searchRankingItems);
       } catch (err) {
         console.error('랭킹 데이터 조회 실패:', err);
@@ -115,7 +115,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
                       : 'text-grey03'
                 }`}
               >
-                {item.rankChange !== null ? Math.abs(item.rankChange) : '-'}
+                {Math.abs(item.rankChange)}
               </span>
             </div>
           </div>
@@ -158,7 +158,7 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
                       : 'text-grey03'
                 }`}
               >
-                {data[currentIndex].rankChange ? Math.abs(data[currentIndex].rankChange) : '-'}
+                {Math.abs(data[currentIndex].rankChange)}
               </span>
             </div>
           </div>

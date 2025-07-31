@@ -63,3 +63,7 @@
   height: 40px;
   z-index: 9999;
 }
+
+.star-shooting {
+  filter: drop-shadow(0 0 10px #a54eff);
+}

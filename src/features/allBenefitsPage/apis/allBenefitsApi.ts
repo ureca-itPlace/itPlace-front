@@ -65,13 +65,13 @@ export interface PartnerSearchRankingItem {
   partnerName: string;
   searchCount: number;
   rank: number;
-  previousRank: number | null;
-  rankChange: number | null;
+  previousRank: number;
+  rankChange: number;
   changeDerection: 'UP' | 'DOWN' | 'SAME' | 'NEW';
 }
 
 export interface PartnerSearchRankingResponse {
-  searchRanking: PartnerSearchRankingItem[];
+  data: PartnerSearchRankingItem[];
 }
 
 // API 응답 타입
@@ -146,13 +146,13 @@ export const getBenefitDetail = async (benefitId: number): Promise<BenefitDetail
 
 // 제휴처 검색 순위 조회 API
 export const getPartnersSearchRanking = async (
-  period: '12h' | '1d' | '7d' = '1d',
-  limit: number = 5
-): Promise<ApiResponse<PartnerSearchRankingResponse>> => {
+  recentperiod: number = 2,
+  prevperiod: number = 3
+): Promise<ApiResponse<PartnerSearchRankingItem[]>> => {
   try {
     const params = new URLSearchParams({
-      period,
-      limit: limit.toString(),
+      recentperiod: recentperiod.toString(),
+      prevperiod: prevperiod.toString(),
     });
 
     const response = await axiosInstance.get(`/api/v1/partners/search-ranking?${params}`);

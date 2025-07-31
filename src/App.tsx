@@ -22,9 +22,8 @@ const App = () => {
           try {
             // refreshToken API로 토큰 유효성 검증
             await refreshToken();
-          } catch (err) {
+          } catch {
             // 토큰이 유효하지 않으면 persist 삭제 및 로그아웃
-            console.log('Token validation failed, clearing persist', err);
             dispatch(logout());
             persistor.purge();
           }

@@ -225,6 +225,25 @@ const MainPageLayout: React.FC = () => {
     });
   }, []);
 
+  // URL 쿼리 파라미터에서 검색어를 처리하는 useEffect
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const searchKeyword = searchParams.get('search');
+
+    if (searchKeyword && searchKeyword !== lastSearchedKeywordRef.current && userCoords) {
+      // 검색어를 먼저 설정 (검색창에 표시)
+      setSearchQuery(searchKeyword);
+
+      // URL에서 검색어가 있고 사용자 위치가 준비되면 검색 실행
+      handleKeywordSearch(searchKeyword);
+
+      // URL에서 쿼리 파라미터 제거 (중복 검색 방지)
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('search');
+      window.history.replaceState({}, '', newUrl.toString());
+    }
+  }, [location.search, handleKeywordSearch, userCoords]);
+
   // 혜택 상세 카드 핸들러
   const handleBenefitDetailRequest = useCallback((benefitIds: number[]) => {
     setBenefitDetailCard({

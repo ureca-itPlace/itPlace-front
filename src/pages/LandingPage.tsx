@@ -1,24 +1,27 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { debounce } from 'lodash';
 import { lazy, useEffect, useLayoutEffect, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
 import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
-import { debounce } from 'lodash';
+import CustomCursor from '../features/landingPage/components/CustomCursor';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-const MapSection = lazy(() => import('../features/landingPage/sections/MapSection'));
+import Intro from '../features/landingPage/components/Intro';
+import HeroSection from '../features/landingPage/sections/HeroSection';
 const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
 const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
 const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
 
 const LandingPage = () => {
+  const [showIntro, setShowIntro] = useState(true);
   const [videoEnded, setVideoEnded] = useState(false);
-  // 헤더 색상 변경을 위한 섹션 색상 감지
-  const [theme, setTheme] = useState<string>('light');
+  const [theme, setTheme] = useState<string>('dark');
   useHeaderThemeObserver(setTheme);
 
+  // 윈도우 리사이즈 핸들러
   useEffect(() => {
     const handleResize = debounce(() => {
       ScrollTrigger.refresh();
@@ -27,10 +30,42 @@ const LandingPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 새로 고침 시 최상단으로 이동
+  // 초기 스크롤 위치 설정
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
+    document.documentElement.style.scrollBehavior = 'auto';
+
+    return () => {
+      document.documentElement.style.scrollBehavior = '';
+    };
   }, []);
+
+  // 로딩 완료 후 처리
+  useEffect(() => {
+    if (!showIntro) {
+      // 스크롤 위치 재설정
+      window.scrollTo(0, 0);
+      document.body.style.overflow = 'visible';
+
+      // ScrollTrigger 초기화를 여러 단계로 나누어 실행
+      const timers = [
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          ScrollTrigger.refresh(true);
+        }, 100),
+        setTimeout(() => {
+          ScrollTrigger.refresh();
+        }, 300),
+        setTimeout(() => {
+          // 마지막으로 한 번 더 새로고침
+          ScrollTrigger.update();
+          ScrollTrigger.refresh();
+        }, 500),
+      ];
+
+      return () => timers.forEach((timer) => clearTimeout(timer));
+    }
+  }, [showIntro]);
 
   // 비디오 종료 후 스크롤 맨 아래로 이동
   useEffect(() => {
@@ -44,23 +79,32 @@ const LandingPage = () => {
     }
   }, [videoEnded]);
 
+  const handleLoadingFinish = () => {
+    // 로딩 완료 시 스크롤 위치 확인
+    window.scrollTo(0, 0);
+    setShowIntro(false);
+  };
+
   return (
-    <div className="relative bg-white z-20 overflow-x-hidden">
-      {/* 헤더 */}
-      <MobileHeader theme={theme} />
-      {/* 더미 박스 */}
-      {/* <div className="h-[65vh]" /> */}
-      {/* 지도 */}
-      <MapSection />
-      {/* 기능 설명 */}
-      <FeatureSection />
-      {/* 비디오 & CTA */}
-      <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
-      {/* CTA */}
-      <div style={{ display: videoEnded ? 'block' : 'none' }}>
-        <StartCTASection />
-      </div>
-    </div>
+    <>
+      {showIntro ? (
+        <Intro onFinish={handleLoadingFinish} />
+      ) : (
+        <div className="relative overflow-x-hidden">
+          <MobileHeader theme={theme} backgroundColor="transparent" />
+
+          {/* 메인 컨텐츠 래퍼 */}
+          <main className="relative">
+            <HeroSection />
+            <FeatureSection />
+            <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
+            {videoEnded && <StartCTASection />}
+          </main>
+
+          <CustomCursor />
+        </div>
+      )}
+    </>
   );
 };
 

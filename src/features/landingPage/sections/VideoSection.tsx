@@ -21,15 +21,29 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
   const texts = [
     <>
       LET'S <span className="custom-font text-purple04">EXPLORE</span>
-      <span className="align-text-top">🌍</span>TOGETHER
+      <img
+        src="/images/landing/video-icon-rocket.webp"
+        alt="로켓"
+        className="inline-block h-[27vh] w-auto pb-4"
+      />
+      TOGETHER
     </>,
     <>
-      FIND<span className="align-text-top">⭐</span>YOUR{' '}
-      <span className="custom-font inline-block text-purple04 border-4 px-10">MEMBERSHIP</span>
+      FIND
+      <img
+        src="/images/landing/video-icon-location.webp"
+        alt="위치"
+        className="inline-block h-[27vh] w-auto pb-4"
+      />
+      YOUR <span className="custom-font inline-block text-purple04 px-10">MEMBERSHIP</span>
     </>,
     <>
       <span className="custom-font text-purple04">BENEFITS</span> AROUND YOU
-      <span className="align-text-top">🐰</span>
+      <img
+        src="/images/landing/video-icon-tag.webp"
+        alt="태그"
+        className="inline-block h-[27vh] w-auto pb-4 mx-1"
+      />
     </>,
   ];
 
@@ -38,6 +52,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     // 초기 세팅
     gsap.set(circleRef.current, { scale: 0.5 });
     gsap.set(videoBoxRef.current, { clipPath: 'circle(0% at 50% 50%)' });
+    gsap.set(h1Ref.current, { opacity: 0 });
 
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -74,7 +89,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       );
     });
 
-    tl.to(h1Ref.current, { color: 'white', duration: 2 }, 9.7);
+    tl.to(h1Ref.current, { opacity: 1, duration: 2 }, 9.7);
 
     // 보라색 원 & 비디오 마스크 등장
     tl.fromTo(
@@ -159,7 +174,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
           </h1>
         ))}
       </div>
-      <h1 ref={h1Ref} className="custom-font text-center text-6xl px-4 text-[#000000]">
+      <h1 ref={h1Ref} className="custom-font text-center text-[10vw] px-4 text-white">
         ARE YOU READY?
       </h1>
     </section>

@@ -10,7 +10,7 @@ const StartCTASection = () => {
   return (
     <section
       data-theme="light"
-      className="relative w-full h-screen overflow-hidden flex items-center justify-center max-lg:px-6 bg-white"
+      className="relative w-full min-h-[100vh] overflow-hidden flex items-center justify-center max-lg:px-6 bg-white"
     >
       <div className="absolute left-[-11%] top-[5%] max-xl:hidden">
         <img
