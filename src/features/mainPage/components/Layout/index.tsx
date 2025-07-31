@@ -260,7 +260,7 @@ const MainPageLayout: React.FC = () => {
     };
 
     const timeoutId = setTimeout(() => {
-      requestAnimationFrame(reset); // 👈 이 한 줄 차이!
+      requestAnimationFrame(reset);
     }, 150);
 
     return () => clearTimeout(timeoutId);
@@ -541,6 +541,7 @@ const MainPageLayout: React.FC = () => {
               bottom: 0,
               minHeight: `${MIN_HEIGHT}px`,
               maxHeight: `${getMaxHeight()}px`,
+              overflow: 'hidden',
               transition: isAnimating ? 'all 0.3s ease-out' : 'none',
             }}
             onMouseMove={handleMouseMove}
@@ -559,7 +560,12 @@ const MainPageLayout: React.FC = () => {
             </div>
 
             {/* 사이드바 콘텐츠 */}
-            <div className="flex-1 min-h-0 overflow-auto max-h-full">
+            <div
+              className="flex-1 min-h-0 max-h-full"
+              style={{
+                overflowY: bottomSheetHeight > MIN_HEIGHT ? 'auto' : 'hidden',
+              }}
+            >
               <SidebarSection
                 platforms={stablePlatforms}
                 selectedPlatform={selectedPlatform}
