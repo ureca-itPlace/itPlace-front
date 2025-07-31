@@ -9,8 +9,8 @@ import CustomCursor from '../features/landingPage/components/CustomCursor';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+import Intro from '../features/landingPage/components/Intro';
 import HeroSection from '../features/landingPage/sections/HeroSection';
-import LoadingScreen from '../features/landingPage/components/LoadingScreen';
 const FeatureSection = lazy(() => import('../features/landingPage/sections/FeatureSection'));
 const VideoSection = lazy(() => import('../features/landingPage/sections/VideoSection'));
 const StartCTASection = lazy(() => import('../features/landingPage/sections/StartCTASection'));
@@ -88,7 +88,7 @@ const LandingPage = () => {
   return (
     <>
       {showIntro ? (
-        <LoadingScreen onFinish={handleLoadingFinish} />
+        <Intro onFinish={handleLoadingFinish} />
       ) : (
         <div className="relative overflow-x-hidden">
           <MobileHeader theme={theme} backgroundColor="transparent" />
