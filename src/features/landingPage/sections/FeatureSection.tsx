@@ -89,6 +89,11 @@ const FeatureSection = () => {
       data-theme="dark"
       className="relative max-h-[400svh] px-5 py-12 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
     >
+      <img
+        src="/images/landing/wave.png"
+        alt="물결"
+        className="absolute top-0 left-0 w-full h-auto z-10"
+      />
       <FeatureItem
         number={1}
         reverse
