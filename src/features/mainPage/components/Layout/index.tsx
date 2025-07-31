@@ -233,7 +233,7 @@ const MainPageLayout: React.FC = () => {
     if (searchKeyword && searchKeyword !== lastSearchedKeywordRef.current && userCoords) {
       // 검색어를 먼저 설정 (검색창에 표시)
       setSearchQuery(searchKeyword);
-      
+
       // URL에서 검색어가 있고 사용자 위치가 준비되면 검색 실행
       handleKeywordSearch(searchKeyword);
 

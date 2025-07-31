@@ -184,17 +184,16 @@ const AuthLayout = () => {
     }
   }, [location.search, goToPhoneAuth, setFormStep, formStep, checkOAuthResult, showOAuthModal]);
 
-  // sessionStorage 플래그를 통한 로그인 리셋 처리
+  // state를 통한 로그인 리셋 처리
   useEffect(() => {
-    const shouldReset = sessionStorage.getItem('resetToLogin');
-    if (shouldReset && formStep !== 'login') {
-      sessionStorage.removeItem('resetToLogin');
+    if (location.state?.resetToLogin) {
       setMode('signup');
       setShowTab(false);
-      hasInitialized.current = false;
       goToLogin();
+      // state 정리
+      window.history.replaceState({}, '', '/login');
     }
-  }, [formStep, goToLogin]);
+  }, [location.state, goToLogin]);
 
   useEffect(() => {}, [formStep]);
 

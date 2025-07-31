@@ -69,13 +69,14 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (
-          e.key === 'Enter' &&
-          searchQuery.trim() &&
-          searchQuery.trim() !== lastSearchedQuery.current
-        ) {
-          lastSearchedQuery.current = searchQuery.trim();
-          onKeywordSearchRef.current?.(searchQuery.trim());
+        if (e.key === 'Enter') {
+          // 모바일에서 키패드 내리기
+          (e.target as HTMLInputElement).blur();
+
+          if (searchQuery.trim() && searchQuery.trim() !== lastSearchedQuery.current) {
+            lastSearchedQuery.current = searchQuery.trim();
+            onKeywordSearchRef.current?.(searchQuery.trim());
+          }
         }
       },
       [searchQuery]

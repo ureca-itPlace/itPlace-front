@@ -69,6 +69,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   // ItPlace AI 추천 결과 상태
   const [isItplaceAiLoading, setIsItplaceAiLoading] = useState(false);
   const [itplaceAiError, setItplaceAiError] = useState<string | null>(null);
+  const [aiStoreResults, setAiStoreResults] = useState<Platform[]>([]);
+  const [selectedRecommendation, setSelectedRecommendation] = useState<RecommendationItem | null>(
+    null
+  );
+  const [showAiStoreList, setShowAiStoreList] = useState(false);
 
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
@@ -150,9 +155,12 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     fetchRecommendationsRef.current();
   }, [activeTab]);
 
-  // 탭 변경 시 ItPlace AI 결과 초기화 (AI 추천에서 다른 탭으로 갈 때만)
+  // 탭 변경 시 AI 상태 초기화
   useEffect(() => {
-    if (activeTab !== 'nearby' && activeTab !== 'ai') {
+    if (activeTab !== 'ai') {
+      setShowAiStoreList(false);
+      setSelectedRecommendation(null);
+      setAiStoreResults([]);
       setItplaceAiError(null);
       onItplaceAiResults?.([], false);
     }
@@ -240,14 +248,18 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           imageUrl: item.partner.image,
         }));
 
+        setAiStoreResults(transformedData);
+        // 지도에 마커 표시
         onItplaceAiResults?.(transformedData, true);
       } else {
         // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
+        setAiStoreResults([]);
         onItplaceAiResults?.([], true);
       }
 
-      // 주변혜택 탭으로 전환
-      onActiveTabChange('nearby');
+      // AI 탭 내에서 StoreCard 리스트 표시
+      setSelectedRecommendation(store);
+      setShowAiStoreList(true);
 
       // SpeechBubble 표시 (추천 이유 설명)
       onShowSpeechBubble?.(store.reason, store.partnerName);
@@ -267,6 +279,14 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
     // 카테고리 변경은 useFavoritesList 내부의 useEffect에서 자동 처리됨
+  };
+
+  // AI 추천에서 뒤로가기 핸들러
+  const handleAiStoreListBack = () => {
+    setShowAiStoreList(false);
+    setSelectedRecommendation(null);
+    setAiStoreResults([]);
+    setItplaceAiError(null);
   };
 
   // 탭별 다른 InfoBanner 메시지와 강조 텍스트
@@ -366,17 +386,34 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           )}
 
           {activeTab === 'ai' && (
-            <div
-              className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0 max-md:mb-2"
-              style={{ height: 'calc(100vh - 48px)' }}
-            >
-              <RecommendStoreList
-                stores={recommendations}
-                onItemClick={handleRecommendationClick}
-                isLoading={isRecommendationsLoading || isItplaceAiLoading}
-                error={recommendationsError || itplaceAiError}
-              />
-            </div>
+            <>
+              {showAiStoreList ? (
+                <StoreCardsSection
+                  platforms={aiStoreResults}
+                  selectedPlatform={selectedPlatform}
+                  onPlatformSelect={handleCardClick}
+                  currentLocation={selectedRecommendation?.partnerName || '추천 매장'}
+                  isLoading={isItplaceAiLoading}
+                  error={itplaceAiError}
+                  backButton={{
+                    onBack: handleAiStoreListBack,
+                    label: '돌아가기',
+                  }}
+                />
+              ) : (
+                <div
+                  className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0 max-md:mb-2"
+                  style={{ height: 'calc(100vh - 48px)' }}
+                >
+                  <RecommendStoreList
+                    stores={recommendations}
+                    onItemClick={handleRecommendationClick}
+                    isLoading={isRecommendationsLoading || isItplaceAiLoading}
+                    error={recommendationsError || itplaceAiError}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       ) : (

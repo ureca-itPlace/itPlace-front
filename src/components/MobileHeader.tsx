@@ -159,8 +159,10 @@ const MobileHeader = ({
               ) : (
                 <button
                   onClick={() => {
-                    sessionStorage.setItem('resetToLogin', 'true');
-                    navigate('/login');
+                    navigate('/login', {
+                      state: { resetToLogin: true },
+                      replace: true,
+                    });
                     closeSidebar();
                   }}
                   className="text-body-0 text-purple04 hover:text-purple05 transition-colors text-left"

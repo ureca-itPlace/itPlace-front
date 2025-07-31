@@ -51,13 +51,13 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
       />
 
       <div
-        className={`${detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}
+        className={`${detailData?.data?.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}
       >
         <h3 className="text-title-6 text-grey06 mb-2 max-md:text-title-7 max-md:mb-1.5">
           상세 혜택
         </h3>
 
-        {detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 ? (
+        {detailData?.data?.tierBenefits && detailData.data.tierBenefits.length > 0 ? (
           <div className="space-y-1 max-md:space-y-0.5">
             {detailData.data.tierBenefits.map((b, i) => (
               <div
@@ -95,7 +95,7 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
         )}
 
         {/* 구분선 - 혜택이 있을 때만 표시 */}
-        {detailData?.data.tierBenefits && detailData.data.tierBenefits.length > 0 && (
+        {detailData?.data?.tierBenefits && detailData.data.tierBenefits.length > 0 && (
           <div className="border-b border-grey03 w-full mt-4 max-md:mt-3" />
         )}
       </div>

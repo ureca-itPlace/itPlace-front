@@ -109,8 +109,10 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
           ) : (
             <button
               onClick={() => {
-                sessionStorage.setItem('resetToLogin', 'true');
-                navigate('/login');
+                navigate('/login', {
+                  state: { resetToLogin: true },
+                  replace: true,
+                });
               }}
               className="flex flex-col items-center text-white text-title-8 hover:drop-shadow-[0_0_5px_rgba(255,255,255,0.6)]"
             >
