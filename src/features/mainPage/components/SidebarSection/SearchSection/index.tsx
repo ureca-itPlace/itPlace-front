@@ -85,24 +85,48 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
     const handleBlur = useCallback(() => {
       // 모바일에서 확대된 뷰포트 원래대로 복원
       if (window.innerWidth < 768) {
+        // 여러 방법을 동시에 시도
+
+        // 1. 스크롤을 먼저 초기화
+        window.scrollTo(0, 0);
+
+        // 2. 뷰포트 강제 리셋
         const viewport = document.querySelector('meta[name=viewport]');
         if (viewport) {
-          const originalContent = viewport.getAttribute('content');
-          // 즉시 확대 해제를 위한 설정
           viewport.setAttribute(
             'content',
-            'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'
+            'width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes'
           );
 
-          // 즉시 원래 설정으로 복원
-          requestAnimationFrame(() => {
+          // 강제 리플로우
+          void document.body.offsetHeight;
+
+          setTimeout(() => {
             viewport.setAttribute(
               'content',
-              originalContent || 'width=device-width, initial-scale=1.0'
+              'width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes'
             );
-            window.scrollTo(0, 0);
-          });
+          }, 10);
         }
+
+        // 3. Visual Viewport API 사용 (지원하는 브라우저만)
+        if ('visualViewport' in window && window.visualViewport) {
+          const resetZoom = () => {
+            if (window.visualViewport && window.visualViewport.scale > 1) {
+              window.scrollTo(0, 0);
+            }
+          };
+
+          setTimeout(resetZoom, 50);
+          setTimeout(resetZoom, 150);
+          setTimeout(resetZoom, 300);
+        }
+
+        // 4. body에 임시 변형 적용 후 제거 (강제 리렌더)
+        document.body.style.transform = 'scale(1)';
+        setTimeout(() => {
+          document.body.style.transform = '';
+        }, 50);
       }
     }, []);
 
