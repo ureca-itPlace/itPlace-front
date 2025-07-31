@@ -42,7 +42,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({
         <h1 className="feature-title text-4xl font-bold leading-normal max-xl:text-3xl max-sm:text-2xl max-xl:leading-normal max-md:leading-normal max-sm:leading-normal">
           {title}
         </h1>
-        <h4 className="feature-desc text-2xl leading-loose max-xl:text-xl max-xl:leading-loose max-lg:leading-loose max-md:leading-relaxed max-sm:leading-relaxed">
+        <h4 className="feature-desc text-2xl font-light leading-loose max-md:text-xl max-xl:leading-loose max-lg:leading-loose max-md:leading-relaxed max-sm:leading-relaxed">
           {description}
         </h4>
       </div>
