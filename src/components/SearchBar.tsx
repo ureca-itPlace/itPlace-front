@@ -8,7 +8,6 @@ interface SearchBarProps {
   className?: string;
   backgroundColor?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  onBlur?: () => void;
 }
 const SearchBar: React.FC<SearchBarProps> = ({
   placeholder,
@@ -18,7 +17,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
   className = '',
   backgroundColor,
   onKeyDown,
-  onBlur,
 }) => {
   return (
     <div className={`relative ${className}`}>
@@ -31,7 +29,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         value={value}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        onBlur={onBlur}
         className={`w-full h-full pl-12 pr-10 rounded-[10px] text-black text-base max-xl:text-body-3 max-md:text-body-3 placeholder-grey03 placeholder:text-body-2 max-xl:placeholder:text-body-3 max-md:placeholder:text-body-3 focus:outline-none focus:ring-0 focus:border-gray-300 ${backgroundColor || ''}`}
       />
       {value && (

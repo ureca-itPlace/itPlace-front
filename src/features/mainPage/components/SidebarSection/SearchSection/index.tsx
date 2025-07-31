@@ -82,54 +82,6 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
       [searchQuery]
     );
 
-    const handleBlur = useCallback(() => {
-      // 모바일에서 확대된 뷰포트 원래대로 복원
-      if (window.innerWidth < 768) {
-        // 여러 방법을 동시에 시도
-
-        // 1. 스크롤을 먼저 초기화
-        window.scrollTo(0, 0);
-
-        // 2. 뷰포트 강제 리셋
-        const viewport = document.querySelector('meta[name=viewport]');
-        if (viewport) {
-          viewport.setAttribute(
-            'content',
-            'width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes'
-          );
-
-          // 강제 리플로우
-          void document.body.offsetHeight;
-
-          setTimeout(() => {
-            viewport.setAttribute(
-              'content',
-              'width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes'
-            );
-          }, 10);
-        }
-
-        // 3. Visual Viewport API 사용 (지원하는 브라우저만)
-        if ('visualViewport' in window && window.visualViewport) {
-          const resetZoom = () => {
-            if (window.visualViewport && window.visualViewport.scale > 1) {
-              window.scrollTo(0, 0);
-            }
-          };
-
-          setTimeout(resetZoom, 50);
-          setTimeout(resetZoom, 150);
-          setTimeout(resetZoom, 300);
-        }
-
-        // 4. body에 임시 변형 적용 후 제거 (강제 리렌더)
-        document.body.style.transform = 'scale(1)';
-        setTimeout(() => {
-          document.body.style.transform = '';
-        }, 50);
-      }
-    }, []);
-
     return (
       <div className="mb-4 w-[330px] max-md:w-full max-md:mb-0 max-md:flex max-md:items-center">
         <form onSubmit={handleSearchSubmit} className="w-full">
@@ -141,7 +93,6 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
             backgroundColor="bg-grey01"
             className="w-full h-[50px] max-md:h-[40px] max-md:ml-1"
             onKeyDown={handleKeyDown}
-            onBlur={handleBlur}
           />
         </form>
       </div>
