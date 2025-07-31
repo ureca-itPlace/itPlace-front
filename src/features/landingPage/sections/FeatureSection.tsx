@@ -7,7 +7,6 @@ import FeatureItem from '../components/FeatureItem';
 gsap.registerPlugin(ScrollTrigger);
 const FeatureSection = () => {
   const featureSectionRef = useRef<HTMLDivElement>(null);
-  const starsRef = useRef<HTMLImageElement>(null);
 
   useGSAP(() => {
     const ctx = gsap.context(() => {
@@ -15,19 +14,6 @@ const FeatureSection = () => {
       const numbers = gsap.utils.toArray('.feature-index');
       const titles = gsap.utils.toArray('.feature-title');
       const descs = gsap.utils.toArray('.feature-desc');
-
-      gsap.to(starsRef.current, {
-        x: '-200vw',
-        y: '150vh',
-        opacity: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: featureSectionRef.current,
-          start: 'top 80%',
-          end: 'bottom center',
-          scrub: 0.5,
-        },
-      });
 
       // 이미지 애니메이션
       images.forEach((image, index) => {
@@ -46,6 +32,7 @@ const FeatureSection = () => {
         });
       });
 
+      // 기능 번호 애니메이션
       numbers.forEach((number) => {
         gsap.from(number as HTMLHeadingElement, {
           opacity: 0,
@@ -103,7 +90,7 @@ const FeatureSection = () => {
     <section
       ref={featureSectionRef}
       data-theme="dark"
-      className="relative max-h-[400svh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden border-4"
+      className="relative max-h-[400svh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
     >
       <img
         src="/images/landing/wave.png"
@@ -134,7 +121,6 @@ const FeatureSection = () => {
         }
         description="사용 내역과 관심사를 AI가 분석하여 가장 적합한 혜택을 맞춤 추천해드립니다. 더 이상 어렵게 찾지 말고 나만을 위한 혜택을 빠르게 받아보세요."
       />
-
       <FeatureItem
         number={3}
         imageSrc="/images/landing/feature-3.webp"
@@ -158,23 +144,6 @@ const FeatureSection = () => {
         }
         description="간단한 금액 입력만으로 제휴처에서 사용한 내역과 혜택 현황을 쉽게 조회할 수 있어요. 소비 패턴 분석과 맞춤형 혜택 관리까지 한 번에 가능합니다."
       />
-      {/* <div>
-        <div className="h-24 bg-purple03 w-[120vw] relative left-1/2 -translate-x-1/2 text-6xl">
-          텍스트가흘려요 텍스트가흘려요 텍스트가흘려요
-        </div>
-        <div className="h-24 bg-white w-[120vw] relative left-1/2 -translate-x-1/2 text-6xl">
-          텍스트가흘려요 텍스트가흘려요 텍스트가흘려요
-        </div>
-      </div> */}
-
-      <div className="z-0 pointer-events-none">
-        <img
-          ref={starsRef}
-          src="/images/landing/stars.webp"
-          alt="별"
-          className="absolute top-[8%] left-full w-[25vw] h-auto"
-        />
-      </div>
     </section>
   );
 };
