@@ -9,7 +9,6 @@ import {
   KakaoMouseEvent,
 } from '../../../types/kakao';
 import CustomMarker from './CustomMarker';
-import { loadKakaoMapSDK } from '../../../../../utils/kakaoMapLoader';
 
 interface KakaoMapProps {
   platforms: Platform[];
@@ -206,14 +205,20 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       }, 100);
     };
 
-    // Kakao Map SDK 로드 후 초기화
-    loadKakaoMapSDK()
-      .then(() => {
-        initializeMap();
-      })
-      .catch((error) => {
-        console.error('Kakao Map SDK 로드 실패:', error);
-      });
+    // 카카오맵 API가 이미 로드되어 있으면 바로 초기화
+    if (window.kakao && window.kakao.maps) {
+      initializeMap();
+    } else {
+      // 카카오맵 API 로드 대기
+      const checkKakaoMaps = setInterval(() => {
+        if (window.kakao && window.kakao.maps) {
+          clearInterval(checkKakaoMaps);
+          initializeMap();
+        }
+      }, 100);
+
+      return () => clearInterval(checkKakaoMaps);
+    }
   }, [userLocation, onMapCenterChange, onMapLevelChange, isMapInitialized]);
 
   // 로드뷰 모드 클릭 이벤트 관리

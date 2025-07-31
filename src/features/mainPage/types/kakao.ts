@@ -58,9 +58,6 @@ export interface KakaoMouseEvent {
 
 export interface KakaoMaps {
   maps: {
-    // SDK 로드 메서드
-    load: (callback: () => void) => void;
-
     // 기본 Map API
     LatLng: new (lat: number, lng: number) => KakaoLatLng;
     Map: new (container: HTMLElement, options: { center: KakaoLatLng; level: number }) => KakaoMap;

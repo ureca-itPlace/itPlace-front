@@ -5,7 +5,6 @@ import { KakaoRoadview, KakaoCustomOverlay } from '../../../types/kakao';
 import { getStoreList } from '../../../api/storeApi';
 import CustomMarker from '../KakaoMap/CustomMarker';
 import { showToast } from '../../../../../utils/toast';
-import { loadKakaoMapSDK } from '../../../../../utils/kakaoMapLoader';
 
 interface RoadviewContainerProps {
   clickedLatLng: { lat: number; lng: number } | null;
@@ -195,46 +194,33 @@ const RoadviewContainer: React.FC<RoadviewContainerProps> = ({
   useEffect(() => {
     if (!clickedLatLng || !roadviewRef.current) return;
 
-    const initializeRoadview = () => {
-      const { lat, lng } = clickedLatLng;
-      const roadviewClient = new window.kakao.maps.RoadviewClient();
-      const roadview = new window.kakao.maps.Roadview(roadviewRef.current!);
+    const { lat, lng } = clickedLatLng;
+    const roadviewClient = new window.kakao.maps.RoadviewClient();
+    const roadview = new window.kakao.maps.Roadview(roadviewRef.current);
 
-      roadviewObjRef.current = roadview;
+    roadviewObjRef.current = roadview;
 
-      // 클릭한 위치 근처의 로드뷰 파노라마 ID 검색
-      const latLng = new window.kakao.maps.LatLng(lat, lng);
-      roadviewClient.getNearestPanoId(latLng, 50, (panoId: string | null) => {
-        if (panoId) {
-          roadview.setPanoId(panoId, latLng);
+    // 클릭한 위치 근처의 로드뷰 파노라마 ID 검색
+    const latLng = new window.kakao.maps.LatLng(lat, lng);
+    roadviewClient.getNearestPanoId(latLng, 50, (panoId: string | null) => {
+      if (panoId) {
+        roadview.setPanoId(panoId, latLng);
 
-          // 로드뷰 로드 후 초기 오버레이 업데이트
-          setTimeout(() => {
-            updateRoadviewOverlaysRef.current?.(lat, lng, roadview);
-          }, 500);
-        } else {
-          showToast('해당 위치에 로드뷰가 없습니다.', 'info');
-          onCloseRef.current();
-        }
-      });
-
-      // 로드뷰 위치 변경 시마다 오버레이 갱신
-      window.kakao.maps.event.addListener(roadview, 'position_changed', () => {
-        const pos = roadview.getPosition();
-        updateRoadviewOverlaysRef.current?.(pos.getLat(), pos.getLng(), roadview);
-      });
-    };
-
-    // Kakao Map SDK 로드 후 로드뷰 초기화
-    loadKakaoMapSDK()
-      .then(() => {
-        initializeRoadview();
-      })
-      .catch((error) => {
-        console.error('Kakao Map SDK 로드 실패:', error);
-        showToast('지도 로드에 실패했습니다.', 'error');
+        // 로드뷰 로드 후 초기 오버레이 업데이트
+        setTimeout(() => {
+          updateRoadviewOverlaysRef.current?.(lat, lng, roadview);
+        }, 500);
+      } else {
+        showToast('해당 위치에 로드뷰가 없습니다.', 'info');
         onCloseRef.current();
-      });
+      }
+    });
+
+    // 로드뷰 위치 변경 시마다 오버레이 갱신
+    window.kakao.maps.event.addListener(roadview, 'position_changed', () => {
+      const pos = roadview.getPosition();
+      updateRoadviewOverlaysRef.current?.(pos.getLat(), pos.getLng(), roadview);
+    });
 
     return () => {
       // 오버레이 정리
