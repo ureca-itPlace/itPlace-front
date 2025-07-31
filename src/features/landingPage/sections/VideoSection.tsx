@@ -22,7 +22,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     <>
       LET'S <span className="custom-font text-purple04">EXPLORE</span>
       <img
-        src="/images/landing/video-icon-rocket.webp"
+        src="/images/landing/video/rocket-icon.webp"
         alt="로켓"
         className="inline-block h-[27vh] w-auto pb-4"
       />
@@ -31,7 +31,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     <>
       FIND
       <img
-        src="/images/landing/video-icon-location.webp"
+        src="/images/landing/video/location-icon.webp"
         alt="위치"
         className="inline-block h-[27vh] w-auto pb-4"
       />
@@ -40,7 +40,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     <>
       <span className="custom-font text-purple04">BENEFITS</span> AROUND YOU
       <img
-        src="/images/landing/video-icon-tag.webp"
+        src="/images/landing/video/tag-icon.webp"
         alt="태그"
         className="inline-block h-[27vh] w-auto pb-4 mx-1"
       />

@@ -192,11 +192,11 @@ const HeroSection = () => {
       {/* 우주 토끼 섹션 */}
       <div
         ref={heroRef}
-        className="relative w-full h-full bg-[url('/images/landing/hero-bg.webp')] bg-no-repeat bg-cover bg-center"
+        className="relative w-full h-full bg-[url('/images/landing/hero/hero-bg.webp')] bg-no-repeat bg-cover bg-center"
       >
         <img
           ref={windowRef}
-          src="/images/landing/hero-window-3.png"
+          src="/images/landing/hero/spaceship-window.png"
           className="absolute inset-0 w-full h-full object-cover z-40 max-lg:hidden"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
@@ -216,25 +216,25 @@ const HeroSection = () => {
       <div ref={mapContainerRef} className="absolute inset-0 w-full h-full bg-white z-60">
         <img
           ref={firstMapImageRef}
-          src="/images/landing/map-1.webp"
+          src="/images/landing/hero/map-1.webp"
           className="absolute inset-0 w-full h-screen object-cover"
           loading="lazy"
         />
         <img
           ref={secondMapImageRef}
-          src="/images/landing/map-2.webp"
+          src="/images/landing/hero/map-2.webp"
           className="absolute inset-0 w-full h-screen object-cover"
           loading="lazy"
         />
         <img
           ref={thirdMapImageRef}
-          src="/images/landing/map-3.webp"
+          src="/images/landing/hero/map-3.webp"
           className="absolute inset-0 w-full h-screen object-cover"
           loading="lazy"
         />
         <img
           ref={fourthMapImageRef}
-          src="/images/landing/map-4.webp"
+          src="/images/landing/hero/map-4.webp"
           className="absolute inset-0 w-full h-screen object-cover"
           loading="lazy"
         />
@@ -255,7 +255,7 @@ const HeroSection = () => {
             ref={(el) => {
               if (el) benefitImagesRef.current[index] = el;
             }}
-            src={`/images/landing/${logo.name}.svg`}
+            src={`/images/landing/hero/${logo.name}.svg`}
             className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-16`}
             loading="lazy"
             alt={logo.name}

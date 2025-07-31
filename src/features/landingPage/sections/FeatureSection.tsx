@@ -93,13 +93,13 @@ const FeatureSection = () => {
       className="relative max-h-[400svh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
     >
       <img
-        src="/images/landing/wave.png"
+        src="/images/landing/feature/wave.png"
         alt="물결"
         className="absolute top-0 left-0 w-full h-auto z-10"
       />
       <FeatureItem
         number={1}
-        imageSrc="/images/landing/feature-1.webp"
+        imageSrc="/images/landing/feature/feature-1.webp"
         alt="기능설명-1"
         title={
           <>
@@ -112,7 +112,7 @@ const FeatureSection = () => {
       <FeatureItem
         number={2}
         reverse
-        imageSrc="/images/landing/feature-2.webp"
+        imageSrc="/images/landing/feature/feature-2.webp"
         alt="기능설명-2"
         title={
           <>
@@ -123,7 +123,7 @@ const FeatureSection = () => {
       />
       <FeatureItem
         number={3}
-        imageSrc="/images/landing/feature-3.webp"
+        imageSrc="/images/landing/feature/feature-3.webp"
         alt="기능설명-3"
         title={
           <>
@@ -135,7 +135,7 @@ const FeatureSection = () => {
       <FeatureItem
         number={4}
         reverse
-        imageSrc="/images/landing/feature-4-web.webp"
+        imageSrc="/images/landing/feature/feature-4-web.webp"
         alt="기능 설명-4"
         title={
           <>

@@ -14,7 +14,7 @@ const StartCTASection = () => {
     >
       <div className="absolute left-[-11%] top-[5%] max-xl:hidden">
         <img
-          src="/images/landing/cta-rabbit.webp"
+          src="/images/landing/cta/cta-rabbit.webp"
           alt="CTA토끼"
           loading="lazy"
           className="object-cover"
