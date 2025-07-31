@@ -24,8 +24,6 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
   // 채팅방 UI 상태
   const [isChatOpen, setIsChatOpen] = React.useState(false);
-  // 원래 스크롤 위치 저장
-  const [originalScrollPosition, setOriginalScrollPosition] = React.useState(0);
 
   const animatedText = useAnimatedLoadingText({
     messages: [
@@ -39,29 +37,14 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
 
   // 채팅방 열기/닫기 핸들러
   const handleChatOpen = () => {
-    // 현재 스크롤 위치 저장
-    setOriginalScrollPosition(window.scrollY);
     setIsChatOpen(true);
   };
 
   const handleChatClose = () => {
     setIsChatOpen(false);
-    // 약간의 지연 후 스크롤 위치 복원
-    setTimeout(() => {
-      window.scrollTo(0, originalScrollPosition);
-      // 추가적으로 body의 높이나 다른 스타일이 남아있을 수 있으니 강제로 리셋
-      document.body.style.height = '';
-      document.body.style.overflow = '';
-    }, 50);
   };
 
-  // 컴포넌트 언마운트 시 정리
-  React.useEffect(() => {
-    return () => {
-      document.body.style.height = '';
-      document.body.style.overflow = '';
-    };
-  }, []);
+  // ...existing code...
 
   // 에러 메시지에 따른 요약 생성
   const getErrorSummary = (errorMessage: string) => {
