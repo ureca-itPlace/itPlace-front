@@ -4,16 +4,16 @@ import { useGSAP } from '@gsap/react';
 import { useResponsive } from '../../../hooks/useResponsive';
 import { disableScroll, enableScroll } from '../../../utils/scrollLock';
 
-interface LoadingScreenProps {
+interface IntroProps {
   onFinish: () => void;
 }
 
-const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
+const Intro = ({ onFinish }: IntroProps) => {
   const [isVisible, setIsVisible] = useState(true);
 
-  const logoRef = useRef<HTMLHeadingElement | null>(null);
-  const descRef = useRef<HTMLParagraphElement | null>(null);
-  const bgRef = useRef<HTMLDivElement | null>(null);
+  const logoRef = useRef<HTMLHeadingElement>(null);
+  const descRef = useRef<HTMLParagraphElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
 
   const { isMobile } = useResponsive();
 
@@ -126,4 +126,4 @@ const LoadingScreen = ({ onFinish }: LoadingScreenProps) => {
   );
 };
 
-export default LoadingScreen;
+export default Intro;
