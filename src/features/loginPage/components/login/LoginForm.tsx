@@ -56,7 +56,7 @@ const LoginForm = ({ onGoToPhoneAuth, onGoToFindEmail }: Props) => {
 
   return (
     <div>
-      <h2 className="text-title-1 max-xl:text-title-2 max-lg:text-title-3 max-md:text-title-2 max-sm:text-title-2 mb-[40px] max-xl:mb-[34px] max-lg:mb-[27px] max-md:mb-[32px] max-sm:mb-[32px]">
+      <h2 className="text-title-1 max-xl:text-title-2 max-lg:text-title-3 max-md:text-title-2 max-sm:text-title-4 max-sm:font-semibold mb-[40px] max-xl:mb-[34px] max-lg:mb-[27px] max-md:mb-[32px] max-sm:mb-[32px]">
         로그인
       </h2>
 

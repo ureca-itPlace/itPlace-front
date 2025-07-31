@@ -237,9 +237,21 @@ const AuthLayout = () => {
       showToast(msg, 'error');
     }
   };
+  const isMobile = window.innerWidth <= 768; // 또는 useMediaQuery
+
+  useEffect(() => {
+    if (isMobile) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isMobile]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white max-md:overflow-hidden max-md:h-screen max-md:fixed max-md:inset-0 max-sm:overflow-hidden max-sm:h-screen max-sm:fixed max-sm:inset-0">
+    <div className="flex items-center justify-center min-h-screen bg-white max-md:overflow-hidden max-md:h-screen max-md:fixed max-md:inset-0 max-sm:overflow-hidden max-sm:max-h-screen max-sm:fixed max-sm:inset-0">
       <div className="fixed top-0 left-0 w-full z-[9999] max-md:block hidden">
         <MobileHeader title="로그인" />
       </div>
@@ -255,17 +267,21 @@ const AuthLayout = () => {
       </Modal>
 
       {/* 모바일 레이아웃 (max-md: ~767px) */}
-      <div className="max-md:block hidden w-full h-screen fixed max-md:fixed max-md:inset-0 max-sm:block max-sm:fixed max-sm:inset-0">
+      <div className="max-md:block hidden w-full fixed max-md:fixed max-md:inset-0 max-sm:block max-sm:fixed max-sm:inset-0">
         {/* 배경 SideCard - 전체 화면 */}
         <div className="absolute top-0 left-0 w-full h-1/2">
           <AuthSideCard />
         </div>
 
         {/* 하단에서 올라오는 오버레이 폼 카드 - 전체 너비 */}
-        <div className="absolute left-0 w-full" style={{ bottom: '0', top: 'calc(50vh - 13rem)' }}>
+        <div className="absolute left-0 w-full" style={{ bottom: '0', top: 'calc(60dvh - 13rem)' }}>
           <div
-            className="bg-white rounded-t-[24px] px-6 pt-8 pb-8 w-full shadow-2xl overflow-hidden h-full"
-            style={{ minHeight: 'calc(50vh + 3rem)' }}
+            className="bg-white rounded-t-[24px] px-6 pt-8 pb-8 w-full shadow-2xl"
+            style={{
+              height: '100%', // 부모 높이만큼
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+            }} // 헤더 높이를 고려해서 조정
           >
             {/* 로그인 */}
             {formStep === 'login' && (
