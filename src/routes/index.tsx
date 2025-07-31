@@ -18,6 +18,10 @@ const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> }, // 기본 라우터
   { path: '/oauth/callback/kakao', element: <OAuthRedirectHandler /> }, // 카카오 콜백 (독립 라우트)
   {
+    path: '*',
+    element: <NotFoundPage />,
+  },
+  {
     element: <ResponsiveLayout />, // DefaultLayout 대신 ResponsiveLayout 사용
     children: [
       {
@@ -45,8 +49,8 @@ const router = createBrowserRouter([
         ],
       },
       { path: '/benefits', element: <AllBenefitsPage /> },
+      { path: '/event', element: <div>이벤트 페이지입니다.</div> },
     ],
-    errorElement: <NotFoundPage />,
   },
 ]);
 
