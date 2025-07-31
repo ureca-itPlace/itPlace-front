@@ -21,7 +21,7 @@ export const refreshToken = () => {
 };
 
 export const login = (email: string, password: string) => {
-  return api.post(
+  return refreshApi.post(
     '/api/v1/auth/login',
     { email, password },
     {

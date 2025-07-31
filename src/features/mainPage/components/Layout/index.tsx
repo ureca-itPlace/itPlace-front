@@ -225,6 +225,25 @@ const MainPageLayout: React.FC = () => {
     });
   }, []);
 
+  // URL 쿼리 파라미터에서 검색어를 처리하는 useEffect
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const searchKeyword = searchParams.get('search');
+
+    if (searchKeyword && searchKeyword !== lastSearchedKeywordRef.current && userCoords) {
+      // 검색어를 먼저 설정 (검색창에 표시)
+      setSearchQuery(searchKeyword);
+      
+      // URL에서 검색어가 있고 사용자 위치가 준비되면 검색 실행
+      handleKeywordSearch(searchKeyword);
+
+      // URL에서 쿼리 파라미터 제거 (중복 검색 방지)
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('search');
+      window.history.replaceState({}, '', newUrl.toString());
+    }
+  }, [location.search, handleKeywordSearch, userCoords]);
+
   // 혜택 상세 카드 핸들러
   const handleBenefitDetailRequest = useCallback((benefitIds: number[]) => {
     setBenefitDetailCard({
@@ -264,7 +283,7 @@ const MainPageLayout: React.FC = () => {
     };
 
     const timeoutId = setTimeout(() => {
-      requestAnimationFrame(reset); // 👈 이 한 줄 차이!
+      requestAnimationFrame(reset);
     }, 150);
 
     return () => clearTimeout(timeoutId);
@@ -555,6 +574,7 @@ const MainPageLayout: React.FC = () => {
               bottom: 0,
               minHeight: `${MIN_HEIGHT}px`,
               maxHeight: `${getMaxHeight()}px`,
+              overflow: 'hidden',
               transition: isAnimating ? 'all 0.3s ease-out' : 'none',
             }}
             onMouseMove={handleMouseMove}
@@ -573,7 +593,12 @@ const MainPageLayout: React.FC = () => {
             </div>
 
             {/* 사이드바 콘텐츠 */}
-            <div className="flex-1 min-h-0 overflow-auto max-h-full">
+            <div
+              className="flex-1 min-h-0 max-h-full"
+              style={{
+                overflowY: bottomSheetHeight > MIN_HEIGHT ? 'auto' : 'hidden',
+              }}
+            >
               <SidebarSection
                 platforms={stablePlatforms}
                 selectedPlatform={selectedPlatform}

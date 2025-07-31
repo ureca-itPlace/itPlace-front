@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Modal from '../../../components/AllBenefitsModal';
 import {
   BenefitItem,
@@ -38,6 +39,7 @@ interface BenefitDetailModalProps {
 }
 
 const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit, onClose }) => {
+  const navigate = useNavigate();
   const [benefitDetail, setBenefitDetail] = useState<BenefitDetailResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -192,7 +194,12 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
             홈페이지
           </button>
           <button
-            onClick={onClose}
+            onClick={() => {
+              // 브랜드명으로 메인페이지에서 검색하도록 네비게이션
+              const searchKeyword = displayName;
+              navigate(`/main?search=${encodeURIComponent(searchKeyword)}`);
+              onClose(); // 모달 닫기
+            }}
             className="w-[218px] h-[52px] bg-purple04 text-white rounded-[30px] text-body-0 font-medium max-md:w-[140px] max-md:h-10 max-md:text-[15px] max-md:rounded-2xl"
           >
             지도로 가기
