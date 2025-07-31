@@ -42,6 +42,9 @@ const HeroSection = () => {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      gsap.set(wrapperRef.current, { opacity: 0 });
+      gsap.to(wrapperRef.current, { opacity: 1, duration: 2, ease: 'sine.out' });
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: wrapperRef.current,
