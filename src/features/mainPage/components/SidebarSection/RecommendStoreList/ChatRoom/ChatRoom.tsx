@@ -308,7 +308,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
 
   return (
     <div
-      className="bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center relative"
+      className="bg-white rounded-[18px] shadow-lg border-t border-l border-r border-grey02 p-0 flex flex-col items-center relative"
       style={{
         width: '100%',
         height: '60vh',
@@ -335,7 +335,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
 
       {/* 메시지 영역 */}
       <div
-        className="overflow-y-auto border border-grey02 p-4 bg-grey01 w-full"
+        className="overflow-y-auto border-l border-r border-grey02 p-4 bg-grey01 w-full"
         style={{ flex: 1, maxHeight: '50vh', height: '100%' }}
       >
         {messages.length === 1 && messages[0].sender === 'bot' ? (
@@ -375,74 +375,77 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
           </div>
         ) : (
           <div className="space-y-3">
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
-              >
-                <div className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  {msg.sender === 'bot' && (
-                    <img
-                      src="/images/main/mainCharacter.webp"
-                      alt="잇콩이"
-                      className="w-7 h-7 rounded-full border border-purple02 bg-white mr-2"
-                    />
-                  )}
-                  <span
-                    className={`px-4 py-2 max-w-none break-words shadow ${
-                      msg.sender === 'user'
-                        ? 'bg-purple04 text-white text-body-3 rounded-[10px]'
-                        : 'bg-white text-black text-body-3 rounded-[10px] break-words'
-                    }`}
-                  >
-                    {msg.text}
-                  </span>
-                </div>
-
-                {/* 제휴업체 카드 */}
-                {msg.sender === 'bot' && msg.partners && msg.partners.length > 0 && (
-                  <div className="mt-2 ml-9 w-full max-w-[90%]">
-                    <div className="grid grid-cols-1 gap-2">
-                      {msg.partners.map((partner, partnerIdx) => (
-                        <div
-                          key={partnerIdx}
-                          className="bg-white border border-grey02 rounded-[10px] p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                          onClick={() => handlePartnerClick(partner.partnerName)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={partner.imgUrl}
-                              alt={partner.partnerName}
-                              className="w-12 h-12 rounded-lg object-cover border border-grey02"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = '/images/thumbnail.png';
-                              }}
-                            />
-                            <div className="flex-1">
-                              <h4 className="text-body-2-bold text-grey05">
-                                {partner.partnerName}
-                              </h4>
-                              <p className="text-body-4 text-grey04 mt-1">제휴업체</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+            {messages.map((msg, idx) => {
+              // 사용자 메시지
+              if (msg.sender === 'user') {
+                return (
+                  <div key={idx} className="flex justify-end">
+                    <div className="max-w-[90%]">
+                      <span className="px-4 py-2 break-words shadow bg-purple04 text-white text-body-3 font-light rounded-[10px]">
+                        {msg.text}
+                      </span>
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
+                );
+              }
+
+              // 봇 메시지
+              return (
+                <div key={idx} className="flex items-start gap-2">
+                  <img
+                    src="/images/main/mainCharacter.webp"
+                    alt="잇콩이"
+                    className="w-7 h-7 rounded-full border border-purple02 bg-white flex-shrink-0"
+                  />
+                  <div className="flex flex-col gap-2" style={{ maxWidth: 'calc(100% - 2.25rem)' }}>
+                    <span className="px-4 py-2 break-words shadow bg-white text-black text-body-3 font-light rounded-[10px]">
+                      {msg.text}
+                    </span>
+                    {/* 제휴업체 카드 */}
+                    {msg.partners && msg.partners.length > 0 && (
+                      <div className="w-full">
+                        <div className="grid grid-cols-1 gap-2">
+                          {msg.partners.map((partner, partnerIdx) => (
+                            <div
+                              key={partnerIdx}
+                              className="bg-white rounded-[10px] p-3 shadow hover:shadow-md transition-shadow cursor-pointer"
+                              onClick={() => handlePartnerClick(partner.partnerName)}
+                            >
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={partner.imgUrl}
+                                  alt={partner.partnerName}
+                                  className="w-12 h-12 rounded-lg object-contain border border-grey02"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = '/images/thumbnail.png';
+                                  }}
+                                />
+                                <div className="flex-1">
+                                  <h4 className="text-body-2-bold text-grey05">
+                                    {partner.partnerName}
+                                  </h4>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
             {isBotLoading && (
               <div className="flex justify-start items-center mt-2">
                 <img
-                  src="\images\main\mainCharacter.webp"
+                  src="/images/main/mainCharacter.webp"
                   alt="잇콩이"
                   className="w-7 h-7 rounded-full border border-grey02 bg-white mr-2"
                 />
-                <div className="flex items-center px-4 py-2 max-w-[70%] break-words shadow bg-white text-black text-body-3 rounded-[10px]">
-                  <LoadingSpinner className="mr-2 h-5 w-5 border-2 border-purple04 border-t-transparent" />
-                  <span>답변을 준비 중이에요...</span>
+                <div className="flex items-center justify-center px-4 py-2 max-w-[90%] break-words shadow bg-white text-black text-body-3 font-light rounded-[10px]">
+                  <LoadingSpinner className="mr-4 h-4 w-4 border-2 border-purple04 border-t-transparent" />
+                  <span className="text-center">답변을 준비 중이에요...</span>
                 </div>
               </div>
             )}
