@@ -26,7 +26,7 @@ const MainPageLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false); // 사이드바 접힘 상태
 
   // 바텀시트 상태 관리
-  const MIN_HEIGHT = 120;
+  const MIN_HEIGHT = 150;
   const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(MIN_HEIGHT); // 바텀시트 높이
   const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
   const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
@@ -525,7 +525,7 @@ const MainPageLayout: React.FC = () => {
       </div>
 
       {/* 모바일 레이아웃 */}
-      <div className="flex md:hidden flex-col h-screen bg-grey01 overflow-hidden">
+      <div className="flex md:hidden flex-col h-screen bg-grey01">
         {/* 토스트 컨테이너 z-index 조정 */}
         <style>
           {`
@@ -550,7 +550,7 @@ const MainPageLayout: React.FC = () => {
         </div>
 
         {/* 지도 - 전체 화면 */}
-        <div className="absolute inset-0">
+        <div className="flex-1 relative">
           <MapSection
             platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}

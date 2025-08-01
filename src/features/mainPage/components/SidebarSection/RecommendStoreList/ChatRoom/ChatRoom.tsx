@@ -285,7 +285,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       onSearchPartner(partnerName);
     }
     if (onChangeTab) {
-      onChangeTab('nearby'); // 주변 혜택 탭으로 변경
+      onChangeTab('ai'); // 잇플AI 추천 탭 유지
     }
     // 채팅방 닫기
     onClose();

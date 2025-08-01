@@ -430,7 +430,16 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                     onItemClick={handleRecommendationClick}
                     isLoading={isRecommendationsLoading || isItplaceAiLoading}
                     error={recommendationsError || itplaceAiError}
-                    onSearchPartner={onSearchPartner}
+                    onSearchPartner={(partnerName: string) => {
+                      // 채팅에서 파트너 검색 시 RecommendationItem 형태로 변환하여 기존 로직 재사용
+                      const fakeRecommendation: RecommendationItem = {
+                        partnerName,
+                        rank: 1,
+                        reason: `${partnerName} 매장 정보를 보여드릴게요!`,
+                        benefitIds: [],
+                      };
+                      handleRecommendationClick(fakeRecommendation);
+                    }}
                     onChangeTab={onActiveTabChange}
                     onBottomSheetReset={onBottomSheetReset}
                     onChatStateChange={handleChatStateChange}
