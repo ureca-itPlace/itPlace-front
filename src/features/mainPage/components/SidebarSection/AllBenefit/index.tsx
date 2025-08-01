@@ -46,7 +46,7 @@ const StoreCardsSection: React.FC<StoreCardsSectionProps> = ({
 
   if (error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center max-md:mt-24">
+      <div className="flex-1 flex flex-col items-center justify-center max-md:mt-12">
         <NoResult
           message1="오류가 발생했어요!"
           message2="잠시 후 다시 시도해 주세요"
