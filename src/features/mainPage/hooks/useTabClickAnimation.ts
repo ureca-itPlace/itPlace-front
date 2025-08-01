@@ -15,7 +15,9 @@ export const useTabClickAnimation = ({ tabRefs, onTabChange }: UseTabClickAnimat
       // 클릭된 탭에 스케일 애니메이션 적용
       const tabElement = tabRefs.current[tabId];
       if (tabElement) {
-        tabAnimations.clickScale(tabElement);
+        requestAnimationFrame(() => {
+          tabAnimations.clickScale(tabElement);
+        });
       }
     },
     [tabRefs, onTabChange]
