@@ -31,7 +31,7 @@ export const tabAnimations = {
         duration: 0.1,
         yoyo: true,
         repeat: 1,
-        ease: 'power2.inOut',
+        ease: 'back.inOut(1.7)',
       }
     );
   },
