@@ -34,10 +34,10 @@ const HeroSection = () => {
     : '/images/landing/hero/hero-bg.webp';
 
   const logos = [
-    { name: 'gs25', top: 'top-[-5%]', left: 'left-[10%]', width: 'w-[14vw]' },
+    { name: 'gs25', top: 'top-[-10%]', left: 'left-[10%]', width: 'w-[14vw]' },
     { name: 'baskin-robbins', top: 'top-[-20%]', left: 'left-[38%]', width: 'w-[8vw]' },
     { name: 'uplus-tv', top: 'top-[-67%]', left: 'left-[4%]', width: 'w-[10vw]' },
-    { name: 'domino', top: 'top-[-5%]', left: 'left-[60%]', width: 'w-[20vw]' },
+    { name: 'domino', top: 'top-[-10%]', left: 'left-[60%]', width: 'w-[20vw]' },
     { name: 'ever-land', top: 'top-[-25%]', left: 'left-[80%]', width: 'w-[14vw]' },
     { name: 'lotte-world', top: 'top-[-80%]', left: 'left-[50%]', width: 'w-[14vw]' },
     { name: 'trip-com', top: 'top-[-80%]', left: 'left-[20%]', width: 'w-[14vw]' },
@@ -222,7 +222,7 @@ const HeroSection = () => {
                 y: '200vh',
                 opacity: 0.8,
                 ease: 'sine.inOut',
-                duration: 7,
+                duration: 10,
               },
               `<+${groupIndex * 0.4}`
             );
