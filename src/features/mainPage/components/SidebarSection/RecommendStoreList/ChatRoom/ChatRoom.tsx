@@ -321,13 +321,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
 
   return createPortal(
     <>
-      {/* 배경 오버레이 */}
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50"
-        style={{ zIndex: 999 }}
-        onClick={handleClose}
-      />
-
       {/* 채팅방 모달 */}
       <div
         className="bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center"
@@ -345,7 +338,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
           zIndex: 1000,
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
         }}
-        onClick={(e) => e.stopPropagation()}
       >
         {/* 상단 프로필/타이틀 */}
         <div className="w-full flex items-center gap-3 px-5 pt-5 pb-4 relative">
