@@ -8,6 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 const HeroSection = () => {
   // Hero Refs
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const scrollArrowRef = useRef<HTMLImageElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLImageElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
@@ -82,12 +83,19 @@ const HeroSection = () => {
         opacity: 0,
       });
 
+      gsap.to(scrollArrowRef.current, {
+        y: -5,
+        yoyo: true,
+        repeat: -1,
+      });
+
       // Hero 애니메이션
       tl.to(windowRef.current, {
         scale: 6.5,
         duration: 3,
         ease: 'power1.inOut',
       });
+      tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'power1.inOut' }, '<');
       tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
       tl.to(titleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
       tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '+=0.3');
@@ -208,6 +216,11 @@ const HeroSection = () => {
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center pointer-events-none"
+        />
+        <img
+          ref={scrollArrowRef}
+          src="/images/landing/hero/scroll-arrow.svg"
+          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 z-50 w-[50px] h-auto pointer-events-none"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
