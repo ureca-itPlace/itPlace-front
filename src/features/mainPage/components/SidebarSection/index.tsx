@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
@@ -15,6 +16,7 @@ import { getRecommendations } from '../../api/recommendationApi';
 import { getFavoritesList } from '../../api/favoritesListApi';
 import { getItplaceAiStores } from '../../api/itplaceAiApi';
 import { StoreData } from '../../types/api';
+import { RootState } from '../../../../store';
 
 interface Tab {
   id: string;
@@ -62,6 +64,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onSearchPartner,
   onBottomSheetReset,
 }) => {
+  const user = useSelector((state: RootState) => state.auth.user);
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
@@ -169,6 +172,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
       setSelectedRecommendation(null);
       setAiStoreResults([]);
       setItplaceAiError(null);
+      setIsChatOpen(false); // 채팅방 상태도 초기화
       onItplaceAiResults?.([], false);
     }
   }, [activeTab, onItplaceAiResults]);
@@ -303,6 +307,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
   // 탭별 다른 InfoBanner 메시지와 강조 텍스트
   const getBannerConfig = () => {
+    const userName = user?.name ? `${user.name.slice(1)}님의` : '잇플님의';
+
     switch (activeTab) {
       case 'nearby':
         return {
@@ -311,14 +317,14 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       case 'favorites':
         return {
-          message: '잇플님의 관심 혜택을 보여드릴게요!',
+          message: `${userName} 관심 혜택을 보여드릴게요!`,
           highlightText: '관심 혜택',
         };
       case 'ai':
         return {
           message: isChatOpen
             ? '무엇이든 잇플AI에게 질문해보세요!'
-            : '잇플님의 맞춤 잇플AI 추천을 보여드릴게요!',
+            : `${userName} 맞춤 잇플AI 추천을 보여드릴게요!`,
           highlightText: isChatOpen ? '잇플AI' : '맞춤 잇플AI 추천',
         };
       default:
