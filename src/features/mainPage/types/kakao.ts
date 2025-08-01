@@ -3,10 +3,15 @@ export interface KakaoLatLng {
   getLng(): number;
 }
 
+export interface KakaoLatLngBounds {
+  contain(latlng: KakaoLatLng): boolean;
+}
+
 export interface KakaoMap {
   getLevel(): number;
   setCenter(latlng: KakaoLatLng): void;
   getCenter(): KakaoLatLng;
+  getBounds(): KakaoLatLngBounds;
   relayout(): void;
 }
 

@@ -11,6 +11,7 @@ import Modal from '../../../../../components/Modal';
 
 interface StoreDetailActionButtonProps {
   benefitId?: string;
+  storeId: number;
   isFavorite: boolean;
   onFavoriteChange: (newIsFavorite: boolean) => void;
   partnerName?: string;
@@ -19,6 +20,7 @@ interface StoreDetailActionButtonProps {
 
 const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   benefitId,
+  storeId,
   isFavorite,
   onFavoriteChange,
   partnerName,
@@ -109,7 +111,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       // 콤마 제거 후 숫자로 변환
       const numericAmount = parseInt(removeCommas(usageAmount));
       // API 호출
-      const response = await submitUsageAmount(parseInt(benefitId), numericAmount);
+      const response = await submitUsageAmount(parseInt(benefitId), numericAmount, storeId);
 
       // 서버에서 message 필드가 온다고 가정
       if (response?.data?.message) {

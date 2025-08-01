@@ -151,6 +151,15 @@ const MobileHeader = ({
               </Link>
             </li>
             <li>
+              <Link
+                to="/event"
+                className="text-body-0 text-black hover:text-purple04 transition-colors"
+                onClick={closeSidebar}
+              >
+                이벤트
+              </Link>
+            </li>
+            <li>
               {isLoggedIn ? (
                 <button
                   onClick={handleLogout}
