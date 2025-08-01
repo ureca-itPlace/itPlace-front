@@ -276,7 +276,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
     '근처 관광지 추천해줘',
     '카페 갈 만한 곳 있어?',
     '쇼핑할 수 있는 곳 알려줘',
-    '테마파크 갈 만한 곳있어?',
+    '테마파크 갈 만한 곳 있어?',
   ];
 
   // 제휴업체 카드 클릭 처리
@@ -382,8 +382,15 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
               if (msg.sender === 'user') {
                 return (
                   <div key={idx} className="flex justify-end">
-                    <div className="max-w-[90%]">
-                      <span className="px-4 py-2 break-words shadow bg-purple04 text-white text-body-3 font-light rounded-[10px]">
+                    <div style={{ maxWidth: '80%' }}>
+                      <span
+                        className="inline-block px-4 py-2 shadow bg-purple04 text-white text-body-3 font-light rounded-[10px]"
+                        style={{
+                          wordWrap: 'break-word',
+                          overflowWrap: 'break-word',
+                          wordBreak: 'break-word',
+                        }}
+                      >
                         {msg.text}
                       </span>
                     </div>
@@ -467,7 +474,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
           onKeyDown={handleInputKeyDown}
         />
         <button
-          className="bg-purple04 text-white px-5 mt-4 rounded-[10px] text-body-3 hover:bg-purple03 flex items-center justify-center"
+          className={`bg-purple04 text-white mt-4 rounded-[10px] text-body-3 hover:bg-purple03 flex items-center justify-center ${isMobile || isTablet ? 'px-2 min-w-[40px]' : 'px-5'}`}
           style={{ height: '44px', minHeight: '44px', paddingTop: '0', paddingBottom: '0' }}
           onClick={() => void handleSend()}
         >
