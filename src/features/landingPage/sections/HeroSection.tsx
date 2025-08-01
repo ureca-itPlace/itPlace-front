@@ -26,12 +26,12 @@ const HeroSection = () => {
   const benefitImagesRef = useRef<HTMLImageElement[]>([]);
 
   const { isMobile, isTablet, isLaptop } = useResponsive();
+  const isSmallScreen = isMobile || isTablet;
   const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
-  const bgImage =
-    isMobile || isTablet
-      ? '/images/landing/hero/hero-bg-mobile.png'
-      : '/images/landing/hero/hero-bg.webp';
+  const bgImage = isSmallScreen
+    ? '/images/landing/hero/hero-bg-mobile.png'
+    : '/images/landing/hero/hero-bg.webp';
 
   const logos = [
     { name: 'gs25', top: 'top-[-5%]', left: 'left-[10%]', width: 'w-[14vw]' },
@@ -91,18 +91,34 @@ const HeroSection = () => {
         yoyo: true,
         repeat: -1,
         duration: 1,
-        ease: 'sine.inOut',
+        ease: 'sine.out',
       });
 
-      // Hero 애니메이션
-      tl.to(windowRef.current, {
-        scale: 6.5,
-        duration: 3.5,
-        ease: 'power1.inOut',
-      });
-      tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, '<');
-      tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 3, ease: 'power1.out' });
-      tl.to(titleRef.current, { opacity: 1, y: 0, duration: 3, ease: 'power1.out' });
+      // Hero 애니메이션 (max-lg이상일 경우만 적용)
+      if (!isSmallScreen) {
+        tl.to(windowRef.current, {
+          scale: 6.5,
+          duration: 7.5,
+          ease: 'sine.out',
+        });
+        tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, '<');
+        tl.to(subtitleRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 3,
+          ease: 'power1.out',
+        });
+        tl.to(titleRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 3,
+          ease: 'power1.out',
+        });
+      } else {
+        // lg 미만에서는 즉시 노출
+        gsap.set(subtitleRef.current, { opacity: 1, y: 0 });
+        gsap.set(titleRef.current, { opacity: 1, y: 0 });
+      }
       tl.to(whiteOverlayRef.current, { opacity: 1, duration: 2.5, ease: 'sine.inOut' }, '+=0.3');
       tl.to(
         heroRef.current,
@@ -216,7 +232,7 @@ const HeroSection = () => {
     }, wrapperRef);
 
     return () => ctx.revert();
-  }, [xDistance, yDistance]);
+  }, [xDistance, yDistance, isSmallScreen]);
 
   return (
     <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
@@ -236,7 +252,7 @@ const HeroSection = () => {
         <img
           ref={scrollArrowRef}
           src="/images/landing/hero/scroll-arrow.svg"
-          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none"
+          className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px]"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
