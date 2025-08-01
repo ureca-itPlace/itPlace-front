@@ -39,6 +39,7 @@ interface SidebarSectionProps {
   userCoords?: { lat: number; lng: number } | null;
   onItplaceAiResults?: (results: Platform[], isShowing: boolean) => void;
   onSearchPartner?: (partnerName: string) => void;
+  onBottomSheetReset?: () => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -59,6 +60,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   userCoords,
   onItplaceAiResults,
   onSearchPartner,
+  onBottomSheetReset,
 }) => {
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
@@ -414,6 +416,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                     error={recommendationsError || itplaceAiError}
                     onSearchPartner={onSearchPartner}
                     onChangeTab={onActiveTabChange}
+                    onBottomSheetReset={onBottomSheetReset}
                   />
                 </div>
               )}

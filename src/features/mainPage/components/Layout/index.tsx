@@ -52,6 +52,11 @@ const MainPageLayout: React.FC = () => {
     [getMaxHeight]
   );
 
+  // 바텀시트를 초기 상태로 리셋하는 함수
+  const resetBottomSheet = useCallback(() => {
+    animateTo(MIN_HEIGHT);
+  }, [animateTo, MIN_HEIGHT]);
+
   // 말풍선 상태
   const [speechBubble, setSpeechBubble] = useState<{
     isVisible: boolean;
@@ -414,6 +419,7 @@ const MainPageLayout: React.FC = () => {
               userCoords={userCoords}
               onItplaceAiResults={handleItplaceAiResults}
               onSearchPartner={handleKeywordSearch}
+              onBottomSheetReset={resetBottomSheet}
             />
           </div>
         </div>
@@ -616,6 +622,7 @@ const MainPageLayout: React.FC = () => {
                 userCoords={userCoords}
                 onItplaceAiResults={handleItplaceAiResults}
                 onSearchPartner={handleKeywordSearch}
+                onBottomSheetReset={resetBottomSheet}
               />
             </div>
           </div>

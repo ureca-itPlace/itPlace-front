@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { TbSend } from 'react-icons/tb';
 import LoadingSpinner from '../../../../../../components/LoadingSpinner';
 import { getRecommendation, RecommendationError } from '../../../../api/recommendChatApi';
@@ -19,9 +20,15 @@ interface ChatRoomProps {
   onClose: () => void;
   onSearchPartner?: (partnerName: string) => void;
   onChangeTab?: (tabId: string) => void;
+  onBottomSheetReset?: () => void;
 }
 
-const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeTab }) => {
+const ChatRoom: React.FC<ChatRoomProps> = ({
+  onClose,
+  onSearchPartner,
+  onChangeTab,
+  onBottomSheetReset,
+}) => {
   const [isBotLoading, setIsBotLoading] = React.useState(false);
   const [input, setInput] = React.useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -81,6 +88,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
     // 컴포넌트 마운트 시 현재 스크롤 위치 저장
     const originalScrollY = window.scrollY;
 
+    // 모바일에서 바텀시트를 초기 상태로 리셋
+    if (onBottomSheetReset && window.innerWidth < 768) {
+      onBottomSheetReset();
+    }
+
     // 컴포넌트 언마운트 시 정리
     return () => {
       // body 스타일 초기화
@@ -93,7 +105,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
         window.scrollTo(0, originalScrollY);
       });
     };
-  }, []);
+  }, [onBottomSheetReset]);
 
   const handleSend = async () => {
     const trimmed = input.trim();
@@ -307,173 +319,192 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
     onClose();
   };
 
-  return (
-    <div
-      className="bg-white rounded-[18px] shadow-lg border-t border-l border-r border-grey02 p-0 flex flex-col items-center relative"
-      style={{
-        width: '100%',
-        height: '60vh',
-        maxWidth: '100%',
-        minWidth: '220px',
-        overflow: 'hidden',
-        // 위치를 고정하여 다른 요소들에 영향을 주지 않도록
-        position: 'relative',
-        zIndex: 10,
-      }}
-    >
-      {/* 상단 프로필/타이틀 */}
-      <div className="w-full flex items-center gap-3 px-5 pt-5 pb-4 relative">
-        <span className="text-title-6 text-purple04 flex-1 text-center">잇플AI 채팅방</span>
-        <button
-          className="text-grey03 hover:text-grey04 text-title-3 absolute right-5 top-4"
-          onClick={handleClose}
-          aria-label="채팅방 닫기"
-        >
-          ×
-        </button>
-      </div>
-      {/* 안내 문구 삭제됨, 챗봇이 첫 메시지로 안내함 */}
-
-      {/* 메시지 영역 */}
+  return createPortal(
+    <>
+      {/* 배경 오버레이 */}
       <div
-        className="overflow-y-auto border-l border-r border-grey02 p-4 bg-grey01 w-full"
-        style={{ flex: 1, maxHeight: '50vh', height: '100%' }}
+        className="fixed inset-0 bg-black bg-opacity-50"
+        style={{ zIndex: 999 }}
+        onClick={handleClose}
+      />
+
+      {/* 채팅방 모달 */}
+      <div
+        className="bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center"
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '90vw',
+          maxWidth: '400px',
+          height: '70vh',
+          maxHeight: '600px',
+          minHeight: '400px',
+          overflow: 'hidden',
+          zIndex: 1000,
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        }}
+        onClick={(e) => e.stopPropagation()}
       >
-        {messages.length === 1 && messages[0].sender === 'bot' ? (
-          // 초기 상태일 때 예시 질문 버튼들 표시
-          <div className="space-y-3">
-            {/* 봇의 첫 메시지 */}
-            <div className="flex flex-col items-start">
-              <div className="flex justify-start">
-                <img
-                  src="/images/main/mainCharacter.webp"
-                  alt="잇콩이"
-                  className="w-7 h-7 rounded-full border border-purple02 bg-white mr-2"
-                />
-                <span className="px-4 py-2 max-w-none break-words shadow bg-white text-black text-body-3 rounded-[10px]">
-                  {messages[0].text}
-                </span>
-              </div>
-            </div>
+        {/* 상단 프로필/타이틀 */}
+        <div className="w-full flex items-center gap-3 px-5 pt-5 pb-4 relative">
+          <span className="text-title-6 text-purple04 flex-1 text-center">잇플AI 채팅방</span>
+          <button
+            className="text-grey03 hover:text-grey04 text-title-3 absolute right-5 top-4"
+            onClick={handleClose}
+            aria-label="채팅방 닫기"
+          >
+            ×
+          </button>
+        </div>
+        {/* 안내 문구 삭제됨, 챗봇이 첫 메시지로 안내함 */}
 
-            {/* 예시 질문 버튼들 */}
-            <div className="ml-9 space-y-2">
-              <div className="text-body-4 text-grey04 mb-2">아래와 같이 질문해보세요 🐰</div>
-              {exampleQuestions.map((question, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => handleExampleClick(question)}
-                  className="block w-full text-left px-3 py-2 bg-white hover:bg-purple01 text-purple04 text-body-4 rounded-[10px] transition-colors"
-                >
-                  {question}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="text-grey05 text-body-3 text-center py-10">
-            잇콩이에게 궁금한 점을 물어보세요!
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {messages.map((msg, idx) => {
-              // 사용자 메시지
-              if (msg.sender === 'user') {
-                return (
-                  <div key={idx} className="flex justify-end">
-                    <div className="max-w-[90%]">
-                      <span className="px-4 py-2 break-words shadow bg-purple04 text-white text-body-3 font-light rounded-[10px]">
-                        {msg.text}
-                      </span>
-                    </div>
-                  </div>
-                );
-              }
-
-              // 봇 메시지
-              return (
-                <div key={idx} className="flex items-start gap-2">
+        {/* 메시지 영역 */}
+        <div
+          className="overflow-y-auto border-l border-r border-grey02 p-4 bg-grey01 w-full"
+          style={{ flex: 1, maxHeight: '50vh', height: '100%' }}
+        >
+          {messages.length === 1 && messages[0].sender === 'bot' ? (
+            // 초기 상태일 때 예시 질문 버튼들 표시
+            <div className="space-y-3">
+              {/* 봇의 첫 메시지 */}
+              <div className="flex flex-col items-start">
+                <div className="flex justify-start">
                   <img
                     src="/images/main/mainCharacter.webp"
                     alt="잇콩이"
-                    className="w-7 h-7 rounded-full border border-purple02 bg-white flex-shrink-0"
+                    className="w-7 h-7 rounded-full border border-purple02 bg-white mr-2"
                   />
-                  <div className="flex flex-col gap-2" style={{ maxWidth: 'calc(100% - 2.25rem)' }}>
-                    <span className="px-4 py-2 break-words shadow bg-white text-black text-body-3 font-light rounded-[10px]">
-                      {msg.text}
-                    </span>
-                    {/* 제휴업체 카드 */}
-                    {msg.partners && msg.partners.length > 0 && (
-                      <div className="w-full">
-                        <div className="grid grid-cols-1 gap-2">
-                          {msg.partners.map((partner, partnerIdx) => (
-                            <div
-                              key={partnerIdx}
-                              className="bg-white rounded-[10px] p-3 shadow hover:shadow-md transition-shadow cursor-pointer"
-                              onClick={() => handlePartnerClick(partner.partnerName)}
-                            >
-                              <div className="flex items-center gap-3">
-                                <img
-                                  src={partner.imgUrl}
-                                  alt={partner.partnerName}
-                                  className="w-12 h-12 rounded-lg object-contain border border-grey02"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.src = '/images/thumbnail.png';
-                                  }}
-                                />
-                                <div className="flex-1">
-                                  <h4 className="text-body-2-bold text-grey05">
-                                    {partner.partnerName}
-                                  </h4>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-            {isBotLoading && (
-              <div className="flex justify-start items-center mt-2">
-                <img
-                  src="/images/main/mainCharacter.webp"
-                  alt="잇콩이"
-                  className="w-7 h-7 rounded-full border border-grey02 bg-white mr-2"
-                />
-                <div className="flex items-center justify-center px-4 py-2 max-w-[90%] break-words shadow bg-white text-black text-body-3 font-light rounded-[10px]">
-                  <LoadingSpinner className="mr-4 h-4 w-4 border-2 border-purple04 border-t-transparent" />
-                  <span className="text-center">답변을 준비 중이에요...</span>
+                  <span className="px-4 py-2 max-w-none break-words shadow bg-white text-black text-body-3 rounded-[10px]">
+                    {messages[0].text}
+                  </span>
                 </div>
               </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
+
+              {/* 예시 질문 버튼들 */}
+              <div className="ml-9 space-y-2">
+                <div className="text-body-4 text-grey04 mb-2">아래와 같이 질문해보세요 🐰</div>
+                {exampleQuestions.map((question, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleExampleClick(question)}
+                    className="block w-full text-left px-3 py-2 bg-white hover:bg-purple01 text-purple04 text-body-4 rounded-[10px] transition-colors"
+                  >
+                    {question}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="text-grey05 text-body-3 text-center py-10">
+              잇콩이에게 궁금한 점을 물어보세요!
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {messages.map((msg, idx) => {
+                // 사용자 메시지
+                if (msg.sender === 'user') {
+                  return (
+                    <div key={idx} className="flex justify-end">
+                      <div className="max-w-[90%]">
+                        <span className="px-4 py-2 break-words shadow bg-purple04 text-white text-body-3 font-light rounded-[10px]">
+                          {msg.text}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+
+                // 봇 메시지
+                return (
+                  <div key={idx} className="flex items-start gap-2">
+                    <img
+                      src="/images/main/mainCharacter.webp"
+                      alt="잇콩이"
+                      className="w-7 h-7 rounded-full border border-purple02 bg-white flex-shrink-0"
+                    />
+                    <div
+                      className="flex flex-col gap-2"
+                      style={{ maxWidth: 'calc(100% - 2.25rem)' }}
+                    >
+                      <span className="px-4 py-2 break-words shadow bg-white text-black text-body-3 font-light rounded-[10px]">
+                        {msg.text}
+                      </span>
+                      {/* 제휴업체 카드 */}
+                      {msg.partners && msg.partners.length > 0 && (
+                        <div className="w-full">
+                          <div className="grid grid-cols-1 gap-2">
+                            {msg.partners.map((partner, partnerIdx) => (
+                              <div
+                                key={partnerIdx}
+                                className="bg-white rounded-[10px] p-3 shadow hover:shadow-md transition-shadow cursor-pointer"
+                                onClick={() => handlePartnerClick(partner.partnerName)}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <img
+                                    src={partner.imgUrl}
+                                    alt={partner.partnerName}
+                                    className="w-12 h-12 rounded-lg object-contain border border-grey02"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.src = '/images/thumbnail.png';
+                                    }}
+                                  />
+                                  <div className="flex-1">
+                                    <h4 className="text-body-2-bold text-grey05">
+                                      {partner.partnerName}
+                                    </h4>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              {isBotLoading && (
+                <div className="flex justify-start items-center mt-2">
+                  <img
+                    src="/images/main/mainCharacter.webp"
+                    alt="잇콩이"
+                    className="w-7 h-7 rounded-full border border-grey02 bg-white mr-2"
+                  />
+                  <div className="flex items-center justify-center px-4 py-2 max-w-[90%] break-words shadow bg-white text-black text-body-3 font-light rounded-[10px]">
+                    <LoadingSpinner className="mr-4 h-4 w-4 border-2 border-purple04 border-t-transparent" />
+                    <span className="text-center">답변을 준비 중이에요...</span>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+        </div>
+        {/* 입력창 영역 */}
+        <div className="w-full px-5 pb-5 bg-white flex gap-2 items-center">
+          <input
+            type="text"
+            className="flex-1 rounded-[10px] px-4 mt-4 text-body-3 bg-grey01 focus:bg-white focus:outline-purple03"
+            style={{ height: '44px', minHeight: '44px' }}
+            placeholder="메시지를 입력하세요..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleInputKeyDown}
+          />
+          <button
+            className="bg-purple04 text-white px-5 mt-4 rounded-[10px] text-body-3 hover:bg-purple03 flex items-center justify-center"
+            style={{ height: '44px', minHeight: '44px', paddingTop: '0', paddingBottom: '0' }}
+            onClick={() => void handleSend()}
+          >
+            <TbSend size={22} />
+          </button>
+        </div>
       </div>
-      {/* 입력창 영역 */}
-      <div className="w-full px-5 pb-5 bg-white flex gap-2 items-center">
-        <input
-          type="text"
-          className="flex-1 rounded-[10px] px-4 mt-4 text-body-3 bg-grey01 focus:bg-white focus:outline-purple03"
-          style={{ height: '44px', minHeight: '44px' }}
-          placeholder="메시지를 입력하세요..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-        />
-        <button
-          className="bg-purple04 text-white px-5 mt-4 rounded-[10px] text-body-3 hover:bg-purple03 flex items-center justify-center"
-          style={{ height: '44px', minHeight: '44px', paddingTop: '0', paddingBottom: '0' }}
-          onClick={() => void handleSend()}
-        >
-          <TbSend size={22} />
-        </button>
-      </div>
-    </div>
+    </>,
+    document.body
   );
 };
 
