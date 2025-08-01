@@ -79,6 +79,9 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   );
   const [showAiStoreList, setShowAiStoreList] = useState(false);
 
+  // 채팅방 열림 상태 추가
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
     activeTab === 'favorites' ? selectedCategory : undefined
@@ -293,6 +296,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     setItplaceAiError(null);
   };
 
+  // 채팅방 상태 변경 핸들러
+  const handleChatStateChange = (isOpen: boolean) => {
+    setIsChatOpen(isOpen);
+  };
+
   // 탭별 다른 InfoBanner 메시지와 강조 텍스트
   const getBannerConfig = () => {
     switch (activeTab) {
@@ -308,8 +316,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       case 'ai':
         return {
-          message: '잇플님의 맞춤 잇플AI 추천을 보여드릴게요!',
-          highlightText: '맞춤 잇플AI 추천',
+          message: isChatOpen
+            ? '무엇이든 잇플AI에게 질문해보세요!'
+            : '잇플님의 맞춤 잇플AI 추천을 보여드릴게요!',
+          highlightText: isChatOpen ? '잇플AI' : '맞춤 잇플AI 추천',
         };
       default:
         return {
@@ -417,6 +427,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                     onSearchPartner={onSearchPartner}
                     onChangeTab={onActiveTabChange}
                     onBottomSheetReset={onBottomSheetReset}
+                    onChatStateChange={handleChatStateChange}
                   />
                 </div>
               )}

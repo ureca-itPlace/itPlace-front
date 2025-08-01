@@ -6,6 +6,7 @@ import { RecommendationItem } from '../../../types/api';
 import NoResult from '../../../../../components/NoResult';
 import { useAnimatedLoadingText } from '../../../hooks/useAnimatedLoadingText';
 import LoadingSpinner from '../../../../../components/LoadingSpinner';
+import { useResponsive } from '../../../../../hooks/useResponsive';
 
 interface RecommendStoreListProps {
   stores: RecommendationItem[];
@@ -16,6 +17,7 @@ interface RecommendStoreListProps {
   onSearchPartner?: (partnerName: string) => void;
   onChangeTab?: (tabId: string) => void;
   onBottomSheetReset?: () => void;
+  onChatStateChange?: (isOpen: boolean) => void;
 }
 
 const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
@@ -26,8 +28,10 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   onSearchPartner,
   onChangeTab,
   onBottomSheetReset,
+  onChatStateChange,
 }) => {
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
+  const { isMobile, isTablet } = useResponsive();
   // 채팅방 UI 상태
   const [isChatOpen, setIsChatOpen] = React.useState(false);
 
@@ -44,10 +48,12 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
   // 채팅방 열기/닫기 핸들러
   const handleChatOpen = () => {
     setIsChatOpen(true);
+    onChatStateChange?.(true);
   };
 
   const handleChatClose = () => {
     setIsChatOpen(false);
+    onChatStateChange?.(false);
   };
 
   // ...existing code...
@@ -231,12 +237,15 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
       ) : (
         <div className="space-y-3 max-md:space-y-3 px-5 max-md:px-4 max-sm:px-3">
           <div>
-            <button
-              className="w-[328px] h-[48px] bg-purple04 text-white rounded-[10px] px-4 flex items-center justify-center cursor-pointer font-bold shadow hover:bg-purple03 transition-colors mb-2 max-md:w-full max-md:h-[64px] max-md:px-3 max-sm:h-[35px] max-sm:px-2"
-              onClick={handleChatOpen}
-            >
-              잇플AI에게 질문하기
-            </button>
+            {/* 웹에서는 채팅방이 열려있을 때 질문하기 버튼 숨기기 */}
+            {!(isChatOpen && !isMobile && !isTablet) && (
+              <button
+                className="w-[328px] h-[48px] bg-purple04 text-white rounded-[10px] px-4 flex items-center justify-center cursor-pointer font-bold shadow hover:bg-purple03 transition-colors mb-2 max-md:w-full max-md:h-[64px] max-md:px-3 max-sm:h-[35px] max-sm:px-2"
+                onClick={handleChatOpen}
+              >
+                잇플AI에게 질문하기
+              </button>
+            )}
             {isChatOpen && (
               <ChatRoom
                 onClose={handleChatClose}
