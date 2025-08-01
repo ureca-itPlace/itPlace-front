@@ -345,8 +345,8 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
                 '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             }
           : {
-              height: '100%',
-              maxHeight: 'none',
+              height: '60vh',
+              maxHeight: '60vh',
               minHeight: '500px',
               overflow: 'hidden',
             }
