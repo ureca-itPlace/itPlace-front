@@ -29,9 +29,10 @@ export const getBenefitDetail = async (
   }
 };
 
-export const submitUsageAmount = (benefitId: number, amount: number) => {
+export const submitUsageAmount = (benefitId: number, amount: number, storeId: number) => {
   return api.post('/api/v1/membership-history/use', {
     benefitId,
     amount,
+    storeId,
   });
 };

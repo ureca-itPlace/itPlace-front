@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { renderToString } from 'react-dom/server';
 import { Platform, MapLocation } from '../../../types';
 import {
@@ -38,9 +38,36 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const markersRef = useRef<KakaoCustomOverlay[]>([]);
   const clustererRef = useRef<KakaoMarkerClusterer | null>(null);
   const debounceTimerRef = useRef<number | null>(null);
+  const isAnimatingRef = useRef<boolean>(false);
   const [userLocation, setUserLocation] = useState<MapLocation | null>(null);
   const [currentZoomLevel, setCurrentZoomLevel] = useState<number>(5);
   const [isMapInitialized, setIsMapInitialized] = useState<boolean>(false);
+  const [visiblePlatforms, setVisiblePlatforms] = useState<Platform[]>([]);
+
+  // Viewport 내 플랫폼 필터링 함수
+  const updateVisiblePlatforms = useCallback(() => {
+    // 애니메이션 중이면 업데이트 중단
+    if (isAnimatingRef.current || !mapRef.current || !platforms.length) {
+      return;
+    }
+
+    const bounds = mapRef.current.getBounds();
+    const filtered = platforms.filter((platform) => {
+      // 좌표가 없는 플랫폼은 제외
+      if (
+        !platform.latitude ||
+        !platform.longitude ||
+        platform.latitude === 0 ||
+        platform.longitude === 0
+      ) {
+        return false;
+      }
+
+      return bounds.contain(new window.kakao.maps.LatLng(platform.latitude, platform.longitude));
+    });
+
+    setVisiblePlatforms(filtered);
+  }, [platforms]);
 
   // 사용자 현재 위치 가져오기
   useEffect(() => {
@@ -154,28 +181,31 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         clustererRef.current = clusterer;
       }
 
-      // 줌 변경 이벤트 리스너
+      // 줌 시작 - 애니메이션 상태 시작
+      window.kakao.maps.event.addListener(map, 'zoom_start', () => {
+        isAnimatingRef.current = true;
+      });
+
+      // 줌 변경 완료 - 클러스터링 전환만 수행
       window.kakao.maps.event.addListener(map, 'zoom_changed', () => {
         const level = map.getLevel();
         setCurrentZoomLevel(level);
-        // 부모 컴포넌트에 맵 레벨 변경 알림
         onMapLevelChange?.(level);
+
+        // 애니메이션 완료 후 마커 업데이트
+        isAnimatingRef.current = false;
+        setTimeout(() => updateVisiblePlatforms(), 100);
       });
 
-      // 지도 드래그 시작 이벤트 (즉시 버튼 표시용)
+      // 드래그 시작 - 애니메이션 상태 시작
       window.kakao.maps.event.addListener(map, 'dragstart', () => {
-        if (onMapCenterChange) {
-          const center = map.getCenter();
-          const centerLocation: MapLocation = {
-            latitude: center.getLat(),
-            longitude: center.getLng(),
-          };
-          onMapCenterChange(centerLocation);
-        }
+        isAnimatingRef.current = true;
       });
 
-      // 지도 드래그 종료 이벤트 리스너 추가 (디바운싱 적용)
+      // 드래그 종료 - 애니메이션 완료 후 업데이트
       window.kakao.maps.event.addListener(map, 'dragend', () => {
+        isAnimatingRef.current = false;
+
         if (onMapCenterChange) {
           // 기존 타이머가 있으면 취소
           if (debounceTimerRef.current) {
@@ -190,7 +220,13 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
               longitude: center.getLng(),
             };
             onMapCenterChange(centerLocation);
-          }, 500);
+
+            // 드래그 완료 후 마커 업데이트
+            updateVisiblePlatforms();
+          }, 100);
+        } else {
+          // onMapCenterChange가 없어도 마커 업데이트
+          setTimeout(() => updateVisiblePlatforms(), 50);
         }
       });
 
@@ -219,7 +255,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       return () => clearInterval(checkKakaoMaps);
     }
-  }, [userLocation, onMapCenterChange, onMapLevelChange, isMapInitialized]);
+  }, [userLocation, onMapCenterChange, onMapLevelChange, isMapInitialized, updateVisiblePlatforms]);
+
+  // platforms 데이터가 변경되면 visiblePlatforms 업데이트
+  useEffect(() => {
+    updateVisiblePlatforms();
+  }, [platforms, updateVisiblePlatforms]);
 
   // 로드뷰 모드 클릭 이벤트 관리
   useEffect(() => {
@@ -255,9 +296,9 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     };
   }, [isRoadviewMode, onMapClick]);
 
-  // 플랫폼 마커 표시
+  // 마커 업데이트 useEffect
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || isAnimatingRef.current) return;
 
     // 기존 마커 제거
     if (clustererRef.current) {
@@ -266,17 +307,17 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
-    // 플랫폼이 없으면 마커 표시 안함
-    if (!platforms.length) {
-      return;
-    }
+    // 렌더링할 플랫폼 결정: visiblePlatforms가 있으면 사용, 없으면 전체 platforms 사용
+    const platformsToRender = visiblePlatforms.length > 0 ? visiblePlatforms : platforms;
+
+    if (platformsToRender.length === 0) return;
 
     const newMarkers: KakaoMarker[] = [];
 
     // 클러스터링 활성화 여부 확인
     const isClusteringActive = currentZoomLevel >= 7 && clustererRef.current;
 
-    platforms.forEach((platform) => {
+    platformsToRender.forEach((platform) => {
       // 좌표가 없는 가맹점은 마커 표시 안함
       if (
         !platform.latitude ||
@@ -336,7 +377,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     if (currentZoomLevel >= 7 && clustererRef.current && newMarkers.length > 0) {
       clustererRef.current.addMarkers(newMarkers);
     }
-  }, [platforms, onPlatformSelect, selectedPlatform, currentZoomLevel]);
+  }, [visiblePlatforms, platforms, selectedPlatform, currentZoomLevel, onPlatformSelect]);
 
   // 선택된 플랫폼으로 지도 중심 이동
   useEffect(() => {
@@ -371,4 +412,4 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   );
 };
 
-export default KakaoMap;
+export default React.memo(KakaoMap);
