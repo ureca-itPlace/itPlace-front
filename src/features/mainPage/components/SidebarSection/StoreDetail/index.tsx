@@ -41,6 +41,10 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       // 응답 코드가 BENEFIT_DETAIL_NOT_FOUND면 데이터 없음으로 처리
       if (res?.code === 'BENEFIT_DETAIL_NOT_FOUND') {
         setDetailData(null);
+        // 데이터가 없어도 초기 로드는 완료된 것으로 처리
+        if (isInitialLoadRef.current) {
+          setIsInitialLoad(false);
+        }
         return;
       }
 
@@ -49,6 +53,11 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       // API 응답에서 isFavorite 상태 업데이트
       if (res?.data?.isFavorite !== undefined) {
         setIsFavorite(res.data.isFavorite);
+      }
+
+      // 데이터 로드 성공 시 초기 로드 완료 처리
+      if (isInitialLoadRef.current) {
+        setIsInitialLoad(false);
       }
     } catch (e) {
       // 중복 호출 방지 에러는 100ms 후 재시도
@@ -79,12 +88,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
     initializeDetail();
   }, [platform.storeId, platform.partnerId]); // platform 변경 시에도 재로드
 
-  // 초기 로드 완료 감지 (nearby 패턴과 동일 - API 호출 완료 후 처리)
-  useEffect(() => {
-    if (detailData !== null && isInitialLoad) {
-      setIsInitialLoad(false);
-    }
-  }, [detailData, isInitialLoad]);
+  // 초기 로드 완료는 fetchDetail 함수에서 직접 처리
 
   // activeTab 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
@@ -128,6 +132,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       <div className="px-6 pb-2 mt-2 flex-shrink-0 max-md:px-4 max-md:pb-2 max-md:fixed max-md:bottom-0 max-md:w-full max-md:bg-white">
         <StoreDetailActionButton
           benefitId={detailData?.data?.benefitId}
+          storeId={platform.storeId}
           isFavorite={isFavorite}
           onFavoriteChange={handleFavoriteChange}
           partnerName={detailData?.data?.benefitName}

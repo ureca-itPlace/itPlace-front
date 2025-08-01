@@ -146,36 +146,35 @@ const StoreCard: React.FC<StoreCardProps> = ({ platform, onSelect }) => {
           </div>
 
           <div className="space-y-1 max-md:space-y-0.5">
-            {platform.benefits.length > 0 ? (
-              platform.benefits.map((benefit, benefitIndex) => {
-                const [grade, content] = benefit.split(': ');
+            {['VIP콕', 'BASIC', 'VIP', 'VVIP'].map((fixedGrade) => {
+              // 해당 등급의 혜택 찾기
+              const matchingBenefit = platform.benefits.find((benefit) => {
+                const [grade] = benefit.split(': ');
+                return grade.toUpperCase() === fixedGrade.toUpperCase();
+              });
 
-                return (
-                  <div
-                    key={benefitIndex}
-                    className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5"
+              const content = matchingBenefit ? matchingBenefit.split(': ')[1] : '-';
+              const displayGrade = getGradeDisplayName(fixedGrade);
+
+              return (
+                <div
+                  key={fixedGrade}
+                  className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5"
+                >
+                  <TbCheck size={16} className="text-grey04 max-md:w-4 max-md:h-4" />
+                  <span
+                    className={`text-body-4 max-md:text-body-5 ${isUserGrade(fixedGrade) && content !== '-' ? 'text-orange04 font-bold' : 'text-grey05'}`}
                   >
-                    <TbCheck size={16} className="text-grey04 max-md:w-4 max-md:h-4" />
-                    <span
-                      className={`text-body-4 max-md:text-body-5 ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
-                    >
-                      {getGradeDisplayName(grade)}
-                    </span>
-                    <span
-                      className={`text-body-4 max-md:text-body-5 truncate ${isUserGrade(grade) ? 'text-orange04 font-bold' : 'text-grey05'}`}
-                    >
-                      {content}
-                    </span>
-                  </div>
-                );
-              })
-            ) : (
-              <div className="grid grid-cols-[20px_60px_1fr] gap-2 items-center max-md:grid-cols-[16px_50px_1fr] max-md:gap-1.5">
-                <TbCheck size={16} className="text-grey04 max-md:w-4 max-md:h-4" />
-                <span className="text-body-4 text-grey05 max-md:text-body-5">혜택 정보가</span>
-                <span className="text-body-4 text-grey05 max-md:text-body-5">없습니다</span>
-              </div>
-            )}
+                    {displayGrade}
+                  </span>
+                  <span
+                    className={`text-body-4 max-md:text-body-5 truncate ${isUserGrade(fixedGrade) && content !== '-' ? 'text-orange04 font-bold' : 'text-grey05'}`}
+                  >
+                    {content}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

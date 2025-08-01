@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
+import useValidation from '../../hooks/UseValidation';
 
 type SignUpFormProps = {
   nameFromPhoneAuth: string;
@@ -40,6 +41,7 @@ const SignUpForm = ({
   });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { validateField } = useValidation();
 
   useEffect(() => {
     gsap.fromTo(
@@ -60,6 +62,16 @@ const SignUpForm = ({
 
   // 입력값 핸들링
   const handleChange = (field: keyof typeof formData, value: string) => {
+    // 생년월일 필드인 경우 검증 실행
+    if (field === 'birth') {
+      validateField('birth', value, {
+        email: '',
+        password: '',
+        passwordConfirm: '',
+        birth: value,
+      });
+    }
+
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 

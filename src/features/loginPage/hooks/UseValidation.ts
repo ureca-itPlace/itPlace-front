@@ -1,15 +1,18 @@
 import { useState, useCallback } from 'react';
+import { showToast } from '../../../utils/toast';
 
 type FormData = {
   email: string;
   password: string;
   passwordConfirm: string;
+  birth?: string;
 };
 
 type Errors = {
   email?: string;
   password?: string;
   passwordConfirm?: string;
+  birth?: string;
 };
 
 const useValidation = () => {
@@ -38,6 +41,27 @@ const useValidation = () => {
         if (!value) message = '비밀번호 확인을 입력해주세요.';
         else if (value !== formData.password) {
           message = '비밀번호가 일치하지 않습니다.';
+        }
+      }
+
+      if (field === 'birth' && value) {
+        const inputDate = new Date(value);
+        const today = new Date();
+
+        // 오늘 날짜인지 확인
+        if (inputDate.toDateString() === today.toDateString()) {
+          showToast('오늘은 선택이 불가능해요!', 'error');
+          message = '생년월일을 다시 확인해주세요.';
+        }
+        // 미래 날짜인지 확인
+        else if (inputDate > today) {
+          showToast('미래는 선택이 불가능해요!', 'error');
+          message = '생년월일을 다시 확인해주세요.';
+        }
+        // 너무 오래된 날짜인지 확인 (예: 1900년 이전)
+        else if (inputDate < new Date('1900-01-01')) {
+          showToast('생년월일을 다시 확인해주세요.', 'error');
+          message = '생년월일을 다시 확인해주세요.';
         }
       }
 
