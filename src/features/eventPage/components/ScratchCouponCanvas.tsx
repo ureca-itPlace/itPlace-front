@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as ScratchCardLib from 'scratchcard-js';
+import { useCallback } from 'react';
 
 const ScratchCard = ScratchCardLib.ScratchCard;
 const SCRATCH_TYPE = ScratchCardLib.SCRATCH_TYPE;
@@ -13,13 +14,11 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
   const scratchCardRef = useRef<InstanceType<typeof ScratchCard> | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  const initScratchCard = () => {
+  const initScratchCard = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // ✅ 기존 canvas 제거
     container.innerHTML = '';
-
     const width = container.offsetWidth;
     const height = container.offsetHeight;
 
@@ -28,7 +27,7 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
       containerWidth: width,
       containerHeight: height,
       imageForwardSrc: '/images/event/coupon-cover.webp',
-      clearZoneRadius: 20,
+      clearZoneRadius: 24,
       nPoints: 30,
       pointSize: 4,
       callback: onComplete,
@@ -39,17 +38,26 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
         scratchCardRef.current = sc;
       })
       .catch(console.error);
-  };
+  }, [onComplete]);
 
   useEffect(() => {
-    initScratchCard(); // ✅ 최초 mount 시 init
+    initScratchCard(); // 초기 mount 시 1번 실행
 
     const container = containerRef.current;
     if (!container) return;
 
-    // ✅ ResizeObserver로 크기 변경 감지 시 다시 초기화
+    // ✅ debounce timeout ref 정의
+    const debounceTimeoutRef = { current: null as number | null };
+
+    // ✅ ResizeObserver 내부에서 debounce 적용
     resizeObserverRef.current = new ResizeObserver(() => {
-      initScratchCard();
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+
+      debounceTimeoutRef.current = window.setTimeout(() => {
+        initScratchCard();
+      }, 300); // 300ms 동안 resize 안 들어오면 실행
     });
 
     resizeObserverRef.current.observe(container);
@@ -57,8 +65,11 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
     return () => {
       resizeObserverRef.current?.disconnect();
       scratchCardRef.current = null;
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current); // ✅ clean up도 필요
+      }
     };
-  }, [onComplete]);
+  }, [initScratchCard]);
 
   return (
     <div className="relative  w-full aspect-[1014/267] mt-6">
