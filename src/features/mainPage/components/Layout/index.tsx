@@ -619,10 +619,15 @@ const MainPageLayout: React.FC = () => {
                 searchQuery={searchQuery}
                 onMapCenterMove={handleMapCenterMove}
                 onBenefitDetailRequest={handleBenefitDetailRequest}
+                onShowSpeechBubble={handleShowSpeechBubble}
                 userCoords={userCoords}
                 onItplaceAiResults={handleItplaceAiResults}
                 onSearchPartner={handleKeywordSearch}
                 onBottomSheetReset={resetBottomSheet}
+                // 모바일 드래그 이벤트 핸들러들 추가
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               />
             </div>
           </div>

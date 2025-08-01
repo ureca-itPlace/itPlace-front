@@ -17,6 +17,7 @@ import { getFavoritesList } from '../../api/favoritesListApi';
 import { getItplaceAiStores } from '../../api/itplaceAiApi';
 import { StoreData } from '../../types/api';
 import { RootState } from '../../../../store';
+import { useResponsive } from '../../../../hooks/useResponsive';
 
 interface Tab {
   id: string;
@@ -42,6 +43,10 @@ interface SidebarSectionProps {
   onItplaceAiResults?: (results: Platform[], isShowing: boolean) => void;
   onSearchPartner?: (partnerName: string) => void;
   onBottomSheetReset?: () => void;
+  // 모바일 드래그 이벤트 핸들러들 추가
+  onTouchStart?: (e: React.TouchEvent) => void;
+  onTouchMove?: (e: React.TouchEvent) => void;
+  onTouchEnd?: () => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -63,8 +68,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onItplaceAiResults,
   onSearchPartner,
   onBottomSheetReset,
+  // 모바일 드래그 이벤트 핸들러들
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
 }) => {
   const user = useSelector((state: RootState) => state.auth.user);
+  const { isMobile, isTablet } = useResponsive();
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
@@ -341,7 +351,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         // 리스트 모드: 기존 UI
         <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] max-md:mx-0 max-md:w-full flex-1 min-h-0">
           {/* 검색 영역 - 데스크톱에서만 표시 */}
-          <div className="pb-8 flex-shrink-0">
+          <div
+            className="pb-8 flex-shrink-0 max-md:touch-manipulation"
+            // 모바일과 태블릿에서만 터치 이벤트 적용 (탭 및 헤더 영역)
+            onTouchStart={isMobile || isTablet ? onTouchStart : undefined}
+            onTouchMove={isMobile || isTablet ? onTouchMove : undefined}
+            onTouchEnd={isMobile || isTablet ? onTouchEnd : undefined}
+          >
             <div className="hidden md:block">
               <SearchSection
                 onSearchChange={handleSearchChange}
