@@ -8,7 +8,12 @@ const MobileLayout = () => {
 
   return (
     <div className="max-md:block hidden bg-white min-h-screen">
-      <main className={`${isAllBenefitsPage || isMainPage ? '' : 'px-5'} mt-[54px]`}>
+      <main
+        className={`
+          ${isMainPage ? '' : 'mt-[54px]'} 
+          ${isAllBenefitsPage || isMainPage ? '' : 'px-5'}
+        `}
+      >
         <Outlet />
       </main>
     </div>
