@@ -239,22 +239,23 @@ const HeroSection = () => {
   return (
     <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
       {/* 우주 토끼 섹션 */}
-      <div
-        ref={heroRef}
-        className="relative w-full h-full bg-no-repeat bg-cover bg-center pointer-events-none"
-        style={{
-          backgroundImage: `url(${bgImage})`,
-        }}
-      >
+      <div ref={heroRef} className="relative w-full h-full pointer-events-none">
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+          <img src={bgImage} alt="배경" loading="lazy" className="w-full h-full object-cover" />
+        </div>
         <img
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
+          alt="우주선 창문"
           className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center pointer-events-none"
+          loading="lazy"
         />
         <img
           ref={scrollArrowRef}
           src="/images/landing/hero/scroll-arrow.svg"
+          alt="스크롤 화살표"
           className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px]"
+          loading="lazy"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
