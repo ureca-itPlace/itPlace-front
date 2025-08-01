@@ -13,6 +13,7 @@ import NotFoundPage from '../pages/NotFoundPage';
 import OAuthRedirectHandler from '../features/loginPage/layouts/OAuthRedirectHandler';
 import PublicRoute from '../features/loginPage/layouts/PublicRoute'; // PublicRoute import
 import ScrollToTopHandler from '../pages/ScrollToTopHandler';
+import EventPage from '../pages/EventPage';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> }, // 기본 라우터
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
         ],
       },
       { path: '/benefits', element: <AllBenefitsPage /> },
-      { path: '/event', element: <div>이벤트 페이지입니다.</div> },
+      { path: '/event', element: <EventPage /> },
     ],
   },
 ]);

@@ -67,3 +67,21 @@
   height: 40px;
   z-index: 9999;
 }
+
+/* 스크롤바 커스텀 */
+/* 스크롤바 전체 영역 */
+.scrollArea {
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 6px;
+}
+.scrollArea::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollArea::-webkit-scrollbar-thumb {
+  background-color: #cdb5ff;
+  border-radius: 4px;
+}
+.scrollArea::-webkit-scrollbar-track {
+  background-color: transparent;
+}

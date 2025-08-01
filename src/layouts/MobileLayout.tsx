@@ -3,17 +3,11 @@ import { Outlet, useLocation } from 'react-router-dom';
 
 const MobileLayout = () => {
   const location = useLocation();
-  const isAllBenefitsPage = location.pathname === '/benefits';
-  const isMainPage = location.pathname === '/main';
+  const isNoMobileLayoutPage = location.pathname === '/benefits' || location.pathname === '/event';
 
   return (
     <div className="max-md:block hidden bg-white min-h-screen">
-      <main
-        className={`
-          ${isMainPage ? '' : 'mt-[54px]'} 
-          ${isAllBenefitsPage || isMainPage ? '' : 'px-5'}
-        `}
-      >
+      <main className={`${isNoMobileLayoutPage ? '' : 'px-5'} mt-[54px]`}>
         <Outlet />
       </main>
     </div>

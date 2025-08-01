@@ -73,7 +73,7 @@ export default function Header({ variant = 'default' }: { variant?: 'default' | 
         </div>
 
         {/* 메뉴들 */}
-        <nav className="flex-1 flex flex-col items-center gap-y-6">
+        <nav className="flex-1 flex flex-col items-center gap-y-6 max-xl:gap-y-3">
           {menus.map((m) => {
             const Icon = m.icon;
             const isActive =
