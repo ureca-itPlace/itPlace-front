@@ -241,14 +241,13 @@ const HeroSection = () => {
       {/* 우주 토끼 섹션 */}
       <div ref={heroRef} className="relative w-full h-full pointer-events-none">
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
-          <img src={bgImage} alt="배경" loading="lazy" className="w-full h-full object-cover" />
+          <img src={bgImage} alt="배경" className="w-full h-full object-cover" />
         </div>
         <img
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           alt="우주선 창문"
           className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center pointer-events-none"
-          loading="lazy"
         />
         <img
           ref={scrollArrowRef}
