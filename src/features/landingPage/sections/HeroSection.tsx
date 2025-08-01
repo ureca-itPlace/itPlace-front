@@ -218,7 +218,7 @@ const HeroSection = () => {
         <img
           ref={scrollArrowRef}
           src="/images/landing/hero/scroll-arrow.svg"
-          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 z-50 w-[50px] h-auto pointer-events-none"
+          className="absolute bottom-[10%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
