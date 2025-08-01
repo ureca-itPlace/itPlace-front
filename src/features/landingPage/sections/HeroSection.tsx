@@ -50,7 +50,7 @@ const HeroSection = () => {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=6000',
+          end: '+=7000',
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -94,18 +94,18 @@ const HeroSection = () => {
       // Hero 애니메이션
       tl.to(windowRef.current, {
         scale: 6.5,
-        duration: 3,
+        duration: 3.5,
         ease: 'power1.inOut',
       });
-      tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'power1.inOut' }, '<');
-      tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
-      tl.to(titleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
-      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '+=0.3');
+      tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, '<');
+      tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 3, ease: 'power1.out' });
+      tl.to(titleRef.current, { opacity: 1, y: 0, duration: 3, ease: 'power1.out' });
+      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 2.5, ease: 'sine.inOut' }, '+=0.3');
       tl.to(
         heroRef.current,
         {
           opacity: 0,
-          duration: 1.2,
+          duration: 2.5,
           ease: 'power1.inOut',
         },
         '+=0.2'
@@ -122,18 +122,18 @@ const HeroSection = () => {
         )
         .to(
           firstMapImageRef.current,
-          { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'none' },
+          { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'sine.out' },
           '+=2'
         )
         .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '>-0.5')
-        .to({}, { duration: 2 })
+        .to({}, { duration: 2.5 })
         .to(
           secondMapImageRef.current,
           { scale: 1.7, x: 80, opacity: 0, duration: 2, filter: 'blur(3px)' },
           '+=1.2'
         )
         .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '+=0.5')
-        .to({}, { duration: 2 })
+        .to({}, { duration: 2.5 })
         .to(
           thirdMapImageRef.current,
           { scale: 1.5, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
@@ -145,7 +145,8 @@ const HeroSection = () => {
           {
             opacity: 0,
             y: 60,
-            duration: 1,
+            duration: 2.5,
+            ease: 'power1.out',
           },
           '+=0.5'
         )
@@ -156,8 +157,8 @@ const HeroSection = () => {
             scale: 0.6,
             opacity: 0,
             transformOrigin: 'center center',
-            duration: 1.5,
-            ease: 'power2.in',
+            duration: 3,
+            ease: 'power1.inOut',
           },
           '+=1.5'
         )
@@ -166,7 +167,8 @@ const HeroSection = () => {
           {
             opacity: 0,
             y: -60,
-            duration: 1,
+            duration: 1.5,
+            ease: 'power1.out',
           },
           '+=0.5'
         )
@@ -176,8 +178,8 @@ const HeroSection = () => {
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
-            ease: 'power2.out',
+            duration: 1.5,
+            ease: 'power1.out',
           },
           '+=0.2'
         );
@@ -187,8 +189,8 @@ const HeroSection = () => {
           {
             y: '150vh',
             opacity: 0.8,
-            ease: 'power1.inOut',
-            duration: 5,
+            ease: 'sine.inOut',
+            duration: 7,
           },
           '<'
         );

@@ -138,7 +138,6 @@ const FeatureSection = () => {
         number={4}
         reverse
         imageSrc="/images/landing/feature/feature-4-web.webp"
-        hoverImageSrc="/images/landing/feature/feature-4-mobile-2.png"
         alt="기능 설명-4"
         title={
           <>

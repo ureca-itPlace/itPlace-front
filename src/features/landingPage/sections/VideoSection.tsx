@@ -58,7 +58,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=2600',
+        end: '+=3000',
         scrub: 0.8,
         pin: true,
         anticipatePin: 1,
@@ -69,8 +69,8 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
     tl.from(textRefs.current, {
       opacity: 0,
       y: 80,
-      duration: 2,
-      ease: 'power2.out',
+      duration: 3,
+      ease: 'power1.out',
       delay: 1,
       stagger: 0.2,
     });
@@ -83,7 +83,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
           x: idx % 2 === 0 ? (isMobile ? 1800 : 2400) : -(isMobile ? 2400 : isTablet ? 3200 : 3000),
           skewX: idx % 2 === 0 ? -20 : 20,
           duration: 7,
-          ease: 'power1.out',
+          ease: 'sine.out',
         },
         3.2 + idx * 0.2
       );
