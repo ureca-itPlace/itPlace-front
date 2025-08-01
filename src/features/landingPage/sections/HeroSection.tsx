@@ -35,10 +35,10 @@ const HeroSection = () => {
 
   const logos = [
     { name: 'gs25', top: 'top-[-5%]', left: 'left-[3%]', width: 'w-[14vw]' },
-    { name: 'cgv', top: 'top-[-5%]', left: 'left-[35%]', width: 'w-[14vw]' },
-    { name: 'baskin-robbins', top: 'top-[-5%]', left: 'left-[65%]', width: 'w-[6vw]' },
+    { name: 'cgv', top: 'top-[-20%]', left: 'left-[35%]', width: 'w-[14vw]' },
+    { name: 'baskin-robbins', top: 'top-[-23%]', left: 'left-[65%]', width: 'w-[6vw]' },
     { name: 'domino', top: 'top-[-5%]', left: 'left-[85%]', width: 'w-[14vw]' },
-    { name: 'megabox', top: 'top-[-15%]', left: 'left-[25%]', width: 'w-[14vw]' },
+    { name: 'megabox', top: 'top-[-40%]', left: 'left-[25%]', width: 'w-[14vw]' },
   ];
 
   useLayoutEffect(() => {
@@ -178,28 +178,23 @@ const HeroSection = () => {
             y: 0,
             duration: 1.2,
             ease: 'power2.out',
-            onComplete: () => {
-              // 스크롤 트리거 등록
-              benefitImagesRef.current.forEach((el, index) => {
-                gsap.to(el, {
-                  y: '150vh',
-                  opacity: 0.8,
-                  ease: 'power1.inOut',
-                  delay: index * 0.15,
-                  scrollTrigger: {
-                    trigger: benefitTextRef.current,
-                    start: 'top center+=100',
-                    end: '+=1200',
-                    scrub: 1,
-                  },
-                });
-              });
-            },
           },
           '+=0.2'
         );
+      benefitImagesRef.current.forEach((el) => {
+        tl.to(
+          el,
+          {
+            y: '150vh',
+            opacity: 0.8,
+            ease: 'power1.inOut',
+            duration: 5,
+          },
+          '<'
+        );
+      });
 
-      tl.to({}, { duration: 5.5 });
+      tl.to({}, { duration: 3 });
     }, wrapperRef);
 
     return () => ctx.revert();
