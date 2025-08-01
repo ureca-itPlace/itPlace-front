@@ -30,7 +30,7 @@ const HeroSection = () => {
   const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
   const bgImage = isSmallScreen
-    ? '/images/landing/hero/hero-bg-mobile.png'
+    ? '/images/landing/hero/hero-bg-mobile.webp'
     : '/images/landing/hero/hero-bg.webp';
 
   const logos = [

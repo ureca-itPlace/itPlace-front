@@ -25,6 +25,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         src="/images/landing/video/rocket-icon.webp"
         alt="로켓"
         className="inline-block h-[27vh] w-auto pb-4"
+        loading="lazy"
       />
       TOGETHER
     </>,
@@ -34,6 +35,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         src="/images/landing/video/location-icon.webp"
         alt="위치"
         className="inline-block h-[27vh] w-auto pb-4"
+        loading="lazy"
       />
       YOUR <span className="custom-font inline-block text-purple04 px-10">MEMBERSHIP</span>
     </>,
@@ -43,6 +45,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         src="/images/landing/video/tag-icon.webp"
         alt="태그"
         className="inline-block h-[27vh] w-auto pb-4 mx-1"
+        loading="lazy"
       />
     </>,
   ];
