@@ -34,11 +34,14 @@ const HeroSection = () => {
       : '/images/landing/hero/hero-bg.webp';
 
   const logos = [
-    { name: 'gs25', top: 'top-[-5%]', left: 'left-[3%]', width: 'w-[14vw]' },
-    { name: 'cgv', top: 'top-[-20%]', left: 'left-[35%]', width: 'w-[14vw]' },
-    { name: 'baskin-robbins', top: 'top-[-23%]', left: 'left-[65%]', width: 'w-[6vw]' },
-    { name: 'domino', top: 'top-[-5%]', left: 'left-[85%]', width: 'w-[14vw]' },
-    { name: 'megabox', top: 'top-[-40%]', left: 'left-[25%]', width: 'w-[14vw]' },
+    { name: 'gs25', top: 'top-[-5%]', left: 'left-[10%]', width: 'w-[14vw]' },
+    { name: 'baskin-robbins', top: 'top-[-20%]', left: 'left-[38%]', width: 'w-[8vw]' },
+    { name: 'uplus-tv', top: 'top-[-67%]', left: 'left-[4%]', width: 'w-[10vw]' },
+    { name: 'domino', top: 'top-[-5%]', left: 'left-[60%]', width: 'w-[20vw]' },
+    { name: 'ever-land', top: 'top-[-25%]', left: 'left-[80%]', width: 'w-[14vw]' },
+    { name: 'lotte-world', top: 'top-[-80%]', left: 'left-[50%]', width: 'w-[14vw]' },
+    { name: 'trip-com', top: 'top-[-80%]', left: 'left-[20%]', width: 'w-[14vw]' },
+    { name: 'shake-shack', top: 'top-[-80%]', left: 'left-[75%]', width: 'w-[20vw]' },
   ];
 
   useLayoutEffect(() => {
@@ -145,10 +148,10 @@ const HeroSection = () => {
           {
             opacity: 0,
             y: 60,
-            duration: 2.5,
+            duration: 2,
             ease: 'power1.out',
           },
-          '+=0.5'
+          '+=1.5'
         )
         .to(
           fourthMapImageRef.current, // 지도 사라짐
@@ -183,17 +186,30 @@ const HeroSection = () => {
           },
           '+=0.2'
         );
-      benefitImagesRef.current.forEach((el) => {
-        tl.to(
-          el,
-          {
-            y: '150vh',
-            opacity: 0.8,
-            ease: 'sine.inOut',
-            duration: 7,
-          },
-          '<'
-        );
+      const logoGroups = [
+        [0, 3], // gs25, domino
+        [1, 2], // cgv, baskin-robbins
+        [6], // megabox
+        [4], // ever-land
+        [5, 7], // lotte-world, trip-com
+      ];
+
+      logoGroups.forEach((group, groupIndex) => {
+        group.forEach((logoIndex) => {
+          const el = benefitImagesRef.current[logoIndex];
+          if (el) {
+            tl.to(
+              el,
+              {
+                y: '200vh',
+                opacity: 1,
+                ease: 'sine.out',
+                duration: 12,
+              },
+              `<+${groupIndex * 0.6}`
+            );
+          }
+        });
       });
 
       tl.to({}, { duration: 3 });
