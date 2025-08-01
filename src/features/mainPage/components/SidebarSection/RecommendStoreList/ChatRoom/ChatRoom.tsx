@@ -1,4 +1,5 @@
 import React from 'react';
+import { TbSend } from 'react-icons/tb';
 import LoadingSpinner from '../../../../../../components/LoadingSpinner';
 import { getRecommendation, RecommendationError } from '../../../../api/recommendChatApi';
 import { getCurrentLocation } from '../../../../api/storeApi';
@@ -465,11 +466,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
           onKeyDown={handleInputKeyDown}
         />
         <button
-          className="bg-purple04 text-white px-5 mt-4 rounded-[10px] text-body-3 hover:bg-purple03"
+          className="bg-purple04 text-white px-5 mt-4 rounded-[10px] text-body-3 hover:bg-purple03 flex items-center justify-center"
           style={{ height: '44px', minHeight: '44px', paddingTop: '0', paddingBottom: '0' }}
           onClick={() => void handleSend()}
         >
-          전송
+          <TbSend size={22} />
         </button>
       </div>
     </div>
