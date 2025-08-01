@@ -220,15 +220,15 @@ const HeroSection = () => {
               el,
               {
                 y: '200vh',
-                opacity: 1,
-                ease: 'sine.out',
-                duration: 12,
+                opacity: 0.8,
+                ease: 'sine.inOut',
+                duration: 7,
               },
-              `afterBenefits+=${0.5 + groupIndex * 0.6}`
+              `<+${groupIndex * 0.4}`
             );
           }
         });
-      }, '+=1.0');
+      });
 
       tl.to({}, { duration: 3 });
     }, wrapperRef);
