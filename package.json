@@ -33,6 +33,7 @@
     "react-redux": "^9.2.0",
     "react-responsive": "^10.0.1",
     "react-router-dom": "^7.6.3",
+    "react-scratchcard": "^1.1.2",
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.0",
     "redux-persist": "^6.0.0",
