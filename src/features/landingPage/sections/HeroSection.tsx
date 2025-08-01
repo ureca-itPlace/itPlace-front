@@ -80,13 +80,15 @@ const HeroSection = () => {
 
       gsap.set(benefitImagesRef.current, {
         y: '-150%',
-        opacity: 0,
+        opacity: 1,
       });
 
       gsap.to(scrollArrowRef.current, {
         y: -5,
         yoyo: true,
         repeat: -1,
+        duration: 1,
+        ease: 'sine.inOut',
       });
 
       // Hero 애니메이션
@@ -177,19 +179,20 @@ const HeroSection = () => {
             duration: 1.2,
             ease: 'power2.out',
             onComplete: () => {
-              // 이미지 애니메이션 자동 실행
+              // 스크롤 트리거 등록
               benefitImagesRef.current.forEach((el, index) => {
-                gsap.fromTo(
-                  el,
-                  { y: '-150%' },
-                  {
-                    y: '150vh',
-                    opacity: 1,
-                    duration: 3,
-                    ease: 'power3.out',
-                    delay: index * 0.1,
-                  }
-                );
+                gsap.to(el, {
+                  y: '150vh',
+                  opacity: 0.8,
+                  ease: 'power1.inOut',
+                  delay: index * 0.15,
+                  scrollTrigger: {
+                    trigger: benefitTextRef.current,
+                    start: 'top center+=100',
+                    end: '+=1200',
+                    scrub: 1,
+                  },
+                });
               });
             },
           },
