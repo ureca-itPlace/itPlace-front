@@ -201,36 +201,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
     setMessages((prev) => [...prev, { sender: 'user', text: question }]);
     setIsBotLoading(true);
 
-    // 더미 데이터로 테스트 (첫 번째 질문일 때만)
-    if (question === '근처 맛집 추천해줘') {
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            sender: 'bot',
-            text: '현재 위치 근처에서 추천하는 맛집들이에요! 아래 제휴업체들을 확인해보세요.',
-            partners: [
-              {
-                partnerName: '스타벅스',
-                imgUrl: '/images/admin/baskin.png',
-              },
-              {
-                partnerName: 'CGV',
-                imgUrl: '/images/admin/CGV.png',
-              },
-              {
-                partnerName: 'GS25',
-                imgUrl: '/images/admin/GS25.png',
-              },
-            ],
-          },
-        ]);
-        setIsBotLoading(false);
-        setInput('');
-      }, 1500);
-      return;
-    }
-
     try {
       // 현재 위치 가져오기 (실패 시 기본 위치 사용)
       let location;
