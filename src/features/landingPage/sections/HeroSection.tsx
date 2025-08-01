@@ -53,7 +53,7 @@ const HeroSection = () => {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=7000',
+          end: '+=7200',
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -166,6 +166,7 @@ const HeroSection = () => {
             y: 60,
             duration: 2,
             ease: 'power1.out',
+            delay: 1,
           },
           '+=1.5'
         )
@@ -187,7 +188,7 @@ const HeroSection = () => {
             opacity: 0,
             y: -60,
             duration: 1.5,
-            ease: 'power1.out',
+            ease: 'sine.out',
           },
           '+=0.5'
         )
@@ -198,10 +199,11 @@ const HeroSection = () => {
             opacity: 1,
             y: 0,
             duration: 1.5,
-            ease: 'power1.out',
+            ease: 'sine.out',
           },
-          '+=0.2'
-        );
+          '+=0.5'
+        )
+        .addLabel('afterBenefits');
       const logoGroups = [
         [0, 3], // gs25, domino
         [1, 2], // cgv, baskin-robbins
@@ -222,11 +224,11 @@ const HeroSection = () => {
                 ease: 'sine.out',
                 duration: 12,
               },
-              `<+${groupIndex * 0.6}`
+              `afterBenefits+=${0.5 + groupIndex * 0.6}`
             );
           }
         });
-      });
+      }, '+=1.0');
 
       tl.to({}, { duration: 3 });
     }, wrapperRef);
