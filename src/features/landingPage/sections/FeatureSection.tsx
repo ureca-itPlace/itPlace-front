@@ -90,21 +90,21 @@ const FeatureSection = () => {
     <section
       ref={featureSectionRef}
       data-theme="dark"
-      className="relative max-h-[400svh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
+      className="relative max-h-[500vh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
     >
       <img
-        src="/images/landing/wave.png"
+        src="/images/landing/feature/wave.png"
         alt="물결"
-        className="absolute top-0 left-0 w-full h-auto z-10"
+        className="absolute top-0 left-0 w-full h-auto z-10 pointer-events-none"
       />
       <FeatureItem
         number={1}
-        imageSrc="/images/landing/feature-1.webp"
+        imageSrc="/images/landing/feature/feature-1.webp"
         alt="기능설명-1"
         title={
           <>
-            내 주변의 모든 멤버십 혜택을 <span className="text-purple04">지도</span> 위에서 한눈에
-            확인하세요!
+            내 주변의 모든 멤버십 혜택을 <span className="text-purple04 font-bold">지도</span>{' '}
+            위에서 한눈에 확인하세요!
           </>
         }
         description="지도를 통해 주변에 있는 모든 제휴처의 멤버십 혜택을 간편하게 확인할 수 있어요. 원하는 혜택을 빠르게 찾고, 할인 정보와 제휴 내용을 쉽게 비교해보세요."
@@ -112,37 +112,52 @@ const FeatureSection = () => {
       <FeatureItem
         number={2}
         reverse
-        imageSrc="/images/landing/feature-2.webp"
+        imageSrc="/images/landing/feature/feature-2.webp"
         alt="기능설명-2"
         title={
           <>
-            내가 자주 쓰는 혜택을 <span className="text-purple04">AI</span>가 알아서 추천해줘요!
+            내가 자주 쓰는 혜택을 <span className="text-purple04 font-bold">AI</span>가 알아서
+            분석하고 추천해줘요!
           </>
         }
         description="사용 내역과 관심사를 AI가 분석하여 가장 적합한 혜택을 맞춤 추천해드립니다. 더 이상 어렵게 찾지 말고 나만을 위한 혜택을 빠르게 받아보세요."
       />
       <FeatureItem
         number={3}
-        imageSrc="/images/landing/feature-3.webp"
+        imageSrc="/images/landing/feature/feature-3.webp"
         alt="기능설명-3"
         title={
           <>
-            <span className="text-purple04">관심 있는 혜택</span>만 따로 모아 관리하세요!
+            <span className="text-purple04 font-bold">나만의 관심 혜택</span>을 한눈에 모아
+            스마트하게 관리하세요!
           </>
         }
-        description="관심 있는 제휴처 혜택을 저장하고 나만의 리스트를 만들어 관리할 수 있어요. 중요한 혜택을 놓치지 않도록 스마트하게 관리해보세요."
+        description="관심 있는 제휴처 혜택을 저장하고, 나만의 맞춤 리스트를 만들어 쉽게 관리할 수 있어요. 중요한 혜택을 놓치지 않도록 스마트하고 편리하게 관리해보세요."
       />
       <FeatureItem
         number={4}
         reverse
-        imageSrc="/images/landing/feature-4-web.webp"
+        imageSrc="/images/landing/feature/feature-4-web.webp"
         alt="기능 설명-4"
         title={
           <>
-            <span className="text-purple04">금액 입력</span>만으로 내 혜택을 정리해드려요!
+            간단한 <span className="text-purple04 font-bold">금액 입력</span>만으로 내가 받은 혜택을
+            자동으로 정리해드려요.
           </>
         }
         description="간단한 금액 입력만으로 제휴처에서 사용한 내역과 혜택 현황을 쉽게 조회할 수 있어요. 소비 패턴 분석과 맞춤형 혜택 관리까지 한 번에 가능합니다."
+      />
+      <FeatureItem
+        number={5}
+        imageSrc="/images/landing/feature/feature-5.webp"
+        alt="기능 설명-5"
+        title={
+          <>
+            지도를 자유롭게 탐험하면서 다양한 장소에 숨어 있는{' '}
+            <span className="text-purple04 font-bold">별</span>을 발견해보세요!
+          </>
+        }
+        description="별을 찾으면 즉시 발급되는 쿠폰을 스크래치하고 다양한 선물을 받아보세요. 누구나 쉽게 참여하고, 즐겁게 혜택을 누릴 수 있어요."
       />
     </section>
   );
