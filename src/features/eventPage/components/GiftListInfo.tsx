@@ -1,13 +1,23 @@
-//mockData
-const productList = [
-  'CU 편의점 모바일 상품권 5,000원권',
-  '스타벅스 아메리카노 T',
-  '이디야 커피 쿠폰',
-  'BHC 뿌링클 치킨',
-  '배스킨라빈스 파인트 아이스크림',
-];
+import { useEffect, useState } from 'react';
+import { fetchGiftList } from '../api/eventApi';
 
 const GiftListInfo = () => {
+  const [giftList, setGiftList] = useState<string[]>([]);
+
+  useEffect(() => {
+    const getGifts = async () => {
+      try {
+        const gifts = await fetchGiftList();
+        const names = gifts.map((gift: { giftName: string }) => gift.giftName);
+        setGiftList(names);
+      } catch (error) {
+        console.error('상품 리스트 조회 실패:', error);
+      }
+    };
+
+    getGifts();
+  }, []);
+
   return (
     <div
       className="bg-white rounded-[18px] p-9 max-xl:p-6 max-md:p-9 text-center h-full"
@@ -23,7 +33,7 @@ const GiftListInfo = () => {
       </p>
 
       <ul className="space-y-3 text-title-5 text-grey05 max-xl:text-title-8 max-sm:text-title-8 text-left inline-block">
-        {productList.map((item, index) => (
+        {giftList.map((item, index) => (
           <li key={index}>
             <span className="text-purple04 mr-5">{index + 1}</span>
             {item}
