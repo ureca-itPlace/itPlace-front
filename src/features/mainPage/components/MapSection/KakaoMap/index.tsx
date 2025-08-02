@@ -194,11 +194,13 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         setCurrentZoomLevel(level);
         onMapLevelChange?.(level);
 
-        // 애니메이션 완료 후 잠시 더 대기 (centerLocation 업데이트 방지)
+        // 즉시 마커 업데이트 실행 (성능 최적화)
+        updateVisiblePlatforms();
+
+        // 애니메이션 상태 해제는 더 짧은 딜레이로
         setTimeout(() => {
           isAnimatingRef.current = false;
           isZoomingRef.current = false;
-          updateVisiblePlatforms();
 
           // 줌 완료 후 SearchInMapButton 표시를 위한 onMapCenterChange 호출
           if (onMapCenterChange) {
@@ -209,7 +211,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
             };
             onMapCenterChange(centerLocation);
           }
-        }, 150);
+        }, 100);
       });
 
       // 드래그 시작 - 애니메이션 상태 시작
