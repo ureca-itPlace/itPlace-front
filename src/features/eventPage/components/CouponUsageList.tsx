@@ -1,7 +1,8 @@
 import CouponUsageItem from './CouponUsageItem';
+import { CouponHistory } from '../../../types/event';
 
 interface CouponUsagelistProps {
-  usageHistory: string[];
+  usageHistory: CouponHistory[];
   loaderRef: React.RefObject<HTMLLIElement | null>;
 }
 
@@ -18,17 +19,14 @@ const CouponUsageList = ({ usageHistory, loaderRef }: CouponUsagelistProps) => {
               max-md:max-h-[calc(100vh-560px)]
               scrollArea"
     >
-      {usageHistory.map((_, index) => {
-        const isWin = index % 3 === 0;
-        return (
-          <CouponUsageItem
-            key={index}
-            isWin={isWin}
-            message={isWin ? '[쿠쿠전자] 공기청정기' : '다음 기회를 노려보세요!'}
-            date={`2025-07-${(index + 1).toString().padStart(2, '0')}`}
-          />
-        );
-      })}
+      {usageHistory.map((item) => (
+        <CouponUsageItem
+          key={item.historyId}
+          isWin={item.result === 'SUCCESS'}
+          message={item.result === 'SUCCESS' ? item.giftName : '다음 기회를 노려보세요!'}
+          date={item.usedDate}
+        />
+      ))}
       <li ref={loaderRef}></li>
     </ul>
   );

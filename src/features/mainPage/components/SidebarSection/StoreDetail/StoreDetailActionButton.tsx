@@ -200,7 +200,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
               : isDistanceValid
                 ? isDesktop
                   ? '모바일에서 사용 가능해요!'
-                  : '혜택 사용 이력 등록'
+                  : '혜택 사용 이력 등록하기'
                 : '사용하기에 너무 멀어요'}
         </button>
       </div>
