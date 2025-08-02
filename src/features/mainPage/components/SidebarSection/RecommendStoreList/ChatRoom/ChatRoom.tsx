@@ -509,7 +509,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       {/* 채팅 초기화 확인 모달 */}
       {showClearConfirm && (
         <div className="absolute inset-0 flex items-center justify-center z-50 rounded-[18px]">
-          <div className="bg-white rounded-[12px] p-6 mx-4 max-w-sm w-full shadow-lg border border-grey02">
+          <div className="bg-white rounded-[12px] p-6 mx-4 max-w-xs w-full shadow-lg border border-grey02">
             <h3 className="text-title-6 text-grey05 mb-3 text-center">채팅 내용 초기화</h3>
             <p className="text-body-3 text-grey04 mb-6 text-center">
               모든 대화 내용이 삭제됩니다.
