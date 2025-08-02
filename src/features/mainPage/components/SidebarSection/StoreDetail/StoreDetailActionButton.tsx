@@ -8,7 +8,7 @@ import { submitUsageAmount } from '../../../api/benefitDetail';
 import { showToast } from '../../../../../utils/toast';
 import { formatNumberWithCommas, removeCommas } from '../../../utils/numberFormat';
 import Modal from '../../../../../components/Modal';
-import { tabAnimations } from '../../../../../utils/tabAnimation';
+import { actionAnimations } from '../../../../../utils/Animation';
 
 interface StoreDetailActionButtonProps {
   benefitId?: string;
@@ -58,7 +58,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     }
 
     if (heartButtonRef.current) {
-      tabAnimations.clickScale(heartButtonRef.current);
+      actionAnimations.clickScale(heartButtonRef.current);
     }
 
     setIsLoading(true);
