@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { TbX } from 'react-icons/tb';
+import { entranceAnimation } from '../utils/Animation';
 
 interface ButtonType {
   label: string;
@@ -22,6 +23,8 @@ interface ModalProps {
   buttons?: ButtonType[];
   children?: React.ReactNode;
   inputType?: string;
+  widthClass?: string;
+  animateOnOpen?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -38,8 +41,16 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   buttons = [],
   children,
+  widthClass,
+  animateOnOpen,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && animateOnOpen && modalRef.current) {
+      entranceAnimation.bounceToFront(modalRef.current);
+    }
+  }, [isOpen, animateOnOpen]);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -56,7 +67,7 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="relative w-[500px] bg-white rounded-[20px] shadow-xl p-10 flex flex-col items-center max-xl:w-[460px] max-xl:p-7 max-sm:p-5 max-sm:w-[calc(100%-40px)]"
+        className={`relative ${widthClass ?? 'w-full max-w-[500px]'} bg-white rounded-[20px] shadow-xl p-10 flex flex-col items-center max-sm:p-5`}
       >
         {/* 닫기 버튼 */}
         <button onClick={onClose} className="absolute top-5 right-5 text-grey03 hover:text-grey04">
