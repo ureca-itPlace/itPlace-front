@@ -122,7 +122,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
 
   const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed) return;
+    if (!trimmed || isBotLoading) return; // 로딩 중이면 전송 방지
 
     // 사용자 메시지 추가
     setMessages((prev) => [...prev, { sender: 'user', text: trimmed }]);
@@ -200,13 +200,14 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault(); // 기본 동작 방지
       void handleSend();
     }
   };
 
   // 예시 질문 버튼 클릭 처리 (바로 전송)
   const handleExampleClick = async (question: string) => {
-    setInput(question);
+    if (isBotLoading) return; // 로딩 중이면 실행 방지
 
     // 사용자 메시지 추가
     setMessages((prev) => [...prev, { sender: 'user', text: question }]);
@@ -278,7 +279,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       ]);
     } finally {
       setIsBotLoading(false);
-      setInput(''); // 입력창 초기화
     }
   };
 
