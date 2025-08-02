@@ -100,25 +100,71 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   React.useEffect(() => {
     // 컴포넌트 마운트 시 현재 스크롤 위치 저장
     const originalScrollY = window.scrollY;
+    
+    // 모바일에서만 body 스크롤 방지 (키보드로 인한 레이아웃 변화 방지)
+    if (isMobile) {
+      // 현재 body 스타일 저장
+      const originalBodyHeight = document.body.style.height;
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalBodyPosition = document.body.style.position;
+      
+      // body 스크롤 방지
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${originalScrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
 
-    // 모바일에서 바텀시트를 초기 상태로 리셋
-    if (onBottomSheetReset && window.innerWidth < 768) {
-      onBottomSheetReset();
+      // 바텀시트를 초기 상태로 리셋
+      if (onBottomSheetReset) {
+        onBottomSheetReset();
+      }
+
+      // 컴포넌트 언마운트 시 정리
+      return () => {
+        // body 스타일 복원
+        document.body.style.height = originalBodyHeight;
+        document.body.style.overflow = originalBodyOverflow;
+        document.body.style.position = originalBodyPosition;
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+
+        // 스크롤 위치 복원
+        requestAnimationFrame(() => {
+          window.scrollTo(0, originalScrollY);
+        });
+      };
+    } else {
+      // 모바일이 아닌 경우 바텀시트만 리셋
+      if (onBottomSheetReset) {
+        onBottomSheetReset();
+      }
     }
+  }, [onBottomSheetReset, isMobile]);
 
-    // 컴포넌트 언마운트 시 정리
-    return () => {
-      // body 스타일 초기화
-      document.body.style.height = '';
-      document.body.style.overflow = '';
-      document.body.style.position = '';
+  // 모바일 키보드 처리를 위한 추가 이펙트
+  React.useEffect(() => {
+    if (!isMobile) return;
 
-      // 스크롤 위치 복원 (더 확실하게)
-      requestAnimationFrame(() => {
-        window.scrollTo(0, originalScrollY);
-      });
+    const handleResize = () => {
+      // 키보드가 나타나거나 사라질 때의 처리
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
-  }, [onBottomSheetReset]);
+
+    // 초기 설정
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      document.documentElement.style.removeProperty('--vh');
+    };
+  }, [isMobile]);
 
   const handleSend = async () => {
     const trimmed = input.trim();
@@ -317,7 +363,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
               transform: 'translate(-50%, -50%)',
               width: '90vw',
               maxWidth: '400px',
-              height: '70vh',
+              height: 'calc(var(--vh, 1vh) * 70)',
               maxHeight: '600px',
               minHeight: '400px',
               overflow: 'hidden',
