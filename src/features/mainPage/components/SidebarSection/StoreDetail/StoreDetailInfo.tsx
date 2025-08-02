@@ -15,9 +15,9 @@ const StoreDetailInfo: React.FC<StoreDetailInfoProps> = ({
   postCode,
 }) => {
   return (
-    <div className="flex flex-col gap-3 text-body-3 text-grey05 mb-5 max-md:gap-2 max-md:text-body-4 max-md:mb-4">
+    <div className="flex flex-col gap-3 text-body-3 text-grey05 mb-5 max-xl:gap-2 max-xl:text-body-4 max-xl:mb-4">
       {roadAddress && (
-        <div className="flex items-start gap-2 max-md:gap-1.5">
+        <div className="flex items-start gap-2 max-xl:gap-1.5">
           <TbMapPin size={16} className="mt-[2px] flex-shrink-0 max-md:w-4 max-md:h-4" />
           <div className="flex flex-col min-w-0">
             <span className="text-grey06 max-md:text-body-5">{roadAddress}</span>

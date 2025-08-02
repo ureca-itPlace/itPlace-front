@@ -48,18 +48,18 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
         value={activeTab}
         onChange={setActiveTab}
         width="w-full"
-        fontSize="text-title-7"
+        fontSize="text-title-7 max-xl:text-title-8"
       />
 
       <div
-        className={`${detailData?.data?.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-md:mb-4' : ''}`}
+        className={`${detailData?.data?.tierBenefits && detailData.data.tierBenefits.length > 0 ? 'mb-6 max-xl:-mt-2 max-xl:mb-4' : ''}`}
       >
-        <h3 className="text-title-6 text-grey06 mb-2 max-md:text-title-7 max-md:mb-1.5">
+        <h3 className="text-title-6 text-grey06 mb-2 max-xl:text-title-7 max-xl:mb-1.5">
           상세 혜택
         </h3>
 
         {detailData?.data?.tierBenefits && detailData.data.tierBenefits.length > 0 ? (
-          <div className="space-y-1 max-md:space-y-0.5">
+          <div className="space-y-1 max-xl:space-y-0.5">
             {detailData.data.tierBenefits.map((b, i) => (
               <div
                 key={i}
@@ -67,14 +67,14 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
               >
                 <TbCheck size={20} className="text-grey04 max-md:w-4 max-md:h-4" />
                 <span
-                  className={`text-body-3 max-md:text-body-4 ${
+                  className={`text-body-3 max-xl:text-body-4 ${
                     isUserGrade(b.grade) ? 'text-orange04 font-bold' : 'text-grey05'
                   }`}
                 >
                   {getGradeDisplayName(b.grade)}
                 </span>
                 <span
-                  className={`text-body-3 max-md:text-body-4 ${
+                  className={`text-body-3 max-xl:text-body-4 ${
                     isUserGrade(b.grade) ? 'text-orange04 font-bold' : 'text-grey05'
                   }`}
                 >
@@ -97,7 +97,7 @@ const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
 
         {/* 구분선 - 혜택이 있을 때만 표시 */}
         {detailData?.data?.tierBenefits && detailData.data.tierBenefits.length > 0 && (
-          <div className="border-b border-grey03 w-full mt-4 max-md:mt-3" />
+          <div className="border-b border-grey03 w-full mt-4 max-xl:mt-3" />
         )}
       </div>
     </>

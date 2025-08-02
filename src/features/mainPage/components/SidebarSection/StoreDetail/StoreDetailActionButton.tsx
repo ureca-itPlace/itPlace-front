@@ -149,7 +149,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       <div className="flex gap-2 max-md:mt-2">
         {/* 하트 버튼 */}
         <button
-          className={`w-12 h-12 rounded-lg border-2 flex items-center justify-center transition-colors max-md:w-12 max-md:h-12 md:w-14 md:h-14 ${
+          className={`w-12 h-12 max-xl:w-10 max-xl:h-10 rounded-lg border-2 flex items-center justify-center transition-colors max-md:w-12 max-md:h-12 md:w-14 md:h-14 ${
             isFavorite
               ? 'border-purple04 bg-purple04/10'
               : isLoggedIn
@@ -174,7 +174,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
 
         {/* 사용 금액 입력하기 버튼 */}
         <button
-          className={`flex-1 py-3 text-body-3-bold rounded-lg transition-colors max-md:text-body-3-bold md:text-body-2-bold max-md:py-3 md:py-3 ${
+          className={`flex-1 py-3 text-body-3-bold rounded-lg transition-colors max-xl:py-2 max-xl:text-body-3-bold md:text-body-2-bold max-md:py-3 md:py-3 ${
             !isDesktop && isDistanceValid && isLoggedIn && benefitId
               ? 'bg-purple04 hover:bg-purple05 text-white'
               : 'bg-grey03 text-grey04 cursor-not-allowed'
