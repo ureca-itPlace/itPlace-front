@@ -53,12 +53,12 @@ export const entranceAnimation = {
   bounceIn: (element: HTMLElement): gsap.core.Tween => {
     return gsap.fromTo(
       element,
-      { y: -50, opacity: 0 },
+      { y: -30, opacity: 0 },
       {
         y: 0,
         opacity: 1,
         duration: 1,
-        ease: 'back.out(1.7)',
+        ease: 'back.out(2.5)',
       }
     );
   },
