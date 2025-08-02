@@ -8,11 +8,13 @@ const TipBanner: React.FC = () => {
   return (
     <section
       className={`bg-grey01 ${
-        isMobile ? 'p-5 gap-2 mb-1' : 'mb-8 items-start gap-2 rounded-[10px] p-6 flex'
+        isMobile
+          ? 'p-5 gap-2 mb-1'
+          : 'mb-8 items-start gap-2 rounded-[10px] p-6 flex max-xl:mb-6 max-xl:p-5 max-xlg:flex-col max-md:hidden'
       }`}
     >
       {/* 아이콘 + Tip 텍스트 */}
-      <div className={`flex ${isMobile ? 'flex-row' : ''}`}>
+      <div className={`flex ${isMobile ? 'flex-row' : 'mt-2'}`}>
         <BiSolidMegaphone
           className={`text-purple04 mr-2 animate-floating ${
             isMobile ? 'text-title-4 max-sm:text-title-5' : 'text-title-5'
@@ -33,10 +35,8 @@ const TipBanner: React.FC = () => {
           isMobile ? 'text-body-2 max-sm:text-body-4' : 'text-body-0 max-xl:text-body-1'
         }`}
       >
-        멤버십 혜택 사용 후, 사용 내역을 기록하면 행운의 스크래치 쿠폰을 얻을 수 있어요!
-        <br className="hidden max-md:block" />
-        지금 바로 <span className="text-purple04 font-medium">잇플맵에서 혜택을 기록</span>해보세요
-        🐰
+        멤버십 혜택 사용 후, 사용 내역을 기록하면 행운의 스크래치 쿠폰을 얻을 수 있어요! 지금 바로{' '}
+        <span className="text-purple04 font-medium">잇플맵에서 혜택을 기록</span>해보세요 🐰
       </p>
     </section>
   );
