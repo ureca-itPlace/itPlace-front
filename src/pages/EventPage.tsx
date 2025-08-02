@@ -22,16 +22,11 @@ import NoResult from '../components/NoResult';
 
 export default function EventPage() {
   const [isLoading, setIsLoading] = useState(false);
-  // ✅ 사용자 정보
   const username = useSelector((state: RootState) => state.auth.user?.name || '');
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
-
-  // ✅ 무한 스크롤용 상태
   const [page, setPage] = useState(1);
   const size = 6;
   const [hasMore, setHasMore] = useState(true);
-
-  // ✅ 로컬 상태
   const [couponCount, setCouponCount] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [modalInfo, setModalInfo] = useState<{
@@ -59,26 +54,21 @@ export default function EventPage() {
     try {
       const data = await fetchCouponHistory(onlySuccess ? 'SUCCESS' : undefined);
       const sliced = data.slice(0, page * size);
-
       setHistoryList(sliced);
-
-      if (sliced.length >= data.length) {
-        setHasMore(false);
-      }
+      if (sliced.length >= data.length) setHasMore(false);
     } catch (err) {
       console.error('이력 조회 실패:', err);
+    } finally {
+      setIsLoading(false);
     }
   }, [onlySuccess, page]);
 
-  // ✅ 필터 바뀌거나 로그인 상태 바뀌면 page 초기화
   useEffect(() => {
     if (!isLoggedIn) return;
-
     setPage(1);
     setHasMore(true);
   }, [onlySuccess, isLoggedIn]);
 
-  // ✅ 진입 시 데이터 로딩
   useEffect(() => {
     if (!isLoggedIn) return;
     getCouponCount();
@@ -93,7 +83,6 @@ export default function EventPage() {
 
     try {
       const result = await postScratchCoupon();
-
       if (result.success) {
         setModalInfo({
           isWin: true,
@@ -103,22 +92,14 @@ export default function EventPage() {
       } else {
         setModalInfo({ isWin: false });
       }
-
       setShowResult(true);
-
-      // ✅ 긁은 직후, 쿠폰 개수와 히스토리 강제 갱신
       await getCouponCount();
-
-      // ✅ 페이지 초기화 → 최신 히스토리 1페이지만 보여주기
       setPage(1);
       setHasMore(true);
-
       const data = await fetchCouponHistory(onlySuccess ? 'SUCCESS' : undefined);
       const sliced = data.slice(0, size);
       setHistoryList(sliced);
-      if (sliced.length >= data.length) {
-        setHasMore(false);
-      }
+      if (sliced.length >= data.length) setHasMore(false);
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       const message = axiosError?.response?.data?.message ?? '쿠폰 긁기에 실패했습니다.';
@@ -126,22 +107,17 @@ export default function EventPage() {
     }
   };
 
-  // ✅ loader가 보이면 page를 1 증가시키는 무한스크롤 로직
   useEffect(() => {
     if (!isLoggedIn || !hasMore) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((prev) => prev + 1);
-        }
+        if (entries[0].isIntersecting) setPage((prev) => prev + 1);
       },
       { threshold: 1.0 }
     );
 
     const target = loader.current;
     if (target) observer.observe(target);
-
     return () => {
       if (target) observer.unobserve(target);
     };
@@ -150,105 +126,100 @@ export default function EventPage() {
   return (
     <>
       {isMobile && (
-        <div className="fixed top-0 left-0 w-full z-[9999] max-md:block">
-          <MobileHeader title="이벤트" />
-        </div>
-      )}
-
-      <main className="px-[28px] py-7 max-md:px-5 min-h-screen flex flex-col">
-        {!isMobile && <TipBanner />}
-
-        <div className="flex-1 flex gap-11 max-xl:gap-6 max-xlg:flex-col max-md:gap-8">
-          <div className="flex-1 flex flex-col gap-8 max-xl:gap-6 max-w-[1080px]">
-            {/* ✅ 긁기 영역 */}
-            <section
-              className="bg-[#ECFBE6] rounded-[18px] px-7 py-6 max-xl:py-4 max-md:mb-7"
-              style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
-            >
-              <picture className="max-md:mx-auto">
-                <source srcSet="/images/event/coupon-title.webp" type="image/webp" />
-                <img src="/images/event/coupon-title.png" alt="쿠폰 타이틀" loading="lazy" />
-              </picture>
-              <ScratchCouponCanvas
-                onComplete={handleScratchComplete}
-                isLoggedIn={isLoggedIn}
-                couponCount={couponCount}
-              />
-            </section>
-
-            <section className="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-xl:gap-6 flex-1 max-md:gap-7">
-              <OwnedCouponCountInfo couponCount={couponCount} />
-              <GiftListInfo />
-            </section>
+        <>
+          <div className="fixed top-0 left-0 w-full z-[9999] max-md:block">
+            <MobileHeader title="이벤트" />
           </div>
+          <TipBanner />
+        </>
+      )}
+      <main className="flex justify-center items-center min-h-screen bg-white px-[28px] py-7 max-md:px-5">
+        <div className="w-full max-w-[1783px] flex flex-col justify-center h-full">
+          {!isMobile && <TipBanner />}
 
-          {/* ✅ 이력 영역 */}
-          <aside
-            className="rounded-[18px] max-w-[666px] w-full max-xlg:max-w-none shrink-0 max-md:w-full"
-            style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
-          >
-            <section className="bg-white rounded-[18px] p-7 h-full flex flex-col">
-              <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-xl:font-semibold max-md:font-semibold max-sm:font-semibold max-md:text-title-4 max-sm:text-title-7">
-                나의 쿠폰 사용 내역
-              </h3>
-              <div className="flex justify-end mt-8">
-                <label className="text-body-1 text-grey05 max-sm:text-body-3">
-                  <input
-                    type="checkbox"
-                    className="mr-2"
-                    checked={onlySuccess}
-                    onChange={(e) => setOnlySuccess(e.target.checked)}
-                  />
-                  당첨 내역만 모아보기
-                </label>
-              </div>
+          <div className="flex gap-11 max-xl:gap-6 max-xlg:flex-col max-md:gap-8">
+            {/* 왼쪽 */}
+            <div className="flex-1 flex flex-col gap-8 max-xl:gap-6 max-w-[1080px]">
+              <section
+                className="bg-[#ECFBE6] rounded-[18px] px-7 py-6 max-xl:py-4 max-md:mb-7"
+                style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
+              >
+                <picture className="max-md:mx-auto">
+                  <source srcSet="/images/event/coupon-title.webp" type="image/webp" />
+                  <img src="/images/event/coupon-title.png" alt="쿠폰 타이틀" loading="lazy" />
+                </picture>
+                <ScratchCouponCanvas
+                  onComplete={handleScratchComplete}
+                  isLoggedIn={isLoggedIn}
+                  couponCount={couponCount}
+                />
+              </section>
+              <section className="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-xl:gap-6 flex-1 max-md:gap-7">
+                <OwnedCouponCountInfo couponCount={couponCount} />
+                <GiftListInfo />
+              </section>
+            </div>
 
-              <div className="flex-1 mt-24 max-lg:mt-12">
-                {!isLoggedIn ? (
-                  <NoResult
-                    message1="로그인 후 확인할 수 있어요!"
-                    message2="로그인하고 행운의 스크래치 쿠폰을 긁어보세요."
-                    buttonText="로그인하기"
-                    buttonRoute="/login"
-                    isLoginRequired
-                    message1FontSize="max-xl:text-title-6"
-                    message2FontSize="max-xl:text-body-3"
-                  />
-                ) : historyList.length === 0 ? (
-                  <NoResult
-                    message1="앗! 내역을 찾을 수 없어요!"
-                    message2="지도에서 별을 찾아 행운 쿠폰을 긁어보세요."
-                    message1FontSize="max-xl:text-title-6"
-                    message2FontSize="max-xl:text-body-3"
-                  />
-                ) : (
-                  <CouponUsageList
-                    usageHistory={historyList}
-                    loaderRef={hasMore ? loader : undefined} // ✅ 더 이상 로드할 게 없으면 null
-                    isLoading={isLoading}
-                  />
-                )}
-              </div>
-            </section>
-          </aside>
+            {/* 오른쪽 */}
+            <aside className="max-w-[666px] max-h-[779px] max-xlg:max-w-none shrink-0 max-md:w-full flex flex-col">
+              <section
+                className="bg-white rounded-[18px] p-7 flex-1 flex flex-col h-full"
+                style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
+              >
+                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-md:text-title-4">
+                  나의 쿠폰 사용 내역
+                </h3>
+                <div className="flex justify-end mt-8">
+                  <label className="text-body-1 text-grey05 max-sm:text-body-3">
+                    <input
+                      type="checkbox"
+                      className="mr-2"
+                      checked={onlySuccess}
+                      onChange={(e) => setOnlySuccess(e.target.checked)}
+                    />
+                    당첨 내역만 모아보기
+                  </label>
+                </div>
+                <div className="flex-1 mt-12 overflow-y-auto">
+                  {!isLoggedIn ? (
+                    <NoResult
+                      message1="로그인 후 확인할 수 있어요!"
+                      message2="로그인하고 행운의 스크래치 쿠폰을 긁어보세요."
+                      buttonText="로그인하기"
+                      buttonRoute="/login"
+                      isLoginRequired
+                    />
+                  ) : historyList.length === 0 ? (
+                    <NoResult
+                      message1="앗! 내역을 찾을 수 없어요!"
+                      message2="지도에서 별을 찾아 행운 쿠폰을 긁어보세요."
+                    />
+                  ) : (
+                    <CouponUsageList
+                      usageHistory={historyList}
+                      loaderRef={hasMore ? loader : undefined}
+                      isLoading={isLoading}
+                    />
+                  )}
+                </div>
+              </section>
+            </aside>
+          </div>
         </div>
 
-        {/* ✅ 결과 모달 */}
-        {showResult && modalInfo && (
-          <>
-            {modalInfo.isWin ? (
-              <WinModal
-                isOpen={showResult}
-                onClose={() => setShowResult(false)}
-                username={username}
-                giftName={modalInfo.giftName!}
-                productImageUrl={modalInfo.giftImageUrl!}
-              />
-            ) : (
-              <FailModal isOpen={showResult} onClose={() => setShowResult(false)} />
-            )}
-          </>
-        )}
+        {showResult &&
+          modalInfo &&
+          (modalInfo.isWin ? (
+            <WinModal
+              isOpen={showResult}
+              onClose={() => setShowResult(false)}
+              username={username}
+              giftName={modalInfo.giftName!}
+              productImageUrl={modalInfo.giftImageUrl!}
+            />
+          ) : (
+            <FailModal isOpen={showResult} onClose={() => setShowResult(false)} />
+          ))}
       </main>
     </>
   );

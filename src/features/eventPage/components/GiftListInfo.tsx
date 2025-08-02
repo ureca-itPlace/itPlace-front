@@ -20,7 +20,7 @@ const GiftListInfo = () => {
 
   return (
     <div
-      className="bg-white rounded-[18px] p-9 max-h-[370px] max-xl:p-6 max-md:p-9 text-center h-full"
+      className="bg-white rounded-[18px] p-9 max-xl:p-6 max-md:p-9 text-center h-full"
       style={{
         boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)',
       }}
