@@ -3,6 +3,11 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import api from '../../apis/axiosInstance';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 import MyPageContentLayout from '../../features/myPage/layout/MyPageContentLayout';
 import Pagination from '../../components/Pagination';
@@ -241,7 +246,10 @@ export default function MyHistoryPage() {
                               {item.discountAmount.toLocaleString()}원
                             </span>
                             <span className="text-grey05 text-body-1 px-4 font-light max-xl:text-body-3 max-xl:font-light max-xl:px-3 max-xlg:text-body-5 max-lg:text-body-4">
-                              {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
+                              {dayjs
+                                .utc(item.usedAt)
+                                .tz('Asia/Seoul')
+                                .format('YYYY-MM-DD HH:mm:ss')}
                             </span>
                           </div>
                         </div>
