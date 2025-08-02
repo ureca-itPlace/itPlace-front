@@ -176,7 +176,7 @@ export default function EventPage() {
                 className="bg-white rounded-[18px] p-7 flex-1 flex flex-col h-full"
                 style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
               >
-                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-md:text-title-4">
+                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-xl:font-semibold max-md:text-title-4 max-md:font-semibold max-sm:font-semibold max-sm:text-title-7">
                   나의 쿠폰 사용 내역
                 </h3>
                 <div className="flex justify-end mt-8">
