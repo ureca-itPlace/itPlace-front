@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { BiSolidMegaphone } from 'react-icons/bi';
 import ScratchCouponCanvas from '../features/eventPage/components/ScratchCouponCanvas';
-import { Modal } from '../components';
 import MobileHeader from '../components/MobileHeader';
+// import WinModal from '../features/eventPage/components/Modal/WinModal';
+// import FailModal from '../features/eventPage/components/Modal/FailModal';
+// import { useSelector } from 'react-redux';
+// import { RootState } from '../store';
 
 export default function EventPage() {
   const [showResult, setShowResult] = useState(false);
   const [isWinner, setIsWinner] = useState<boolean | null>(null);
   const [usageHistory, setUsageHistory] = useState<string[]>(Array(10).fill(''));
   const loader = useRef(null);
+  // const username = useSelector((state: RootState) => state.auth.user?.name || '');
 
   const handleScratchComplete = () => {
     const win = Math.random() > 0.5;
@@ -235,18 +239,22 @@ export default function EventPage() {
           </aside>
         </div>
 
-        {/* ✅ 결과 모달 */}
-        {showResult && (
-          <Modal
-            isOpen={showResult}
-            onClose={() => setShowResult(false)}
-            title={isWinner ? '🎉 당첨!' : '😢 꽝!'}
-            message={
-              isWinner ? 'W8200 타워형 공기청정기에 당첨되셨습니다!' : '다음 기회를 노려보세요!'
-            }
-            buttons={[{ label: '확인', onClick: () => setShowResult(false) }]}
-          />
-        )}
+        {/* ✅ 결과 모달 api 연결 후 주석 해제 */}
+        {/* {showResult && (
+          <>
+            {isWinner ? (
+              <WinModal
+                isOpen={showResult}
+                onClose={() => setShowResult(false)}
+                username={username}
+                giftName={giftName}
+                productImageUrl={giftImageUrl}
+              />
+            ) : (
+              <FailModal isOpen={showResult} onClose={() => setShowResult(false)} />
+            )}
+          </>
+        )} */}
       </main>
     </>
   );
