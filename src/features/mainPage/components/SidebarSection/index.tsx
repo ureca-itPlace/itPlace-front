@@ -66,7 +66,6 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onShowSpeechBubble,
   userCoords,
   onItplaceAiResults,
-  onSearchPartner,
   onBottomSheetReset,
   // 모바일 드래그 이벤트 핸들러들
   onTouchStart,
@@ -266,6 +265,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           benefits: item.tierBenefit.map((benefit) => `${benefit.grade}: ${benefit.context}`),
           rating: 0, // API에서 제공하지 않으므로 기본값
           distance: item.distance,
+          hasCoupon: item.store.hasCoupon,
           imageUrl: item.partner.image,
         }));
 
