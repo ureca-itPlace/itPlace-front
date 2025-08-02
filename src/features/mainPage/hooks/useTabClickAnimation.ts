@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { tabAnimations } from '../../../utils/tabAnimation';
+import { actionAnimations } from '../../../utils/Animation';
 
 interface UseTabClickAnimationProps {
   tabRefs: { current: { [key: string]: HTMLButtonElement | null } };
@@ -16,7 +16,7 @@ export const useTabClickAnimation = ({ tabRefs, onTabChange }: UseTabClickAnimat
       const tabElement = tabRefs.current[tabId];
       if (tabElement) {
         requestAnimationFrame(() => {
-          tabAnimations.clickScale(tabElement);
+          actionAnimations.clickScale(tabElement);
         });
       }
     },

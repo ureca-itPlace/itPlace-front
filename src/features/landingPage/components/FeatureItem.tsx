@@ -29,6 +29,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({
           src={imageSrc}
           alt={alt}
           className="feature-image w-auto h-auto max-h-[80vh] object-contain"
+          loading="lazy"
         />
       </div>
 

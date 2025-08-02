@@ -30,14 +30,14 @@ const HeroSection = () => {
   const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
   const bgImage = isSmallScreen
-    ? '/images/landing/hero/hero-bg-mobile.png'
+    ? '/images/landing/hero/hero-bg-mobile.webp'
     : '/images/landing/hero/hero-bg.webp';
 
   const logos = [
-    { name: 'gs25', top: 'top-[-5%]', left: 'left-[10%]', width: 'w-[14vw]' },
+    { name: 'gs25', top: 'top-[-10%]', left: 'left-[10%]', width: 'w-[14vw]' },
     { name: 'baskin-robbins', top: 'top-[-20%]', left: 'left-[38%]', width: 'w-[8vw]' },
     { name: 'uplus-tv', top: 'top-[-67%]', left: 'left-[4%]', width: 'w-[10vw]' },
-    { name: 'domino', top: 'top-[-5%]', left: 'left-[60%]', width: 'w-[20vw]' },
+    { name: 'domino', top: 'top-[-10%]', left: 'left-[60%]', width: 'w-[20vw]' },
     { name: 'ever-land', top: 'top-[-25%]', left: 'left-[80%]', width: 'w-[14vw]' },
     { name: 'lotte-world', top: 'top-[-80%]', left: 'left-[50%]', width: 'w-[14vw]' },
     { name: 'trip-com', top: 'top-[-80%]', left: 'left-[20%]', width: 'w-[14vw]' },
@@ -220,15 +220,15 @@ const HeroSection = () => {
               el,
               {
                 y: '200vh',
-                opacity: 1,
-                ease: 'sine.out',
-                duration: 12,
+                opacity: 0.8,
+                ease: 'sine.inOut',
+                duration: 10,
               },
-              `afterBenefits+=${0.5 + groupIndex * 0.6}`
+              `<+${groupIndex * 0.4}`
             );
           }
         });
-      }, '+=1.0');
+      });
 
       tl.to({}, { duration: 3 });
     }, wrapperRef);
@@ -239,22 +239,22 @@ const HeroSection = () => {
   return (
     <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
       {/* 우주 토끼 섹션 */}
-      <div
-        ref={heroRef}
-        className="relative w-full h-full bg-no-repeat bg-cover bg-center pointer-events-none"
-        style={{
-          backgroundImage: `url(${bgImage})`,
-        }}
-      >
+      <div ref={heroRef} className="relative w-full h-full pointer-events-none">
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+          <img src={bgImage} alt="배경" className="w-full h-full object-cover" />
+        </div>
         <img
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
+          alt="우주선 창문"
           className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <img
           ref={scrollArrowRef}
           src="/images/landing/hero/scroll-arrow.svg"
+          alt="스크롤 화살표"
           className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px]"
+          loading="lazy"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
