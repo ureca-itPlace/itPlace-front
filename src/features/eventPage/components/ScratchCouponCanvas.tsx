@@ -1,15 +1,21 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import * as ScratchCardLib from 'scratchcard-js';
-import { useCallback } from 'react';
+import { showToast } from '../../../utils/toast';
 
 const ScratchCard = ScratchCardLib.ScratchCard;
 const SCRATCH_TYPE = ScratchCardLib.SCRATCH_TYPE;
 
 interface ScratchCouponCanvasProps {
   onComplete: () => void;
+  isLoggedIn: boolean;
+  couponCount: number | null;
 }
 
-export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasProps) {
+export default function ScratchCouponCanvas({
+  onComplete,
+  isLoggedIn,
+  couponCount,
+}: ScratchCouponCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scratchCardRef = useRef<InstanceType<typeof ScratchCard> | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
@@ -18,11 +24,11 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
     const container = containerRef.current;
     if (!container) return;
 
-    container.innerHTML = '';
+    container.innerHTML = ''; // 초기화
     const width = container.offsetWidth;
     const height = container.offsetHeight;
 
-    // ✅ 화면 너비 기준으로 반지름 다르게 설정
+    const isUserAllowed = isLoggedIn && !!couponCount && couponCount > 0;
     const clearZoneRadius = window.innerWidth < 768 ? 8 : 24;
 
     const sc = new ScratchCard('#scratch-canvas', {
@@ -33,34 +39,47 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
       clearZoneRadius,
       nPoints: 30,
       pointSize: 4,
-      callback: onComplete,
+      callback: () => {
+        if (isUserAllowed) {
+          onComplete();
+        }
+      },
     });
 
     sc.init()
       .then(() => {
         scratchCardRef.current = sc;
+
+        // ❌ 긁기 권한 없음 → canvas 클릭 시 토스트만
+        if (!isUserAllowed) {
+          const canvasEl = sc.canvas;
+          canvasEl.style.pointerEvents = 'none';
+          container.style.cursor = 'not-allowed';
+
+          container.onclick = () => {
+            showToast(
+              !isLoggedIn ? '로그인 후 이용해주세요!' : '쿠폰이 부족합니다. 별을 모아보세요!',
+              'error'
+            );
+          };
+        }
       })
       .catch(console.error);
-  }, [onComplete]);
+  }, [onComplete, isLoggedIn, couponCount]);
 
   useEffect(() => {
-    initScratchCard(); // 초기 mount 시 1번 실행
+    initScratchCard();
 
     const container = containerRef.current;
     if (!container) return;
 
-    // ✅ debounce timeout ref 정의
     const debounceTimeoutRef = { current: null as number | null };
 
-    // ✅ ResizeObserver 내부에서 debounce 적용
     resizeObserverRef.current = new ResizeObserver(() => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
       debounceTimeoutRef.current = window.setTimeout(() => {
         initScratchCard();
-      }, 300); // 300ms 동안 resize 안 들어오면 실행
+      }, 300);
     });
 
     resizeObserverRef.current.observe(container);
@@ -68,15 +87,13 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
     return () => {
       resizeObserverRef.current?.disconnect();
       scratchCardRef.current = null;
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current); // ✅ clean up도 필요
-      }
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
     };
   }, [initScratchCard]);
 
   return (
-    <div className="relative  w-full aspect-[1014/267] mt-6">
-      {/* ✅ 아래: 쿠폰 베이스 이미지 */}
+    <div className="relative w-full aspect-[1014/267] mt-6">
+      {/* ✅ 쿠폰 아래 이미지 */}
       <picture>
         <source srcSet="/images/event/coupon-main.webp" type="image/webp" />
         <img
@@ -86,7 +103,7 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
         />
       </picture>
 
-      {/* ✅ 위에 긁는 캔버스 (DOM 하나만) */}
+      {/* ✅ 긁는 캔버스 (스크래치 영역) */}
       <div
         id="scratch-canvas"
         ref={containerRef}
