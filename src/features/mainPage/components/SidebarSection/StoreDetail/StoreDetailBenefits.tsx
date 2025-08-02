@@ -10,6 +10,7 @@ interface StoreDetailBenefitsProps {
   activeTab: 'default' | 'vipkok';
   setActiveTab: (tab: 'default' | 'vipkok') => void;
   detailData: BenefitDetailResponse | null;
+  isLoading?: boolean;
 }
 
 const StoreDetailBenefits: React.FC<StoreDetailBenefitsProps> = ({
