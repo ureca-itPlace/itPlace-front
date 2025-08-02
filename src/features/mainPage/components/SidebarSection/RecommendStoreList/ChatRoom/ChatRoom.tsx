@@ -294,7 +294,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   // 채팅방 JSX 컴포넌트
   const chatRoomContent = (
     <div
-      className={`bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center ${
+      className={`bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center z-[9999] ${
         isMobile || isTablet ? '' : 'h-full'
       }`}
       style={
@@ -310,7 +310,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
               maxHeight: '600px',
               minHeight: '400px',
               overflow: 'hidden',
-              zIndex: 1000,
+              zIndex: 9999,
               boxShadow:
                 '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             }
