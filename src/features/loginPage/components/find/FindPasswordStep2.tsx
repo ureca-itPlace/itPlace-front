@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import AuthButton from '../common/AuthButton';
 import ErrorMessage from '../common/ErrorMessage';
 import AuthFooter from '../common/AuthFooter';
-import useValidation from '../../hooks/UseValidation';
+import useValidation from '../../hooks/useValidation';
 import { resetPassword } from '../../apis/user';
 import { showToast } from '../../../../utils/toast';
 import PasswordInputForm from '../common/PasswordInputForm';

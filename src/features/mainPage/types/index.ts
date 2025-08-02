@@ -17,6 +17,7 @@ export interface Platform {
   benefits: string[];
   rating: number;
   distance: number;
+  hasCoupon: boolean;
   imageUrl?: string;
   phone?: string;
   hours?: string;

@@ -7,6 +7,7 @@ import StoreDetailInfo from './StoreDetailInfo';
 import StoreDetailBenefits from './StoreDetailBenefits';
 import StoreDetailUsageGuide from './StoreDetailUsageGuide';
 import StoreDetailActionButton from './StoreDetailActionButton';
+import LoadingSpinner from '../../../../../components/LoadingSpinner';
 
 interface StoreDetailCardProps {
   platform: Platform;
@@ -17,6 +18,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   const [activeTab, setActiveTab] = useState<'default' | 'vipkok'>('default');
   const [detailData, setDetailData] = useState<BenefitDetailResponse | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // platform 참조를 ref로 저장 (의존성 배열 최적화)
   const platformRef = useRef(platform);
@@ -30,6 +32,11 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
   const fetchDetail = useCallback(async () => {
     const category = activeTab === 'vipkok' ? 'VIP_COCK' : 'BASIC_BENEFIT';
     const currentPlatform = platformRef.current;
+
+    // 로딩 시작 (탭 변경 시에만, 초기 로드는 이미 true)
+    if (!isInitialLoadRef.current) {
+      setIsLoading(true);
+    }
 
     try {
       const res = await getBenefitDetail({
@@ -45,6 +52,8 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
         if (isInitialLoadRef.current) {
           setIsInitialLoad(false);
         }
+        // 로딩 완료
+        setIsLoading(false);
         return;
       }
 
@@ -59,6 +68,9 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       if (isInitialLoadRef.current) {
         setIsInitialLoad(false);
       }
+
+      // 로딩 완료
+      setIsLoading(false);
     } catch (e) {
       // 중복 호출 방지 에러는 100ms 후 재시도
       if (e instanceof Error && e.message === 'Duplicate request prevented') {
@@ -72,6 +84,9 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
       if (isInitialLoadRef.current) {
         setIsInitialLoad(false);
       }
+
+      // 로딩 완료
+      setIsLoading(false);
     }
   }, [activeTab]);
 
@@ -81,6 +96,9 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
 
   // platform 변경 시 데이터 로드
   useEffect(() => {
+    // platform 변경 시 로딩 상태 초기화
+    setIsLoading(true);
+
     const initializeDetail = () => {
       fetchDetailRef.current();
     };
@@ -118,14 +136,21 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           detailData={detailData}
+          isLoading={isLoading}
         />
       </div>
 
-      {/* 스크롤 영역 - 이용 방법만 */}
+      {/* 스크롤 영역 - 이용 방법만 또는 로딩 스피너 */}
       <div
         className={`flex-1 overflow-y-auto pb-6 max-md:pb-24 max-md:overflow-y-visible ${detailData?.data?.manual ? 'px-6 max-md:px-4' : ''}`}
       >
-        <StoreDetailUsageGuide detailData={detailData} />
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <LoadingSpinner className="h-12 w-12 border-4 border-purple04 border-t-transparent" />
+          </div>
+        ) : (
+          <StoreDetailUsageGuide detailData={detailData} />
+        )}
       </div>
 
       {/* 고정 버튼 */}

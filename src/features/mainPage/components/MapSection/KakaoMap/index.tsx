@@ -122,7 +122,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         const clusterer = new window.kakao.maps.MarkerClusterer({
           map: map,
           averageCenter: true,
-          minLevel: 7, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
+          minLevel: 6, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
           disableClickZoom: false,
           styles: [
             {
@@ -300,23 +300,26 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   useEffect(() => {
     if (!mapRef.current || isAnimatingRef.current) return;
 
-    // 기존 마커 제거
-    if (clustererRef.current) {
-      clustererRef.current.clear();
-    }
-    markersRef.current.forEach((marker) => marker.setMap(null));
-    markersRef.current = [];
-
     // 렌더링할 플랫폼 결정: visiblePlatforms가 있으면 사용, 없으면 전체 platforms 사용
     const platformsToRender = visiblePlatforms.length > 0 ? visiblePlatforms : platforms;
 
-    if (platformsToRender.length === 0) return;
+    if (platformsToRender.length === 0) {
+      // 데이터가 없으면 기존 마커만 제거
+      if (clustererRef.current) {
+        clustererRef.current.clear();
+      }
+      markersRef.current.forEach((marker) => marker.setMap(null));
+      markersRef.current = [];
+      return;
+    }
 
     const newMarkers: KakaoMarker[] = [];
+    const newCustomOverlays: KakaoCustomOverlay[] = [];
 
     // 클러스터링 활성화 여부 확인
-    const isClusteringActive = currentZoomLevel >= 7 && clustererRef.current;
+    const isClusteringActive = currentZoomLevel >= 6 && clustererRef.current;
 
+    // 새로운 마커들을 먼저 생성
     platformsToRender.forEach((platform) => {
       // 좌표가 없는 가맹점은 마커 표시 안함
       if (
@@ -349,7 +352,12 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
         // React 컴포넌트를 HTML로 렌더링
         const markerHTML = renderToString(
-          <CustomMarker imageUrl={platform.imageUrl} name={platform.name} isSelected={isSelected} />
+          <CustomMarker
+            imageUrl={platform.imageUrl}
+            name={platform.name}
+            isSelected={isSelected}
+            hasCoupon={platform.hasCoupon}
+          />
         );
 
         // 개별 커스텀 마커 표시
@@ -368,14 +376,36 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         });
 
         customOverlay.setContent(markerElement);
-        customOverlay.setMap(mapRef.current);
-        markersRef.current.push(customOverlay);
+        newCustomOverlays.push(customOverlay);
       }
     });
 
-    // 클러스터링 적용
-    if (currentZoomLevel >= 7 && clustererRef.current && newMarkers.length > 0) {
-      clustererRef.current.addMarkers(newMarkers);
+    // 기존 마커 제거와 새 마커 추가를 동시에 처리
+    if (isClusteringActive) {
+      // 클러스터링 모드: 커스텀 오버레이 제거 후 클러스터 마커 추가
+      markersRef.current.forEach((marker) => marker.setMap(null));
+      markersRef.current = [];
+
+      if (clustererRef.current) {
+        clustererRef.current.clear();
+        if (newMarkers.length > 0) {
+          clustererRef.current.addMarkers(newMarkers);
+        }
+      }
+    } else {
+      // 커스텀 마커 모드: 클러스터 제거 후 커스텀 오버레이 추가
+      if (clustererRef.current) {
+        clustererRef.current.clear();
+      }
+
+      markersRef.current.forEach((marker) => marker.setMap(null));
+      markersRef.current = [];
+
+      // 새로운 커스텀 오버레이들을 지도에 추가
+      newCustomOverlays.forEach((overlay) => {
+        overlay.setMap(mapRef.current);
+      });
+      markersRef.current = newCustomOverlays;
     }
   }, [visiblePlatforms, platforms, selectedPlatform, currentZoomLevel, onPlatformSelect]);
 

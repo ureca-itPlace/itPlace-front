@@ -6,7 +6,7 @@ import { showToast } from '../../../../utils/toast';
 import AuthButton from '../common/AuthButton';
 import EmailVerificationBox from '../verification/EmailVerificationBox';
 import AuthFooter from '../common/AuthFooter';
-import useValidation from '../../hooks/UseValidation';
+import useValidation from '../../hooks/useValidation';
 import { signUpFinal } from '../../apis/user';
 import { signUpWithOAuthLink } from '../../apis/auth';
 import PasswordInputForm from '../common/PasswordInputForm';

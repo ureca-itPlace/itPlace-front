@@ -27,6 +27,7 @@ export interface Store {
   postCode: string;
   latitude: number;
   longitude: number;
+  hasCoupon: boolean;
 }
 
 export interface Partner {

@@ -40,6 +40,7 @@ export const convertStoreDataToPlatform = (storeData: StoreData): Platform | nul
     benefits: benefits,
     rating: 4.5,
     distance: distance, // API에서 제공하는 거리 값 사용
+    hasCoupon: store.hasCoupon,
     imageUrl: partner.image,
   };
 };
@@ -74,6 +75,7 @@ export const createPlatformWithoutCoords = (storeData: StoreData): Platform => {
     benefits: benefits,
     rating: 4.5,
     distance: distance, // API에서 제공하는 거리 값 사용
+    hasCoupon: store.hasCoupon,
     imageUrl: partner.image,
   };
 };
