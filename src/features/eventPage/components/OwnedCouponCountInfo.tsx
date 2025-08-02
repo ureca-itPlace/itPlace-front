@@ -1,6 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchCouponCount } from '../api/eventApi';
 
 const OwnedCouponCount = () => {
+  const [couponCount, setCouponCount] = useState<number>(0);
+
+  useEffect(() => {
+    const getCouponCount = async () => {
+      try {
+        const count = await fetchCouponCount();
+        setCouponCount(count);
+      } catch (err) {
+        console.error('쿠폰 개수 조회 실패:', err);
+      }
+    };
+
+    getCouponCount();
+  }, []);
   return (
     <div
       className="bg-white -mb-2 rounded-[18px] p-9 max-xl:p-6 text-center h-full"
@@ -24,7 +39,7 @@ const OwnedCouponCount = () => {
           />
         </picture>
         <div className="absolute top-[50%] text-[48px] font-bold max-xl:text-[42px] max-xl:font-bold max-sm:text-[38px] max-sm:font-bold text-white">
-          3개
+          {couponCount}개
         </div>
       </div>
     </div>
