@@ -161,12 +161,12 @@ export default function EventPage() {
             </div>
 
             {/* 오른쪽 */}
-            <aside className="max-w-[666px] max-h-[779px] max-xlg:max-w-none shrink-0 max-md:w-full flex flex-col">
+            <aside className="max-w-[666px] max-h-[779px] max-xlg:max-w-none max-xl:max-h-[580px] shrink-0 max-md:w-full flex flex-col">
               <section
                 className="bg-white rounded-[18px] p-7 flex-1 flex flex-col h-full"
                 style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
               >
-                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-md:text-title-4">
+                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-xl:font-semibold max-md:font-semibold max-sm:font-semibold max-md:text-title-4 max-sm:text-title-7">
                   나의 쿠폰 사용 내역
                 </h3>
                 <div className="flex justify-end mt-8">

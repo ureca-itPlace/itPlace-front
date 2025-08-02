@@ -17,8 +17,8 @@ const CouponUsageList = ({ usageHistory, loaderRef, isLoading }: CouponUsagelist
               pr-1
               max-h-[calc(100vh-360px)]
               max-xl:max-h-[calc(100vh-310px)]
-              max-xlg:max-h-[calc(100vh-760px)]
-              max-md:max-h-[calc(100vh-560px)]
+              max-xlg:max-h-[calc(100vh-360px)]
+              max-md:max-h-[calc(100vh-460px)]
               scrollArea"
     >
       {usageHistory.map((item) => (
