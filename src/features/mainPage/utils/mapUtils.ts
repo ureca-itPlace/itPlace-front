@@ -13,7 +13,7 @@ export const getRadiusByMapLevel = (mapLevel: number): number => {
   const radiusMap: { [key: number]: number } = {
     1: 300, // 최대 확대 - 500m
     2: 600, // 0.1km (기본값)
-    3: 1000, // 0.2km
+    3: 1500, // 0.2km
     4: 3000, // 0.3km
     5: 5000, // 0.5km
     6: 7000, // 0.7km
