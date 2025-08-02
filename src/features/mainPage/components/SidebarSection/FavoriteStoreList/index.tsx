@@ -4,6 +4,7 @@ import { TbChevronRight } from 'react-icons/tb';
 import { FavoriteBenefit } from '../../../types/api';
 import { RootState } from '../../../../../store';
 import NoResult from '../../../../../components/NoResult';
+import LoadingSpinner from '../../../../../components/LoadingSpinner';
 
 interface FavoriteStoreListProps {
   favorites: FavoriteBenefit[];
@@ -21,12 +22,9 @@ const FavoriteStoreList: React.FC<FavoriteStoreListProps> = ({
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
   if (isLoading) {
     return (
-      <div className="space-y-2 max-md:space-y-1.5 max-sm:space-y-1">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <div key={index} className="px-5 max-md:px-4 max-sm:px-3">
-            <div className="w-[330px] h-[60px] bg-grey02 rounded-[10px] animate-pulse max-md:w-auto max-md:h-[50px] max-sm:h-[45px]" />
-          </div>
-        ))}
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0 max-md:min-h-56">
+        <LoadingSpinner className="h-12 w-12 border-4 border-purple04 border-t-transparent" />
+        <p className="mt-4 text-body-4 text-grey04">관심 혜택을 불러오는 중...</p>
       </div>
     );
   }

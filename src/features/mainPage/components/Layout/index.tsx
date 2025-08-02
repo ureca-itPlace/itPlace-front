@@ -26,7 +26,7 @@ const MainPageLayout: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false); // 사이드바 접힘 상태
 
   // 바텀시트 상태 관리
-  const MIN_HEIGHT = 90;
+  const MIN_HEIGHT = 150;
   const [bottomSheetHeight, setBottomSheetHeight] = useState<number>(MIN_HEIGHT); // 바텀시트 높이
   const [isDragging, setIsDragging] = useState<boolean>(false); // 드래그 상태
   const [startY, setStartY] = useState<number>(0); // 드래그 시작 Y 좌표
@@ -51,6 +51,11 @@ const MainPageLayout: React.FC = () => {
     },
     [getMaxHeight]
   );
+
+  // 바텀시트를 초기 상태로 리셋하는 함수
+  const resetBottomSheet = useCallback(() => {
+    animateTo(MIN_HEIGHT);
+  }, [animateTo, MIN_HEIGHT]);
 
   // 말풍선 상태
   const [speechBubble, setSpeechBubble] = useState<{
@@ -414,6 +419,7 @@ const MainPageLayout: React.FC = () => {
               userCoords={userCoords}
               onItplaceAiResults={handleItplaceAiResults}
               onSearchPartner={handleKeywordSearch}
+              onBottomSheetReset={resetBottomSheet}
             />
           </div>
         </div>
@@ -519,7 +525,7 @@ const MainPageLayout: React.FC = () => {
       </div>
 
       {/* 모바일 레이아웃 */}
-      <div className="flex md:hidden flex-col h-screen bg-grey01">
+      <div className="flex md:hidden flex-col h-screen bg-grey01 overflow-hidden">
         {/* 토스트 컨테이너 z-index 조정 */}
         <style>
           {`
@@ -544,7 +550,7 @@ const MainPageLayout: React.FC = () => {
         </div>
 
         {/* 지도 - 전체 화면 */}
-        <div className="flex-1 relative">
+        <div className="absolute inset-0">
           <MapSection
             platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
@@ -613,9 +619,15 @@ const MainPageLayout: React.FC = () => {
                 searchQuery={searchQuery}
                 onMapCenterMove={handleMapCenterMove}
                 onBenefitDetailRequest={handleBenefitDetailRequest}
+                onShowSpeechBubble={handleShowSpeechBubble}
                 userCoords={userCoords}
                 onItplaceAiResults={handleItplaceAiResults}
                 onSearchPartner={handleKeywordSearch}
+                onBottomSheetReset={resetBottomSheet}
+                // 모바일 드래그 이벤트 핸들러들 추가
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               />
             </div>
           </div>

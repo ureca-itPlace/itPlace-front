@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { Platform } from '../../types';
 import { FavoriteBenefit, RecommendationItem } from '../../types/api';
 import { CATEGORIES } from '../../constants';
@@ -15,6 +16,8 @@ import { getRecommendations } from '../../api/recommendationApi';
 import { getFavoritesList } from '../../api/favoritesListApi';
 import { getItplaceAiStores } from '../../api/itplaceAiApi';
 import { StoreData } from '../../types/api';
+import { RootState } from '../../../../store';
+import { useResponsive } from '../../../../hooks/useResponsive';
 
 interface Tab {
   id: string;
@@ -39,6 +42,11 @@ interface SidebarSectionProps {
   userCoords?: { lat: number; lng: number } | null;
   onItplaceAiResults?: (results: Platform[], isShowing: boolean) => void;
   onSearchPartner?: (partnerName: string) => void;
+  onBottomSheetReset?: () => void;
+  // 모바일 드래그 이벤트 핸들러들 추가
+  onTouchStart?: (e: React.TouchEvent) => void;
+  onTouchMove?: (e: React.TouchEvent) => void;
+  onTouchEnd?: () => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
@@ -58,7 +66,15 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   onShowSpeechBubble,
   userCoords,
   onItplaceAiResults,
+  onSearchPartner,
+  onBottomSheetReset,
+  // 모바일 드래그 이벤트 핸들러들
+  onTouchStart,
+  onTouchMove,
+  onTouchEnd,
 }) => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { isMobile, isTablet } = useResponsive();
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [selectedCategory, setSelectedCategory] = useState('전체');
 
@@ -75,6 +91,9 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     null
   );
   const [showAiStoreList, setShowAiStoreList] = useState(false);
+
+  // 채팅방 열림 상태 추가
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // 즐겨찾기 데이터 관리 (관심 혜택 탭일 때만 로드)
   const { favorites, isLoading: isFavoritesLoading } = useFavoritesList(
@@ -163,6 +182,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
       setSelectedRecommendation(null);
       setAiStoreResults([]);
       setItplaceAiError(null);
+      setIsChatOpen(false); // 채팅방 상태도 초기화
       onItplaceAiResults?.([], false);
     }
   }, [activeTab, onItplaceAiResults]);
@@ -290,8 +310,15 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     setItplaceAiError(null);
   };
 
+  // 채팅방 상태 변경 핸들러
+  const handleChatStateChange = (isOpen: boolean) => {
+    setIsChatOpen(isOpen);
+  };
+
   // 탭별 다른 InfoBanner 메시지와 강조 텍스트
   const getBannerConfig = () => {
+    const userName = user?.name ? `${user.name.slice(1)}님의` : '잇플님의';
+
     switch (activeTab) {
       case 'nearby':
         return {
@@ -300,13 +327,15 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       case 'favorites':
         return {
-          message: '잇플님의 관심 혜택을 보여드릴게요!',
+          message: `${userName} 관심 혜택을 보여드릴게요!`,
           highlightText: '관심 혜택',
         };
       case 'ai':
         return {
-          message: '잇플님의 맞춤 잇플AI 추천을 보여드릴게요!',
-          highlightText: '맞춤 잇플AI 추천',
+          message: isChatOpen
+            ? '무엇이든 잇플AI에게 질문해보세요!'
+            : `${userName} 맞춤 잇플AI 추천을 보여드릴게요!`,
+          highlightText: isChatOpen ? '잇플AI' : '맞춤 잇플AI 추천',
         };
       default:
         return {
@@ -322,7 +351,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         // 리스트 모드: 기존 UI
         <div className="flex flex-col mx-5 mt-[15px] mb-[18px] w-[330px] max-md:mx-0 max-md:w-full flex-1 min-h-0">
           {/* 검색 영역 - 데스크톱에서만 표시 */}
-          <div className="pb-8 flex-shrink-0">
+          <div
+            className="pb-8 flex-shrink-0 max-md:touch-manipulation"
+            // 모바일과 태블릿에서만 터치 이벤트 적용 (탭 및 헤더 영역)
+            onTouchStart={isMobile || isTablet ? onTouchStart : undefined}
+            onTouchMove={isMobile || isTablet ? onTouchMove : undefined}
+            onTouchEnd={isMobile || isTablet ? onTouchEnd : undefined}
+          >
             <div className="hidden md:block">
               <SearchSection
                 onSearchChange={handleSearchChange}
@@ -422,6 +457,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                       handleRecommendationClick(fakeRecommendation);
                     }}
                     onChangeTab={onActiveTabChange}
+                    onBottomSheetReset={onBottomSheetReset}
+                    onChatStateChange={handleChatStateChange}
                   />
                 </div>
               )}

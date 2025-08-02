@@ -102,15 +102,15 @@ export const entranceAnimation = {
     );
   },
 
-  fadeInScale: (element: HTMLElement): gsap.core.Tween => {
+  bounceToFront: (element: HTMLElement): gsap.core.Tween => {
     return gsap.fromTo(
       element,
-      { scale: 0.8, opacity: 0 },
+      { scale: 0.8, opacity: 1 },
       {
         scale: 1,
         opacity: 1,
         duration: 0.5,
-        ease: 'power2.out',
+        ease: 'bounce.out(1)',
       }
     );
   },
