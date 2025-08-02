@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import AuthInput from '../common/AuthInput';
 import AuthButton from '../common/AuthButton';
 import AuthFooter from '../common/AuthFooter';
-import useValidation from '../../hooks/UseValidation';
+import useValidation from '../../hooks/useValidation';
 
 type SignUpFormProps = {
   nameFromPhoneAuth: string;
@@ -41,7 +41,7 @@ const SignUpForm = ({
   });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const { validateField } = useValidation();
+  const { validateField, errors } = useValidation();
 
   useEffect(() => {
     gsap.fromTo(
@@ -80,12 +80,13 @@ const SignUpForm = ({
     setFormData((prev) => ({ ...prev, gender: value }));
   };
 
-  // 모든 필드가 입력됐는지 확인
+  // 모든 필드가 입력됐고 검증 오류가 없는지 확인
   const isValid =
     formData.name.trim() &&
     formData.phone.trim() &&
     formData.birth.trim() &&
-    (formData.gender === 'MALE' || formData.gender === 'FEMALE');
+    (formData.gender === 'MALE' || formData.gender === 'FEMALE') &&
+    !errors.birth;
 
   return (
     <div ref={wrapperRef} className="w-full flex flex-col items-center">
