@@ -8,6 +8,7 @@ import { submitUsageAmount } from '../../../api/benefitDetail';
 import { showToast } from '../../../../../utils/toast';
 import { formatNumberWithCommas, removeCommas } from '../../../utils/numberFormat';
 import Modal from '../../../../../components/Modal';
+import { actionAnimations } from '../../../../../utils/Animation';
 
 interface StoreDetailActionButtonProps {
   benefitId?: string;
@@ -29,6 +30,8 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [usageAmount, setUsageAmount] = useState('');
+
+  const heartButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
 
@@ -52,6 +55,10 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
     if (!benefitId) {
       showToast('혜택 정보가 없어 관심 혜택으로 추가할 수 없습니다.', 'error');
       return;
+    }
+
+    if (heartButtonRef.current) {
+      actionAnimations.clickScale(heartButtonRef.current);
     }
 
     setIsLoading(true);
@@ -148,11 +155,15 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
           disabled={!isLoggedIn || !benefitId || isLoading}
         >
           {isFavorite ? (
-            <TbHeartFilled className="w-5 h-5 text-purple04 max-md:w-5 max-md:h-5 md:w-6 md:h-6" />
+            <span ref={heartButtonRef} className="inline-block">
+              <TbHeartFilled className="w-5 h-5 text-purple04 max-md:w-5 max-md:h-5 md:w-6 md:h-6" />
+            </span>
           ) : (
-            <TbHeart
-              className={`w-5 h-5 max-md:w-5 max-md:h-5 md:w-6 md:h-6 ${isLoggedIn ? 'text-purple04' : 'text-grey03'}`}
-            />
+            <span ref={heartButtonRef} className="inline-block">
+              <TbHeart
+                className={`w-5 h-5 max-md:w-5 max-md:h-5 md:w-6 md:h-6 ${isLoggedIn ? 'text-purple04' : 'text-grey03'}`}
+              />
+            </span>
           )}
         </button>
 

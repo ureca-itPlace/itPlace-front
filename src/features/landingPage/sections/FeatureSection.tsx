@@ -93,9 +93,10 @@ const FeatureSection = () => {
       className="relative max-h-[500vh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
     >
       <img
-        src="/images/landing/feature/wave.png"
+        src="/images/landing/feature/wave.webp"
         alt="물결"
         className="absolute top-0 left-0 w-full h-auto z-10 pointer-events-none"
+        loading="lazy"
       />
       <FeatureItem
         number={1}
