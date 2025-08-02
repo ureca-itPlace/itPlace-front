@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { BiSolidMegaphone } from 'react-icons/bi';
 import ScratchCouponCanvas from '../features/eventPage/components/ScratchCouponCanvas';
 import MobileHeader from '../components/MobileHeader';
 import { useMediaQuery } from 'react-responsive';
 import TipBanner from '../features/eventPage/components/TipBanner';
+import OwnedCouponCountInfo from '../features/eventPage/components/OwnedCouponCountInfo';
+import GiftListInfo from '../features/eventPage/components/GiftListInfo';
+import CouponUsageItem from '../features/eventPage/components/CouponUsageItem';
 // import WinModal from '../features/eventPage/components/Modal/WinModal';
 // import FailModal from '../features/eventPage/components/Modal/FailModal';
 // import { useSelector } from 'react-redux';
@@ -24,15 +26,6 @@ export default function EventPage() {
     setIsWinner(win);
     setShowResult(true);
   };
-
-  //mockData
-  const productList = [
-    'CU 편의점 모바일 상품권 5,000원권',
-    '스타벅스 아메리카노 T',
-    '이디야 커피 쿠폰',
-    'BHC 뿌링클 치킨',
-    '배스킨라빈스 파인트 아이스크림',
-  ];
 
   // ✅ 무한스크롤 로직
   useEffect(() => {
@@ -82,62 +75,15 @@ export default function EventPage() {
             >
               <picture className="max-md:mx-auto">
                 <source srcSet="/images/event/coupon-title.webp" type="image/webp" />
-                <img src="/images/event/coupon-title.png" alt="쿠폰 타이틀" />
+                <img src="/images/event/coupon-title.png" alt="쿠폰 타이틀" loading="lazy" />
               </picture>
               <ScratchCouponCanvas onComplete={handleScratchComplete} />
             </section>
 
             {/* ✅ 보유 쿠폰 + 상품 리스트 */}
             <section className="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-xl:gap-6 flex-1 max-md:gap-7">
-              <div
-                className="bg-white -mb-2 rounded-[18px] p-9 max-xl:p-6 text-center h-full"
-                style={{
-                  boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                <h3 className="text-title-3 text-grey05 font-semibold max-xl:text-title-5 max-xl:font-semibold max-md:font-semibold max-sm:font-semibold mb-2 max-md:text-title-4 max-sm:text-title-7">
-                  내가 보유한 쿠폰 개수
-                </h3>
-                <p className="text-purple04 text-body-1 mb-4 max-xl:text-body-3 max-sm:text-body-3">
-                  보유한 쿠폰 개수만큼 도전할 수 있어요!
-                </p>
-                <div className="relative w-full flex justify-center items-center">
-                  <picture>
-                    <source srcSet="/images/event/coupon-count.webp" type="image/webp" />
-                    <img
-                      src="/images/event/coupon-count.png"
-                      alt="쿠폰 수 이미지"
-                      className="w-[310px] max-xl:w-[230px] max-sm:w-[240px]"
-                    />
-                  </picture>
-                  <div className="absolute top-[50%] text-[48px] font-bold max-xl:text-[42px] max-xl:font-bold max-sm:text-[38px] max-sm:font-bold text-white">
-                    3개
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="bg-white rounded-[18px] p-9 max-xl:p-6 max-md:p-9 text-center h-full"
-                style={{
-                  boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                <h3 className="text-title-3 text-grey05 font-semibold mb-2 max-xl:text-title-5 max-xl:font-semibold max-md:font-semibold max-sm:font-semibold max-md:text-title-4 max-sm:text-title-7">
-                  상품 리스트
-                </h3>
-                <p className="text-purple04 text-body-1 mb-9 max-xl:mb-6 max-xl:text-body-3 max-sm:text-body-3">
-                  행운 쿠폰으로 받을 수 있는 선물이에요!
-                </p>
-
-                <ul className="space-y-3 text-title-5 text-grey05 max-xl:text-title-8 max-sm:text-title-8 text-left inline-block">
-                  {productList.map((item, index) => (
-                    <li key={index}>
-                      <span className="text-purple04 mr-5">{index + 1}</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <OwnedCouponCountInfo />
+              <GiftListInfo />
             </section>
           </div>
 
@@ -181,35 +127,12 @@ export default function EventPage() {
                 {usageHistory.map((_, index) => {
                   const isWin = index % 3 === 0;
                   return (
-                    <li
+                    <CouponUsageItem
                       key={index}
-                      className="border border-purple02 rounded-[18px] p-7 max-xl:p-5 max-sm:p-4"
-                    >
-                      <div className="flex max-md:flex-col max-md:items-center items-center justify-between gap-3">
-                        {/* 왼쪽 당첨/꽝 텍스트 */}
-                        <p
-                          className={`w-[90px] font-bold text-title-4 max-xl:text-title-5 max-xl:font-bold max-sm:text-title-6 max-sm:font-bold text-center ${
-                            isWin ? 'text-purple04' : 'text-black'
-                          }`}
-                        >
-                          {isWin ? '당첨🎉' : '꽝!'}
-                        </p>
-
-                        {/* 가운데 메시지 */}
-                        <p
-                          className={`text-body-1 max-sm:text-body-2 text-grey05 ${
-                            isWin ? 'w-[320px] max-sm:w-full' : 'w-[320px] max-sm:w-full'
-                          } text-center max-md:mt-2 max-sm:mt-0`}
-                        >
-                          {isWin ? '[쿠쿠전자] 공기청정기' : '다음 기회를 노려보세요!'}
-                        </p>
-
-                        {/* 오른쪽 날짜 */}
-                        <p className="text-body-2 text-grey04 mt-1 max-sm:mt-0 min-w-[100px] text-right max-md:text-center max-sm:text-body-3">
-                          2025-07-{(index + 1).toString().padStart(2, '0')}
-                        </p>
-                      </div>
-                    </li>
+                      isWin={isWin}
+                      message={isWin ? '[쿠쿠전자] 공기청정기' : '다음 기회를 노려보세요!'}
+                      date={`2025-07-${(index + 1).toString().padStart(2, '0')}`}
+                    />
                   );
                 })}
                 <li ref={loader}></li>
