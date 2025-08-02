@@ -18,7 +18,12 @@ const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]"
+      animateOnOpen
+    >
       <div className="relative w-full flex flex-col items-center text-center">
         <div className="absolute -top-[265px] left-1/2 -translate-x-1/2 w-[380px] h-[292px] max-sm:-top-[190px] max-sm:w-[260px] max-sm:h-[220px]">
           <img src={GiftImg} alt="꽝 일러스트" className="w-full h-full object-contain" />

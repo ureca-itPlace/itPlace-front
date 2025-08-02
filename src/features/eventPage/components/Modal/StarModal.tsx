@@ -34,7 +34,12 @@ const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]"
+      animateOnOpen
+    >
       <div className="flex flex-col items-center text-center">
         <h2 className="text-title-4 font-bold pt-2 max-sm:text-title-7 max-sm:font-bold">
           숨겨진 별을 찾아 행운 쿠폰을 잡아보세요!

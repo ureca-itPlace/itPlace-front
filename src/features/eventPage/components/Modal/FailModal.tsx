@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import Modal from '../../../../components/Modal';
 import FailTopImg from '/images/event/modal-fail.webp';
-import { entranceAnimation } from '../../../../utils/Animation';
 
 interface FailModalProps {
   isOpen: boolean;
@@ -9,26 +8,15 @@ interface FailModalProps {
 }
 
 const FailModal: React.FC<FailModalProps> = ({ isOpen, onClose }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isOpen && modalRef.current) {
-      // 애니메이션 적용
-      entranceAnimation.bounceToFront(modalRef.current);
-    }
-  }, [isOpen]);
-
   return (
     <>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
         widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]"
+        animateOnOpen
       >
-        <div
-          ref={modalRef}
-          className="relative w-full flex flex-col items-center text-center pt-10"
-        >
+        <div className="relative w-full flex flex-col items-center text-center pt-10">
           <div className="absolute -top-[270px] left-1/2 -translate-x-1/2 w-[380px] h-[292px] max-xl:w-[280px] max-xl:h-[190px] max-xl:-top-[170px] max-sm:-top-[130px] max-sm:w-[150px] max-sm:h-[150px]">
             <img src={FailTopImg} alt="꽝 일러스트" className="w-full h-full object-contain" />
           </div>

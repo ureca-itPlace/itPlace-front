@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import Modal from '../../../../components/Modal';
 import WinTopImg from '/images/event/modal-win.webp';
 import ProductImg from '/images/admin/CGV.png';
-import { entranceAnimation } from '../../../../utils/Animation';
 
 interface WinModalProps {
   isOpen: boolean;
@@ -19,26 +18,15 @@ const WinModal: React.FC<WinModalProps> = ({
   giftName,
   productImageUrl,
 }) => {
-  const winModalRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isOpen && winModalRef.current) {
-      // 애니메이션 적용
-      entranceAnimation.bounceToFront(winModalRef.current);
-    }
-  }, [isOpen]);
-
   return (
     <>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
         widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]"
+        animateOnOpen
       >
-        <div
-          ref={winModalRef}
-          className="relative w-full flex flex-col items-center text-center pt-10"
-        >
+        <div className="relative w-full flex flex-col items-center text-center pt-10">
           <div className="absolute -top-[270px] left-1/2 -translate-x-1/2 w-[380px] h-[292px] max-sm:-top-[110px] max-sm:w-[220px] max-sm:h-[130px] max-md:w-[290px] max-md:h-[200px] max-md:-top-[190px] max-xl:w-[250px] max-xl:h-[160px] max-xl:-top-[150px]">
             <img src={WinTopImg} alt="당첨 일러스트" className="w-full h-full object-contain" />
           </div>
