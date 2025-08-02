@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { BiSolidMegaphone } from 'react-icons/bi';
 import ScratchCouponCanvas from '../features/eventPage/components/ScratchCouponCanvas';
 import MobileHeader from '../components/MobileHeader';
+import { useMediaQuery } from 'react-responsive';
+import TipBanner from '../features/eventPage/components/TipBanner';
 // import WinModal from '../features/eventPage/components/Modal/WinModal';
 // import FailModal from '../features/eventPage/components/Modal/FailModal';
 // import { useSelector } from 'react-redux';
@@ -12,6 +14,9 @@ export default function EventPage() {
   const [isWinner, setIsWinner] = useState<boolean | null>(null);
   const [usageHistory, setUsageHistory] = useState<string[]>(Array(10).fill(''));
   const loader = useRef(null);
+
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
+
   // const username = useSelector((state: RootState) => state.auth.user?.name || '');
 
   const handleScratchComplete = () => {
@@ -58,37 +63,11 @@ export default function EventPage() {
       </div>
 
       {/* ✅ 모바일 Tip 영역 */}
-      <section className="bg-grey01 p-5 gap-2 mb-1 hidden max-md:block">
-        <div className="flex flex-row">
-          <BiSolidMegaphone className="text-title-4 max-sm:text-title-5 text-purple04 mr-2 animate-floating" />
-          <span className="text-black mr-2 font-semibold text-title-6 max-sm:text-title-7 animate-floating">
-            Tip!
-          </span>
-        </div>
-        <p className=" text-grey05 text-body-2 max-sm:text-body-4 animate-floating mt-2">
-          멤버십 혜택 사용 후, 사용 내역을 기록하면 행운의 스크래치 쿠폰을 얻을 수 있어요!{' '}
-          <br className="max-sm:hidden" />
-          지금 바로 <span className="text-purple04 font-medium">잇플맵에서 혜택을 기록</span>
-          해보세요 🐰
-        </p>
-      </section>
+      {isMobile && <TipBanner />}
 
       <main className="px-[28px] py-7 max-md:px-5 min-h-screen flex flex-col">
         {/* ✅ Tip 영역 */}
-        <section className="bg-grey01 mb-8 items-start gap-2 rounded-[10px] p-6 max-xl:mb-6 max-xl:p-5 flex max-xlg:flex-col max-md:hidden">
-          <div className="flex">
-            <BiSolidMegaphone className="text-title-5 text-purple04 animate-floating" />
-            <span className="text-black mx-2 font-semibold text-title-5 max-xl:text-title-6 max-xl:font-semibold animate-floating">
-              Tip!
-            </span>
-          </div>
-          <p className="text-body-0 text-grey05 max-xl:text-body-1 animate-floating">
-            멤버십 혜택 사용 후, 사용 내역을 기록하면 행운의 스크래치 쿠폰을 얻을 수 있어요!
-            <br className="hidden max-md:block" />
-            지금 바로 <span className="text-purple04 font-medium">잇플맵에서 혜택을 기록</span>
-            해보세요 🐰
-          </p>
-        </section>
+        {!isMobile && <TipBanner />}
 
         {/* ✅ 메인 콘텐츠 영역 */}
         <div className="flex-1 flex gap-11 max-xl:gap-6 max-xlg:flex-col max-md:gap-8">
