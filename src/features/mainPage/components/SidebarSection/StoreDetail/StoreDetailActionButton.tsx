@@ -8,6 +8,7 @@ import { submitUsageAmount } from '../../../api/benefitDetail';
 import { showToast } from '../../../../../utils/toast';
 import { formatNumberWithCommas, removeCommas } from '../../../utils/numberFormat';
 import Modal from '../../../../../components/Modal';
+import CouponModal from '../../../../eventPage/components/Modal/CouponModal';
 
 interface StoreDetailActionButtonProps {
   benefitId?: string;
@@ -29,6 +30,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [usageAmount, setUsageAmount] = useState('');
+  const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
 
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
 
@@ -123,6 +125,9 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       // 입력값 초기화 & 모달 닫기
       setUsageAmount('');
       setIsModalOpen(false);
+
+      // CouponModal 표시
+      setIsCouponModalOpen(true);
     } catch (error) {
       const errorMessage =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -236,6 +241,9 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
           </div>
         </div>
       </Modal>
+
+      {/* CouponModal - 사용 내역 등록 성공 시 표시 */}
+      <CouponModal isOpen={isCouponModalOpen} onClose={() => setIsCouponModalOpen(false)} />
     </>
   );
 };
