@@ -1,12 +1,14 @@
 import CouponUsageItem from './CouponUsageItem';
 import { CouponHistory } from '../../../types/event';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 interface CouponUsagelistProps {
   usageHistory: CouponHistory[];
   loaderRef: React.RefObject<HTMLLIElement | null>;
+  isLoading: boolean;
 }
 
-const CouponUsageList = ({ usageHistory, loaderRef }: CouponUsagelistProps) => {
+const CouponUsageList = ({ usageHistory, loaderRef, isLoading }: CouponUsagelistProps) => {
   return (
     <ul
       className="
@@ -27,6 +29,13 @@ const CouponUsageList = ({ usageHistory, loaderRef }: CouponUsagelistProps) => {
           date={item.usedDate}
         />
       ))}
+
+      {isLoading && (
+        <li className="flex justify-center py-4">
+          <LoadingSpinner />
+        </li>
+      )}
+
       <li ref={loaderRef}></li>
     </ul>
   );
