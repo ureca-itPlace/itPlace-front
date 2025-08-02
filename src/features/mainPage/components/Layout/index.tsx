@@ -510,7 +510,7 @@ const MainPageLayout: React.FC = () => {
             className="absolute z-30 transition-all duration-300 ease-in-out"
             style={{
               left: isSidebarCollapsed ? '120px' : '500px',
-              bottom: '350px', // 말풍선보다 위쪽
+              bottom: '365px', // 말풍선보다 위쪽
               transform: 'translateX(-20%)',
               width: '410px',
             }}
