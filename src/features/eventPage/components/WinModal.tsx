@@ -13,11 +13,9 @@ const WinModal: React.FC<WinModalProps> = ({ isOpen, onClose }) => {
     <>
       <Modal isOpen={isOpen} onClose={onClose} widthClass="w-[624px]">
         <div className="relative w-full flex flex-col items-center text-center pt-10">
-          <img
-            src={WinTopImg}
-            alt="당첨 일러스트"
-            className="absolute -top-[80%] left-1/2 -translate-x-1/2 w-[380px] h-[292px]"
-          />
+          <div className="absolute -top-[80%] left-1/2 -translate-x-1/2 w-[380px] h-[292px]">
+            <img src={WinTopImg} alt="당첨 일러스트" className="w-full h-full object-contain" />
+          </div>
           <h2 className="text-title-2 font-bold">축하드려요 잇플님!</h2>
           <img src={ProductImg} alt="상품 이미지" className="mt-4 w-[76px] h-[76px]" />
           <p className="text-body-0 text-[#000000] mt-4">🎉[회사명]상품 이름에 당첨되셨어요.</p>
