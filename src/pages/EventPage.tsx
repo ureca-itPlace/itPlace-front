@@ -1,3 +1,4 @@
+// src/pages/EventPage.tsx
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
@@ -38,6 +39,7 @@ export default function EventPage() {
   const [onlySuccess, setOnlySuccess] = useState(false);
 
   const loader = useRef<HTMLLIElement | null>(null);
+  const scrollContainerRef = useRef<HTMLUListElement | null>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   const getCouponCount = async () => {
@@ -109,19 +111,29 @@ export default function EventPage() {
 
   useEffect(() => {
     if (!isLoggedIn || !hasMore) return;
+
+    const scrollContainer = scrollContainerRef.current;
+    const target = loader.current;
+    if (!scrollContainer || !target) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) setPage((prev) => prev + 1);
+        if (entries[0].isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
       },
-      { threshold: 1.0 }
+      {
+        root: scrollContainer,
+        threshold: 0.3,
+      }
     );
 
-    const target = loader.current;
-    if (target) observer.observe(target);
+    observer.observe(target);
+
     return () => {
       if (target) observer.unobserve(target);
     };
-  }, [hasMore, isLoggedIn]);
+  }, [hasMore, isLoggedIn, scrollContainerRef.current]);
 
   return (
     <>
@@ -138,7 +150,6 @@ export default function EventPage() {
           {!isMobile && <TipBanner />}
 
           <div className="flex gap-11 max-xl:gap-6 max-xlg:flex-col max-md:gap-8">
-            {/* 왼쪽 */}
             <div className="flex-1 flex flex-col gap-8 max-xl:gap-6 max-w-[1080px]">
               <section
                 className="bg-[#ECFBE6] rounded-[18px] px-7 py-6 max-xl:py-4 max-md:mb-7"
@@ -160,13 +171,12 @@ export default function EventPage() {
               </section>
             </div>
 
-            {/* 오른쪽 */}
-            <aside className="max-w-[666px] max-h-[779px] max-xlg:max-w-none max-xl:max-h-[580px] shrink-0 max-md:w-full flex flex-col">
+            <aside className="max-w-[666px] max-h-[779px] max-xlg:max-w-none max-xl:max-h-[580px] w-full shrink-0 max-md:w-full flex flex-col">
               <section
                 className="bg-white rounded-[18px] p-7 flex-1 flex flex-col h-full"
                 style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
               >
-                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-xl:font-semibold max-md:font-semibold max-sm:font-semibold max-md:text-title-4 max-sm:text-title-7">
+                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-md:text-title-4">
                   나의 쿠폰 사용 내역
                 </h3>
                 <div className="flex justify-end mt-8">
@@ -198,6 +208,7 @@ export default function EventPage() {
                     <CouponUsageList
                       usageHistory={historyList}
                       loaderRef={hasMore ? loader : undefined}
+                      scrollContainerRef={scrollContainerRef}
                       isLoading={isLoading}
                     />
                   )}

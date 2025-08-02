@@ -5,21 +5,29 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 interface CouponUsagelistProps {
   usageHistory: CouponHistory[];
   loaderRef?: React.RefObject<HTMLLIElement | null>;
+  scrollContainerRef?: React.RefObject<HTMLUListElement | null>;
   isLoading: boolean;
 }
 
-const CouponUsageList = ({ usageHistory, loaderRef, isLoading }: CouponUsagelistProps) => {
+const CouponUsageList = ({
+  usageHistory,
+  loaderRef,
+  scrollContainerRef,
+  isLoading,
+}: CouponUsagelistProps) => {
   return (
     <ul
+      ref={scrollContainerRef}
       className="
-              space-y-5
-              overflow-y-auto
-              pr-1
-              max-h-[calc(100vh-360px)]
-              max-xl:max-h-[calc(100vh-310px)]
-              max-xlg:max-h-[calc(100vh-360px)]
-              max-md:max-h-[calc(100vh-460px)]
-              scrollArea"
+        space-y-5
+        overflow-y-auto
+        pr-1
+        max-h-[calc(100vh-360px)]
+        max-xl:max-h-[calc(100vh-310px)]
+        max-xlg:max-h-[calc(100vh-360px)]
+        max-md:max-h-[calc(100vh-460px)]
+        scrollArea
+      "
     >
       {usageHistory.map((item) => (
         <CouponUsageItem
