@@ -35,7 +35,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   const [input, setInput] = React.useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = React.useState(false);
-  const [isKeyboardOpen, setIsKeyboardOpen] = React.useState(false);
 
   // sessionStorage에서 메시지 복원
   const getInitialMessages = (): Message[] => {
@@ -109,31 +108,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       });
     };
   }, [onBottomSheetReset]);
-
-  // 모바일 키보드 상태 감지
-  React.useEffect(() => {
-    if (!isMobile && !isTablet) return;
-
-    const handleViewportChange = () => {
-      // 뷰포트 높이가 줄어들면 키보드가 열린 것으로 간주
-      const viewportHeight = window.innerHeight;
-      const initialHeight = window.screen.height;
-      const heightDifference = initialHeight - viewportHeight;
-      
-      // 키보드가 열렸을 때의 임계값 (보통 300px 이상 차이가 남)
-      setIsKeyboardOpen(heightDifference > 300);
-    };
-
-    // resize 이벤트 리스너 등록
-    window.addEventListener('resize', handleViewportChange);
-    
-    // 초기값 설정
-    handleViewportChange();
-
-    return () => {
-      window.removeEventListener('resize', handleViewportChange);
-    };
-  }, [isMobile, isTablet]);
 
   const handleSend = async () => {
     const trimmed = input.trim();
@@ -327,17 +301,16 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
         isMobile || isTablet
           ? {
               position: 'fixed',
-              top: isKeyboardOpen ? '40%' : '50%', // 키보드가 열리면 위쪽으로 이동
+              top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '90vw',
               maxWidth: '400px',
-              height: isKeyboardOpen ? 'min(50vh, 500px)' : 'min(70vh, 600px)', // 키보드 상태에 따라 높이 조절
-              maxHeight: isKeyboardOpen ? '500px' : '600px',
-              minHeight: isKeyboardOpen ? '350px' : '400px',
+              height: '70vh',
+              maxHeight: '600px',
+              minHeight: '400px',
               overflow: 'hidden',
               zIndex: 9999,
-              transition: 'all 0.3s ease-in-out', // 부드러운 전환 효과
               boxShadow:
                 '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             }
@@ -365,11 +338,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       {/* 메시지 영역 */}
       <div
         className="overflow-y-auto border-l border-r border-grey02 p-4 bg-grey01 w-full"
-        style={{
-          flex: 1,
-          maxHeight: isMobile || isTablet ? (isKeyboardOpen ? '35vh' : '50vh') : 'none',
-          height: '100%',
-        }}
+        style={{ flex: 1, maxHeight: isMobile || isTablet ? '50vh' : 'none', height: '100%' }}
       >
         {messages.length === 1 && messages[0].sender === 'bot' ? (
           // 초기 상태일 때 예시 질문 버튼들 표시
