@@ -10,7 +10,7 @@ const TipBanner: React.FC = () => {
       className={`bg-grey01 ${
         isMobile
           ? 'p-5 gap-2 mb-1'
-          : 'mb-8 items-start gap-2 rounded-[10px] p-6 flex max-xl:mb-6 max-xl:p-5 max-xlg:flex-col max-md:hidden'
+          : 'mb-6 items-start gap-2 rounded-[10px] p-6 flex max-xl:p-4 max-xlg:flex-col max-md:hidden'
       }`}
     >
       {/* 아이콘 + Tip 텍스트 */}
@@ -21,7 +21,7 @@ const TipBanner: React.FC = () => {
           }`}
         />
         <span
-          className={`text-black font-semibold animate-floating ${
+          className={`text-black font-semibold max-xl:font-semibold animate-floating ${
             isMobile ? 'text-title-6 max-sm:text-title-7' : 'text-title-5 max-xl:text-title-6'
           }`}
         >
