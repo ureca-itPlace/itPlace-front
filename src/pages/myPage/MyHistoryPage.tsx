@@ -158,6 +158,7 @@ export default function MyHistoryPage() {
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
                   dateFormat="yyyy-MM-dd"
+                  maxDate={endDate ?? undefined}
                   placeholderText="시작 날짜"
                   className="border border-grey03 text-center rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[110px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
                 />
@@ -166,6 +167,7 @@ export default function MyHistoryPage() {
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   dateFormat="yyyy-MM-dd"
+                  minDate={startDate ?? undefined}
                   placeholderText="종료 날짜"
                   className="border border-grey03 text-center rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[110px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
                 />
