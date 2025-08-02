@@ -1,7 +1,10 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
+import { TbSend } from 'react-icons/tb';
 import LoadingSpinner from '../../../../../../components/LoadingSpinner';
 import { getRecommendation, RecommendationError } from '../../../../api/recommendChatApi';
 import { getCurrentLocation } from '../../../../api/storeApi';
+import { useResponsive } from '../../../../../../hooks/useResponsive';
 
 interface Partner {
   partnerName: string;
@@ -18,9 +21,16 @@ interface ChatRoomProps {
   onClose: () => void;
   onSearchPartner?: (partnerName: string) => void;
   onChangeTab?: (tabId: string) => void;
+  onBottomSheetReset?: () => void;
 }
 
-const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeTab }) => {
+const ChatRoom: React.FC<ChatRoomProps> = ({
+  onClose,
+  onSearchPartner,
+  onChangeTab,
+  onBottomSheetReset,
+}) => {
+  const { isMobile, isTablet } = useResponsive();
   const [isBotLoading, setIsBotLoading] = React.useState(false);
   const [input, setInput] = React.useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
@@ -80,6 +90,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
     // 컴포넌트 마운트 시 현재 스크롤 위치 저장
     const originalScrollY = window.scrollY;
 
+    // 모바일에서 바텀시트를 초기 상태로 리셋
+    if (onBottomSheetReset && window.innerWidth < 768) {
+      onBottomSheetReset();
+    }
+
     // 컴포넌트 언마운트 시 정리
     return () => {
       // body 스타일 초기화
@@ -92,7 +107,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
         window.scrollTo(0, originalScrollY);
       });
     };
-  }, []);
+  }, [onBottomSheetReset]);
 
   const handleSend = async () => {
     const trimmed = input.trim();
@@ -186,36 +201,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
     setMessages((prev) => [...prev, { sender: 'user', text: question }]);
     setIsBotLoading(true);
 
-    // 더미 데이터로 테스트 (첫 번째 질문일 때만)
-    if (question === '근처 맛집 추천해줘') {
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            sender: 'bot',
-            text: '현재 위치 근처에서 추천하는 맛집들이에요! 아래 제휴업체들을 확인해보세요.',
-            partners: [
-              {
-                partnerName: '스타벅스',
-                imgUrl: '/images/admin/baskin.png',
-              },
-              {
-                partnerName: 'CGV',
-                imgUrl: '/images/admin/CGV.png',
-              },
-              {
-                partnerName: 'GS25',
-                imgUrl: '/images/admin/GS25.png',
-              },
-            ],
-          },
-        ]);
-        setIsBotLoading(false);
-        setInput('');
-      }, 1500);
-      return;
-    }
-
     try {
       // 현재 위치 가져오기 (실패 시 기본 위치 사용)
       let location;
@@ -288,10 +273,10 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
 
   // 예시 질문들
   const exampleQuestions = [
-    '근처 맛집 추천해줘',
+    '근처 관광지 추천해줘',
     '카페 갈 만한 곳 있어?',
     '쇼핑할 수 있는 곳 알려줘',
-    '영화관 어디 있지?',
+    '테마파크 갈 만한 곳 있어?',
   ];
 
   // 제휴업체 카드 클릭 처리
@@ -306,19 +291,36 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
     onClose();
   };
 
-  return (
+  // 채팅방 JSX 컴포넌트
+  const chatRoomContent = (
     <div
-      className="bg-white rounded-[18px] shadow-lg border-t border-l border-r border-grey02 p-0 flex flex-col items-center relative"
-      style={{
-        width: '100%',
-        height: '60vh',
-        maxWidth: '100%',
-        minWidth: '220px',
-        overflow: 'hidden',
-        // 위치를 고정하여 다른 요소들에 영향을 주지 않도록
-        position: 'relative',
-        zIndex: 10,
-      }}
+      className={`bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center ${
+        isMobile || isTablet ? '' : 'h-full'
+      }`}
+      style={
+        isMobile || isTablet
+          ? {
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '90vw',
+              maxWidth: '400px',
+              height: '70vh',
+              maxHeight: '600px',
+              minHeight: '400px',
+              overflow: 'hidden',
+              zIndex: 1000,
+              boxShadow:
+                '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            }
+          : {
+              height: '60vh',
+              maxHeight: '60vh',
+              minHeight: '500px',
+              overflow: 'hidden',
+            }
+      }
     >
       {/* 상단 프로필/타이틀 */}
       <div className="w-full flex items-center gap-3 px-5 pt-5 pb-4 relative">
@@ -336,7 +338,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
       {/* 메시지 영역 */}
       <div
         className="overflow-y-auto border-l border-r border-grey02 p-4 bg-grey01 w-full"
-        style={{ flex: 1, maxHeight: '50vh', height: '100%' }}
+        style={{ flex: 1, maxHeight: isMobile || isTablet ? '50vh' : 'none', height: '100%' }}
       >
         {messages.length === 1 && messages[0].sender === 'bot' ? (
           // 초기 상태일 때 예시 질문 버튼들 표시
@@ -380,8 +382,15 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
               if (msg.sender === 'user') {
                 return (
                   <div key={idx} className="flex justify-end">
-                    <div className="max-w-[90%]">
-                      <span className="px-4 py-2 break-words shadow bg-purple04 text-white text-body-3 font-light rounded-[10px]">
+                    <div style={{ maxWidth: '80%' }}>
+                      <span
+                        className="inline-block px-4 py-2 shadow bg-purple04 text-white text-body-3 font-light rounded-[10px]"
+                        style={{
+                          wordWrap: 'break-word',
+                          overflowWrap: 'break-word',
+                          wordBreak: 'break-word',
+                        }}
+                      >
                         {msg.text}
                       </span>
                     </div>
@@ -465,15 +474,22 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ onClose, onSearchPartner, onChangeT
           onKeyDown={handleInputKeyDown}
         />
         <button
-          className="bg-purple04 text-white px-5 mt-4 rounded-[10px] text-body-3 hover:bg-purple03"
+          className={`bg-purple04 text-white mt-4 rounded-[10px] text-body-3 hover:bg-purple03 flex items-center justify-center ${isMobile || isTablet ? 'px-2 min-w-[40px]' : 'px-5'}`}
           style={{ height: '44px', minHeight: '44px', paddingTop: '0', paddingBottom: '0' }}
           onClick={() => void handleSend()}
         >
-          전송
+          <TbSend size={22} />
         </button>
       </div>
     </div>
   );
+
+  // 모바일/태블릿에서는 포털로 렌더링, 웹에서는 직접 렌더링
+  if (isMobile || isTablet) {
+    return createPortal(chatRoomContent, document.body);
+  }
+
+  return chatRoomContent;
 };
 
 export default ChatRoom;
