@@ -19,6 +19,9 @@ const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
           <br /> 사용 이력을 등록하면 이벤트에 참여할 수 있어요.
         </p>
         <EventModalButton onClick={onClose} label="확인" />
+        <button onClick={onClose} className="underline mt-6 text-body-3 text-grey03 font-light">
+          다시 보지 않기
+        </button>
       </div>
     </Modal>
   );
