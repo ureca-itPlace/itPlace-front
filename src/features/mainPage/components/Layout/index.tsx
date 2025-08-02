@@ -519,7 +519,7 @@ const MainPageLayout: React.FC = () => {
       </div>
 
       {/* 모바일 레이아웃 */}
-      <div className="flex md:hidden flex-col h-screen bg-grey01">
+      <div className="flex md:hidden flex-col h-screen bg-grey01 overflow-hidden">
         {/* 토스트 컨테이너 z-index 조정 */}
         <style>
           {`
@@ -544,7 +544,7 @@ const MainPageLayout: React.FC = () => {
         </div>
 
         {/* 지도 - 전체 화면 */}
-        <div className="flex-1 relative">
+        <div className="absolute inset-0">
           <MapSection
             platforms={stablePlatforms}
             selectedPlatform={selectedPlatform}
