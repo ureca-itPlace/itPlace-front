@@ -5,6 +5,7 @@ import SearchSection from '../SidebarSection/SearchSection';
 import SpeechBubble from '../SidebarSection/RecommendStoreList/SpeechBubble';
 import BenefitDetailCard from '../SidebarSection/RecommendStoreList/BenefitDetailCard';
 import MobileHeader from '../../../../components/MobileHeader';
+import StarModal from '../../../eventPage/components/Modal/StarModal';
 import { Platform, MapLocation } from '../../types';
 import { CATEGORIES, LAYOUT } from '../../constants';
 import { useStoreData } from '../../hooks/useStoreData';
@@ -100,6 +101,9 @@ const MainPageLayout: React.FC = () => {
   // ItPlace AI 추천 결과 상태 (SidebarSection에서 올려받음)
   const [itplaceAiResults, setItplaceAiResults] = useState<Platform[]>([]);
   const [isShowingItplaceAiResults, setIsShowingItplaceAiResults] = useState(false);
+
+  // StarModal 상태
+  const [isStarModalOpen, setIsStarModalOpen] = useState(false);
 
   /**
    * 카테고리 선택 처리
@@ -355,6 +359,20 @@ const MainPageLayout: React.FC = () => {
   const handleItplaceAiResults = useCallback((results: Platform[], isShowing: boolean) => {
     setItplaceAiResults(results);
     setIsShowingItplaceAiResults(isShowing);
+  }, []);
+
+  // 메인페이지 진입 시 StarModal 표시
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsStarModalOpen(true);
+    }, 500); // 1초 후에 모달 표시
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // StarModal 닫기 핸들러
+  const handleStarModalClose = useCallback(() => {
+    setIsStarModalOpen(false);
   }, []);
 
   // platforms 배열 안정화 (ItPlace AI 결과 우선 표시)
@@ -633,6 +651,9 @@ const MainPageLayout: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* StarModal - 전체 화면에 최상위 레이어로 표시 */}
+      <StarModal isOpen={isStarModalOpen} onClose={handleStarModalClose} />
     </>
   );
 };
