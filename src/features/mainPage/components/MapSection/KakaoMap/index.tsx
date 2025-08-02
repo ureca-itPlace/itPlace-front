@@ -37,8 +37,8 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const mapRef = useRef<KakaoMapType | null>(null);
   const markersRef = useRef<KakaoCustomOverlay[]>([]);
   const clustererRef = useRef<KakaoMarkerClusterer | null>(null);
-  const debounceTimerRef = useRef<number | null>(null);
   const isAnimatingRef = useRef<boolean>(false);
+  const isZoomingRef = useRef<boolean>(false);
   const [userLocation, setUserLocation] = useState<MapLocation | null>(null);
   const [currentZoomLevel, setCurrentZoomLevel] = useState<number>(5);
   const [isMapInitialized, setIsMapInitialized] = useState<boolean>(false);
@@ -184,17 +184,29 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       // 줌 시작 - 애니메이션 상태 시작
       window.kakao.maps.event.addListener(map, 'zoom_start', () => {
         isAnimatingRef.current = true;
+        isZoomingRef.current = true;
       });
 
-      // 줌 변경 완료 - 클러스터링 전환만 수행
+      // 줌 변경 완료 - 클러스터링 즉시 적용
       window.kakao.maps.event.addListener(map, 'zoom_changed', () => {
         const level = map.getLevel();
         setCurrentZoomLevel(level);
         onMapLevelChange?.(level);
 
-        // 애니메이션 완료 후 마커 업데이트
+        // 즉시 마커 업데이트 (클러스터링 전환을 위해)
         isAnimatingRef.current = false;
-        setTimeout(() => updateVisiblePlatforms(), 100);
+        isZoomingRef.current = false;
+        updateVisiblePlatforms();
+
+        // SearchInMapButton 표시를 위한 onMapCenterChange 호출
+        if (onMapCenterChange) {
+          const center = map.getCenter();
+          const centerLocation: MapLocation = {
+            latitude: center.getLat(),
+            longitude: center.getLng(),
+          };
+          onMapCenterChange(centerLocation);
+        }
       });
 
       // 드래그 시작 - 애니메이션 상태 시작
@@ -206,28 +218,16 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       window.kakao.maps.event.addListener(map, 'dragend', () => {
         isAnimatingRef.current = false;
 
-        if (onMapCenterChange) {
-          // 기존 타이머가 있으면 취소
-          if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-          }
-
-          // 500ms 후에 실행 (디바운싱)
-          debounceTimerRef.current = setTimeout(() => {
-            const center = map.getCenter();
-            const centerLocation: MapLocation = {
-              latitude: center.getLat(),
-              longitude: center.getLng(),
-            };
-            onMapCenterChange(centerLocation);
-
-            // 드래그 완료 후 마커 업데이트
-            updateVisiblePlatforms();
-          }, 100);
-        } else {
-          // onMapCenterChange가 없어도 마커 업데이트
-          setTimeout(() => updateVisiblePlatforms(), 50);
+        // 줌으로 인한 dragend가 아닌 실제 드래그일 때만 onMapCenterChange 호출
+        if (!isZoomingRef.current && onMapCenterChange) {
+          const center = map.getCenter();
+          const centerLocation: MapLocation = {
+            latitude: center.getLat(),
+            longitude: center.getLng(),
+          };
+          onMapCenterChange(centerLocation);
         }
+        updateVisiblePlatforms();
       });
 
       // 지도 초기화 완료 표시
@@ -390,9 +390,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     mapRef.current.setCenter(moveLatLon);
   }, [selectedPlatform]);
 
-  // centerLocation prop이 변경되면 지도 중심 이동
+  // centerLocation prop이 변경되면 지도 중심 이동 (애니메이션 중이거나 줌 직후가 아닐 때만)
   useEffect(() => {
-    if (!mapRef.current || !centerLocation) return;
+    if (!mapRef.current || !centerLocation || isAnimatingRef.current || isZoomingRef.current) {
+      return;
+    }
 
     const moveLatLon = new window.kakao.maps.LatLng(
       centerLocation.latitude,
