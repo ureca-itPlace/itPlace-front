@@ -122,7 +122,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         const clusterer = new window.kakao.maps.MarkerClusterer({
           map: map,
           averageCenter: true,
-          minLevel: 7, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
+          minLevel: 6, // 줌 레벨 7 이하에서만 클러스터링 적용 (축소된 상태)
           disableClickZoom: false,
           styles: [
             {
@@ -315,7 +315,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     const newMarkers: KakaoMarker[] = [];
 
     // 클러스터링 활성화 여부 확인
-    const isClusteringActive = currentZoomLevel >= 7 && clustererRef.current;
+    const isClusteringActive = currentZoomLevel >= 6 && clustererRef.current;
 
     platformsToRender.forEach((platform) => {
       // 좌표가 없는 가맹점은 마커 표시 안함
@@ -379,7 +379,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     });
 
     // 클러스터링 적용
-    if (currentZoomLevel >= 7 && clustererRef.current && newMarkers.length > 0) {
+    if (currentZoomLevel >= 6 && clustererRef.current && newMarkers.length > 0) {
       clustererRef.current.addMarkers(newMarkers);
     }
   }, [visiblePlatforms, platforms, selectedPlatform, currentZoomLevel, onPlatformSelect]);
