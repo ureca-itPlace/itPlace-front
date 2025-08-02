@@ -37,7 +37,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   const mapRef = useRef<KakaoMapType | null>(null);
   const markersRef = useRef<KakaoCustomOverlay[]>([]);
   const clustererRef = useRef<KakaoMarkerClusterer | null>(null);
-  const debounceTimerRef = useRef<number | null>(null);
   const isAnimatingRef = useRef<boolean>(false);
   const isZoomingRef = useRef<boolean>(false);
   const [userLocation, setUserLocation] = useState<MapLocation | null>(null);
