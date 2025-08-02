@@ -22,6 +22,8 @@ interface ModalProps {
   buttons?: ButtonType[];
   children?: React.ReactNode;
   inputType?: string;
+  widthClass?: string;
+  topImageUrl?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -38,6 +40,8 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   buttons = [],
   children,
+  widthClass,
+  topImageUrl,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -56,8 +60,15 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         ref={modalRef}
-        className="relative w-[500px] bg-white rounded-[20px] shadow-xl p-10 flex flex-col items-center max-xl:w-[460px] max-xl:p-7 max-sm:p-5 max-sm:w-[calc(100%-40px)]"
+        className={`relative ${widthClass ?? 'w-full max-w-[500px]'} bg-white rounded-[20px] shadow-xl p-10 flex flex-col items-center max-sm:p-5`}
       >
+        {topImageUrl && (
+          <img
+            src={topImageUrl}
+            alt="모달 상단 이미지"
+            className="absolute -top-[54%] left-1/2 -translate-x-1/2 w-auto h-auto"
+          />
+        )}
         {/* 닫기 버튼 */}
         <button onClick={onClose} className="absolute top-5 right-5 text-grey03 hover:text-grey04">
           <TbX size={24} />
