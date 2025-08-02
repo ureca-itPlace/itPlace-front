@@ -22,12 +22,15 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
     const width = container.offsetWidth;
     const height = container.offsetHeight;
 
+    // ✅ 화면 너비 기준으로 반지름 다르게 설정
+    const clearZoneRadius = window.innerWidth < 768 ? 8 : 24;
+
     const sc = new ScratchCard('#scratch-canvas', {
       scratchType: SCRATCH_TYPE.CIRCLE,
       containerWidth: width,
       containerHeight: height,
       imageForwardSrc: '/images/event/coupon-cover.webp',
-      clearZoneRadius: 24,
+      clearZoneRadius,
       nPoints: 30,
       pointSize: 4,
       callback: onComplete,
