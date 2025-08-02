@@ -192,9 +192,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         setCurrentZoomLevel(level);
         onMapLevelChange?.(level);
 
-        // 애니메이션 완료 후 마커 업데이트
-        isAnimatingRef.current = false;
-        setTimeout(() => updateVisiblePlatforms(), 100);
+        // 애니메이션 완료 후 잠시 더 대기 (centerLocation 업데이트 방지)
+        setTimeout(() => {
+          isAnimatingRef.current = false;
+          updateVisiblePlatforms();
+        }, 150);
       });
 
       // 드래그 시작 - 애니메이션 상태 시작
@@ -204,29 +206,29 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
       // 드래그 종료 - 애니메이션 완료 후 업데이트
       window.kakao.maps.event.addListener(map, 'dragend', () => {
-        isAnimatingRef.current = false;
+        // 줌 애니메이션 중이 아닐 때만 처리
+        if (!isAnimatingRef.current) {
+          isAnimatingRef.current = false;
 
-        if (onMapCenterChange) {
-          // 기존 타이머가 있으면 취소
-          if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-          }
+          if (onMapCenterChange) {
+            // 기존 타이머가 있으면 취소
+            if (debounceTimerRef.current) {
+              clearTimeout(debounceTimerRef.current);
+            }
 
-          // 500ms 후에 실행 (디바운싱)
-          debounceTimerRef.current = setTimeout(() => {
-            const center = map.getCenter();
-            const centerLocation: MapLocation = {
-              latitude: center.getLat(),
-              longitude: center.getLng(),
-            };
-            onMapCenterChange(centerLocation);
-
-            // 드래그 완료 후 마커 업데이트
+            // 50ms 후에 실행 (디바운싱)
+            debounceTimerRef.current = setTimeout(() => {
+              const center = map.getCenter();
+              const centerLocation: MapLocation = {
+                latitude: center.getLat(),
+                longitude: center.getLng(),
+              };
+              onMapCenterChange(centerLocation);
+              updateVisiblePlatforms();
+            }, 50);
+          } else {
             updateVisiblePlatforms();
-          }, 100);
-        } else {
-          // onMapCenterChange가 없어도 마커 업데이트
-          setTimeout(() => updateVisiblePlatforms(), 50);
+          }
         }
       });
 
@@ -390,9 +392,11 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     mapRef.current.setCenter(moveLatLon);
   }, [selectedPlatform]);
 
-  // centerLocation prop이 변경되면 지도 중심 이동
+  // centerLocation prop이 변경되면 지도 중심 이동 (애니메이션 중이 아닐 때만)
   useEffect(() => {
-    if (!mapRef.current || !centerLocation) return;
+    if (!mapRef.current || !centerLocation || isAnimatingRef.current) {
+      return;
+    }
 
     const moveLatLon = new window.kakao.maps.LatLng(
       centerLocation.latitude,
