@@ -6,6 +6,7 @@ import TipBanner from '../features/eventPage/components/TipBanner';
 import OwnedCouponCountInfo from '../features/eventPage/components/OwnedCouponCountInfo';
 import GiftListInfo from '../features/eventPage/components/GiftListInfo';
 import CouponUsageItem from '../features/eventPage/components/CouponUsageItem';
+import CouponUsageList from '../features/eventPage/components/CouponUsageList';
 // import WinModal from '../features/eventPage/components/Modal/WinModal';
 // import FailModal from '../features/eventPage/components/Modal/FailModal';
 // import { useSelector } from 'react-redux';
@@ -15,7 +16,7 @@ export default function EventPage() {
   const [showResult, setShowResult] = useState(false);
   const [isWinner, setIsWinner] = useState<boolean | null>(null);
   const [usageHistory, setUsageHistory] = useState<string[]>(Array(10).fill(''));
-  const loader = useRef(null);
+  const loader = useRef<HTMLLIElement | null>(null);
 
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
@@ -113,30 +114,7 @@ export default function EventPage() {
               </div>
 
               {/* ✅ 내역 스크롤 영역 */}
-              <ul
-                className="
-              space-y-5
-              overflow-y-auto
-              pr-1
-              max-h-[calc(100vh-360px)]
-              max-xl:max-h-[calc(100vh-310px)]
-              max-xlg:max-h-[calc(100vh-760px)]
-              max-md:max-h-[calc(100vh-560px)]
-              scrollArea"
-              >
-                {usageHistory.map((_, index) => {
-                  const isWin = index % 3 === 0;
-                  return (
-                    <CouponUsageItem
-                      key={index}
-                      isWin={isWin}
-                      message={isWin ? '[쿠쿠전자] 공기청정기' : '다음 기회를 노려보세요!'}
-                      date={`2025-07-${(index + 1).toString().padStart(2, '0')}`}
-                    />
-                  );
-                })}
-                <li ref={loader}></li>
-              </ul>
+              <CouponUsageList usageHistory={usageHistory} loaderRef={loader} />
             </section>
           </aside>
         </div>
