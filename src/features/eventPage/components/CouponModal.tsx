@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '../../../components/Modal';
 import GiftImg from '/images/event/modal-gift.webp';
 import EventModalButton from '../EventModalButton';
+import { useNavigate } from 'react-router-dom';
 
 interface StarModalProps {
   isOpen: boolean;
@@ -9,6 +10,13 @@ interface StarModalProps {
 }
 
 const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleCouponUse = () => {
+    onClose();
+    navigate('/event'); // 쿠폰 사용 페이지로 이동
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]">
       <div className="relative w-full flex flex-col items-center text-center">
@@ -23,7 +31,7 @@ const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
           <br />
           이벤트 페이지에서 확인해보세요!
         </p>
-        <EventModalButton onClick={onClose} label="확인" />
+        <EventModalButton onClick={handleCouponUse} label="쿠폰 사용하러 가기" />
       </div>
     </Modal>
   );
