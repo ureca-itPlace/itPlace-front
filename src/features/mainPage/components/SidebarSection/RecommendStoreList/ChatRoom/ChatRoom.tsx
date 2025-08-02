@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { TbSend } from 'react-icons/tb';
+import { TbSend, TbRefresh, TbX } from 'react-icons/tb';
 import LoadingSpinner from '../../../../../../components/LoadingSpinner';
 import { getRecommendation, RecommendationError } from '../../../../api/recommendChatApi';
 import { getCurrentLocation } from '../../../../api/storeApi';
@@ -35,6 +35,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   const [input, setInput] = React.useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = React.useState(false);
+  const [showClearConfirm, setShowClearConfirm] = React.useState(false);
 
   // sessionStorage에서 메시지 복원
   const getInitialMessages = (): Message[] => {
@@ -83,6 +84,16 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   // 채팅방 닫기 (세션 유지)
   const handleClose = () => {
     onClose();
+  };
+
+  // 채팅 내용 초기화
+  const handleClearChat = () => {
+    const initialMessages: Message[] = [
+      { sender: 'bot', text: '궁금한 점을 자유롭게 물어보세요!' },
+    ];
+    setMessages(initialMessages);
+    sessionStorage.setItem('chatMessages', JSON.stringify(initialMessages));
+    setShowClearConfirm(false);
   };
 
   // 컴포넌트 마운트/언마운트 시 body 스타일 관리
@@ -323,15 +334,28 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       }
     >
       {/* 상단 프로필/타이틀 */}
-      <div className="w-full flex items-center gap-3 px-5 pt-5 pb-4 relative">
-        <span className="text-title-6 text-purple04 flex-1 text-center">잇플AI 채팅방</span>
-        <button
-          className="text-grey03 hover:text-grey04 text-title-3 absolute right-5 top-4"
-          onClick={handleClose}
-          aria-label="채팅방 닫기"
-        >
-          ×
-        </button>
+      <div className="w-full flex items-center justify-end px-5 pt-5 pb-4 relative">
+        <span className="absolute left-1/2 transform -translate-x-1/2 text-title-6 text-purple04">
+          잇플AI 채팅방
+        </span>
+        <div className="flex items-center gap-2">
+          {/* 채팅 초기화 버튼 */}
+          <button
+            className="text-grey03 hover:text-grey04 text-title-4 transition-colors"
+            onClick={() => setShowClearConfirm(true)}
+            aria-label="채팅 내용 초기화"
+          >
+            <TbRefresh />
+          </button>
+          {/* 닫기 버튼 */}
+          <button
+            className="text-grey03 hover:text-grey04 text-title-4"
+            onClick={handleClose}
+            aria-label="채팅방 닫기"
+          >
+            <TbX />
+          </button>
+        </div>
       </div>
       {/* 안내 문구 삭제됨, 챗봇이 첫 메시지로 안내함 */}
 
@@ -481,6 +505,34 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
           <TbSend size={22} />
         </button>
       </div>
+
+      {/* 채팅 초기화 확인 모달 */}
+      {showClearConfirm && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 rounded-[18px]">
+          <div className="bg-white rounded-[12px] p-6 mx-4 max-w-sm w-full shadow-lg border border-grey02">
+            <h3 className="text-title-6 text-grey05 mb-3 text-center">채팅 내용 초기화</h3>
+            <p className="text-body-3 text-grey04 mb-6 text-center">
+              모든 대화 내용이 삭제됩니다.
+              <br />
+              정말 초기화하시겠습니까?
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="flex-1 px-4 py-2 text-body-3 text-grey04 bg-grey01 hover:bg-grey02 rounded-[8px] transition-colors"
+                onClick={() => setShowClearConfirm(false)}
+              >
+                취소
+              </button>
+              <button
+                className="flex-1 px-4 py-2 text-body-3 text-white bg-purple04 hover:bg-purple03 rounded-[8px] transition-colors"
+                onClick={handleClearChat}
+              >
+                초기화
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
