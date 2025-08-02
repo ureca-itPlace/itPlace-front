@@ -267,7 +267,7 @@ const RecommendStoreList: React.FC<RecommendStoreListProps> = ({
                   {/* 왼쪽 이미지 */}
                   <div className="w-[50px] h-[50px] bg-white rounded-[10px] overflow-hidden flex-shrink-0 mr-6 max-md:w-[40px] max-md:h-[40px] max-md:mr-4 max-sm:w-[35px] max-sm:h-[35px] max-sm:mr-3">
                     <img
-                      src={store.imgUrl || '/mainPage/RecommendDefault.png'}
+                      src={store.imgUrl || 'images/main/RecommendDefault.webp'}
                       alt={`${store.partnerName} 로고`}
                       className="w-full h-full object-contain"
                     />

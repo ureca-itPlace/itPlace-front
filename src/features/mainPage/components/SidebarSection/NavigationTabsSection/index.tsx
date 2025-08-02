@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { tabAnimations } from '../../../../../utils/tabAnimation';
+import { actionAnimations } from '../../../../../utils/Animation';
 import { useTabClickAnimation } from '../../../hooks/useTabClickAnimation';
 
 interface Tab {
@@ -32,21 +32,21 @@ const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
 
     if (aiTabElement) {
       // 이전 애니메이션 정리
-      tabAnimations.killAnimation(animationRef.current);
+      actionAnimations.killAnimation(animationRef.current);
       animationRef.current = null;
 
       // 항상 원위치로 리셋
-      tabAnimations.resetPosition(aiTabElement);
+      actionAnimations.resetPosition(aiTabElement);
 
       // AI 탭이 활성화되지 않은 경우 실행될 애니메이션 (통통 튀기기)
       if (activeTab !== 'ai') {
-        animationRef.current = tabAnimations.bounceAnimation(aiTabElement);
+        animationRef.current = actionAnimations.bounceAnimation(aiTabElement);
       }
     }
 
     // 클린업
     return () => {
-      tabAnimations.killAnimation(animationRef.current);
+      actionAnimations.killAnimation(animationRef.current);
       animationRef.current = null;
     };
   }, [activeTab]);
@@ -58,7 +58,7 @@ const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
       // 호버 시 원위치로 돌아가기
       const aiTabElement = tabRefs.current['ai'];
       if (aiTabElement) {
-        tabAnimations.returnToPosition(aiTabElement);
+        actionAnimations.returnToPosition(aiTabElement);
       }
     }
   };
