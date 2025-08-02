@@ -1,7 +1,7 @@
 import React from 'react';
-import Modal from '../../../components/Modal';
+import Modal from '../../../../components/Modal';
 import GiftImg from '/images/event/modal-gift.webp';
-import EventModalButton from '../EventModalButton';
+import EventModalButton from './EventModalButton';
 import { useNavigate } from 'react-router-dom';
 
 interface StarModalProps {

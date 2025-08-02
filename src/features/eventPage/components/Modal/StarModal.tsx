@@ -1,7 +1,7 @@
 import React from 'react';
-import Modal from '../../../components/Modal';
+import Modal from '../../../../components/Modal';
 import StarImg from '/images/event/event-star.png';
-import EventModalButton from '../EventModalButton';
+import EventModalButton from './EventModalButton';
 
 interface StarModalProps {
   isOpen: boolean;

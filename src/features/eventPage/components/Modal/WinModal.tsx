@@ -1,5 +1,5 @@
 import React from 'react';
-import Modal from '../../../components/Modal';
+import Modal from '../../../../components/Modal';
 import WinTopImg from '/images/event/modal-win.webp';
 import ProductImg from '/images/admin/CGV.png';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import Modal from '../../../components/Modal';
+import Modal from '../../../../components/Modal';
 import FailTopImg from '/images/event/modal-fail.webp';
 
 interface FailModalProps {
