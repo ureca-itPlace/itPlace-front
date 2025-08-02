@@ -9,24 +9,28 @@
   src: url('/font/nanum-barun-gothic/NanumBarunGothicUltraLight.otf') format('opentype');
   font-weight: 200;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'NanumBarunGothic';
   src: url('/font/nanum-barun-gothic/NanumBarunGothicLight.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'NanumBarunGothic';
   src: url('/font/nanum-barun-gothic/NanumBarunGothic.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'NanumBarunGothic';
   src: url('/font/nanum-barun-gothic/NanumBarunGothicBold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 * {
@@ -64,6 +68,20 @@
   z-index: 9999;
 }
 
-.star-shooting {
-  filter: drop-shadow(0 0 10px #a54eff);
+/* 스크롤바 커스텀 */
+/* 스크롤바 전체 영역 */
+.scrollArea {
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 6px;
+}
+.scrollArea::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollArea::-webkit-scrollbar-thumb {
+  background-color: #cdb5ff;
+  border-radius: 4px;
+}
+.scrollArea::-webkit-scrollbar-track {
+  background-color: transparent;
 }

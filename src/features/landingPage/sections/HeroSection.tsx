@@ -8,6 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 const HeroSection = () => {
   // Hero Refs
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const scrollArrowRef = useRef<HTMLImageElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLImageElement>(null);
   const subtitleRef = useRef<HTMLDivElement>(null);
@@ -25,24 +26,34 @@ const HeroSection = () => {
   const benefitImagesRef = useRef<HTMLImageElement[]>([]);
 
   const { isMobile, isTablet, isLaptop } = useResponsive();
+  const isSmallScreen = isMobile || isTablet;
   const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
+  const bgImage = isSmallScreen
+    ? '/images/landing/hero/hero-bg-mobile.png'
+    : '/images/landing/hero/hero-bg.webp';
 
   const logos = [
-    { name: 'gs25', top: 'top-[-5%]', left: 'left-[3%]', width: 'w-[12vw]' },
-    { name: 'cgv', top: 'top-[-5%]', left: 'left-[35%]', width: 'w-[12vw]' },
-    { name: 'baskin-robbins', top: 'top-[-5%]', left: 'left-[65%]', width: 'w-[5vw]' },
-    { name: 'domino', top: 'top-[-5%]', left: 'left-[85%]', width: 'w-[12vw]' },
-    { name: 'megabox', top: 'top-[-15%]', left: 'left-[25%]', width: 'w-[12vw]' },
+    { name: 'gs25', top: 'top-[-5%]', left: 'left-[10%]', width: 'w-[14vw]' },
+    { name: 'baskin-robbins', top: 'top-[-20%]', left: 'left-[38%]', width: 'w-[8vw]' },
+    { name: 'uplus-tv', top: 'top-[-67%]', left: 'left-[4%]', width: 'w-[10vw]' },
+    { name: 'domino', top: 'top-[-5%]', left: 'left-[60%]', width: 'w-[20vw]' },
+    { name: 'ever-land', top: 'top-[-25%]', left: 'left-[80%]', width: 'w-[14vw]' },
+    { name: 'lotte-world', top: 'top-[-80%]', left: 'left-[50%]', width: 'w-[14vw]' },
+    { name: 'trip-com', top: 'top-[-80%]', left: 'left-[20%]', width: 'w-[14vw]' },
+    { name: 'shake-shack', top: 'top-[-80%]', left: 'left-[75%]', width: 'w-[20vw]' },
   ];
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
+      gsap.set(wrapperRef.current, { opacity: 0 });
+      gsap.to(wrapperRef.current, { opacity: 1, duration: 2, ease: 'sine.out' });
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=6000',
+          end: '+=7200',
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -72,23 +83,48 @@ const HeroSection = () => {
 
       gsap.set(benefitImagesRef.current, {
         y: '-150%',
-        opacity: 0,
+        opacity: 1,
       });
 
-      // Hero 애니메이션
-      tl.to(windowRef.current, {
-        scale: 4.5,
-        duration: 3,
-        ease: 'power1.inOut',
+      gsap.to(scrollArrowRef.current, {
+        y: -5,
+        yoyo: true,
+        repeat: -1,
+        duration: 1,
+        ease: 'sine.out',
       });
-      tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
-      tl.to(titleRef.current, { opacity: 1, y: 0, duration: 2, ease: 'power2.out' });
-      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 1.2, ease: 'power1.inOut' }, '+=0.3');
+
+      // Hero 애니메이션 (max-lg이상일 경우만 적용)
+      if (!isSmallScreen) {
+        tl.to(windowRef.current, {
+          scale: 6.5,
+          duration: 7.5,
+          ease: 'sine.out',
+        });
+        tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, '<');
+        tl.to(subtitleRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 3,
+          ease: 'power1.out',
+        });
+        tl.to(titleRef.current, {
+          opacity: 1,
+          y: 0,
+          duration: 3,
+          ease: 'power1.out',
+        });
+      } else {
+        // lg 미만에서는 즉시 노출
+        gsap.set(subtitleRef.current, { opacity: 1, y: 0 });
+        gsap.set(titleRef.current, { opacity: 1, y: 0 });
+      }
+      tl.to(whiteOverlayRef.current, { opacity: 1, duration: 2.5, ease: 'sine.inOut' }, '+=0.3');
       tl.to(
         heroRef.current,
         {
           opacity: 0,
-          duration: 1.2,
+          duration: 2.5,
           ease: 'power1.inOut',
         },
         '+=0.2'
@@ -105,18 +141,18 @@ const HeroSection = () => {
         )
         .to(
           firstMapImageRef.current,
-          { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'none' },
+          { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'sine.out' },
           '+=2'
         )
         .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '>-0.5')
-        .to({}, { duration: 2 })
+        .to({}, { duration: 2.5 })
         .to(
           secondMapImageRef.current,
           { scale: 1.7, x: 80, opacity: 0, duration: 2, filter: 'blur(3px)' },
           '+=1.2'
         )
         .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '+=0.5')
-        .to({}, { duration: 2 })
+        .to({}, { duration: 2.5 })
         .to(
           thirdMapImageRef.current,
           { scale: 1.5, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
@@ -128,9 +164,11 @@ const HeroSection = () => {
           {
             opacity: 0,
             y: 60,
-            duration: 1,
+            duration: 2,
+            ease: 'power1.out',
+            delay: 1,
           },
-          '+=0.5'
+          '+=1.5'
         )
         .to(
           fourthMapImageRef.current, // 지도 사라짐
@@ -139,8 +177,8 @@ const HeroSection = () => {
             scale: 0.6,
             opacity: 0,
             transformOrigin: 'center center',
-            duration: 1.5,
-            ease: 'power2.in',
+            duration: 3,
+            ease: 'power1.inOut',
           },
           '+=1.5'
         )
@@ -149,7 +187,8 @@ const HeroSection = () => {
           {
             opacity: 0,
             y: -60,
-            duration: 1,
+            duration: 1.5,
+            ease: 'sine.out',
           },
           '+=0.5'
         )
@@ -159,52 +198,70 @@ const HeroSection = () => {
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
-            ease: 'power2.out',
-            onComplete: () => {
-              // 이미지 애니메이션 자동 실행
-              benefitImagesRef.current.forEach((el, index) => {
-                gsap.fromTo(
-                  el,
-                  { y: '-150%' },
-                  {
-                    y: '150vh',
-                    opacity: 1,
-                    duration: 3,
-                    ease: 'power3.out',
-                    delay: index * 0.1,
-                  }
-                );
-              });
-            },
+            duration: 1.5,
+            ease: 'sine.out',
           },
-          '+=0.2'
-        );
+          '+=0.5'
+        )
+        .addLabel('afterBenefits');
+      const logoGroups = [
+        [0, 3], // gs25, domino
+        [1, 2], // cgv, baskin-robbins
+        [6], // megabox
+        [4], // ever-land
+        [5, 7], // lotte-world, trip-com
+      ];
 
-      tl.to({}, { duration: 5.5 });
+      logoGroups.forEach((group, groupIndex) => {
+        group.forEach((logoIndex) => {
+          const el = benefitImagesRef.current[logoIndex];
+          if (el) {
+            tl.to(
+              el,
+              {
+                y: '200vh',
+                opacity: 1,
+                ease: 'sine.out',
+                duration: 12,
+              },
+              `afterBenefits+=${0.5 + groupIndex * 0.6}`
+            );
+          }
+        });
+      }, '+=1.0');
+
+      tl.to({}, { duration: 3 });
     }, wrapperRef);
 
     return () => ctx.revert();
-  }, [xDistance, yDistance]);
+  }, [xDistance, yDistance, isSmallScreen]);
 
   return (
     <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
       {/* 우주 토끼 섹션 */}
       <div
         ref={heroRef}
-        className="relative w-full h-full bg-[url('/images/landing/hero-bg.webp')] bg-no-repeat bg-cover bg-center"
+        className="relative w-full h-full bg-no-repeat bg-cover bg-center pointer-events-none"
+        style={{
+          backgroundImage: `url(${bgImage})`,
+        }}
       >
         <img
           ref={windowRef}
-          src="/images/landing/hero-window-3.png"
-          className="absolute inset-0 w-full h-full object-cover z-40 max-lg:hidden"
+          src="/images/landing/hero/spaceship-window.webp"
+          className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center pointer-events-none"
+        />
+        <img
+          ref={scrollArrowRef}
+          src="/images/landing/hero/scroll-arrow.svg"
+          className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px]"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
           <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
             EXPLORE THE
           </div>
           <div ref={titleRef} className="custom-font text-[12vw] text-white leading-none">
-            ITPLACE
+            IT:PLACE
           </div>
         </div>
         <div
@@ -216,26 +273,26 @@ const HeroSection = () => {
       <div ref={mapContainerRef} className="absolute inset-0 w-full h-full bg-white z-60">
         <img
           ref={firstMapImageRef}
-          src="/images/landing/map-1.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          src="/images/landing/hero/map-1.webp"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <img
           ref={secondMapImageRef}
-          src="/images/landing/map-2.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          src="/images/landing/hero/map-2.webp"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <img
           ref={thirdMapImageRef}
-          src="/images/landing/map-3.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          src="/images/landing/hero/map-3.webp"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <img
           ref={fourthMapImageRef}
-          src="/images/landing/map-4.webp"
-          className="absolute inset-0 w-full h-screen object-cover"
+          src="/images/landing/hero/map-4.webp"
+          className="absolute inset-0 w-full h-screen object-cover pointer-events-none"
           loading="lazy"
         />
         <div className="flex flex-col items-center justify-center w-full h-full text-[15vw] text-purple04 z-30">
@@ -255,8 +312,8 @@ const HeroSection = () => {
             ref={(el) => {
               if (el) benefitImagesRef.current[index] = el;
             }}
-            src={`/images/landing/${logo.name}.svg`}
-            className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-16`}
+            src={`/images/landing/hero/${logo.name}.svg`}
+            className={`absolute ${logo.top} ${logo.left} ${logo.width} h-auto min-w-16 pointer-events-none`}
             loading="lazy"
             alt={logo.name}
           />

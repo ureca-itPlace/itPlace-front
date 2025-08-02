@@ -16,7 +16,7 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(({ onVideoEnd, videoBoxRe
         autoPlay={false}
         playsInline
         preload="metadata"
-        poster="/images/landing/landing-video-thumbnail.png"
+        poster="/images/landing/video/video-thumbnail.png"
         onEnded={onVideoEnd}
         className="w-full h-screen object-cover"
       />
