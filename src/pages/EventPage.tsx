@@ -5,7 +5,6 @@ import { useMediaQuery } from 'react-responsive';
 import TipBanner from '../features/eventPage/components/TipBanner';
 import OwnedCouponCountInfo from '../features/eventPage/components/OwnedCouponCountInfo';
 import GiftListInfo from '../features/eventPage/components/GiftListInfo';
-import CouponUsageItem from '../features/eventPage/components/CouponUsageItem';
 import CouponUsageList from '../features/eventPage/components/CouponUsageList';
 // import WinModal from '../features/eventPage/components/Modal/WinModal';
 // import FailModal from '../features/eventPage/components/Modal/FailModal';
