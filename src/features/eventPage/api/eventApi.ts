@@ -20,9 +20,9 @@ export const postScratchCoupon = async () => {
 };
 
 // ✅ 4. 쿠폰 사용 이력 조회
-export const fetchCouponHistory = async (type?: 'SUCCESS' | 'FAIL') => {
-  const res = await api.get('api/v1/gifts/history', {
-    params: type ? { type } : undefined,
+export const fetchCouponHistory = async (type?: 'SUCCESS') => {
+  const res = await api.get('/api/v1/gifts/history', {
+    ...(type ? { params: { type } } : {}), // type이 있을 때만 params 포함
   });
-  return res.data.data; // array of usage history
+  return res.data.data;
 };

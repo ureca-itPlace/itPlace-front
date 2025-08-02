@@ -4,7 +4,7 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 
 interface CouponUsagelistProps {
   usageHistory: CouponHistory[];
-  loaderRef: React.RefObject<HTMLLIElement | null>;
+  loaderRef?: React.RefObject<HTMLLIElement | null>;
   isLoading: boolean;
 }
 
@@ -25,18 +25,16 @@ const CouponUsageList = ({ usageHistory, loaderRef, isLoading }: CouponUsagelist
         <CouponUsageItem
           key={item.historyId}
           isWin={item.result === 'SUCCESS'}
-          message={item.result === 'SUCCESS' ? item.giftName : '다음 기회를 노려보세요!'}
+          message={item.result === 'SUCCESS' ? (item.giftName ?? '') : '다음 기회를 노려보세요!'}
           date={item.usedDate}
         />
       ))}
 
-      {isLoading && (
-        <li className="flex justify-center py-4">
-          <LoadingSpinner />
+      {loaderRef && (
+        <li ref={loaderRef} className="flex justify-center items-center py-6">
+          {isLoading && <LoadingSpinner />}
         </li>
       )}
-
-      <li ref={loaderRef}></li>
     </ul>
   );
 };

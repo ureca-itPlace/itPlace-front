@@ -5,7 +5,7 @@ interface Props {
 const OwnedCouponCount = ({ couponCount }: Props) => {
   return (
     <div
-      className="bg-white -mb-2 rounded-[18px] p-9 max-xl:p-6 text-center h-full"
+      className="bg-white max-h-[370px] -mb-2 rounded-[18px] p-9 max-xl:p-6 text-center h-full"
       style={{
         boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)',
       }}

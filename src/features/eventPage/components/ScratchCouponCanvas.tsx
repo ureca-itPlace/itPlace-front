@@ -20,15 +20,26 @@ export default function ScratchCouponCanvas({
   const scratchCardRef = useRef<InstanceType<typeof ScratchCard> | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
+  const couponCountRef = useRef(couponCount);
+  const isLoggedInRef = useRef(isLoggedIn);
+
+  // 최신값 유지
+  useEffect(() => {
+    couponCountRef.current = couponCount;
+  }, [couponCount]);
+
+  useEffect(() => {
+    isLoggedInRef.current = isLoggedIn;
+  }, [isLoggedIn]);
+
   const initScratchCard = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    container.innerHTML = ''; // 초기화
+    container.innerHTML = '';
     const width = container.offsetWidth;
     const height = container.offsetHeight;
 
-    const isUserAllowed = isLoggedIn && !!couponCount && couponCount > 0;
     const clearZoneRadius = window.innerWidth < 768 ? 8 : 24;
 
     const sc = new ScratchCard('#scratch-canvas', {
@@ -40,7 +51,10 @@ export default function ScratchCouponCanvas({
       nPoints: 30,
       pointSize: 4,
       callback: () => {
-        if (isUserAllowed) {
+        const allowed =
+          isLoggedInRef.current && couponCountRef.current !== null && couponCountRef.current > 0;
+
+        if (allowed) {
           onComplete();
         }
       },
@@ -50,22 +64,30 @@ export default function ScratchCouponCanvas({
       .then(() => {
         scratchCardRef.current = sc;
 
-        // ❌ 긁기 권한 없음 → canvas 클릭 시 토스트만
-        if (!isUserAllowed) {
-          const canvasEl = sc.canvas;
-          canvasEl.style.pointerEvents = 'none';
-          container.style.cursor = 'not-allowed';
+        const canvasEl = sc.canvas;
+        const currentIsLoggedIn = isLoggedInRef.current;
+        const currentCouponCount = couponCountRef.current;
+        const allowed = currentIsLoggedIn && currentCouponCount !== null && currentCouponCount > 0;
 
+        // 커서 및 클릭 동작 설정
+        if (!allowed) {
+          if (canvasEl) canvasEl.style.pointerEvents = 'none';
+          container.style.cursor = 'not-allowed';
           container.onclick = () => {
-            showToast(
-              !isLoggedIn ? '로그인 후 이용해주세요!' : '쿠폰이 부족합니다. 별을 모아보세요!',
-              'error'
-            );
+            if (!currentIsLoggedIn) {
+              showToast('로그인 후 이용해주세요!', 'error');
+            } else {
+              showToast('쿠폰이 부족합니다. 별을 찾아보세요!', 'error');
+            }
           };
+        } else {
+          if (canvasEl) canvasEl.style.pointerEvents = 'auto';
+          container.style.cursor = 'default';
+          container.onclick = null;
         }
       })
       .catch(console.error);
-  }, [onComplete, isLoggedIn, couponCount]);
+  }, [onComplete]);
 
   useEffect(() => {
     initScratchCard();
@@ -93,7 +115,6 @@ export default function ScratchCouponCanvas({
 
   return (
     <div className="relative w-full aspect-[1014/267] mt-6">
-      {/* ✅ 쿠폰 아래 이미지 */}
       <picture>
         <source srcSet="/images/event/coupon-main.webp" type="image/webp" />
         <img
@@ -103,7 +124,6 @@ export default function ScratchCouponCanvas({
         />
       </picture>
 
-      {/* ✅ 긁는 캔버스 (스크래치 영역) */}
       <div
         id="scratch-canvas"
         ref={containerRef}

@@ -20,7 +20,7 @@ const GiftListInfo = () => {
 
   return (
     <div
-      className="bg-white rounded-[18px] p-9 max-xl:p-6 max-md:p-9 text-center h-full"
+      className="bg-white rounded-[18px] p-9 max-h-[370px] max-xl:p-6 max-md:p-9 text-center h-full"
       style={{
         boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)',
       }}
@@ -35,7 +35,7 @@ const GiftListInfo = () => {
       <ul className="space-y-3 text-title-5 text-grey05 max-xl:text-title-8 max-sm:text-title-8 text-left inline-block">
         {giftList.map((item, index) => (
           <li key={index}>
-            <span className="text-purple04 mr-5">{index + 1}</span>
+            <span className="text-purple04 mr-5 max-sm:mr-1">{index + 1}</span>
             {item}
           </li>
         ))}

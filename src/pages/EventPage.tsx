@@ -105,8 +105,20 @@ export default function EventPage() {
       }
 
       setShowResult(true);
+
+      // ✅ 긁은 직후, 쿠폰 개수와 히스토리 강제 갱신
       await getCouponCount();
-      await getHistory();
+
+      // ✅ 페이지 초기화 → 최신 히스토리 1페이지만 보여주기
+      setPage(1);
+      setHasMore(true);
+
+      const data = await fetchCouponHistory(onlySuccess ? 'SUCCESS' : undefined);
+      const sliced = data.slice(0, size);
+      setHistoryList(sliced);
+      if (sliced.length >= data.length) {
+        setHasMore(false);
+      }
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       const message = axiosError?.response?.data?.message ?? '쿠폰 긁기에 실패했습니다.';
@@ -212,7 +224,7 @@ export default function EventPage() {
                 ) : (
                   <CouponUsageList
                     usageHistory={historyList}
-                    loaderRef={loader}
+                    loaderRef={hasMore ? loader : undefined} // ✅ 더 이상 로드할 게 없으면 null
                     isLoading={isLoading}
                   />
                 )}
