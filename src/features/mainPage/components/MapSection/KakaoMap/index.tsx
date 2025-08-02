@@ -188,30 +188,26 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
         isZoomingRef.current = true;
       });
 
-      // 줌 변경 완료 - 클러스터링 전환만 수행
+      // 줌 변경 완료 - 클러스터링 즉시 적용
       window.kakao.maps.event.addListener(map, 'zoom_changed', () => {
         const level = map.getLevel();
         setCurrentZoomLevel(level);
         onMapLevelChange?.(level);
 
-        // 즉시 마커 업데이트 실행 (성능 최적화)
+        // 즉시 마커 업데이트 (클러스터링 전환을 위해)
+        isAnimatingRef.current = false;
+        isZoomingRef.current = false;
         updateVisiblePlatforms();
 
-        // 애니메이션 상태 해제는 더 짧은 딜레이로
-        setTimeout(() => {
-          isAnimatingRef.current = false;
-          isZoomingRef.current = false;
-
-          // 줌 완료 후 SearchInMapButton 표시를 위한 onMapCenterChange 호출
-          if (onMapCenterChange) {
-            const center = map.getCenter();
-            const centerLocation: MapLocation = {
-              latitude: center.getLat(),
-              longitude: center.getLng(),
-            };
-            onMapCenterChange(centerLocation);
-          }
-        }, 100);
+        // SearchInMapButton 표시를 위한 onMapCenterChange 호출
+        if (onMapCenterChange) {
+          const center = map.getCenter();
+          const centerLocation: MapLocation = {
+            latitude: center.getLat(),
+            longitude: center.getLng(),
+          };
+          onMapCenterChange(centerLocation);
+        }
       });
 
       // 드래그 시작 - 애니메이션 상태 시작
@@ -225,24 +221,14 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
 
         // 줌으로 인한 dragend가 아닌 실제 드래그일 때만 onMapCenterChange 호출
         if (!isZoomingRef.current && onMapCenterChange) {
-          // 기존 타이머가 있으면 취소
-          if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-          }
-
-          // 50ms 후에 실행 (디바운싱)
-          debounceTimerRef.current = setTimeout(() => {
-            const center = map.getCenter();
-            const centerLocation: MapLocation = {
-              latitude: center.getLat(),
-              longitude: center.getLng(),
-            };
-            onMapCenterChange(centerLocation);
-            updateVisiblePlatforms();
-          }, 50);
-        } else {
-          updateVisiblePlatforms();
+          const center = map.getCenter();
+          const centerLocation: MapLocation = {
+            latitude: center.getLat(),
+            longitude: center.getLng(),
+          };
+          onMapCenterChange(centerLocation);
         }
+        updateVisiblePlatforms();
       });
 
       // 지도 초기화 완료 표시
