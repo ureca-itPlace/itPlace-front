@@ -62,11 +62,13 @@ export default function MyHistoryPage() {
     const fetchHistory = async () => {
       setLoading(true);
       try {
+        const startParam = startDate ? startDate.toISOString().split('T')[0] : undefined;
+        const endParam = endDate ? endDate.toISOString().split('T')[0] : undefined;
         const res = await api.get('/api/v1/membership-history', {
           params: {
             keyword: keyword || undefined,
-            startDate: startDate ? dayjs(startDate).format('YYYY-MM-DD') : undefined,
-            endDate: endDate ? dayjs(endDate).format('YYYY-MM-DD') : undefined,
+            startDate: startParam,
+            endDate: endParam,
             page,
             size,
           },
