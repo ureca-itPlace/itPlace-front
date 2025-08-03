@@ -24,7 +24,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       <img
         src="/images/landing/videoImage/rocket-icon.webp"
         alt="로켓"
-        className="inline-block h-[27vh] w-auto pb-4"
+        className="inline-block h-[27vh] w-auto pb-4 max-sm:h-44"
         loading="lazy"
       />
       TOGETHER
@@ -34,7 +34,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       <img
         src="/images/landing/videoImage/location-icon.webp"
         alt="위치"
-        className="inline-block h-[27vh] w-auto pb-4"
+        className="inline-block h-[27vh] w-auto pb-4 max-sm:h-44"
         loading="lazy"
       />
       YOUR <span className="custom-font inline-block text-purple04 px-10">MEMBERSHIP</span>
@@ -44,7 +44,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       <img
         src="/images/landing/videoImage/tag-icon.webp"
         alt="태그"
-        className="inline-block h-[27vh] w-auto pb-4 mx-1"
+        className="inline-block h-[27vh] w-auto pb-4 mx-1 max-sm:h-44"
         loading="lazy"
       />
     </>,
@@ -169,13 +169,16 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
             ref={(el) => {
               if (el) textRefs.current[i] = el;
             }}
-            className="relative custom-font pl-4 text-[22vh] whitespace-nowrap"
+            className="relative custom-font pl-4 text-[22vh] whitespace-nowrap max-sm:text-9xl"
           >
             {text}
           </h1>
         ))}
       </div>
-      <h1 ref={h1Ref} className="custom-font text-center text-[10vw] px-4 text-white">
+      <h1
+        ref={h1Ref}
+        className="custom-font text-center text-[10vw] px-4 text-white max-sm:text-7xl max-sm:leading-relaxed"
+      >
         ARE YOU READY?
       </h1>
     </section>
