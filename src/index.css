@@ -256,7 +256,7 @@
   /* 모바일일 경우 대략 가운데 위치 */
   .react-datepicker-popper {
     position: absolute !important;
-    top: 250px !important;
+    top: 270px !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
     z-index: 9999 !important;
@@ -291,5 +291,6 @@
 
   .react-datepicker__week {
     gap: 20px;
+    margin-bottom: 8px;
   }
 }
