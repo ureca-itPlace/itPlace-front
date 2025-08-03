@@ -236,3 +236,22 @@
     right: 10px;
   }
 }
+
+@media (max-width: 500px) {
+  /* 모바일에서 키보드 입력 방지 */
+  .react-datepicker__input-container input {
+    caret-color: transparent !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  .react-datepicker-popper {
+    position: fixed !important;
+    top: 45% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999 !important;
+    width: auto !important;
+  }
+}
