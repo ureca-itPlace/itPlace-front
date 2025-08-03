@@ -257,7 +257,7 @@ const HeroSection = () => {
           ref={scrollArrowRef}
           src="/images/landing/hero/scroll-arrow.svg"
           alt="스크롤 화살표"
-          className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px]"
+          className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px] max-lg:bottom-[150px]"
           loading="lazy"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
