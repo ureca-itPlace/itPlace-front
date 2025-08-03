@@ -15,6 +15,7 @@ import SearchBar from '../../components/SearchBar';
 import NoResult from '../../components/NoResult';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/locale/ko';
 import { RiResetRightFill } from 'react-icons/ri';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -157,6 +158,8 @@ export default function MyHistoryPage() {
                   <RiResetRightFill />
                 </button>
                 <DatePicker
+                  locale={ko}
+                  showPopperArrow={false}
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
                   dateFormat="yyyy-MM-dd"
@@ -166,6 +169,8 @@ export default function MyHistoryPage() {
                 />
                 <span className="text-grey05">~</span>
                 <DatePicker
+                  locale={ko}
+                  showPopperArrow={false}
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   dateFormat="yyyy-MM-dd"
