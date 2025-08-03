@@ -27,7 +27,7 @@ const HeroSection = () => {
 
   const { isMobile, isTablet, isLaptop } = useResponsive();
   const isSmallScreen = isMobile || isTablet;
-  const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
+  const xDistance = isMobile ? 50 : isTablet ? 130 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
   const bgImage = isSmallScreen
     ? '/images/landing/hero/hero-bg-mobile.webp'
