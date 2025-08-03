@@ -68,12 +68,12 @@ export default function MyHistoryPage() {
 
         if (startDate) {
           startParam = dayjs(startDate).format('YYYY-MM-DD');
-          console.log('✅ startParam:', startParam);
+          // console.log('✅ startParam:', startParam);
         }
 
         if (endDate) {
           endParam = dayjs(endDate).format('YYYY-MM-DD');
-          console.log('📝 종료 날짜:', dayjs(endDate).format('YYYY-MM-DD'));
+          // console.log('📝 종료 날짜:', dayjs(endDate).format('YYYY-MM-DD'));
         }
         console.log('시간 포함 날짜 파라미터:', { startParam, endParam });
         const res = await api.get('/api/v1/membership-history', {
