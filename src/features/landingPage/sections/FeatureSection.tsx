@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import FeatureItem from '../components/FeatureItem';
 
 gsap.registerPlugin(ScrollTrigger);
+
 const FeatureSection = () => {
   const featureSectionRef = useRef<HTMLDivElement>(null);
 
@@ -28,6 +29,8 @@ const FeatureSection = () => {
             start: 'top 90%',
             end: 'top 60%',
             scrub: 1.2,
+            invalidateOnRefresh: true,
+            refreshPriority: -1, // 우선순위 추가
           },
         });
       });
@@ -44,6 +47,8 @@ const FeatureSection = () => {
             start: 'top 75%',
             end: 'top 45%',
             scrub: 0.6,
+            invalidateOnRefresh: true,
+            refreshPriority: -1,
           },
         });
       });
@@ -60,6 +65,8 @@ const FeatureSection = () => {
             start: 'top 80%',
             end: 'top 50%',
             scrub: 0.6,
+            invalidateOnRefresh: true,
+            refreshPriority: -1,
           },
         });
       });
@@ -76,11 +83,11 @@ const FeatureSection = () => {
             start: 'top 85%',
             end: 'top 55%',
             scrub: 0.6,
+            invalidateOnRefresh: true,
+            refreshPriority: -1,
           },
         });
       });
-
-      ScrollTrigger.refresh();
     }, featureSectionRef);
 
     return () => ctx.revert();
@@ -90,7 +97,7 @@ const FeatureSection = () => {
     <section
       ref={featureSectionRef}
       data-theme="dark"
-      className="relative max-h-[500vh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-x-hidden"
+      className="relative h-[500vh] px-5 py-20 bg-[#000000] flex flex-col justify-center gap-10 max-lg:px-8 overflow-hidden z-10"
     >
       <img
         src="/images/landing/feature/wave.webp"

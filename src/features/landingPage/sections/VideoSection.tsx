@@ -65,6 +65,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         scrub: 0.8,
         pin: true,
         anticipatePin: 1,
+        invalidateOnRefresh: true,
       },
     });
 
@@ -149,8 +150,6 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       },
     });
 
-    ScrollTrigger.refresh();
-
     return () => {
       tl.kill();
     };
@@ -158,9 +157,8 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
 
   return (
     <section
-      data-theme="dark"
       ref={sectionRef}
-      className="relative w-full min-h-[100vh] bg-[#000000] text-white flex items-center justify-center overflow-hidden"
+      className="relative w-full h-[100vh] bg-[#000000] text-white flex items-center justify-center overflow-hidden z-20"
     >
       <Video ref={videoRef} videoBoxRef={videoBoxRef} onVideoEnd={() => setVideoEnded(true)} />
       <PurpleCircle ref={circleRef} />

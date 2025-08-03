@@ -22,7 +22,8 @@ const LandingPage = () => {
   useEffect(() => {
     const handleResize = debounce(() => {
       ScrollTrigger.refresh();
-    }, 300);
+    }, 400);
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -91,11 +92,22 @@ const LandingPage = () => {
           <MobileHeader backgroundColor="transparent" iconColor="text-white" />
 
           {/* 메인 컨텐츠 래퍼 */}
-          <main className="relative">
+          <main className="relative z-0">
             <HeroSection />
-            <FeatureSection />
-            <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
-            {videoEnded && <StartCTASection />}
+            {/* FeatureSection */}
+            <div className="relative z-10">
+              <FeatureSection />
+            </div>
+            {/* VideoSection */}
+            <div className="relative z-20">
+              <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
+            </div>
+            {/* StartCTASection */}
+            {videoEnded && (
+              <div className="relative z-30">
+                <StartCTASection />
+              </div>
+            )}
           </main>
 
           <CustomCursor />

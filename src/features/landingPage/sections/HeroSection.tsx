@@ -57,6 +57,7 @@ const HeroSection = () => {
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
           markers: false,
         },
       });
@@ -192,12 +193,11 @@ const HeroSection = () => {
           },
           '+=0.5'
         )
-        .fromTo(
+        .from(
           benefitTextRef.current,
-          { opacity: 0, y: 60 },
           {
-            opacity: 1,
-            y: 0,
+            opacity: 0,
+            y: 60,
             duration: 1.5,
             ease: 'sine.out',
           },
