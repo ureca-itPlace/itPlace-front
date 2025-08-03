@@ -63,8 +63,21 @@ export default function MyHistoryPage() {
     const fetchHistory = async () => {
       setLoading(true);
       try {
-        const startParam = startDate ? startDate.toISOString().split('T')[0] : undefined;
-        const endParam = endDate ? endDate.toISOString().split('T')[0] : undefined;
+        let startParam: string | undefined;
+        let endParam: string | undefined;
+
+        if (startDate) {
+          // 날짜만 전송 (시간 제거)
+          startParam = dayjs(startDate).format('YYYY-MM-DD');
+          console.log('✅ startParam:', startParam);
+        }
+
+        if (endDate) {
+          // 종료 날짜는 하루 추가해서 전송 (포함되도록)
+          endParam = dayjs(endDate).format('YYYY-MM-DD');
+          console.log('📝 종료 날짜:', dayjs(endDate).format('YYYY-MM-DD'));
+        }
+        console.log('시간 포함 날짜 파라미터:', { startParam, endParam });
         const res = await api.get('/api/v1/membership-history', {
           params: {
             keyword: keyword || undefined,
@@ -77,6 +90,7 @@ export default function MyHistoryPage() {
 
         const data = res.data?.data;
         if (data && Array.isArray(data.content)) {
+          console.log('멤버십 이력 데이터', data);
           setHistory(data.content);
           setCurrentPage(data.currentPage ?? 0);
           setTotalElements(data.totalElements ?? 0);
@@ -161,7 +175,10 @@ export default function MyHistoryPage() {
                   locale={ko}
                   showPopperArrow={false}
                   selected={startDate}
-                  onChange={(date) => setStartDate(date)}
+                  onChange={(date) => {
+                    console.log('📅 시작 날짜 선택됨:', date);
+                    setStartDate(date);
+                  }}
                   dateFormat="yyyy-MM-dd"
                   maxDate={endDate ?? undefined}
                   placeholderText="시작 날짜"
@@ -172,7 +189,10 @@ export default function MyHistoryPage() {
                   locale={ko}
                   showPopperArrow={false}
                   selected={endDate}
-                  onChange={(date) => setEndDate(date)}
+                  onChange={(date) => {
+                    console.log('📅 종료 날짜 선택됨:', date);
+                    setEndDate(date);
+                  }}
                   dateFormat="yyyy-MM-dd"
                   minDate={startDate ?? undefined}
                   placeholderText="종료 날짜"
@@ -255,10 +275,7 @@ export default function MyHistoryPage() {
                               {item.discountAmount.toLocaleString()}원
                             </span>
                             <span className="text-grey05 text-body-1 px-4 font-light max-xl:text-body-3 max-xl:font-light max-xl:px-3 max-xlg:text-body-5 max-lg:text-body-4">
-                              {dayjs
-                                .utc(item.usedAt)
-                                .tz('Asia/Seoul')
-                                .format('YYYY-MM-DD HH:mm:ss')}
+                              {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
                             </span>
                           </div>
                         </div>
