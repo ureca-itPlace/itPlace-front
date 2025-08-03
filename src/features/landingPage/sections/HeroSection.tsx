@@ -237,7 +237,11 @@ const HeroSection = () => {
   }, [xDistance, yDistance, isSmallScreen]);
 
   return (
-    <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
+    <section
+      ref={wrapperRef}
+      data-theme="light"
+      className="relative w-full min-h-[100vh] overflow-hidden"
+    >
       {/* 우주 토끼 섹션 */}
       <div ref={heroRef} className="relative w-full h-full pointer-events-none">
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
