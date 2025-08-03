@@ -273,10 +273,7 @@ export default function MyHistoryPage() {
                               {item.discountAmount.toLocaleString()}원
                             </span>
                             <span className="text-grey05 text-body-1 px-4 font-light max-xl:text-body-3 max-xl:font-light max-xl:px-3 max-xlg:text-body-5 max-lg:text-body-4">
-                              {dayjs
-                                .utc(item.usedAt)
-                                .tz('Asia/Seoul')
-                                .format('YYYY-MM-DD HH:mm:ss')}
+                              {dayjs(item.usedAt).format('YYYY-MM-DD HH:mm:ss')}
                             </span>
                           </div>
                         </div>
