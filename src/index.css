@@ -253,14 +253,6 @@
 }
 
 @media (max-width: 500px) {
-  /* 모바일에서 키보드 입력 방지 */
-  .react-datepicker__input-container input {
-    caret-color: transparent !important;
-    user-select: none !important;
-    -webkit-user-select: none !important;
-    -webkit-touch-callout: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-  }
   /* 모바일일 경우 대략 가운데 위치 */
   .react-datepicker-popper {
     position: absolute !important;
