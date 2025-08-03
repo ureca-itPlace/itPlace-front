@@ -263,27 +263,22 @@
   }
   /* 모바일일 경우 대략 가운데 위치 */
   .react-datepicker-popper {
-    position: fixed !important;
-    top: 45% !important;
-    left: 53% !important;
+    position: absolute !important;
+    top: 250px !important;
+    left: 50% !important;
     transform: translate(-50%, -50%) !important;
     z-index: 9999 !important;
     width: auto !important;
   }
 
   .react-datepicker {
-    width: 80vw !important;
-    max-width: 320px !important; /* 최대 너비 제한 */
-    min-width: 280px !important; /* 최소 너비 보장 */
+    width: 90vw !important;
+    min-width: 280px !important;
   }
 
-  /* 요일 라인 */
   .react-datepicker__day-names {
-    display: flex;
-    justify-content: space-around;
-    margin-left: 6px;
-    margin-right: 6px;
-    margin-top: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
   }
 
   /* 요일 */
@@ -300,5 +295,9 @@
     display: flex;
     flex-direction: column;
     background-color: white;
+  }
+
+  .react-datepicker__week {
+    gap: 20px;
   }
 }
