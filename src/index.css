@@ -84,28 +84,39 @@
   background-color: transparent;
 }
 
+/* 달력 컨테이너 */
 .react-datepicker {
   font-family: inherit;
   border: none;
   box-shadow: 2px 4px 8px 3px rgba(0, 0, 0, 0.1);
   background-color: white;
-  padding: 12px 0px;
+  padding: 12px 8px;
+  display: flex;
+  justify-content: center;
 }
 
+/* 달력 헤더 */
 .react-datepicker__header {
   background-color: white;
   border-bottom: none;
 }
 
+/* 현재 월 */
 .react-datepicker__current-month {
   color: #a175ff;
   font-size: 16px;
 }
 
+/* 요일 라인 */
 .react-datepicker__day-names {
+  display: flex;
+  justify-content: space-around;
+  margin-left: 6px;
+  margin-right: 6px;
   margin-top: 20px;
 }
 
+/* 요일 */
 .react-datepicker__day-name {
   color: #a175ff;
   width: 32px;
@@ -114,21 +125,25 @@
   font-size: 14px;
 }
 
+/* 전체 달 */
 .react-datepicker__month {
-  padding: 8px;
+  display: flex;
+  flex-direction: column;
   background-color: white;
 }
 
+/* 주 */
 .react-datepicker__week {
   display: flex;
   justify-content: space-around;
 }
 
+/* 일 */
 .react-datepicker__day {
   width: 32px;
   height: 32px;
-  line-height: 32px;
   border-radius: 20px;
+  line-height: 32px;
   transition: all 0.2s ease;
   cursor: pointer;
   font-size: 14px;
@@ -246,12 +261,44 @@
     -webkit-touch-callout: none !important;
     -webkit-tap-highlight-color: transparent !important;
   }
+  /* 모바일일 경우 대략 가운데 위치 */
   .react-datepicker-popper {
     position: fixed !important;
     top: 45% !important;
-    left: 50% !important;
+    left: 53% !important;
     transform: translate(-50%, -50%) !important;
     z-index: 9999 !important;
     width: auto !important;
+  }
+
+  .react-datepicker {
+    width: 80vw !important;
+    max-width: 320px !important; /* 최대 너비 제한 */
+    min-width: 280px !important; /* 최소 너비 보장 */
+  }
+
+  /* 요일 라인 */
+  .react-datepicker__day-names {
+    display: flex;
+    justify-content: space-around;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 20px;
+  }
+
+  /* 요일 */
+  .react-datepicker__day-name {
+    color: #a175ff;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+  }
+
+  /* 전체 달 */
+  .react-datepicker__month {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
   }
 }
