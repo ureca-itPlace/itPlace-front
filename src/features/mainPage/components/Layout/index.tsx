@@ -359,6 +359,11 @@ const MainPageLayout: React.FC = () => {
 
   // ItPlace AI 추천 결과 핸들러
   const handleItplaceAiResults = useCallback((results: Platform[], isShowing: boolean) => {
+    console.log('🚀 handleItplaceAiResults 호출:', {
+      resultsLength: results.length,
+      isShowing,
+      results: results.map((r) => ({ name: r.name, lat: r.latitude, lng: r.longitude })),
+    });
     setItplaceAiResults(results);
     setIsShowingItplaceAiResults(isShowing);
   }, []);
@@ -379,10 +384,20 @@ const MainPageLayout: React.FC = () => {
 
   // platforms 배열 안정화 (ItPlace AI 결과 우선 표시)
   const stablePlatforms = useMemo(() => {
+    console.log('🔍 stablePlatforms 계산:', {
+      isShowingItplaceAiResults,
+      itplaceAiResultsLength: itplaceAiResults.length,
+      filteredPlatformsLength: filteredPlatforms.length,
+      apiPlatformsLength: apiPlatforms.length,
+    });
+
     if (isShowingItplaceAiResults && itplaceAiResults.length > 0) {
+      console.log('✅ Using itplaceAiResults:', itplaceAiResults.length);
       return itplaceAiResults;
     }
-    return filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms;
+    const result = filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms;
+    console.log('✅ Using filtered/api platforms:', result.length);
+    return result;
   }, [filteredPlatforms, apiPlatforms, itplaceAiResults, isShowingItplaceAiResults]);
 
   // 모바일에서 body 스크롤 방지

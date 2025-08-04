@@ -292,7 +292,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           onMapCenterMove?.(firstStore.latitude, firstStore.longitude);
         }
 
-        // 지도에 마커 표시
+        // 지도에 마커 표시 (KakaoMap에서 타이밍 처리)
         onItplaceAiResults?.(transformedData, true);
       } else {
         // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
@@ -360,7 +360,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
           onMapCenterMove?.(firstStore.latitude, firstStore.longitude);
         }
 
-        // 지도에 마커 표시
+        // 지도에 마커 표시 (KakaoMap에서 타이밍 처리)
         onItplaceAiResults?.(transformedData, true);
       } else {
         // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정

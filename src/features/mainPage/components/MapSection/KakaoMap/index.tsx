@@ -257,9 +257,16 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     }
   }, [userLocation, onMapCenterChange, onMapLevelChange, isMapInitialized, updateVisiblePlatforms]);
 
-  // platforms 데이터가 변경되면 visiblePlatforms 업데이트
+  // platforms 데이터가 변경되면 visiblePlatforms 업데이트 (지연 처리)
   useEffect(() => {
-    updateVisiblePlatforms();
+    // 애니메이션 중이거나 줌 중이면 잠시 후 업데이트
+    if (isAnimatingRef.current || isZoomingRef.current) {
+      setTimeout(() => {
+        updateVisiblePlatforms();
+      }, 600); // 지도 이동 완료 대기
+    } else {
+      updateVisiblePlatforms();
+    }
   }, [platforms, updateVisiblePlatforms]);
 
   // 로드뷰 모드 클릭 이벤트 관리
@@ -420,18 +427,27 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     mapRef.current.setCenter(moveLatLon);
   }, [selectedPlatform]);
 
-  // centerLocation prop이 변경되면 지도 중심 이동 (애니메이션 중이거나 줌 직후가 아닐 때만)
+  // centerLocation prop이 변경되면 지도 중심 이동
   useEffect(() => {
-    if (!mapRef.current || !centerLocation || isAnimatingRef.current || isZoomingRef.current) {
+    if (!mapRef.current || !centerLocation) {
       return;
     }
+
+    // 애니메이션 시작 표시
+    isAnimatingRef.current = true;
 
     const moveLatLon = new window.kakao.maps.LatLng(
       centerLocation.latitude,
       centerLocation.longitude
     );
     mapRef.current.setCenter(moveLatLon);
-  }, [centerLocation]);
+
+    // 이동 완료 후 애니메이션 상태 해제 및 viewport 업데이트
+    setTimeout(() => {
+      isAnimatingRef.current = false;
+      updateVisiblePlatforms();
+    }, 500);
+  }, [centerLocation, updateVisiblePlatforms]);
 
   return (
     <div className="w-full h-full">
