@@ -67,13 +67,19 @@ export default function MyHistoryPage() {
         let endParam: string | undefined;
 
         if (startDate) {
-          startParam = dayjs(startDate).format('YYYY-MM-DD');
-          // console.log('✅ startParam:', startParam);
+          startParam = dayjs(startDate)
+            .tz('Asia/Seoul')
+            .startOf('day')
+            .utc()
+            .format('YYYY-MM-DDTHH:mm:ss');
         }
 
         if (endDate) {
-          endParam = dayjs(endDate).format('YYYY-MM-DD');
-          // console.log('📝 종료 날짜:', dayjs(endDate).format('YYYY-MM-DD'));
+          endParam = dayjs(endDate)
+            .tz('Asia/Seoul')
+            .endOf('day')
+            .utc()
+            .format('YYYY-MM-DDTHH:mm:ss');
         }
         console.log('시간 포함 날짜 파라미터:', { startParam, endParam });
         const res = await api.get('/api/v1/membership-history', {
