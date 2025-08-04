@@ -70,7 +70,6 @@ const LandingPage = () => {
   // 비디오 종료 후 스크롤 맨 아래로 이동
   useEffect(() => {
     if (videoEnded) {
-      console.log('비디오 종료');
       gsap.to(window, {
         scrollTo: { y: 'max', autoKill: false },
         duration: 0.6,
