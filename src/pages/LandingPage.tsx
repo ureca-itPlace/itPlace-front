@@ -4,7 +4,6 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { debounce } from 'lodash';
 import { lazy, useEffect, useLayoutEffect, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
-import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
 import CustomCursor from '../features/landingPage/components/CustomCursor';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -18,14 +17,13 @@ const StartCTASection = lazy(() => import('../features/landingPage/sections/Star
 const LandingPage = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [videoEnded, setVideoEnded] = useState(false);
-  const [theme, setTheme] = useState<string>('dark');
-  useHeaderThemeObserver(setTheme);
 
   // 윈도우 리사이즈 핸들러
   useEffect(() => {
     const handleResize = debounce(() => {
       ScrollTrigger.refresh();
-    }, 300);
+    }, 400);
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -91,14 +89,25 @@ const LandingPage = () => {
         <Intro onFinish={handleLoadingFinish} />
       ) : (
         <div className="relative overflow-x-hidden">
-          <MobileHeader theme={theme} backgroundColor="transparent" />
+          <MobileHeader backgroundColor="transparent" iconColor="text-white" />
 
           {/* 메인 컨텐츠 래퍼 */}
-          <main className="relative">
+          <main className="relative z-0">
             <HeroSection />
-            <FeatureSection />
-            <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
-            {videoEnded && <StartCTASection />}
+            {/* FeatureSection */}
+            <div className="relative z-10">
+              <FeatureSection />
+            </div>
+            {/* VideoSection */}
+            <div className="relative z-20">
+              <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
+            </div>
+            {/* StartCTASection */}
+            {videoEnded && (
+              <div className="relative z-30">
+                <StartCTASection />
+              </div>
+            )}
           </main>
 
           <CustomCursor />

@@ -1,18 +1,36 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import * as ScratchCardLib from 'scratchcard-js';
-import { useCallback } from 'react';
+import { showToast } from '../../../utils/toast';
 
 const ScratchCard = ScratchCardLib.ScratchCard;
 const SCRATCH_TYPE = ScratchCardLib.SCRATCH_TYPE;
 
 interface ScratchCouponCanvasProps {
   onComplete: () => void;
+  isLoggedIn: boolean;
+  couponCount: number | null;
 }
 
-export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasProps) {
+export default function ScratchCouponCanvas({
+  onComplete,
+  isLoggedIn,
+  couponCount,
+}: ScratchCouponCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scratchCardRef = useRef<InstanceType<typeof ScratchCard> | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
+
+  const couponCountRef = useRef(couponCount);
+  const isLoggedInRef = useRef(isLoggedIn);
+
+  // 최신값 유지
+  useEffect(() => {
+    couponCountRef.current = couponCount;
+  }, [couponCount]);
+
+  useEffect(() => {
+    isLoggedInRef.current = isLoggedIn;
+  }, [isLoggedIn]);
 
   const initScratchCard = useCallback(() => {
     const container = containerRef.current;
@@ -22,42 +40,68 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
     const width = container.offsetWidth;
     const height = container.offsetHeight;
 
+    const clearZoneRadius = window.innerWidth < 768 ? 8 : 24;
+
     const sc = new ScratchCard('#scratch-canvas', {
       scratchType: SCRATCH_TYPE.CIRCLE,
       containerWidth: width,
       containerHeight: height,
       imageForwardSrc: '/images/event/coupon-cover.webp',
-      clearZoneRadius: 24,
+      clearZoneRadius,
       nPoints: 30,
       pointSize: 4,
-      callback: onComplete,
+      callback: () => {
+        const allowed =
+          isLoggedInRef.current && couponCountRef.current !== null && couponCountRef.current > 0;
+
+        if (allowed) {
+          onComplete();
+        }
+      },
     });
 
     sc.init()
       .then(() => {
         scratchCardRef.current = sc;
+
+        const canvasEl = sc.canvas;
+        const currentIsLoggedIn = isLoggedInRef.current;
+        const currentCouponCount = couponCountRef.current;
+        const allowed = currentIsLoggedIn && currentCouponCount !== null && currentCouponCount > 0;
+
+        // 커서 및 클릭 동작 설정
+        if (!allowed) {
+          if (canvasEl) canvasEl.style.pointerEvents = 'none';
+          container.style.cursor = 'not-allowed';
+          container.onclick = () => {
+            if (!currentIsLoggedIn) {
+              showToast('로그인 후 이용해주세요!', 'error');
+            } else {
+              showToast('쿠폰이 부족합니다. 별을 찾아보세요!', 'error');
+            }
+          };
+        } else {
+          if (canvasEl) canvasEl.style.pointerEvents = 'auto';
+          container.style.cursor = 'default';
+          container.onclick = null;
+        }
       })
       .catch(console.error);
   }, [onComplete]);
 
   useEffect(() => {
-    initScratchCard(); // 초기 mount 시 1번 실행
+    initScratchCard();
 
     const container = containerRef.current;
     if (!container) return;
 
-    // ✅ debounce timeout ref 정의
     const debounceTimeoutRef = { current: null as number | null };
 
-    // ✅ ResizeObserver 내부에서 debounce 적용
     resizeObserverRef.current = new ResizeObserver(() => {
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
       debounceTimeoutRef.current = window.setTimeout(() => {
         initScratchCard();
-      }, 300); // 300ms 동안 resize 안 들어오면 실행
+      }, 300);
     });
 
     resizeObserverRef.current.observe(container);
@@ -65,15 +109,12 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
     return () => {
       resizeObserverRef.current?.disconnect();
       scratchCardRef.current = null;
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current); // ✅ clean up도 필요
-      }
+      if (debounceTimeoutRef.current) clearTimeout(debounceTimeoutRef.current);
     };
   }, [initScratchCard]);
 
   return (
-    <div className="relative  w-full aspect-[1014/267] mt-6">
-      {/* ✅ 아래: 쿠폰 베이스 이미지 */}
+    <div className="relative w-full aspect-[1014/267] mt-6">
       <picture>
         <source srcSet="/images/event/coupon-main.webp" type="image/webp" />
         <img
@@ -83,7 +124,6 @@ export default function ScratchCouponCanvas({ onComplete }: ScratchCouponCanvasP
         />
       </picture>
 
-      {/* ✅ 위에 긁는 캔버스 (DOM 하나만) */}
       <div
         id="scratch-canvas"
         ref={containerRef}

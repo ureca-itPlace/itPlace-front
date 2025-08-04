@@ -25,6 +25,7 @@ interface ModalProps {
   inputType?: string;
   widthClass?: string;
   animateOnOpen?: boolean;
+  shadowStyle?: React.CSSProperties;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -43,6 +44,7 @@ const Modal: React.FC<ModalProps> = ({
   children,
   widthClass,
   animateOnOpen,
+  shadowStyle,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -68,6 +70,7 @@ const Modal: React.FC<ModalProps> = ({
       <div
         ref={modalRef}
         className={`relative ${widthClass ?? 'w-full max-w-[500px]'} bg-white rounded-[20px] shadow-xl p-10 flex flex-col items-center max-sm:p-5`}
+        style={shadowStyle}
       >
         {/* 닫기 버튼 */}
         <button onClick={onClose} className="absolute top-5 right-5 text-grey03 hover:text-grey04">

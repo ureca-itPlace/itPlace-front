@@ -44,14 +44,14 @@ export default function MyPageLayout() {
 
   // ✅ 로그인된 경우에는 마이페이지 레이아웃 정상 렌더
   return (
-    <div>
+    <div className="bg-grey01">
       <div className="hidden fixed top-0 left-0 w-full z-[9999] max-md:block">
         <MobileHeader title="마이잇플" />
       </div>
 
       <div
         className={
-          `min-h-screen bg-grey01 mx-auto p-[28px] flex gap-[28px] max-lg:gap-[16px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
+          `min-h-screen bg-grey01 mx-auto max-w-[1800px] p-[28px] flex gap-[28px] max-lg:gap-[16px] max-md:-mx-5 max-md:max-h-none max-md:flex-col max-md:p-0 max-md:pt-[48px]` +
           (isWhiteLayout ? ' max-md:gap-0 max-md:bg-white' : '')
         }
       >
