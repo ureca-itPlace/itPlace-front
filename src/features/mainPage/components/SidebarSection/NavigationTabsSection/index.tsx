@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { actionAnimations } from '../../../../../utils/Animation';
 import { useTabClickAnimation } from '../../../hooks/useTabClickAnimation';
 
@@ -26,25 +26,19 @@ const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
     onTabChange,
   });
 
-  useEffect(() => {
-    // AI 탭인 경우 애니메이션 적용
+  useLayoutEffect(() => {
     const aiTabElement = tabRefs.current['ai'];
 
     if (aiTabElement) {
-      // 이전 애니메이션 정리
       actionAnimations.killAnimation(animationRef.current);
       animationRef.current = null;
-
-      // 항상 원위치로 리셋
       actionAnimations.resetPosition(aiTabElement);
 
-      // AI 탭이 활성화되지 않은 경우 실행될 애니메이션 (통통 튀기기)
       if (activeTab !== 'ai') {
         animationRef.current = actionAnimations.bounceAnimation(aiTabElement);
       }
     }
 
-    // 클린업
     return () => {
       actionAnimations.killAnimation(animationRef.current);
       animationRef.current = null;
@@ -86,6 +80,15 @@ const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
           }`}
         >
           {tab.label}
+          {tab.id === 'ai' && activeTab !== 'ai' && (
+            <span className="absolute top-[-4px] right-[-4px] w-[12px] h-[12px] pointer-events-none">
+              <img
+                src="/images/main/tab-highlight.png"
+                alt="ai탭 강조 이미지"
+                className="w-full h-full transform scale-[1.15] filter drop-shadow-[0_0_6px_#7638FA]"
+              />
+            </span>
+          )}
         </button>
       ))}
     </div>
