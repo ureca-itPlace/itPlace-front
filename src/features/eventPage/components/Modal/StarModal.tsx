@@ -39,7 +39,6 @@ const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
       onClose={onClose}
       widthClass="w-[624px] max-md:max-w-[calc(100%-32px)]"
       animateOnOpen
-      shadowStyle={{ boxShadow: '0px 3px 30px 0px #7638FA' }}
     >
       <div className="flex flex-col items-center text-center">
         <h2 className="text-title-4 font-bold pt-2 max-sm:text-title-7 max-sm:font-bold">
