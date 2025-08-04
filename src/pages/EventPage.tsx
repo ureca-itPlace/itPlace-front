@@ -123,7 +123,7 @@ export default function EventPage() {
         }
       },
       {
-        root: scrollContainer,
+        root: scrollContainer, // 기본값 = viewport 기준
         threshold: 0.3,
       }
     );
@@ -190,7 +190,7 @@ export default function EventPage() {
                     당첨 내역만 모아보기
                   </label>
                 </div>
-                <div className="flex-1 mt-12 overflow-y-auto">
+                <div className="flex-1 mt-12 overflow-hidden">
                   {!isLoggedIn ? (
                     <NoResult
                       message1="로그인 후 확인할 수 있어요!"

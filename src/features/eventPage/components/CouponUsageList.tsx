@@ -20,12 +20,9 @@ const CouponUsageList = ({
       ref={scrollContainerRef}
       className="
         space-y-5
-        overflow-y-auto
         pr-1
-        max-h-[calc(100vh-360px)]
-        max-xl:max-h-[calc(100vh-310px)]
-        max-xlg:max-h-[calc(100vh-360px)]
-        max-md:max-h-[calc(100vh-460px)]
+    overflow-y-auto
+    max-h-[600px]
         scrollArea
       "
     >
