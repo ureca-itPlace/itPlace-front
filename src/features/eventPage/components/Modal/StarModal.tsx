@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Modal from '../../../../components/Modal';
 import StarImg from '/images/event/event-star.webp';
 import EventModalButton from './EventModalButton';
+import { actionAnimations } from '../../../../utils/Animation';
 
 interface StarModalProps {
   isOpen: boolean;
@@ -15,13 +16,18 @@ const getTodayString = () => {
 
 const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
   const [isHidden, setIsHidden] = useState<boolean>(false);
+  const starRef = useRef(null);
 
   useEffect(() => {
+    if (isOpen && starRef.current) {
+      actionAnimations.scaleAnimation(starRef.current);
+    }
+
     const hiddenDate = localStorage.getItem('starModalHiddenDate');
     if (hiddenDate === getTodayString()) {
       setIsHidden(true);
     }
-  }, []);
+  }, [isOpen]);
 
   const handleHide = () => {
     localStorage.setItem('starModalHiddenDate', getTodayString()); // 오늘 날짜를 로컬 스토리지에 저장
@@ -45,6 +51,7 @@ const StarModal: React.FC<StarModalProps> = ({ isOpen, onClose }) => {
           숨겨진 별을 찾아 행운 쿠폰을 잡아보세요!
         </h2>
         <img
+          ref={starRef}
           src={StarImg}
           alt="별 이미지"
           className="mt-4 w-[100px] h-[100px] max-sm:w-[80px] max-sm:h-[80px] object-contain max-sm:mt-2"

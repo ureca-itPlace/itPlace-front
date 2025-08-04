@@ -12,6 +12,16 @@ export const actionAnimations = {
     });
   },
 
+  scaleAnimation: (element: HTMLElement): gsap.core.Tween => {
+    return gsap.to(element, {
+      scale: 1.1,
+      duration: 0.7,
+      yoyo: true,
+      repeat: -1,
+      ease: 'power1.out',
+    });
+  },
+
   // 호버 시 원위치로 돌아가는 애니메이션
   returnToPosition: (element: HTMLElement): gsap.core.Tween => {
     return gsap.to(element, {
