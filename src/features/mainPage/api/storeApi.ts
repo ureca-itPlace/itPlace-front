@@ -11,7 +11,9 @@ const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY; // Vite 환경변
 /**
  * 사용자 위치 기반 전체 지점 목록 조회
  */
-export const getStoreList = async (params: StoreListParams & { userLat?: number; userLng?: number }): Promise<StoreApiResponse> => {
+export const getStoreList = async (
+  params: StoreListParams & { userLat?: number; userLng?: number }
+): Promise<StoreApiResponse> => {
   const response = await api.get('/api/v1/maps/nearby', {
     params: {
       lat: params.lat,
@@ -48,7 +50,9 @@ export const getStoreListByCategory = async (
 /**
  * 키워드 검색을 통한 지점 목록 조회
  */
-export const searchStores = async (params: SearchStoresParams & { userLat?: number; userLng?: number }): Promise<StoreApiResponse> => {
+export const searchStores = async (
+  params: SearchStoresParams & { userLat?: number; userLng?: number }
+): Promise<StoreApiResponse> => {
   const response = await api.get('/api/v1/maps/nearby/search', {
     params: {
       lat: params.lat,
