@@ -83,7 +83,7 @@ const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
           {tab.id === 'ai' && activeTab !== 'ai' && (
             <span className="absolute top-[-4px] right-[-4px] w-[12px] h-[12px] pointer-events-none max-sm:w-[10px] max-sm:h-[10px] max-sm:right-[-2px]">
               <img
-                src="/images/main/tab-highlight.png"
+                src="/images/main/tab-highlight.webp"
                 alt="ai탭 강조 이미지"
                 className="w-full h-full transform scale-[1.15] filter drop-shadow-[0_0_6px_#7638FA]"
               />
