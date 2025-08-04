@@ -39,9 +39,25 @@ export const useStoreData = () => {
     async (lat: number, lng: number, radius: number, category: string | null) => {
       const shouldFilterByCategory = category && category !== '전체';
 
+      // 현재 사용자 위치 가져오기
+      const currentUserCoords = userCoordsRef.current;
+
       const storeResponse = shouldFilterByCategory
-        ? await getStoreListByCategory({ lat, lng, radiusMeters: radius, category })
-        : await getStoreList({ lat, lng, radiusMeters: radius });
+        ? await getStoreListByCategory({
+            lat,
+            lng,
+            radiusMeters: radius,
+            category,
+            userLat: currentUserCoords?.lat,
+            userLng: currentUserCoords?.lng,
+          })
+        : await getStoreList({
+            lat,
+            lng,
+            radiusMeters: radius,
+            userLat: currentUserCoords?.lat,
+            userLng: currentUserCoords?.lng,
+          });
 
       return transformStoreDataToPlatforms(storeResponse.data);
     },
@@ -216,6 +232,9 @@ export const useStoreData = () => {
         // 맵 레벨에 따른 반경 계산
         const radius = getRadiusByMapLevel(mapLevel);
 
+        // 현재 사용자 위치 가져오기
+        const currentUserCoords = userCoordsRef.current;
+
         // 검색어가 비어있으면 전체 가맹점 조회
         if (!keyword.trim()) {
           const storeResponse =
@@ -225,11 +244,15 @@ export const useStoreData = () => {
                   lng: searchLng,
                   radiusMeters: radius,
                   category: selectedCategory,
+                  userLat: currentUserCoords?.lat,
+                  userLng: currentUserCoords?.lng,
                 })
               : await getStoreList({
                   lat: searchLat,
                   lng: searchLng,
                   radiusMeters: radius,
+                  userLat: currentUserCoords?.lat,
+                  userLng: currentUserCoords?.lng,
                 });
 
           return transformStoreDataToPlatforms(storeResponse.data);
@@ -241,6 +264,8 @@ export const useStoreData = () => {
           lng: searchLng,
           category: selectedCategory || undefined,
           keyword: keyword.trim(),
+          userLat: currentUserCoords?.lat,
+          userLng: currentUserCoords?.lng,
         });
 
         return transformStoreDataToPlatforms(storeResponse.data);

@@ -255,6 +255,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
       const response = await getItplaceAiStores(
         favorite.partnerName,
         userCoords.lat,
+        userCoords.lng,
+        userCoords.lat,
         userCoords.lng
       );
 
@@ -324,7 +326,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         return;
       }
 
-      const response = await getItplaceAiStores(store.partnerName, userCoords.lat, userCoords.lng);
+      const response = await getItplaceAiStores(
+        store.partnerName,
+        userCoords.lat,
+        userCoords.lng,
+        userCoords.lat,
+        userCoords.lng
+      );
 
       // API 응답이 있으면 매장 목록 표시
       if (response.data && response.data.length > 0) {
