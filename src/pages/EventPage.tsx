@@ -133,7 +133,7 @@ export default function EventPage() {
     return () => {
       if (target) observer.unobserve(target);
     };
-  }, [hasMore, isLoggedIn, scrollContainerRef.current]);
+  }, [hasMore, isLoggedIn, scrollContainerRef]);
 
   return (
     <>

@@ -29,14 +29,17 @@ const CouponUsageList = ({
         scrollArea
       "
     >
-      {usageHistory.map((item) => (
-        <CouponUsageItem
-          key={item.historyId}
-          isWin={item.result === 'SUCCESS'}
-          message={item.result === 'SUCCESS' ? (item.giftName ?? '') : '다음 기회를 노려보세요!'}
-          date={item.usedDate}
-        />
-      ))}
+      {usageHistory
+        .slice()
+        .reverse()
+        .map((item) => (
+          <CouponUsageItem
+            key={item.historyId}
+            isWin={item.result === 'SUCCESS'}
+            message={item.result === 'SUCCESS' ? (item.giftName ?? '') : '다음 기회를 노려보세요!'}
+            date={item.usedDate}
+          />
+        ))}
 
       {loaderRef && (
         <li ref={loaderRef} className="flex justify-center items-center py-6">
