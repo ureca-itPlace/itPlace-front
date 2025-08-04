@@ -1,6 +1,8 @@
-import React from 'react';
+interface Props {
+  couponCount: number | null;
+}
 
-const OwnedCouponCount = () => {
+const OwnedCouponCount = ({ couponCount }: Props) => {
   return (
     <div
       className="bg-white -mb-2 rounded-[18px] p-9 max-xl:p-6 text-center h-full"
@@ -23,8 +25,8 @@ const OwnedCouponCount = () => {
             className="w-[310px] max-xl:w-[230px] max-sm:w-[240px]"
           />
         </picture>
-        <div className="absolute top-[50%] text-[48px] font-bold max-xl:text-[42px] max-xl:font-bold max-sm:text-[38px] max-sm:font-bold text-white">
-          3개
+        <div className="absolute top-[50%] text-[48px] font-bold  max-xl:text-[42px] max-xl:font-bold max-sm:text-[38px] max-sm:font-bold text-white">
+          {couponCount !== null ? `${couponCount}개` : '?개'}
         </div>
       </div>
     </div>

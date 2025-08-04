@@ -18,7 +18,7 @@ const CouponUsageItem = ({ isWin, message, date }: CouponUsageItemProps) => {
         </p>
 
         {/* 가운데 메시지 */}
-        <p className="text-body-1 max-sm:text-body-2 text-grey05 w-[320px] max-sm:w-full text-center max-md:mt-2 max-sm:mt-0">
+        <p className="text-body-1 max-sm:text-body-2 text-grey05 w-[320px] max-sm:w-full max-md:text-center max-md:mt-2 max-sm:mt-0">
           {message}
         </p>
 
