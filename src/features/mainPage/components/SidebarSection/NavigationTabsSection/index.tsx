@@ -81,7 +81,7 @@ const NavigationTabsSection: React.FC<NavigationTabsSectionProps> = ({
         >
           {tab.label}
           {tab.id === 'ai' && activeTab !== 'ai' && (
-            <span className="absolute top-[-4px] right-[-4px] w-[12px] h-[12px] pointer-events-none">
+            <span className="absolute top-[-4px] right-[-4px] w-[12px] h-[12px] pointer-events-none max-sm:w-[10px] max-sm:h-[10px] max-sm:right-[-2px]">
               <img
                 src="/images/main/tab-highlight.png"
                 alt="ai탭 강조 이미지"
