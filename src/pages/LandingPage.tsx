@@ -2,7 +2,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { debounce } from 'lodash';
-import { lazy, useEffect, useLayoutEffect, useState } from 'react';
+import { lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
 import CustomCursor from '../features/landingPage/components/CustomCursor';
 
@@ -17,6 +17,8 @@ const StartCTASection = lazy(() => import('../features/landingPage/sections/Star
 const LandingPage = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [videoEnded, setVideoEnded] = useState(false);
+  const [iconColor, setIconColor] = useState<'text-white' | 'text-[#000000]'>('text-white');
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   // 윈도우 리사이즈 핸들러
   useEffect(() => {
@@ -77,6 +79,28 @@ const LandingPage = () => {
     }
   }, [videoEnded]);
 
+  // CTA만 검정색 헤더
+  useEffect(() => {
+    if (!showIntro && videoEnded && ctaRef.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIconColor('text-[#000000]');
+          } else {
+            setIconColor('text-white');
+          }
+        },
+        {
+          threshold: 0.3,
+        }
+      );
+
+      observer.observe(ctaRef.current);
+
+      return () => observer.disconnect();
+    }
+  }, [showIntro, videoEnded]);
+
   const handleLoadingFinish = () => {
     // 로딩 완료 시 스크롤 위치 확인
     window.scrollTo(0, 0);
@@ -89,7 +113,7 @@ const LandingPage = () => {
         <Intro onFinish={handleLoadingFinish} />
       ) : (
         <div className="relative overflow-x-hidden">
-          <MobileHeader backgroundColor="transparent" iconColor="text-white" />
+          <MobileHeader backgroundColor="transparent" iconColor={iconColor} />
 
           {/* 메인 컨텐츠 래퍼 */}
           <main className="relative z-0">
@@ -104,7 +128,7 @@ const LandingPage = () => {
             </div>
             {/* StartCTASection */}
             {videoEnded && (
-              <div className="relative z-30">
+              <div ref={ctaRef} className="relative z-30">
                 <StartCTASection />
               </div>
             )}
