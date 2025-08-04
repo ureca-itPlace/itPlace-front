@@ -9,23 +9,9 @@ interface CouponUsagelistProps {
   isLoading: boolean;
 }
 
-const CouponUsageList = ({
-  usageHistory,
-  loaderRef,
-  scrollContainerRef,
-  isLoading,
-}: CouponUsagelistProps) => {
+const CouponUsageList = ({ usageHistory, isLoading }: CouponUsagelistProps) => {
   return (
-    <ul
-      ref={scrollContainerRef}
-      className="
-        space-y-5
-        pr-1
-    overflow-y-auto
-    max-h-[600px]
-        scrollArea
-      "
-    >
+    <ul className="space-y-5 overflow-y-auto max-h-[600px] pr-1 scrollArea">
       {usageHistory.map((item) => (
         <CouponUsageItem
           key={item.historyId}
@@ -34,10 +20,9 @@ const CouponUsageList = ({
           date={item.usedDate}
         />
       ))}
-
-      {loaderRef && (
-        <li ref={loaderRef} className="flex justify-center items-center py-6">
-          {isLoading && <LoadingSpinner />}
+      {isLoading && (
+        <li className="flex justify-center items-center py-6">
+          <LoadingSpinner />
         </li>
       )}
     </ul>
