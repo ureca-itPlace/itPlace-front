@@ -120,7 +120,7 @@ export const entranceAnimation = {
         scale: 1,
         opacity: 1,
         duration: 0.5,
-        ease: 'bounce.out(1)',
+        ease: 'bounce.out',
       }
     );
   },
