@@ -53,7 +53,7 @@ const HeroSection = () => {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=7200',
+          end: '+=8000',
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -221,8 +221,8 @@ const HeroSection = () => {
               {
                 y: '200vh',
                 opacity: 0.8,
-                ease: 'sine.inOut',
-                duration: 10,
+                ease: 'sine.out',
+                duration: 30,
               },
               `<+${groupIndex * 0.4}`
             );
