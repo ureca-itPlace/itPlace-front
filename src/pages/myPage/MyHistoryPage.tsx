@@ -15,6 +15,7 @@ import SearchBar from '../../components/SearchBar';
 import NoResult from '../../components/NoResult';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/locale/ko';
 import { RiResetRightFill } from 'react-icons/ri';
 import FadeWrapper from '../../features/myPage/components/FadeWrapper';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -62,11 +63,30 @@ export default function MyHistoryPage() {
     const fetchHistory = async () => {
       setLoading(true);
       try {
+        let startParam: string | undefined;
+        let endParam: string | undefined;
+
+        if (startDate) {
+          startParam = dayjs(startDate)
+            .tz('Asia/Seoul')
+            .startOf('day')
+            .utc()
+            .format('YYYY-MM-DDTHH:mm:ss');
+        }
+
+        if (endDate) {
+          endParam = dayjs(endDate)
+            .tz('Asia/Seoul')
+            .endOf('day')
+            .utc()
+            .format('YYYY-MM-DDTHH:mm:ss');
+        }
+        console.log('시간 포함 날짜 파라미터:', { startParam, endParam });
         const res = await api.get('/api/v1/membership-history', {
           params: {
             keyword: keyword || undefined,
-            startDate: startDate ? dayjs(startDate).format('YYYY-MM-DD') : undefined,
-            endDate: endDate ? dayjs(endDate).format('YYYY-MM-DD') : undefined,
+            startDate: startParam,
+            endDate: endParam,
             page,
             size,
           },
@@ -74,6 +94,7 @@ export default function MyHistoryPage() {
 
         const data = res.data?.data;
         if (data && Array.isArray(data.content)) {
+          console.log('멤버십 이력 데이터', data);
           setHistory(data.content);
           setCurrentPage(data.currentPage ?? 0);
           setTotalElements(data.totalElements ?? 0);
@@ -155,19 +176,31 @@ export default function MyHistoryPage() {
                   <RiResetRightFill />
                 </button>
                 <DatePicker
+                  locale={ko}
+                  showPopperArrow={false}
                   selected={startDate}
-                  onChange={(date) => setStartDate(date)}
+                  onChange={(date) => {
+                    console.log('📅 시작 날짜 선택됨:', date);
+                    setStartDate(date);
+                  }}
                   dateFormat="yyyy-MM-dd"
+                  maxDate={endDate ?? undefined}
                   placeholderText="시작 날짜"
-                  className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[90px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                  className="border border-grey03 text-center rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[110px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
                 />
                 <span className="text-grey05">~</span>
                 <DatePicker
+                  locale={ko}
+                  showPopperArrow={false}
                   selected={endDate}
-                  onChange={(date) => setEndDate(date)}
+                  onChange={(date) => {
+                    console.log('📅 종료 날짜 선택됨:', date);
+                    setEndDate(date);
+                  }}
                   dateFormat="yyyy-MM-dd"
+                  minDate={startDate ?? undefined}
                   placeholderText="종료 날짜"
-                  className="border border-grey03 rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[90px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
+                  className="border border-grey03 text-center rounded-[12px] px-2 h-[50px] w-[120px] max-xl:text-body-3 max-xl:h-[44px] max-xl:w-[110px] max-xlg:w-full max-md:h-[36px] max-md:rounded-[10px] placeholder:text-grey05 placeholder:font-normal placeholder:text-center outline-none focus:border-purple04"
                 />
               </div>
             </div>
