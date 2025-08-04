@@ -12,8 +12,8 @@ const HeroSection = () => {
   const scrollArrowRef = useRef<HTMLImageElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLImageElement>(null);
-  const subtitleRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
+  const topTitleRef = useRef<HTMLDivElement>(null);
+  const bottomTitleRef = useRef<HTMLDivElement>(null);
   const whiteOverlayRef = useRef<HTMLDivElement>(null);
 
   // Map Refs
@@ -54,7 +54,7 @@ const HeroSection = () => {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=8400',
+          end: '+=9400',
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -65,8 +65,8 @@ const HeroSection = () => {
 
       // 초기 세팅
       gsap.set(windowRef.current, { scale: 1, transformOrigin: 'center center' });
-      gsap.set(subtitleRef.current, { y: 100, opacity: 0 });
-      gsap.set(titleRef.current, { y: 100, opacity: 0 });
+      gsap.set(topTitleRef.current, { y: 100, opacity: 0 });
+      gsap.set(bottomTitleRef.current, { y: 100, opacity: 0 });
       gsap.set(whiteOverlayRef.current, { opacity: 0, pointerEvents: 'none' });
       gsap.set(mapContainerRef.current, { opacity: 0, visibility: 'hidden' });
       gsap.set(
@@ -104,22 +104,22 @@ const HeroSection = () => {
           ease: 'sine.out',
         });
         tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, '<');
-        tl.to(subtitleRef.current, {
+        tl.to(topTitleRef.current, {
           opacity: 1,
           y: 0,
-          duration: 3,
+          duration: 5,
           ease: 'power1.out',
         });
-        tl.to(titleRef.current, {
+        tl.to(bottomTitleRef.current, {
           opacity: 1,
           y: 0,
-          duration: 3,
+          duration: 5,
           ease: 'power1.out',
         });
       } else {
         // lg 미만에서는 즉시 노출
-        gsap.set(subtitleRef.current, { opacity: 1, y: 0 });
-        gsap.set(titleRef.current, { opacity: 1, y: 0 });
+        gsap.set(topTitleRef.current, { opacity: 1, y: 0 });
+        gsap.set(bottomTitleRef.current, { opacity: 1, y: 0 });
       }
       tl.to(whiteOverlayRef.current, { opacity: 1, duration: 2.5, ease: 'sine.inOut' }, '+=0.3');
       tl.to(
@@ -141,7 +141,7 @@ const HeroSection = () => {
           { opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power1.out' },
           '<'
         )
-        .to({}, { duration: 5 })
+        .to({}, { duration: 4 })
         .to(
           firstMapImageRef.current,
           {
@@ -154,7 +154,7 @@ const HeroSection = () => {
           '+=2'
         )
         .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '-=0.5')
-        .to({}, { duration: 5 })
+        .to({}, { duration: 6 })
         .to(
           secondMapImageRef.current,
           {
@@ -168,7 +168,7 @@ const HeroSection = () => {
           '+=1.2'
         )
         .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '-=0.5')
-        .to({}, { duration: 5 })
+        .to({}, { duration: 6 })
         .to(
           thirdMapImageRef.current,
           {
@@ -176,7 +176,7 @@ const HeroSection = () => {
             x: xDistance,
             y: yDistance,
             opacity: 0,
-            duration: 3,
+            duration: 5,
             ease: 'slow(0.9, 0.1, false)',
             filter: 'blur(3px)',
           },
@@ -287,10 +287,10 @@ const HeroSection = () => {
           loading="lazy"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
-          <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
+          <div ref={topTitleRef} className="custom-font text-[6vw] text-white leading-none">
             EXPLORE THE
           </div>
-          <div ref={titleRef} className="custom-font text-[12vw] text-white leading-none">
+          <div ref={bottomTitleRef} className="custom-font text-[12vw] text-white leading-none">
             IT:PLACE
           </div>
         </div>
