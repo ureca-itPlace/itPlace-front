@@ -195,6 +195,8 @@ export default function EventPage() {
                     <NoResult
                       message1="로그인 후 확인할 수 있어요!"
                       message2="로그인하고 행운의 스크래치 쿠폰을 긁어보세요."
+                      message1FontSize="max-xl:text-title-6"
+                      message2FontSize="max-xl:text-body-3"
                       buttonText="로그인하기"
                       buttonRoute="/login"
                       isLoginRequired
@@ -203,6 +205,8 @@ export default function EventPage() {
                     <NoResult
                       message1="앗! 내역을 찾을 수 없어요!"
                       message2="지도에서 별을 찾아 행운 쿠폰을 긁어보세요."
+                      message1FontSize="max-xl:text-title-6"
+                      message2FontSize="max-xl:text-body-3"
                     />
                   ) : (
                     <CouponUsageList
