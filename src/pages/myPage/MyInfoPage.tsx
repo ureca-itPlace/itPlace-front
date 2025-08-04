@@ -49,8 +49,7 @@ export default function MyInfoPage() {
       setLoading(true);
       const res = await api.get<{ data: UserInfo }>('api/v1/users');
       setUser(res.data.data);
-    } catch (err) {
-      console.error('사용자 정보 조회 실패', err);
+    } catch {
       showToast('사용자 정보 조회에 실패했습니다.', 'error');
     } finally {
       setLoading(false);
@@ -126,8 +125,6 @@ export default function MyInfoPage() {
         // ✅ 유플러스 회원 아님 (정상적인 흐름)
         showToast('유플러스 회원이 아니신가요? 정보를 불러오지 못했습니다.', 'error');
       } else {
-        // ❌ 예기치 못한 에러
-        console.error('유플러스 데이터 확인 실패:', err);
         showToast('회원 확인 중 오류가 발생했습니다.', 'error');
       }
     }
@@ -197,7 +194,6 @@ export default function MyInfoPage() {
             });
             showToast('비밀번호가 성공적으로 변경되었습니다.', 'success');
           } catch (err) {
-            console.error('비밀번호 변경 실패:', err);
             // 👉 에러 코드별 토스트 처리
             const axiosErr = err as AxiosError<{ code: string }>;
             const code = axiosErr.response?.data?.code;
@@ -236,7 +232,6 @@ export default function MyInfoPage() {
             // 로그인 페이지로 이동
             navigate('/login');
           } catch (err) {
-            console.error('회원탈퇴 실패:', err);
             const axiosErr = err as AxiosError<{ code?: string }>;
             const code = axiosErr.response?.data?.code;
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import Modal from '../../../../components/Modal';
 import WinTopImg from '/images/event/modal-win.webp';
-import ProductImg from '/images/admin/CGV.png';
 
 interface WinModalProps {
   isOpen: boolean;
@@ -34,11 +33,7 @@ const WinModal: React.FC<WinModalProps> = ({
           <h2 className="text-title-2 font-bold max-sm:text-title-5 max-sm:font-bold max-xl:text-title-3">
             축하드려요 {username}님!
           </h2>
-          <img
-            src={productImageUrl || ProductImg}
-            alt="상품 이미지"
-            className="mt-4 w-[76px] h-[76px]"
-          />
+          <img src={productImageUrl} alt="상품 이미지" className="mt-4 w-[76px] h-[76px]" />
           {/* 상품 이름 */}
           <p className="text-body-0 text-[#000000] mt-4 max-sm:text-body-2 max-xl:text-body-1">
             🎉{giftName}에 당첨되셨어요.

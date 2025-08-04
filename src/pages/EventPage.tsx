@@ -1,5 +1,4 @@
-// src/pages/EventPage.tsx
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { useMediaQuery } from 'react-responsive';
@@ -26,9 +25,6 @@ export default function EventPage() {
   const [isLoading, setIsLoading] = useState(false);
   const username = useSelector((state: RootState) => state.auth.user?.name || '');
   const isLoggedIn = useSelector((state: RootState) => !!state.auth.user);
-  const [page, setPage] = useState(1);
-  const size = 6;
-  const [hasMore, setHasMore] = useState(true);
   const [couponCount, setCouponCount] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [modalInfo, setModalInfo] = useState<{
@@ -40,8 +36,6 @@ export default function EventPage() {
   const [onlySuccess, setOnlySuccess] = useState(false);
   const [showNoCouponModal, setShowNoCouponModal] = useState(false);
 
-  const loader = useRef<HTMLLIElement | null>(null);
-  const scrollContainerRef = useRef<HTMLUListElement | null>(null);
   const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   const getCouponCount = async () => {
@@ -52,32 +46,6 @@ export default function EventPage() {
       setCouponCount(null);
     }
   };
-
-  const getHistory = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const data = await fetchCouponHistory(onlySuccess ? 'SUCCESS' : undefined);
-      const sliced = data.slice(0, page * size);
-      setHistoryList(sliced);
-      if (sliced.length >= data.length) setHasMore(false);
-    } catch (err) {
-      console.error('이력 조회 실패:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [onlySuccess, page]);
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    setPage(1);
-    setHasMore(true);
-  }, [onlySuccess, isLoggedIn]);
-
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    getCouponCount();
-    getHistory();
-  }, [isLoggedIn, getHistory]);
 
   const handleScratchComplete = async () => {
     if (!isLoggedIn) {
@@ -103,12 +71,8 @@ export default function EventPage() {
       }
       setShowResult(true);
       await getCouponCount();
-      setPage(1);
-      setHasMore(true);
       const data = await fetchCouponHistory(onlySuccess ? 'SUCCESS' : undefined);
-      const sliced = data.slice(0, size);
-      setHistoryList(sliced);
-      if (sliced.length >= data.length) setHasMore(false);
+      setHistoryList(data);
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
       const message = axiosError?.response?.data?.message ?? '쿠폰 긁기에 실패했습니다.';
@@ -116,31 +80,24 @@ export default function EventPage() {
     }
   };
 
+  // ✅ 전체 사용내역 불러오기
   useEffect(() => {
-    if (!isLoggedIn || !hasMore) return;
-
-    const scrollContainer = scrollContainerRef.current;
-    const target = loader.current;
-    if (!scrollContainer || !target) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setPage((prev) => prev + 1);
-        }
-      },
-      {
-        root: scrollContainer,
-        threshold: 0.3,
+    const fetchAll = async () => {
+      setIsLoading(true);
+      try {
+        const data = await fetchCouponHistory(onlySuccess ? 'SUCCESS' : undefined);
+        setHistoryList(data);
+      } catch (err) {
+        console.error('사용 내역 조회 실패:', err);
+      } finally {
+        setIsLoading(false);
       }
-    );
-
-    observer.observe(target);
-
-    return () => {
-      if (target) observer.unobserve(target);
     };
-  }, [hasMore, isLoggedIn, scrollContainerRef]);
+    if (isLoggedIn) {
+      getCouponCount();
+      fetchAll();
+    }
+  }, [isLoggedIn, onlySuccess]);
 
   return (
     <>
@@ -184,7 +141,7 @@ export default function EventPage() {
                 className="bg-white rounded-[18px] p-7 flex-1 flex flex-col h-full"
                 style={{ boxShadow: '0px 3px 12px rgba(0, 0, 0, 0.1)' }}
               >
-                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-xl:font-semibold max-md:text-title-4 max-md:font-semibold max-sm:font-semibold max-sm:text-title-7">
+                <h3 className="text-title-3 text-grey05 font-semibold text-center mt-5 mb-2 max-xl:text-title-5 max-md:text-title-4 max-sm:text-title-7">
                   나의 쿠폰 사용 내역
                 </h3>
                 <div className="flex justify-end mt-8">
@@ -198,11 +155,13 @@ export default function EventPage() {
                     당첨 내역만 모아보기
                   </label>
                 </div>
-                <div className="flex-1 mt-12 overflow-y-auto">
+                <div className="flex-1 mt-12 overflow-hidden">
                   {!isLoggedIn ? (
                     <NoResult
                       message1="로그인 후 확인할 수 있어요!"
                       message2="로그인하고 행운의 스크래치 쿠폰을 긁어보세요."
+                      message1FontSize="max-xl:text-title-6"
+                      message2FontSize="max-xl:text-body-3"
                       buttonText="로그인하기"
                       buttonRoute="/login"
                       isLoginRequired
@@ -211,14 +170,11 @@ export default function EventPage() {
                     <NoResult
                       message1="앗! 내역을 찾을 수 없어요!"
                       message2="지도에서 별을 찾아 행운 쿠폰을 긁어보세요."
+                      message1FontSize="max-xl:text-title-6"
+                      message2FontSize="max-xl:text-body-3"
                     />
                   ) : (
-                    <CouponUsageList
-                      usageHistory={historyList}
-                      loaderRef={hasMore ? loader : undefined}
-                      scrollContainerRef={scrollContainerRef}
-                      isLoading={isLoading}
-                    />
+                    <CouponUsageList usageHistory={historyList} isLoading={isLoading} />
                   )}
                 </div>
               </section>

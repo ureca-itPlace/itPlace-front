@@ -69,7 +69,7 @@ const InfoRow: React.FC<{ label: string; value: string }> = ({ label, value }) =
     </div>
     {/* 오른쪽 값 박스 */}
     <div className="flex-1 h-min-[55px] w-full bg-grey01 rounded-[18px] px-6 py-4 text-body-0 text-grey05 max-xl:text-body-2 max-xl:py-3 max-md:bg-white max-md:px-0 max-md:text-grey04">
-      {value}
+      {value || '\u00A0'}
     </div>
   </div>
 );

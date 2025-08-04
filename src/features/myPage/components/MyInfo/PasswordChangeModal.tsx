@@ -1,4 +1,5 @@
 import Modal from '../../../../components/Modal';
+import { useMemo } from 'react';
 
 interface PasswordChangeModalProps {
   isOpen: boolean;
@@ -12,6 +13,8 @@ interface PasswordChangeModalProps {
   onSubmit: () => void;
 }
 
+const specialCharRegex = /[!@#$%^&*()_+{}[\]:;<>,.?~/-]/;
+
 export default function PasswordChangeModal({
   isOpen,
   currentPassword,
@@ -23,8 +26,20 @@ export default function PasswordChangeModal({
   onCancel,
   onSubmit,
 }: PasswordChangeModalProps) {
+  const isPasswordValid = useMemo(() => {
+    return newPassword.length >= 6 && specialCharRegex.test(newPassword);
+  }, [newPassword]);
+
+  const isPasswordMatch = useMemo(() => {
+    return confirmPassword === newPassword;
+  }, [newPassword, confirmPassword]);
+
   const isReady =
-    currentPassword.trim() !== '' && newPassword.trim() !== '' && confirmPassword.trim() !== '';
+    currentPassword.trim() !== '' &&
+    newPassword.trim() !== '' &&
+    confirmPassword.trim() !== '' &&
+    isPasswordValid &&
+    isPasswordMatch;
 
   return (
     <Modal
@@ -33,7 +48,6 @@ export default function PasswordChangeModal({
       message="현재 비밀번호와 새 비밀번호를 입력해주세요."
       onClose={onCancel}
     >
-      {/* ✅ 이 div 안에 인풋들과 버튼을 모두 넣고 flex-col로 정렬 */}
       <div className="flex flex-col items-center gap-4 w-full max-w-[436px] mt-4">
         {/* 인풋 영역 */}
         <div className="flex flex-col gap-3 w-full">
@@ -44,20 +58,36 @@ export default function PasswordChangeModal({
             value={currentPassword}
             onChange={(e) => onCurrentChange(e.target.value)}
           />
-          <input
-            type="password"
-            className="w-full h-[50px] px-4 bg-grey01 rounded-[10px] text-body-2 placeholder-grey03"
-            placeholder="새 비밀번호 입력"
-            value={newPassword}
-            onChange={(e) => onNewChange(e.target.value)}
-          />
-          <input
-            type="password"
-            className="w-full h-[50px] px-4 bg-grey01 rounded-[10px] text-body-2 placeholder-grey03"
-            placeholder="새 비밀번호 확인"
-            value={confirmPassword}
-            onChange={(e) => onConfirmChange(e.target.value)}
-          />
+
+          <div className="flex flex-col gap-1">
+            <input
+              type="password"
+              className="w-full h-[50px] px-4 bg-grey01 rounded-[10px] text-body-2 placeholder-grey03"
+              placeholder="새 비밀번호 입력"
+              value={newPassword}
+              onChange={(e) => onNewChange(e.target.value)}
+            />
+            <p
+              className={`text-caption text-left ml-1 ${newPassword && !isPasswordValid ? 'text-red-500' : 'text-grey04'}`}
+            >
+              6자 이상, 특수문자 1개 이상 포함해야 합니다.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <input
+              type="password"
+              className="w-full h-[50px] px-4 bg-grey01 rounded-[10px] text-body-2 placeholder-grey03"
+              placeholder="새 비밀번호 확인"
+              value={confirmPassword}
+              onChange={(e) => onConfirmChange(e.target.value)}
+            />
+            {confirmPassword && !isPasswordMatch && (
+              <p className="text-caption text-red-500 text-left ml-1">
+                비밀번호가 일치하지 않습니다.
+              </p>
+            )}
+          </div>
         </div>
 
         {/* 버튼 영역 */}
