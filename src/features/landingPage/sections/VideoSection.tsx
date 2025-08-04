@@ -65,7 +65,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         scrub: 0.8,
         pin: true,
         anticipatePin: 1,
-        invalidateOnRefresh: true,
+        refreshPriority: -1,
       },
     });
 
@@ -120,10 +120,11 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       start: 'top top',
       end: '+=2000',
       scrub: 0.5,
+      refreshPriority: -1,
       onUpdate: (self) => {
         if (!video) return;
         if (self.direction === 1 && !videoEnded && video.paused && self.progress >= 0.95) {
-          video.play().catch(console.log);
+          video.play().catch();
         }
 
         // 역방향으로 올라갈 때 영상 일시 정지
@@ -145,7 +146,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         setVideoEnded(false);
         // 다시 아래로 돌아오면 시작
         if (video && video.paused) {
-          video.play().catch(console.log);
+          video.play().catch();
         }
       },
     });

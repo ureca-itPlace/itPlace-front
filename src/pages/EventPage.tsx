@@ -9,6 +9,7 @@ import GiftListInfo from '../features/eventPage/components/GiftListInfo';
 import CouponUsageList from '../features/eventPage/components/CouponUsageList';
 import WinModal from '../features/eventPage/components/Modal/WinModal';
 import FailModal from '../features/eventPage/components/Modal/FailModal';
+import NoCouponModal from '../features/eventPage/components/Modal/NoCouponModal';
 import MobileHeader from '../components/MobileHeader';
 import TipBanner from '../features/eventPage/components/TipBanner';
 import {
@@ -37,6 +38,7 @@ export default function EventPage() {
   } | null>(null);
   const [historyList, setHistoryList] = useState<CouponHistory[]>([]);
   const [onlySuccess, setOnlySuccess] = useState(false);
+  const [showNoCouponModal, setShowNoCouponModal] = useState(false);
 
   const loader = useRef<HTMLLIElement | null>(null);
   const scrollContainerRef = useRef<HTMLUListElement | null>(null);
@@ -80,6 +82,11 @@ export default function EventPage() {
   const handleScratchComplete = async () => {
     if (!isLoggedIn) {
       showToast('로그인 후 이용해주세요!', 'error');
+      return;
+    }
+
+    if (!couponCount || couponCount <= 0) {
+      setShowNoCouponModal(true);
       return;
     }
 
@@ -133,7 +140,7 @@ export default function EventPage() {
     return () => {
       if (target) observer.unobserve(target);
     };
-  }, [hasMore, isLoggedIn, scrollContainerRef.current]);
+  }, [hasMore, isLoggedIn, scrollContainerRef]);
 
   return (
     <>
@@ -163,6 +170,7 @@ export default function EventPage() {
                   onComplete={handleScratchComplete}
                   isLoggedIn={isLoggedIn}
                   couponCount={couponCount}
+                  showNoCoupon={() => setShowNoCouponModal(true)}
                 />
               </section>
               <section className="grid grid-cols-2 max-md:grid-cols-1 gap-7 max-xl:gap-6 flex-1 max-md:gap-7">
@@ -231,6 +239,10 @@ export default function EventPage() {
           ) : (
             <FailModal isOpen={showResult} onClose={() => setShowResult(false)} />
           ))}
+
+        {showNoCouponModal && (
+          <NoCouponModal isOpen={showNoCouponModal} onClose={() => setShowNoCouponModal(false)} />
+        )}
       </main>
     </>
   );
