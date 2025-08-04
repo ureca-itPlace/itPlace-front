@@ -446,7 +446,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     setTimeout(() => {
       isAnimatingRef.current = false;
       updateVisiblePlatforms();
-    }, 500);
+    }, 200);
   }, [centerLocation, updateVisiblePlatforms]);
 
   return (
