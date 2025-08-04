@@ -315,7 +315,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   };
 
   // ItPlace AI 추천 클릭 핸들러
-  const handleRecommendationClick = async (store: RecommendationItem) => {
+  const handleRecommendationClick = async (
+    store: RecommendationItem,
+    showSpeechBubble: boolean = true
+  ) => {
     try {
       setIsItplaceAiLoading(true);
       setItplaceAiError(null);
@@ -380,8 +383,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
       setSelectedRecommendation(store);
       setShowAiStoreList(true);
 
-      // SpeechBubble 표시 (추천 이유 설명)
-      onShowSpeechBubble?.(store.reason, store.partnerName);
+      // SpeechBubble 표시 (추천 이유 설명) - chatroom에서 온 요청이 아닐 때만
+      if (showSpeechBubble) {
+        onShowSpeechBubble?.(store.reason, store.partnerName);
+      }
 
       // BenefitDetailCard 표시를 위해 RecommendationItem의 benefitIds 사용
       if (store.benefitIds && store.benefitIds.length > 0 && onBenefitDetailRequest) {
@@ -577,7 +582,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                         reason: `${partnerName} 매장 정보를 보여드릴게요!`,
                         benefitIds: [],
                       };
-                      handleRecommendationClick(fakeRecommendation);
+                      handleRecommendationClick(fakeRecommendation, false); // speechBubble 비활성화
                     }}
                     onChangeTab={onActiveTabChange}
                     onBottomSheetReset={onBottomSheetReset}
