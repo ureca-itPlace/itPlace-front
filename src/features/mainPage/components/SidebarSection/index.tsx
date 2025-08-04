@@ -285,9 +285,20 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         }));
 
         setFavoriteStoreResults(transformedData);
+
+        // 첫 번째 매장 위치로 지도 중심 이동 (마커가 보이도록)
+        if (transformedData.length > 0) {
+          const firstStore = transformedData[0];
+          onMapCenterMove?.(firstStore.latitude, firstStore.longitude);
+        }
+
+        // 지도에 마커 표시
+        onItplaceAiResults?.(transformedData, true);
       } else {
         // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
         setFavoriteStoreResults([]);
+        // 지도에 빈 배열로 마커 업데이트
+        onItplaceAiResults?.([], true);
       }
 
       // 관심 혜택 탭 내에서 StoreCard 리스트 표시
@@ -342,6 +353,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         }));
 
         setAiStoreResults(transformedData);
+
+        // 첫 번째 매장 위치로 지도 중심 이동 (마커가 보이도록)
+        if (transformedData.length > 0) {
+          const firstStore = transformedData[0];
+          onMapCenterMove?.(firstStore.latitude, firstStore.longitude);
+        }
+
         // 지도에 마커 표시
         onItplaceAiResults?.(transformedData, true);
       } else {
