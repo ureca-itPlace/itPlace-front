@@ -30,7 +30,7 @@ const FailModal: React.FC<FailModalProps> = ({ isOpen, onClose }) => {
             />
           </div>
           <h2 className="text-title-4 font-bold pt-2 max-sm:text-title-7 max-sm:font-bold">
-            앗 보유하신 쿠폰이 없어요 !
+            앗 보유하신 쿠폰이 없어요!
           </h2>
           <p className="text-body-0 text-[#000000] mt-2 max-sm:text-body-3 max-sm:leading-none max-sm:mb-4">
             지도에서{' '}
