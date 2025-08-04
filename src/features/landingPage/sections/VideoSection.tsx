@@ -65,7 +65,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         scrub: 0.8,
         pin: true,
         anticipatePin: 1,
-        invalidateOnRefresh: true,
+        refreshPriority: -1,
       },
     });
 
@@ -120,6 +120,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       start: 'top top',
       end: '+=2000',
       scrub: 0.5,
+      refreshPriority: -1,
       onUpdate: (self) => {
         if (!video) return;
         if (self.direction === 1 && !videoEnded && video.paused && self.progress >= 0.95) {
