@@ -36,11 +36,20 @@ export const useStoreData = () => {
    * 카테고리가 '전체'이거나 null인 경우 전체 검색, 그 외에는 카테고리별 검색
    */
   const loadStoresByCategory = useCallback(
-    async (lat: number, lng: number, radius: number, category: string | null) => {
+    async (
+      lat: number,
+      lng: number,
+      radius: number,
+      category: string | null,
+      userLat?: number,
+      userLng?: number
+    ) => {
       const shouldFilterByCategory = category && category !== '전체';
 
-      // 현재 사용자 위치 가져오기
+      // 사용자 위치: 파라미터로 전달되면 사용, 없으면 현재 저장된 사용자 위치 사용
       const currentUserCoords = userCoordsRef.current;
+      const finalUserLat = userLat !== undefined ? userLat : currentUserCoords?.lat;
+      const finalUserLng = userLng !== undefined ? userLng : currentUserCoords?.lng;
 
       const storeResponse = shouldFilterByCategory
         ? await getStoreListByCategory({
@@ -48,15 +57,15 @@ export const useStoreData = () => {
             lng,
             radiusMeters: radius,
             category,
-            userLat: currentUserCoords?.lat,
-            userLng: currentUserCoords?.lng,
+            userLat: finalUserLat,
+            userLng: finalUserLng,
           })
         : await getStoreList({
             lat,
             lng,
             radiusMeters: radius,
-            userLat: currentUserCoords?.lat,
-            userLng: currentUserCoords?.lng,
+            userLat: finalUserLat,
+            userLng: finalUserLng,
           });
 
       return transformStoreDataToPlatforms(storeResponse.data);
@@ -144,14 +153,16 @@ export const useStoreData = () => {
   }, [selectedCategory, currentMapLevelInHook]);
 
   /**
-   * 지도 중심 위치 변경 시 위치 정보만 업데이트 (API 재요청 없음)
+   * 지도 중심 위치 변경 시 주소 정보만 업데이트 (사용자 위치는 유지)
    */
-  const updateLocationFromMap = useCallback(
-    async (lat: number, lng: number) => {
-      await updateLocationInfo(lat, lng);
-    },
-    [updateLocationInfo]
-  );
+  const updateLocationFromMap = useCallback(async (lat: number, lng: number) => {
+    try {
+      const address = await getAddressFromCoordinates(lat, lng);
+      setCurrentLocation(address);
+    } catch {
+      // 주소 변환 실패 시 무시
+    }
+  }, []);
 
   /**
    * 카테고리 필터링
@@ -172,12 +183,17 @@ export const useStoreData = () => {
         // 맵 레벨에 따른 반경 계산
         const radius = getRadiusByMapLevel(mapLevel);
 
-        // 가맹점 검색 (지도 중심 좌표 기준)
+        // 현재 사용자 위치 가져오기
+        const currentUserCoords = userCoordsRef.current;
+
+        // 가맹점 검색 (지도 중심 좌표 기준, 사용자 위치는 별도 전달)
         const platforms = await loadStoresByCategoryRef.current(
-          centerLat,
-          centerLng,
+          centerLat, // 검색 중심 좌표
+          centerLng, // 검색 중심 좌표
           radius,
-          selectedCategory
+          selectedCategory,
+          currentUserCoords?.lat, // 사용자 실제 위치
+          currentUserCoords?.lng // 사용자 실제 위치
         );
 
         // 사용자 위치는 업데이트하지 않음 (기존 userCoords 유지)
@@ -235,37 +251,37 @@ export const useStoreData = () => {
         // 현재 사용자 위치 가져오기
         const currentUserCoords = userCoordsRef.current;
 
-        // 검색어가 비어있으면 전체 가맹점 조회
+        // 검색어가 비어있으면 전체 가맹점 조회 (검색 위치와 사용자 위치 분리)
         if (!keyword.trim()) {
           const storeResponse =
             selectedCategory && selectedCategory !== '전체'
               ? await getStoreListByCategory({
-                  lat: searchLat,
-                  lng: searchLng,
+                  lat: searchLat, // 검색 중심 좌표
+                  lng: searchLng, // 검색 중심 좌표
                   radiusMeters: radius,
                   category: selectedCategory,
-                  userLat: currentUserCoords?.lat,
-                  userLng: currentUserCoords?.lng,
+                  userLat: currentUserCoords?.lat, // 사용자 실제 위치
+                  userLng: currentUserCoords?.lng, // 사용자 실제 위치
                 })
               : await getStoreList({
-                  lat: searchLat,
-                  lng: searchLng,
+                  lat: searchLat, // 검색 중심 좌표
+                  lng: searchLng, // 검색 중심 좌표
                   radiusMeters: radius,
-                  userLat: currentUserCoords?.lat,
-                  userLng: currentUserCoords?.lng,
+                  userLat: currentUserCoords?.lat, // 사용자 실제 위치
+                  userLng: currentUserCoords?.lng, // 사용자 실제 위치
                 });
 
           return transformStoreDataToPlatforms(storeResponse.data);
         }
 
-        // 키워드 검색 API 호출
+        // 키워드 검색 API 호출 (검색 위치와 사용자 위치 분리)
         const storeResponse = await searchStores({
-          lat: searchLat,
-          lng: searchLng,
+          lat: searchLat, // 검색 중심 좌표
+          lng: searchLng, // 검색 중심 좌표
           category: selectedCategory || undefined,
           keyword: keyword.trim(),
-          userLat: currentUserCoords?.lat,
-          userLng: currentUserCoords?.lng,
+          userLat: currentUserCoords?.lat, // 사용자 실제 위치
+          userLng: currentUserCoords?.lng, // 사용자 실제 위치
         });
 
         return transformStoreDataToPlatforms(storeResponse.data);
