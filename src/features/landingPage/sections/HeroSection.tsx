@@ -248,11 +248,14 @@ const HeroSection = () => {
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
           <img src={bgImage} alt="배경" className="w-full h-full object-cover" />
         </div>
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+          <img src={bgImage} alt="배경" className="w-full h-full object-cover" />
+        </div>
         <img
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           alt="우주선 창문"
-          className="absolute inset-0 w-full h-[100vh] object-cover z-40 max-lg:hidden bg-center pointer-events-none"
+          className="absolute inset-0 w-full h-[100vh] object-cover aspect-[16/9] z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <img
           ref={scrollArrowRef}
