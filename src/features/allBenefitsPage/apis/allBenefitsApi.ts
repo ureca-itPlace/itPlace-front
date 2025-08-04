@@ -85,63 +85,42 @@ export interface ApiResponse<T = unknown> {
 
 // 혜택 목록 조회 API
 export const getBenefits = async (params: BenefitApiParams): Promise<BenefitResponse> => {
-  try {
-    // 기본값 설정
-    const queryParams = {
-      mainCategory: params.mainCategory,
-      page: params.page ?? 0,
-      size: params.size ?? 12,
-      sort: params.sort ?? 'POPULARITY',
-      ...(params.category && { category: params.category }),
-      ...(params.filter && { filter: params.filter }),
-      ...(params.keyword && { keyword: params.keyword }),
-    };
+  // 기본값 설정
+  const queryParams = {
+    mainCategory: params.mainCategory,
+    page: params.page ?? 0,
+    size: params.size ?? 12,
+    sort: params.sort ?? 'POPULARITY',
+    ...(params.category && { category: params.category }),
+    ...(params.filter && { filter: params.filter }),
+    ...(params.keyword && { keyword: params.keyword }),
+  };
 
-    const response = await axiosInstance.get('/api/v1/benefit', { params: queryParams });
-    return response.data.data;
-  } catch (error) {
-    console.error('혜택 데이터 로드 실패:', error);
-    throw error;
-  }
+  const response = await axiosInstance.get('/api/v1/benefit', { params: queryParams });
+  return response.data.data;
 };
 
 // 즐겨찾기 추가 API
 export const addFavorite = async (benefitId: number): Promise<void> => {
-  try {
-    const requestBody: FavoriteRequest = { benefitId };
-    await axiosInstance.post('/api/v1/favorites', requestBody);
-  } catch (error) {
-    console.error('즐겨찾기 추가 실패:', error);
-    throw error;
-  }
+  const requestBody: FavoriteRequest = { benefitId };
+  await axiosInstance.post('/api/v1/favorites', requestBody);
 };
 
 // 즐겨찾기 삭제 API
 export const removeFavorite = async (benefitId: number): Promise<void> => {
-  try {
-    const requestBody = { benefitIds: [benefitId] };
-    console.log('DELETE /api/v1/favorites', requestBody);
-    await axiosInstance.delete('/api/v1/favorites', {
-      data: requestBody,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  } catch (error) {
-    console.error('즐겨찾기 삭제 실패:', error);
-    throw error;
-  }
+  const requestBody = { benefitIds: [benefitId] };
+  await axiosInstance.delete('/api/v1/favorites', {
+    data: requestBody,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
 // 혜택 상세 조회 API
 export const getBenefitDetail = async (benefitId: number): Promise<BenefitDetailResponse> => {
-  try {
-    const response = await axiosInstance.get(`/api/v1/benefit/${benefitId}`);
-    return response.data.data;
-  } catch (error) {
-    console.error('혜택 상세 정보 로드 실패:', error);
-    throw error;
-  }
+  const response = await axiosInstance.get(`/api/v1/benefit/${benefitId}`);
+  return response.data.data;
 };
 
 // 제휴처 검색 순위 조회 API
@@ -149,16 +128,11 @@ export const getPartnersSearchRanking = async (
   recentperiod: number = 2,
   prevperiod: number = 3
 ): Promise<ApiResponse<PartnerSearchRankingItem[]>> => {
-  try {
-    const params = new URLSearchParams({
-      recentperiod: recentperiod.toString(),
-      prevperiod: prevperiod.toString(),
-    });
+  const params = new URLSearchParams({
+    recentperiod: recentperiod.toString(),
+    prevperiod: prevperiod.toString(),
+  });
 
-    const response = await axiosInstance.get(`/api/v1/partners/search-ranking?${params}`);
-    return response.data;
-  } catch (error) {
-    console.error('제휴처 검색 순위 조회 실패:', error);
-    throw error;
-  }
+  const response = await axiosInstance.get(`/api/v1/partners/search-ranking?${params}`);
+  return response.data;
 };

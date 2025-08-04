@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getPartnersSearchRanking, PartnerSearchRankingItem } from '../apis/allBenefitsApi';
-import { mockSearchRanking } from '../data/mockData';
 
 // 로컬 RankingItem 타입 정의
 interface RankingItem {
@@ -50,17 +49,10 @@ const SimpleRanking: React.FC<SimpleRankingProps> = ({ className = '' }) => {
 
   useEffect(() => {
     const fetchRankingData = async () => {
-      try {
-        // 제휴처 검색 순위 데이터 조회 (최근 2일, 이전 3일 기준으로 상위 3개)
-        const searchRankingResponse = await getPartnersSearchRanking(2, 3);
-        const searchRankingItems = convertToRankingItem(searchRankingResponse.data.slice(0, 3));
-        setData(searchRankingItems);
-      } catch (err) {
-        console.error('랭킹 데이터 조회 실패:', err);
-        // 에러 발생 시 mock 데이터 사용
-        const mockItems = convertToRankingItem(mockSearchRanking.slice(0, 3));
-        setData(mockItems);
-      }
+      // 제휴처 검색 순위 데이터 조회 (최근 2일, 이전 3일 기준으로 상위 3개)
+      const searchRankingResponse = await getPartnersSearchRanking(2, 3);
+      const searchRankingItems = convertToRankingItem(searchRankingResponse.data.slice(0, 3));
+      setData(searchRankingItems);
     };
 
     fetchRankingData();

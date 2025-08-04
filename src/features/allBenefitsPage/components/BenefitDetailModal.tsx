@@ -51,8 +51,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
         try {
           const detail = await getBenefitDetail(benefit.benefitId);
           setBenefitDetail(detail);
-        } catch (error) {
-          console.error('혜택 상세 정보 로드 실패:', error);
+        } catch {
           showToast('혜택 상세 정보를 불러오는 중 오류가 발생했습니다', 'error');
         } finally {
           setIsLoading(false);
@@ -107,7 +106,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
   const displayDescription =
     benefitDetail?.description ||
     `${benefit.category} • ${benefit.usageType === 'ONLINE' ? '온라인' : '오프라인'}`;
-  const displayImage = benefitDetail?.image || benefit.image || '/images/mock/cgv.png';
+  const displayImage = benefitDetail?.image || benefit.image || '/images/admin/CGV.png';
 
   // 제공 횟수 정보
   const getBenefitInfo = () => {
