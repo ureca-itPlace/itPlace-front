@@ -100,6 +100,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   );
   const [allFavorites, setAllFavorites] = useState<FavoriteBenefit[]>([]);
 
+  // 즐겨찾기 매장 목록 표시 상태
+  const [showFavoriteStoreList, setShowFavoriteStoreList] = useState(false);
+  const [favoriteStoreResults, setFavoriteStoreResults] = useState<Platform[]>([]);
+  const [selectedFavorite, setSelectedFavorite] = useState<FavoriteBenefit | null>(null);
+  const [isFavoriteStoreLoading, setIsFavoriteStoreLoading] = useState(false);
+  const [favoriteStoreError, setFavoriteStoreError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchAllFavorites = async () => {
       if (activeTab !== 'favorites') return;
@@ -186,6 +193,16 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     }
   }, [activeTab, onItplaceAiResults]);
 
+  // 탭 변경 시 즐겨찾기 상태 초기화
+  useEffect(() => {
+    if (activeTab !== 'favorites') {
+      setShowFavoriteStoreList(false);
+      setSelectedFavorite(null);
+      setFavoriteStoreResults([]);
+      setFavoriteStoreError(null);
+    }
+  }, [activeTab]);
+
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
     onPlatformSelect(platform);
@@ -224,9 +241,64 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     onSearchChange?.(query);
   };
 
-  const handleFavoriteClick = (favorite: FavoriteBenefit) => {
-    // 파트너명으로 검색 실행
-    onKeywordSearch?.(favorite.partnerName);
+  const handleFavoriteClick = async (favorite: FavoriteBenefit) => {
+    try {
+      setIsFavoriteStoreLoading(true);
+      setFavoriteStoreError(null);
+
+      // 사용자 위치 정보 확인
+      if (!userCoords) {
+        setFavoriteStoreError('위치 정보를 가져올 수 없습니다.');
+        return;
+      }
+
+      const response = await getItplaceAiStores(
+        favorite.partnerName,
+        userCoords.lat,
+        userCoords.lng
+      );
+
+      // API 응답이 있으면 매장 목록 표시
+      if (response.data && response.data.length > 0) {
+        // API 응답을 Platform 형식으로 변환 (AI 추천과 동일한 로직)
+        const transformedData: Platform[] = response.data.map((item: StoreData) => ({
+          id: `${item.store.storeId}-${item.partner.partnerId}`,
+          storeId: item.store.storeId,
+          partnerId: item.partner.partnerId,
+          name: item.store.storeName,
+          category: item.partner.category,
+          business: item.store.business,
+          city: item.store.city,
+          town: item.store.town,
+          legalDong: item.store.legalDong,
+          address: item.store.address,
+          roadName: item.store.roadName,
+          roadAddress: item.store.roadAddress,
+          postCode: item.store.postCode,
+          latitude: item.store.latitude,
+          longitude: item.store.longitude,
+          benefits: item.tierBenefit.map((benefit) => `${benefit.grade}: ${benefit.context}`),
+          rating: 0, // API에서 제공하지 않으므로 기본값
+          distance: item.distance,
+          hasCoupon: item.store.hasCoupon,
+          imageUrl: item.partner.image,
+        }));
+
+        setFavoriteStoreResults(transformedData);
+      } else {
+        // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
+        setFavoriteStoreResults([]);
+      }
+
+      // 관심 혜택 탭 내에서 StoreCard 리스트 표시
+      setSelectedFavorite(favorite);
+      setShowFavoriteStoreList(true);
+    } catch (error) {
+      console.error('즐겨찾기 매장 정보 조회 실패:', error);
+      setFavoriteStoreError('매장 정보를 불러오는데 실패했습니다.');
+    } finally {
+      setIsFavoriteStoreLoading(false);
+    }
   };
 
   // ItPlace AI 추천 클릭 핸들러
@@ -308,6 +380,14 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     setSelectedRecommendation(null);
     setAiStoreResults([]);
     setItplaceAiError(null);
+  };
+
+  // 즐겨찾기에서 뒤로가기 핸들러
+  const handleFavoriteStoreListBack = () => {
+    setShowFavoriteStoreList(false);
+    setSelectedFavorite(null);
+    setFavoriteStoreResults([]);
+    setFavoriteStoreError(null);
   };
 
   // 채팅방 상태 변경 핸들러
@@ -395,29 +475,46 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'favorites' && (
             <>
-              {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-3 max-md:mx-0">
-                <CategoryTabsSection
-                  categories={CATEGORIES}
-                  selectedCategory={selectedCategory}
-                  onCategorySelect={handleCategorySelect}
-                  mode="sidebar"
-                  showNavigationButtons={true}
+              {showFavoriteStoreList ? (
+                <StoreCardsSection
+                  platforms={favoriteStoreResults}
+                  selectedPlatform={selectedPlatform}
+                  onPlatformSelect={handleCardClick}
+                  currentLocation={selectedFavorite?.partnerName || '즐겨찾기 매장'}
+                  isLoading={isFavoriteStoreLoading}
+                  error={favoriteStoreError}
+                  backButton={{
+                    onBack: handleFavoriteStoreListBack,
+                    label: '돌아가기',
+                  }}
                 />
-              </div>
+              ) : (
+                <>
+                  {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
+                  <div className="mb-3 max-md:mx-0">
+                    <CategoryTabsSection
+                      categories={CATEGORIES}
+                      selectedCategory={selectedCategory}
+                      onCategorySelect={handleCategorySelect}
+                      mode="sidebar"
+                      showNavigationButtons={true}
+                    />
+                  </div>
 
-              {/* 즐겨찾기 스토어 리스트 */}
-              <div
-                className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
-                style={{ height: 'calc(100vh - 360px)' }}
-              >
-                <FavoriteStoreList
-                  favorites={favorites}
-                  totalFavoritesCount={allFavorites.length}
-                  onItemClick={handleFavoriteClick}
-                  isLoading={isFavoritesLoading}
-                />
-              </div>
+                  {/* 즐겨찾기 스토어 리스트 */}
+                  <div
+                    className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
+                    style={{ height: 'calc(100vh - 360px)' }}
+                  >
+                    <FavoriteStoreList
+                      favorites={favorites}
+                      totalFavoritesCount={allFavorites.length}
+                      onItemClick={handleFavoriteClick}
+                      isLoading={isFavoritesLoading || isFavoriteStoreLoading}
+                    />
+                  </div>
+                </>
+              )}
             </>
           )}
 
