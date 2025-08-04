@@ -54,7 +54,7 @@ const HeroSection = () => {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=8000',
+          end: '+=8400',
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -141,26 +141,48 @@ const HeroSection = () => {
           { opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power1.out' },
           '<'
         )
+        .to({}, { duration: 5 })
         .to(
           firstMapImageRef.current,
-          { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'sine.out' },
+          {
+            scale: 1.4,
+            opacity: 0,
+            duration: 3,
+            filter: 'blur(3px)',
+            ease: 'slow(0.9, 0.1, false)',
+          },
           '+=2'
         )
-        .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '>-0.5')
-        .to({}, { duration: 2.5 })
+        .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '-=0.5')
+        .to({}, { duration: 5 })
         .to(
           secondMapImageRef.current,
-          { scale: 1.7, x: 80, opacity: 0, duration: 2, filter: 'blur(3px)' },
+          {
+            scale: 1.7,
+            x: 80,
+            opacity: 0,
+            duration: 3,
+            ease: 'slow(0.9, 0.1, false)',
+            filter: 'blur(3px)',
+          },
           '+=1.2'
         )
-        .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '+=0.5')
-        .to({}, { duration: 2.5 })
+        .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '-=0.5')
+        .to({}, { duration: 5 })
         .to(
           thirdMapImageRef.current,
-          { scale: 1.5, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
+          {
+            scale: 1.5,
+            x: xDistance,
+            y: yDistance,
+            opacity: 0,
+            duration: 3,
+            ease: 'slow(0.9, 0.1, false)',
+            filter: 'blur(3px)',
+          },
           '+=1.2'
         )
-        .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '+=0.2') // 네 번째 지도 등장
+        .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '-=0.5') // 네 번째 지도 등장
         .from(
           locationTextRef.current, // location 텍스트 등장
           {
@@ -255,7 +277,7 @@ const HeroSection = () => {
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           alt="우주선 창문"
-          className="absolute inset-0 w-full h-[100vh] object-cover aspect-[16/9] z-40 max-lg:hidden bg-center pointer-events-none"
+          className="absolute inset-0 w-full h-[100vh] object-fill aspect-[16/9] z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <img
           ref={scrollArrowRef}
