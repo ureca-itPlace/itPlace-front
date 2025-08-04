@@ -35,7 +35,7 @@ const FailModal: React.FC<FailModalProps> = ({ isOpen, onClose }) => {
           <p className="text-body-0 text-[#000000] mt-2 max-sm:text-body-3 max-sm:leading-none max-sm:mb-4">
             지도에서{' '}
             <strong>
-              <img src="/images/event/event-star.png" className="inline-block w-8 mb-1" />
+              <img src="/images/event/event-star.webp" className="inline-block w-8 mb-1" />
             </strong>
             을 찾아 해당 혜택에 사용 이력을 등록하면
             {isTablet ? '' : <br />} 쿠폰을 얻을 수 있어요.

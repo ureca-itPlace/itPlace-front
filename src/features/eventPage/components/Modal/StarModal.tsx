@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../../../../components/Modal';
-import StarImg from '/images/event/event-star.png';
+import StarImg from '/images/event/event-star.webp';
 import EventModalButton from './EventModalButton';
 
 interface StarModalProps {
