@@ -100,14 +100,14 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   React.useEffect(() => {
     // 컴포넌트 마운트 시 현재 스크롤 위치 저장
     const originalScrollY = window.scrollY;
-    
+
     // 모바일에서만 body 스크롤 방지 (키보드로 인한 레이아웃 변화 방지)
     if (isMobile) {
       // 현재 body 스타일 저장
       const originalBodyHeight = document.body.style.height;
       const originalBodyOverflow = document.body.style.overflow;
       const originalBodyPosition = document.body.style.position;
-      
+
       // body 스크롤 방지
       document.body.style.position = 'fixed';
       document.body.style.top = `-${originalScrollY}px`;
