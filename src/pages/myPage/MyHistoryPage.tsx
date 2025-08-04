@@ -78,13 +78,11 @@ export default function MyHistoryPage() {
           setCurrentPage(data.currentPage ?? 0);
           setTotalElements(data.totalElements ?? 0);
         } else {
-          console.warn('⚠️ API 응답 구조가 예상과 다릅니다:', res.data);
           setHistory([]);
           setCurrentPage(0);
           setTotalElements(0);
         }
-      } catch (err) {
-        console.error('멤버십 이력 API 오류:', err);
+      } catch {
         setHistory([]);
         setCurrentPage(0);
         setTotalElements(0);
@@ -109,8 +107,7 @@ export default function MyHistoryPage() {
 
         setTotalAmount(amount);
         dispatch(setTotalAmountAction(amount));
-      } catch (err) {
-        console.error('멤버십 요약 API 오류:', err);
+      } catch {
         setTotalAmount(0);
       } finally {
         setLoading(false);
