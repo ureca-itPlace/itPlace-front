@@ -16,13 +16,13 @@ const CouponUsageList = ({ usageHistory, isLoading }: CouponUsagelistProps) => {
         .slice()
         .reverse()
         .map((item) => (
-        <CouponUsageItem
-          key={item.historyId}
-          isWin={item.result === 'SUCCESS'}
-          message={item.result === 'SUCCESS' ? (item.giftName ?? '') : '다음 기회를 노려보세요!'}
-          date={item.usedDate}
-        />
-      ))}
+          <CouponUsageItem
+            key={item.historyId}
+            isWin={item.result === 'SUCCESS'}
+            message={item.result === 'SUCCESS' ? (item.giftName ?? '') : '다음 기회를 노려보세요!'}
+            date={item.usedDate}
+          />
+        ))}
       {isLoading && (
         <li className="flex justify-center items-center py-6">
           <LoadingSpinner />

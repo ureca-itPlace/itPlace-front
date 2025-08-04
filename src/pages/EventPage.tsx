@@ -99,7 +99,6 @@ export default function EventPage() {
     }
   }, [isLoggedIn, onlySuccess]);
 
-
   return (
     <>
       {isMobile && (
