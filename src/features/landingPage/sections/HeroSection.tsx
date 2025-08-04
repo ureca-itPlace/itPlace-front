@@ -1,9 +1,10 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SlowMo } from 'gsap/EasePack';
 import { useLayoutEffect, useRef } from 'react';
 import { useResponsive } from '../../../hooks/useResponsive';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SlowMo);
 
 const HeroSection = () => {
   // Hero Refs
@@ -39,7 +40,7 @@ const HeroSection = () => {
     { name: 'uplus-tv', top: 'top-[-67%]', left: 'left-[4%]', width: 'w-[10vw]' },
     { name: 'domino', top: 'top-[-10%]', left: 'left-[60%]', width: 'w-[20vw]' },
     { name: 'ever-land', top: 'top-[-25%]', left: 'left-[80%]', width: 'w-[14vw]' },
-    { name: 'lotte-world', top: 'top-[-80%]', left: 'left-[50%]', width: 'w-[14vw]' },
+    { name: 'lotte-world', top: 'top-[-70%]', left: 'left-[50%]', width: 'w-[14vw]' },
     { name: 'trip-com', top: 'top-[-80%]', left: 'left-[20%]', width: 'w-[14vw]' },
     { name: 'shake-shack', top: 'top-[-80%]', left: 'left-[75%]', width: 'w-[20vw]' },
   ];
@@ -219,12 +220,12 @@ const HeroSection = () => {
             tl.to(
               el,
               {
-                y: '200vh',
-                opacity: 0.8,
-                ease: 'sine.out',
+                y: '180vh',
+                opacity: 1,
+                ease: 'slow(0.9, 0.1, false)',
                 duration: 30,
               },
-              `<+${groupIndex * 0.4}`
+              `<+${groupIndex * 0.2}`
             );
           }
         });
@@ -251,7 +252,7 @@ const HeroSection = () => {
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           alt="우주선 창문"
-          className="absolute inset-0 w-full h-full object-fill z-40 max-lg:hidden bg-center pointer-events-none"
+          className="absolute inset-0 w-full h-[100vh] object-cover z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <img
           ref={scrollArrowRef}
