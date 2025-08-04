@@ -32,14 +32,26 @@ const GiftListInfo = () => {
         행운 쿠폰으로 받을 수 있는 선물이에요!
       </p>
 
-      <ul className="space-y-3 text-title-5 text-grey05 max-xl:text-title-8 max-sm:text-title-8 text-left inline-block">
-        {giftList.map((item, index) => (
-          <li key={index}>
-            <span className="text-purple04 mr-5 max-sm:mr-1">{index + 1}</span>
-            {item}
-          </li>
-        ))}
-      </ul>
+      <div className="flex justify-center">
+        <div className="grid grid-cols-[auto_1fr] gap-x-5 gap-y-3 max-sm:gap-x-1 text-left inline-block">
+          {giftList.map((item, index) => (
+            <>
+              <span
+                key={`number-${index}`}
+                className="text-purple04 text-title-5 max-xl:text-title-8 max-sm:text-title-8 self-start"
+              >
+                {index + 1}
+              </span>
+              <span
+                key={`text-${index}`}
+                className="text-grey05 text-title-5 max-xl:text-title-8 max-sm:text-title-8 leading-tight"
+              >
+                {item}
+              </span>
+            </>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
