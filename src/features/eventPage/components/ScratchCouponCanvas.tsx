@@ -9,12 +9,14 @@ interface ScratchCouponCanvasProps {
   onComplete: () => void;
   isLoggedIn: boolean;
   couponCount: number | null;
+  showNoCoupon: () => void;
 }
 
 export default function ScratchCouponCanvas({
   onComplete,
   isLoggedIn,
   couponCount,
+  showNoCoupon,
 }: ScratchCouponCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scratchCardRef = useRef<InstanceType<typeof ScratchCard> | null>(null);
@@ -77,7 +79,7 @@ export default function ScratchCouponCanvas({
             if (!currentIsLoggedIn) {
               showToast('로그인 후 이용해주세요!', 'error');
             } else {
-              showToast('쿠폰이 부족합니다. 별을 찾아보세요!', 'error');
+              showNoCoupon();
             }
           };
         } else {
@@ -87,7 +89,7 @@ export default function ScratchCouponCanvas({
         }
       })
       .catch(console.error);
-  }, [onComplete]);
+  }, [onComplete, showNoCoupon]);
 
   useEffect(() => {
     initScratchCard();

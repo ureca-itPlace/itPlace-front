@@ -12,7 +12,10 @@ interface CouponUsagelistProps {
 const CouponUsageList = ({ usageHistory, isLoading }: CouponUsagelistProps) => {
   return (
     <ul className="space-y-5 overflow-y-auto max-h-[600px] pr-1 scrollArea">
-      {usageHistory.map((item) => (
+      {usageHistory
+        .slice()
+        .reverse()
+        .map((item) => (
         <CouponUsageItem
           key={item.historyId}
           isWin={item.result === 'SUCCESS'}

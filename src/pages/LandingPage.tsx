@@ -2,9 +2,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { debounce } from 'lodash';
-import { lazy, useEffect, useLayoutEffect, useState } from 'react';
+import { lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import MobileHeader from '../components/MobileHeader';
-import { useHeaderThemeObserver } from '../hooks/useHeaderThemeObserver';
 import CustomCursor from '../features/landingPage/components/CustomCursor';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -18,14 +17,15 @@ const StartCTASection = lazy(() => import('../features/landingPage/sections/Star
 const LandingPage = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [videoEnded, setVideoEnded] = useState(false);
-  const [theme, setTheme] = useState<string>('dark');
-  useHeaderThemeObserver(setTheme);
+  const [iconColor, setIconColor] = useState<'text-white' | 'text-[#000000]'>('text-white');
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   // 윈도우 리사이즈 핸들러
   useEffect(() => {
     const handleResize = debounce(() => {
       ScrollTrigger.refresh();
-    }, 300);
+    }, 400);
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -70,7 +70,6 @@ const LandingPage = () => {
   // 비디오 종료 후 스크롤 맨 아래로 이동
   useEffect(() => {
     if (videoEnded) {
-      console.log('비디오 종료');
       gsap.to(window, {
         scrollTo: { y: 'max', autoKill: false },
         duration: 0.6,
@@ -78,6 +77,28 @@ const LandingPage = () => {
       });
     }
   }, [videoEnded]);
+
+  // CTA만 검정색 헤더
+  useEffect(() => {
+    if (!showIntro && videoEnded && ctaRef.current) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIconColor('text-[#000000]');
+          } else {
+            setIconColor('text-white');
+          }
+        },
+        {
+          threshold: 0.3,
+        }
+      );
+
+      observer.observe(ctaRef.current);
+
+      return () => observer.disconnect();
+    }
+  }, [showIntro, videoEnded]);
 
   const handleLoadingFinish = () => {
     // 로딩 완료 시 스크롤 위치 확인
@@ -91,14 +112,25 @@ const LandingPage = () => {
         <Intro onFinish={handleLoadingFinish} />
       ) : (
         <div className="relative overflow-x-hidden">
-          <MobileHeader theme={theme} backgroundColor="transparent" />
+          <MobileHeader backgroundColor="transparent" iconColor={iconColor} />
 
           {/* 메인 컨텐츠 래퍼 */}
-          <main className="relative">
+          <main className="relative z-0">
             <HeroSection />
-            <FeatureSection />
-            <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
-            {videoEnded && <StartCTASection />}
+            {/* FeatureSection */}
+            <div className="relative z-10">
+              <FeatureSection />
+            </div>
+            {/* VideoSection */}
+            <div className="relative z-20">
+              <VideoSection setVideoEnded={setVideoEnded} videoEnded={videoEnded} />
+            </div>
+            {/* StartCTASection */}
+            {videoEnded && (
+              <div ref={ctaRef} className="relative z-30">
+                <StartCTASection />
+              </div>
+            )}
           </main>
 
           <CustomCursor />

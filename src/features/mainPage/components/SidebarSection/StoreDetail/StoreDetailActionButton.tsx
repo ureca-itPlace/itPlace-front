@@ -18,6 +18,7 @@ interface StoreDetailActionButtonProps {
   onFavoriteChange: (newIsFavorite: boolean) => void;
   partnerName?: string;
   distance: number;
+  hasCoupon?: boolean;
 }
 
 const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
@@ -27,6 +28,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   onFavoriteChange,
   partnerName,
   distance,
+  hasCoupon = false,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -133,8 +135,10 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
       setUsageAmount('');
       setIsModalOpen(false);
 
-      // CouponModal 표시
-      setIsCouponModalOpen(true);
+      // hasCoupon이 true인 경우에만 CouponModal 표시
+      if (hasCoupon) {
+        setIsCouponModalOpen(true);
+      }
     } catch (error) {
       const errorMessage =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||

@@ -95,6 +95,7 @@ const MainPageLayout: React.FC = () => {
     filterByCategory, // 카테고리 필터링
     searchInCurrentMap, // 현재 지도 영역에서 검색
     searchByKeyword, // 키워드 검색
+    updateToCurrentLocation, // 현재 위치 업데이트
     userCoords, // 사용자 초기 위치
   } = useStoreData();
 
@@ -162,14 +163,15 @@ const MainPageLayout: React.FC = () => {
     [updateLocationFromMap]
   );
 
-  // 현재 위치로 이동 핸들러
+  // 현재 위치로 이동 핸들러 (현재 위치 버튼 클릭 시)
   const handleLocationMove = useCallback(
     (latitude: number, longitude: number) => {
-      updateLocationFromMap(latitude, longitude);
+      // 사용자 위치 업데이트 및 데이터 재로드
+      updateToCurrentLocation(latitude, longitude, currentMapLevel);
       // 지도 중심도 해당 위치로 이동
       setCurrentMapCenter({ lat: latitude, lng: longitude });
     },
-    [updateLocationFromMap]
+    [updateToCurrentLocation, currentMapLevel]
   );
 
   // 지도 중심 이동 핸들러 (사이드바에서 호출)

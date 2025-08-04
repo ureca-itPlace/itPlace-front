@@ -80,7 +80,7 @@ const CustomMarker: React.FC<CustomMarkerProps> = ({
       {/* 쿠폰 보유 시 event-star 이미지 */}
       {hasCoupon && !isSelected && (
         <img
-          src="/images/event/event-star.png"
+          src="/images/event/event-star.webp"
           alt="쿠폰 이벤트"
           className="absolute -left-6 top-0 w-14"
           style={{ transform: 'translateY(-50%) rotate(-30deg)' }}

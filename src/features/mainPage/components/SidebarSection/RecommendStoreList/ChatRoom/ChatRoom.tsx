@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { TbSend } from 'react-icons/tb';
+import { TbSend, TbRefresh, TbX } from 'react-icons/tb';
 import LoadingSpinner from '../../../../../../components/LoadingSpinner';
 import { getRecommendation, RecommendationError } from '../../../../api/recommendChatApi';
 import { getCurrentLocation } from '../../../../api/storeApi';
@@ -35,6 +35,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   const [input, setInput] = React.useState('');
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = React.useState(false);
+  const [showClearConfirm, setShowClearConfirm] = React.useState(false);
 
   // sessionStorage에서 메시지 복원
   const getInitialMessages = (): Message[] => {
@@ -85,33 +86,89 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
     onClose();
   };
 
+  // 채팅 내용 초기화
+  const handleClearChat = () => {
+    const initialMessages: Message[] = [
+      { sender: 'bot', text: '궁금한 점을 자유롭게 물어보세요!' },
+    ];
+    setMessages(initialMessages);
+    sessionStorage.setItem('chatMessages', JSON.stringify(initialMessages));
+    setShowClearConfirm(false);
+  };
+
   // 컴포넌트 마운트/언마운트 시 body 스타일 관리
   React.useEffect(() => {
     // 컴포넌트 마운트 시 현재 스크롤 위치 저장
     const originalScrollY = window.scrollY;
 
-    // 모바일에서 바텀시트를 초기 상태로 리셋
-    if (onBottomSheetReset && window.innerWidth < 768) {
-      onBottomSheetReset();
+    // 모바일에서만 body 스크롤 방지 (키보드로 인한 레이아웃 변화 방지)
+    if (isMobile) {
+      // 현재 body 스타일 저장
+      const originalBodyHeight = document.body.style.height;
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalBodyPosition = document.body.style.position;
+
+      // body 스크롤 방지
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${originalScrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+
+      // 바텀시트를 초기 상태로 리셋
+      if (onBottomSheetReset) {
+        onBottomSheetReset();
+      }
+
+      // 컴포넌트 언마운트 시 정리
+      return () => {
+        // body 스타일 복원
+        document.body.style.height = originalBodyHeight;
+        document.body.style.overflow = originalBodyOverflow;
+        document.body.style.position = originalBodyPosition;
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+
+        // 스크롤 위치 복원
+        requestAnimationFrame(() => {
+          window.scrollTo(0, originalScrollY);
+        });
+      };
+    } else {
+      // 모바일이 아닌 경우 바텀시트만 리셋
+      if (onBottomSheetReset) {
+        onBottomSheetReset();
+      }
     }
+  }, [onBottomSheetReset, isMobile]);
 
-    // 컴포넌트 언마운트 시 정리
-    return () => {
-      // body 스타일 초기화
-      document.body.style.height = '';
-      document.body.style.overflow = '';
-      document.body.style.position = '';
+  // 모바일 키보드 처리를 위한 추가 이펙트
+  React.useEffect(() => {
+    if (!isMobile) return;
 
-      // 스크롤 위치 복원 (더 확실하게)
-      requestAnimationFrame(() => {
-        window.scrollTo(0, originalScrollY);
-      });
+    const handleResize = () => {
+      // 키보드가 나타나거나 사라질 때의 처리
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
-  }, [onBottomSheetReset]);
+
+    // 초기 설정
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+      document.documentElement.style.removeProperty('--vh');
+    };
+  }, [isMobile]);
 
   const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed) return;
+    if (!trimmed || isBotLoading) return; // 로딩 중이면 전송 방지
 
     // 사용자 메시지 추가
     setMessages((prev) => [...prev, { sender: 'user', text: trimmed }]);
@@ -189,13 +246,14 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault(); // 기본 동작 방지
       void handleSend();
     }
   };
 
   // 예시 질문 버튼 클릭 처리 (바로 전송)
   const handleExampleClick = async (question: string) => {
-    setInput(question);
+    if (isBotLoading) return; // 로딩 중이면 실행 방지
 
     // 사용자 메시지 추가
     setMessages((prev) => [...prev, { sender: 'user', text: question }]);
@@ -267,7 +325,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       ]);
     } finally {
       setIsBotLoading(false);
-      setInput(''); // 입력창 초기화
     }
   };
 
@@ -294,7 +351,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   // 채팅방 JSX 컴포넌트
   const chatRoomContent = (
     <div
-      className={`bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center ${
+      className={`bg-white rounded-[18px] shadow-lg border border-grey02 p-0 flex flex-col items-center z-[9999] ${
         isMobile || isTablet ? '' : 'h-full'
       }`}
       style={
@@ -306,11 +363,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
               transform: 'translate(-50%, -50%)',
               width: '90vw',
               maxWidth: '400px',
-              height: '70vh',
+              height: 'calc(var(--vh, 1vh) * 70)',
               maxHeight: '600px',
               minHeight: '400px',
               overflow: 'hidden',
-              zIndex: 1000,
+              zIndex: 9999,
               boxShadow:
                 '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
             }
@@ -323,15 +380,28 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
       }
     >
       {/* 상단 프로필/타이틀 */}
-      <div className="w-full flex items-center gap-3 px-5 pt-5 pb-4 relative">
-        <span className="text-title-6 text-purple04 flex-1 text-center">잇플AI 채팅방</span>
-        <button
-          className="text-grey03 hover:text-grey04 text-title-3 absolute right-5 top-4"
-          onClick={handleClose}
-          aria-label="채팅방 닫기"
-        >
-          ×
-        </button>
+      <div className="w-full flex items-center justify-end px-5 pt-5 pb-4 relative">
+        <span className="absolute left-1/2 transform -translate-x-1/2 text-title-6 text-purple04">
+          잇플AI 채팅방
+        </span>
+        <div className="flex items-center gap-2">
+          {/* 채팅 초기화 버튼 */}
+          <button
+            className="text-grey03 hover:text-grey04 text-title-4 transition-colors"
+            onClick={() => setShowClearConfirm(true)}
+            aria-label="채팅 내용 초기화"
+          >
+            <TbRefresh />
+          </button>
+          {/* 닫기 버튼 */}
+          <button
+            className="text-grey03 hover:text-grey04 text-title-4"
+            onClick={handleClose}
+            aria-label="채팅방 닫기"
+          >
+            <TbX />
+          </button>
+        </div>
       </div>
       {/* 안내 문구 삭제됨, 챗봇이 첫 메시지로 안내함 */}
 
@@ -481,6 +551,34 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
           <TbSend size={22} />
         </button>
       </div>
+
+      {/* 채팅 초기화 확인 모달 */}
+      {showClearConfirm && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 rounded-[18px]">
+          <div className="bg-white rounded-[12px] p-6 mx-4 max-w-xs w-full shadow-lg border border-grey02">
+            <h3 className="text-title-6 text-grey05 mb-3 text-center">채팅 내용 초기화</h3>
+            <p className="text-body-3 text-grey04 mb-6 text-center">
+              모든 대화 내용이 삭제됩니다.
+              <br />
+              정말 초기화하시겠습니까?
+            </p>
+            <div className="flex gap-3">
+              <button
+                className="flex-1 px-4 py-2 text-body-3 text-grey04 bg-grey01 hover:bg-grey02 rounded-[8px] transition-colors"
+                onClick={() => setShowClearConfirm(false)}
+              >
+                취소
+              </button>
+              <button
+                className="flex-1 px-4 py-2 text-body-3 text-white bg-purple04 hover:bg-purple03 rounded-[8px] transition-colors"
+                onClick={handleClearChat}
+              >
+                초기화
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
