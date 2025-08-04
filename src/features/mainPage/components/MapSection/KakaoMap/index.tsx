@@ -263,7 +263,7 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
     if (isAnimatingRef.current || isZoomingRef.current) {
       setTimeout(() => {
         updateVisiblePlatforms();
-      }, 600); // 지도 이동 완료 대기
+      }, 250); // 지도 이동 완료 대기
     } else {
       updateVisiblePlatforms();
     }
