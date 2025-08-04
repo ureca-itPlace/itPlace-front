@@ -198,6 +198,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
               // 브랜드명으로 메인페이지에서 검색하도록 네비게이션
               const searchKeyword = displayName;
               navigate(`/main?search=${encodeURIComponent(searchKeyword)}`);
+              showToast(`${searchKeyword} 매장을 검색합니다`, 'info');
               onClose(); // 모달 닫기
             }}
             className="w-[218px] h-[52px] bg-purple04 text-white rounded-[30px] text-body-0 font-medium max-md:w-[140px] max-md:h-10 max-md:text-[15px] max-md:rounded-2xl"
