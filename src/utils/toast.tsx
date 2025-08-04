@@ -2,6 +2,26 @@
 import { toast, ToastOptions, ToastIcon } from 'react-toastify';
 import { MdCheckCircle, MdError, MdInfo } from 'react-icons/md';
 
+// ✅ 토스트 중복 방지를 위한 맵 (메시지 -> 마지막 호출 시간)
+const lastToastTime = new Map<string, number>();
+
+// ✅ 토스트 중복 방지 시간 (밀리초)
+const TOAST_DEBOUNCE_TIME = 3000; // 1초
+
+// ✅ 오래된 기록 정리 (메모리 누수 방지)
+const CLEANUP_INTERVAL = 60000; // 1분마다 정리
+const MAX_RECORD_AGE = 30000; // 30초 이상 된 기록은 삭제
+
+// 주기적으로 오래된 기록 정리
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, time] of lastToastTime.entries()) {
+    if (now - time > MAX_RECORD_AGE) {
+      lastToastTime.delete(key);
+    }
+  }
+}, CLEANUP_INTERVAL);
+
 // ✅ 공통 스타일: flex로 중앙정렬 + gap
 const commonStyle: React.CSSProperties = {
   display: 'flex',
@@ -47,6 +67,19 @@ export function showToast(
   type: 'success' | 'error' | 'info' = 'info',
   options?: ToastOptions
 ) {
+  // ✅ 중복 토스트 방지 로직
+  const now = Date.now();
+  const toastKey = `${message}-${type}`; // 메시지와 타입을 조합한 키
+  const lastTime = lastToastTime.get(toastKey);
+
+  // 이전 토스트와 같은 메시지이고, 설정된 시간 내에 호출된 경우 무시
+  if (lastTime && now - lastTime < TOAST_DEBOUNCE_TIME) {
+    return;
+  }
+
+  // 현재 시간을 기록
+  lastToastTime.set(toastKey, now);
+
   let icon: ToastIcon = <MdInfo size={20} color="#fff" />;
 
   if (type === 'success') {

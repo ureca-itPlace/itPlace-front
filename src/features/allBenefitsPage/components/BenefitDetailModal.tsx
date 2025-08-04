@@ -51,8 +51,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
         try {
           const detail = await getBenefitDetail(benefit.benefitId);
           setBenefitDetail(detail);
-        } catch (error) {
-          console.error('혜택 상세 정보 로드 실패:', error);
+        } catch {
           showToast('혜택 상세 정보를 불러오는 중 오류가 발생했습니다', 'error');
         } finally {
           setIsLoading(false);
@@ -107,7 +106,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
   const displayDescription =
     benefitDetail?.description ||
     `${benefit.category} • ${benefit.usageType === 'ONLINE' ? '온라인' : '오프라인'}`;
-  const displayImage = benefitDetail?.image || benefit.image || '/images/mock/cgv.png';
+  const displayImage = benefitDetail?.image || benefit.image || '/images/admin/CGV.png';
 
   // 제공 횟수 정보
   const getBenefitInfo = () => {
@@ -198,6 +197,7 @@ const BenefitDetailModal: React.FC<BenefitDetailModalProps> = ({ isOpen, benefit
               // 브랜드명으로 메인페이지에서 검색하도록 네비게이션
               const searchKeyword = displayName;
               navigate(`/main?search=${encodeURIComponent(searchKeyword)}`);
+              showToast(`${searchKeyword} 매장을 검색합니다`, 'info');
               onClose(); // 모달 닫기
             }}
             className="w-[218px] h-[52px] bg-purple04 text-white rounded-[30px] text-body-0 font-medium max-md:w-[140px] max-md:h-10 max-md:text-[15px] max-md:rounded-2xl"

@@ -18,14 +18,10 @@ import {
   TierBenefit,
   BenefitApiParams,
 } from './apis/allBenefitsApi';
-import { /* createMockBenefitResponse, */ toggleMockFavorite } from './data/mockData';
 import BenefitDetailModal from './components/BenefitDetailModal';
 import MobileHeader from '../../components/MobileHeader';
 
 const AllBenefitsLayout: React.FC = () => {
-  // 중요 !!!!!! 개발 모드 설정 (true: Mock 데이터 사용, false: 실제 API 사용)
-  const USE_MOCK_DATA = false;
-
   const [filter, setFilter] = useState<'default' | 'vipkok'>('default');
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
@@ -67,22 +63,7 @@ const AllBenefitsLayout: React.FC = () => {
           params.filter = filterType === '온라인' ? 'ONLINE' : 'OFFLINE';
         }
 
-        let data;
-        if (USE_MOCK_DATA) {
-          // Mock 데이터 사용
-          const { createMockBenefitResponse } = await import('./data/mockData');
-          data = createMockBenefitResponse(
-            page,
-            9,
-            keyword,
-            category,
-            params.mainCategory,
-            params.filter
-          );
-        } else {
-          // 실제 API 호출
-          data = await getBenefits(params);
-        }
+        const data = await getBenefits(params);
 
         setBenefits(data.content);
         setTotalElements(data.totalElements);
@@ -90,11 +71,10 @@ const AllBenefitsLayout: React.FC = () => {
 
         // 초기 즐겨찾기 상태 설정 (API에서 받아온 데이터 기준)
         const favoriteIds = data.content
-          .filter((benefit) => benefit.isFavorite)
-          .map((benefit) => benefit.benefitId);
+          .filter((benefit: BenefitItem) => benefit.isFavorite)
+          .map((benefit: BenefitItem) => benefit.benefitId);
         setFavorites(favoriteIds);
-      } catch (error) {
-        console.error('혜택 데이터 로드 실패:', error);
+      } catch {
         showToast('혜택 데이터를 불러오는 중 오류가 발생했습니다', 'error');
         setBenefits([]);
         setTotalElements(0);
@@ -102,35 +82,13 @@ const AllBenefitsLayout: React.FC = () => {
         setIsLoading(false);
       }
     },
-    [filter, USE_MOCK_DATA]
+    [filter]
   );
 
   // 즐겨찾기 토글 함수
   const toggleFavorite = useCallback(
     async (benefitId: number) => {
       try {
-        if (USE_MOCK_DATA) {
-          // mock 데이터 즐겨찾기 토글
-          toggleMockFavorite(benefitId);
-          setFavorites((prev) =>
-            prev.includes(benefitId) ? prev.filter((id) => id !== benefitId) : [...prev, benefitId]
-          );
-          setBenefits((prev) =>
-            prev.map((benefit) =>
-              benefit.benefitId === benefitId
-                ? { ...benefit, isFavorite: !benefit.isFavorite }
-                : benefit
-            )
-          );
-          showToast(
-            favorites.includes(benefitId)
-              ? '관심 혜택에서 삭제되었습니다'
-              : '관심 혜택에 추가되었습니다',
-            'success'
-          );
-          return;
-        }
-
         const isCurrentlyFavorite = favorites.includes(benefitId);
         if (isCurrentlyFavorite) {
           // 즐겨찾기 삭제
@@ -152,12 +110,11 @@ const AllBenefitsLayout: React.FC = () => {
               : benefit
           )
         );
-      } catch (error) {
-        console.error('관심 혜택 토글 실패:', error);
+      } catch {
         showToast('관심 혜택 처리 중 오류가 발생했습니다', 'error');
       }
     },
-    [favorites, USE_MOCK_DATA]
+    [favorites]
   );
 
   // 카드 클릭 핸들러
@@ -435,7 +392,7 @@ const AllBenefitsLayout: React.FC = () => {
                     </button>
                     <div className="w-[80px] max-xl:w-[64px] h-[80px] max-xl:h-[64px] flex items-center justify-center max-md:w-[56px] max-md:h-[56px]">
                       <img
-                        src={benefit.image || '/images/mock/cgv.png'}
+                        src={benefit.image || '/images/admin/CGV.png'}
                         alt={`${benefit.benefitName} 로고`}
                         className="max-w-full max-h-full object-contain"
                       />
