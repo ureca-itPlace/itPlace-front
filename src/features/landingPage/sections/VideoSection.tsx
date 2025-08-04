@@ -24,7 +24,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       <img
         src="/images/landing/videoImage/rocket-icon.webp"
         alt="로켓"
-        className="inline-block h-[27vh] w-auto pb-4"
+        className="inline-block h-[27vh] w-auto pb-4 max-sm:h-44"
         loading="lazy"
       />
       TOGETHER
@@ -34,7 +34,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       <img
         src="/images/landing/videoImage/location-icon.webp"
         alt="위치"
-        className="inline-block h-[27vh] w-auto pb-4"
+        className="inline-block h-[27vh] w-auto pb-4 max-sm:h-44"
         loading="lazy"
       />
       YOUR <span className="custom-font inline-block text-purple04 px-10">MEMBERSHIP</span>
@@ -44,7 +44,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       <img
         src="/images/landing/videoImage/tag-icon.webp"
         alt="태그"
-        className="inline-block h-[27vh] w-auto pb-4 mx-1"
+        className="inline-block h-[27vh] w-auto pb-4 mx-1 max-sm:h-44"
         loading="lazy"
       />
     </>,
@@ -65,6 +65,7 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         scrub: 0.8,
         pin: true,
         anticipatePin: 1,
+        refreshPriority: -1,
       },
     });
 
@@ -119,10 +120,11 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
       start: 'top top',
       end: '+=2000',
       scrub: 0.5,
+      refreshPriority: -1,
       onUpdate: (self) => {
         if (!video) return;
         if (self.direction === 1 && !videoEnded && video.paused && self.progress >= 0.95) {
-          video.play().catch(console.log);
+          video.play().catch();
         }
 
         // 역방향으로 올라갈 때 영상 일시 정지
@@ -144,12 +146,10 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
         setVideoEnded(false);
         // 다시 아래로 돌아오면 시작
         if (video && video.paused) {
-          video.play().catch(console.log);
+          video.play().catch();
         }
       },
     });
-
-    ScrollTrigger.refresh();
 
     return () => {
       tl.kill();
@@ -158,9 +158,8 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
 
   return (
     <section
-      data-theme="dark"
       ref={sectionRef}
-      className="relative w-full min-h-[100vh] bg-[#000000] text-white flex items-center justify-center overflow-hidden"
+      className="relative w-full h-[100vh] bg-[#000000] text-white flex items-center justify-center overflow-hidden z-20"
     >
       <Video ref={videoRef} videoBoxRef={videoBoxRef} onVideoEnd={() => setVideoEnded(true)} />
       <PurpleCircle ref={circleRef} />
@@ -171,13 +170,16 @@ const VideoSection = ({ videoEnded, setVideoEnded }: VideoSectionProps) => {
             ref={(el) => {
               if (el) textRefs.current[i] = el;
             }}
-            className="relative custom-font pl-4 text-[22vh] whitespace-nowrap"
+            className="relative custom-font pl-4 text-[22vh] whitespace-nowrap max-sm:text-9xl"
           >
             {text}
           </h1>
         ))}
       </div>
-      <h1 ref={h1Ref} className="custom-font text-center text-[10vw] px-4 text-white">
+      <h1
+        ref={h1Ref}
+        className="custom-font text-center text-[10vw] px-4 text-white max-sm:text-7xl max-sm:leading-relaxed"
+      >
         ARE YOU READY?
       </h1>
     </section>

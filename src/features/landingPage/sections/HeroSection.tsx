@@ -27,7 +27,7 @@ const HeroSection = () => {
 
   const { isMobile, isTablet, isLaptop } = useResponsive();
   const isSmallScreen = isMobile || isTablet;
-  const xDistance = isMobile ? 50 : isTablet ? 150 : isLaptop ? 100 : 300;
+  const xDistance = isMobile ? 50 : isTablet ? 130 : isLaptop ? 100 : 300;
   const yDistance = isMobile ? -150 : 50;
   const bgImage = isSmallScreen
     ? '/images/landing/hero/hero-bg-mobile.webp'
@@ -57,6 +57,7 @@ const HeroSection = () => {
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
+          invalidateOnRefresh: true,
           markers: false,
         },
       });
@@ -192,12 +193,11 @@ const HeroSection = () => {
           },
           '+=0.5'
         )
-        .fromTo(
+        .from(
           benefitTextRef.current,
-          { opacity: 0, y: 60 },
           {
-            opacity: 1,
-            y: 0,
+            opacity: 0,
+            y: 60,
             duration: 1.5,
             ease: 'sine.out',
           },
@@ -237,7 +237,11 @@ const HeroSection = () => {
   }, [xDistance, yDistance, isSmallScreen]);
 
   return (
-    <section ref={wrapperRef} className="relative w-full min-h-[100vh] overflow-hidden">
+    <section
+      ref={wrapperRef}
+      data-theme="light"
+      className="relative w-full min-h-[100vh] overflow-hidden"
+    >
       {/* 우주 토끼 섹션 */}
       <div ref={heroRef} className="relative w-full h-full pointer-events-none">
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
@@ -247,13 +251,13 @@ const HeroSection = () => {
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           alt="우주선 창문"
-          className="absolute inset-0 w-full h-full object-fit z-40 max-lg:hidden bg-center pointer-events-none"
+          className="absolute inset-0 w-full h-full object-fill z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <img
           ref={scrollArrowRef}
           src="/images/landing/hero/scroll-arrow.svg"
           alt="스크롤 화살표"
-          className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px]"
+          className="absolute bottom-[9%] left-1/2 -translate-x-1/2 z-50 w-[60px] h-auto pointer-events-none max-xl:w-[50px] max-lg:bottom-[150px]"
           loading="lazy"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">

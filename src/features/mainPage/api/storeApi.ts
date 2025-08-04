@@ -11,12 +11,14 @@ const KAKAO_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY; // Vite 환경변
 /**
  * 사용자 위치 기반 전체 지점 목록 조회
  */
-export const getStoreList = async (params: StoreListParams): Promise<StoreApiResponse> => {
+export const getStoreList = async (params: StoreListParams & { userLat?: number; userLng?: number }): Promise<StoreApiResponse> => {
   const response = await api.get('/api/v1/maps/nearby', {
     params: {
       lat: params.lat,
       lng: params.lng,
       radiusMeters: params.radiusMeters,
+      userLat: params.userLat,
+      userLng: params.userLng,
     },
   });
 
@@ -27,7 +29,7 @@ export const getStoreList = async (params: StoreListParams): Promise<StoreApiRes
  * 사용자 위치 기반 카테고리별 지점 목록 조회
  */
 export const getStoreListByCategory = async (
-  params: StoreListParams & { category?: string }
+  params: StoreListParams & { category?: string; userLat?: number; userLng?: number }
 ): Promise<StoreApiResponse> => {
   const response = await api.get('/api/v1/maps/nearby/category', {
     params: {
@@ -35,6 +37,8 @@ export const getStoreListByCategory = async (
       lng: params.lng,
       radiusMeters: params.radiusMeters,
       category: params.category,
+      userLat: params.userLat,
+      userLng: params.userLng,
     },
   });
 
@@ -44,13 +48,15 @@ export const getStoreListByCategory = async (
 /**
  * 키워드 검색을 통한 지점 목록 조회
  */
-export const searchStores = async (params: SearchStoresParams): Promise<StoreApiResponse> => {
+export const searchStores = async (params: SearchStoresParams & { userLat?: number; userLng?: number }): Promise<StoreApiResponse> => {
   const response = await api.get('/api/v1/maps/nearby/search', {
     params: {
       lat: params.lat,
       lng: params.lng,
       category: params.category,
       keyword: params.keyword,
+      userLat: params.userLat,
+      userLng: params.userLng,
     },
   });
 

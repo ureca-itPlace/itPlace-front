@@ -100,6 +100,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
   );
   const [allFavorites, setAllFavorites] = useState<FavoriteBenefit[]>([]);
 
+  // 즐겨찾기 매장 목록 표시 상태
+  const [showFavoriteStoreList, setShowFavoriteStoreList] = useState(false);
+  const [favoriteStoreResults, setFavoriteStoreResults] = useState<Platform[]>([]);
+  const [selectedFavorite, setSelectedFavorite] = useState<FavoriteBenefit | null>(null);
+  const [isFavoriteStoreLoading, setIsFavoriteStoreLoading] = useState(false);
+  const [favoriteStoreError, setFavoriteStoreError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchAllFavorites = async () => {
       if (activeTab !== 'favorites') return;
@@ -186,6 +193,16 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     }
   }, [activeTab, onItplaceAiResults]);
 
+  // 탭 변경 시 즐겨찾기 상태 초기화
+  useEffect(() => {
+    if (activeTab !== 'favorites') {
+      setShowFavoriteStoreList(false);
+      setSelectedFavorite(null);
+      setFavoriteStoreResults([]);
+      setFavoriteStoreError(null);
+    }
+  }, [activeTab]);
+
   // 카드 클릭 시 상세보기로 전환 + 지도 중심 이동
   const handleCardClick = (platform: Platform) => {
     onPlatformSelect(platform);
@@ -224,13 +241,84 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     onSearchChange?.(query);
   };
 
-  const handleFavoriteClick = (favorite: FavoriteBenefit) => {
-    // 파트너명으로 검색 실행
-    onKeywordSearch?.(favorite.partnerName);
+  const handleFavoriteClick = async (favorite: FavoriteBenefit) => {
+    try {
+      setIsFavoriteStoreLoading(true);
+      setFavoriteStoreError(null);
+
+      // 사용자 위치 정보 확인
+      if (!userCoords) {
+        setFavoriteStoreError('위치 정보를 가져올 수 없습니다.');
+        return;
+      }
+
+      const response = await getItplaceAiStores(
+        favorite.partnerName,
+        userCoords.lat,
+        userCoords.lng,
+        userCoords.lat,
+        userCoords.lng
+      );
+
+      // API 응답이 있으면 매장 목록 표시
+      if (response.data && response.data.length > 0) {
+        // API 응답을 Platform 형식으로 변환 (AI 추천과 동일한 로직)
+        const transformedData: Platform[] = response.data.map((item: StoreData) => ({
+          id: `${item.store.storeId}-${item.partner.partnerId}`,
+          storeId: item.store.storeId,
+          partnerId: item.partner.partnerId,
+          name: item.store.storeName,
+          category: item.partner.category,
+          business: item.store.business,
+          city: item.store.city,
+          town: item.store.town,
+          legalDong: item.store.legalDong,
+          address: item.store.address,
+          roadName: item.store.roadName,
+          roadAddress: item.store.roadAddress,
+          postCode: item.store.postCode,
+          latitude: item.store.latitude,
+          longitude: item.store.longitude,
+          benefits: item.tierBenefit.map((benefit) => `${benefit.grade}: ${benefit.context}`),
+          rating: 0, // API에서 제공하지 않으므로 기본값
+          distance: item.distance,
+          hasCoupon: item.store.hasCoupon,
+          imageUrl: item.partner.image,
+        }));
+
+        setFavoriteStoreResults(transformedData);
+
+        // 첫 번째 매장 위치로 지도 중심 이동 (마커가 보이도록)
+        if (transformedData.length > 0) {
+          const firstStore = transformedData[0];
+          onMapCenterMove?.(firstStore.latitude, firstStore.longitude);
+        }
+
+        // 지도에 마커 표시 (KakaoMap에서 타이밍 처리)
+        onItplaceAiResults?.(transformedData, true);
+      } else {
+        // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
+        setFavoriteStoreResults([]);
+        // 지도에 빈 배열로 마커 업데이트
+        onItplaceAiResults?.([], true);
+      }
+
+      // 관심 혜택 탭 내에서 StoreCard 리스트 표시
+      setSelectedFavorite(favorite);
+      setShowFavoriteStoreList(true);
+    } catch (error) {
+      console.error('즐겨찾기 매장 정보 조회 실패:', error);
+      setFavoriteStoreError('매장 정보를 불러오는데 실패했습니다.');
+    } finally {
+      setIsFavoriteStoreLoading(false);
+    }
   };
 
   // ItPlace AI 추천 클릭 핸들러
-  const handleRecommendationClick = async (store: RecommendationItem) => {
+  const handleRecommendationClick = async (
+    store: RecommendationItem,
+    showSpeechBubble: boolean = true
+  ) => {
     try {
       setIsItplaceAiLoading(true);
       setItplaceAiError(null);
@@ -241,7 +329,13 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         return;
       }
 
-      const response = await getItplaceAiStores(store.partnerName, userCoords.lat, userCoords.lng);
+      const response = await getItplaceAiStores(
+        store.partnerName,
+        userCoords.lat,
+        userCoords.lng,
+        userCoords.lat,
+        userCoords.lng
+      );
 
       // API 응답이 있으면 매장 목록 표시
       if (response.data && response.data.length > 0) {
@@ -270,7 +364,14 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         }));
 
         setAiStoreResults(transformedData);
-        // 지도에 마커 표시
+
+        // 첫 번째 매장 위치로 지도 중심 이동 (마커가 보이도록)
+        if (transformedData.length > 0) {
+          const firstStore = transformedData[0];
+          onMapCenterMove?.(firstStore.latitude, firstStore.longitude);
+        }
+
+        // 지도에 마커 표시 (KakaoMap에서 타이밍 처리)
         onItplaceAiResults?.(transformedData, true);
       } else {
         // 온라인 제휴처 등으로 매장 데이터가 없는 경우, 빈 배열로 설정
@@ -282,8 +383,10 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
       setSelectedRecommendation(store);
       setShowAiStoreList(true);
 
-      // SpeechBubble 표시 (추천 이유 설명)
-      onShowSpeechBubble?.(store.reason, store.partnerName);
+      // SpeechBubble 표시 (추천 이유 설명) - chatroom에서 온 요청이 아닐 때만
+      if (showSpeechBubble) {
+        onShowSpeechBubble?.(store.reason, store.partnerName);
+      }
 
       // BenefitDetailCard 표시를 위해 RecommendationItem의 benefitIds 사용
       if (store.benefitIds && store.benefitIds.length > 0 && onBenefitDetailRequest) {
@@ -310,6 +413,14 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     setItplaceAiError(null);
   };
 
+  // 즐겨찾기에서 뒤로가기 핸들러
+  const handleFavoriteStoreListBack = () => {
+    setShowFavoriteStoreList(false);
+    setSelectedFavorite(null);
+    setFavoriteStoreResults([]);
+    setFavoriteStoreError(null);
+  };
+
   // 채팅방 상태 변경 핸들러
   const handleChatStateChange = (isOpen: boolean) => {
     setIsChatOpen(isOpen);
@@ -322,7 +433,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
     switch (activeTab) {
       case 'nearby':
         return {
-          message: '근처 제휴처를 안내해드릴게요 !',
+          message: '근처 제휴처를 안내해드릴게요!',
           highlightText: '근처 제휴처',
         };
       case 'favorites':
@@ -339,7 +450,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         };
       default:
         return {
-          message: '근처 제휴처를 안내해드릴게요 !',
+          message: '근처 제휴처를 안내해드릴게요!',
           highlightText: '근처 제휴처',
         };
     }
@@ -395,29 +506,46 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
 
           {activeTab === 'favorites' && (
             <>
-              {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
-              <div className="mb-3 max-md:mx-0">
-                <CategoryTabsSection
-                  categories={CATEGORIES}
-                  selectedCategory={selectedCategory}
-                  onCategorySelect={handleCategorySelect}
-                  mode="sidebar"
-                  showNavigationButtons={true}
+              {showFavoriteStoreList ? (
+                <StoreCardsSection
+                  platforms={favoriteStoreResults}
+                  selectedPlatform={selectedPlatform}
+                  onPlatformSelect={handleCardClick}
+                  currentLocation={selectedFavorite?.partnerName || '즐겨찾기 매장'}
+                  isLoading={isFavoriteStoreLoading}
+                  error={favoriteStoreError}
+                  backButton={{
+                    onBack: handleFavoriteStoreListBack,
+                    label: '돌아가기',
+                  }}
                 />
-              </div>
+              ) : (
+                <>
+                  {/* 카테고리 탭 (관심 혜택용 - 사이드바 모드) */}
+                  <div className="mb-3 max-md:mx-0">
+                    <CategoryTabsSection
+                      categories={CATEGORIES}
+                      selectedCategory={selectedCategory}
+                      onCategorySelect={handleCategorySelect}
+                      mode="sidebar"
+                      showNavigationButtons={true}
+                    />
+                  </div>
 
-              {/* 즐겨찾기 스토어 리스트 */}
-              <div
-                className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
-                style={{ height: 'calc(100vh - 360px)' }}
-              >
-                <FavoriteStoreList
-                  favorites={favorites}
-                  totalFavoritesCount={allFavorites.length}
-                  onItemClick={handleFavoriteClick}
-                  isLoading={isFavoritesLoading}
-                />
-              </div>
+                  {/* 즐겨찾기 스토어 리스트 */}
+                  <div
+                    className="-mx-5 overflow-y-auto overflow-x-hidden flex flex-col max-md:mx-0"
+                    style={{ height: 'calc(100vh - 360px)' }}
+                  >
+                    <FavoriteStoreList
+                      favorites={favorites}
+                      totalFavoritesCount={allFavorites.length}
+                      onItemClick={handleFavoriteClick}
+                      isLoading={isFavoritesLoading || isFavoriteStoreLoading}
+                    />
+                  </div>
+                </>
+              )}
             </>
           )}
 
@@ -454,7 +582,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                         reason: `${partnerName} 매장 정보를 보여드릴게요!`,
                         benefitIds: [],
                       };
-                      handleRecommendationClick(fakeRecommendation);
+                      handleRecommendationClick(fakeRecommendation, false); // speechBubble 비활성화
                     }}
                     onChangeTab={onActiveTabChange}
                     onBottomSheetReset={onBottomSheetReset}

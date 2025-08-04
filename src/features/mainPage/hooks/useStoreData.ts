@@ -39,9 +39,25 @@ export const useStoreData = () => {
     async (lat: number, lng: number, radius: number, category: string | null) => {
       const shouldFilterByCategory = category && category !== '전체';
 
+      // 현재 사용자 위치 가져오기
+      const currentUserCoords = userCoordsRef.current;
+
       const storeResponse = shouldFilterByCategory
-        ? await getStoreListByCategory({ lat, lng, radiusMeters: radius, category })
-        : await getStoreList({ lat, lng, radiusMeters: radius });
+        ? await getStoreListByCategory({
+            lat,
+            lng,
+            radiusMeters: radius,
+            category,
+            userLat: currentUserCoords?.lat,
+            userLng: currentUserCoords?.lng,
+          })
+        : await getStoreList({
+            lat,
+            lng,
+            radiusMeters: radius,
+            userLat: currentUserCoords?.lat,
+            userLng: currentUserCoords?.lng,
+          });
 
       return transformStoreDataToPlatforms(storeResponse.data);
     },
@@ -148,7 +164,7 @@ export const useStoreData = () => {
 
   /**
    * 현재 지도 영역에서 가맹점 검색 (수동 검색)
-   * 지도 레벨에 따른 반경으로 검색하고 위치 정보도 업데이트
+   * 지도 레벨에 따른 반경으로 검색하되, 사용자 위치는 업데이트하지 않음
    */
   const searchInCurrentMap = useCallback(
     async (centerLat: number, centerLng: number, mapLevel: number) => {
@@ -156,7 +172,7 @@ export const useStoreData = () => {
         // 맵 레벨에 따른 반경 계산
         const radius = getRadiusByMapLevel(mapLevel);
 
-        // 가맹점 검색
+        // 가맹점 검색 (지도 중심 좌표 기준)
         const platforms = await loadStoresByCategoryRef.current(
           centerLat,
           centerLng,
@@ -164,13 +180,44 @@ export const useStoreData = () => {
           selectedCategory
         );
 
-        // 위치 정보 업데이트
-        await updateLocationInfoRef.current(centerLat, centerLng);
+        // 사용자 위치는 업데이트하지 않음 (기존 userCoords 유지)
+        // 단, 현재 위치 텍스트만 업데이트 (주소 표시용)
+        try {
+          const address = await getAddressFromCoordinates(centerLat, centerLng);
+          setCurrentLocation(address);
+        } catch {
+          // 주소 변환 실패 시 무시
+        }
 
         return platforms;
       };
 
       await executeRef.current(searchInMap);
+    },
+    [selectedCategory]
+  );
+
+  /**
+   * 현재 위치 버튼 클릭 시 사용자 위치 업데이트 및 데이터 재로드
+   */
+  const updateToCurrentLocation = useCallback(
+    async (lat: number, lng: number, mapLevel: number) => {
+      const updateCurrentLocation = async () => {
+        // 사용자 위치 업데이트
+        await updateLocationInfoRef.current(lat, lng);
+
+        // 새로운 위치 기준으로 가맹점 데이터 로드
+        const platforms = await loadStoresByCategoryRef.current(
+          lat,
+          lng,
+          getRadiusByMapLevel(mapLevel),
+          selectedCategory
+        );
+
+        return platforms;
+      };
+
+      await executeRef.current(updateCurrentLocation);
     },
     [selectedCategory]
   );
@@ -185,6 +232,9 @@ export const useStoreData = () => {
         // 맵 레벨에 따른 반경 계산
         const radius = getRadiusByMapLevel(mapLevel);
 
+        // 현재 사용자 위치 가져오기
+        const currentUserCoords = userCoordsRef.current;
+
         // 검색어가 비어있으면 전체 가맹점 조회
         if (!keyword.trim()) {
           const storeResponse =
@@ -194,11 +244,15 @@ export const useStoreData = () => {
                   lng: searchLng,
                   radiusMeters: radius,
                   category: selectedCategory,
+                  userLat: currentUserCoords?.lat,
+                  userLng: currentUserCoords?.lng,
                 })
               : await getStoreList({
                   lat: searchLat,
                   lng: searchLng,
                   radiusMeters: radius,
+                  userLat: currentUserCoords?.lat,
+                  userLng: currentUserCoords?.lng,
                 });
 
           return transformStoreDataToPlatforms(storeResponse.data);
@@ -210,6 +264,8 @@ export const useStoreData = () => {
           lng: searchLng,
           category: selectedCategory || undefined,
           keyword: keyword.trim(),
+          userLat: currentUserCoords?.lat,
+          userLng: currentUserCoords?.lng,
         });
 
         return transformStoreDataToPlatforms(storeResponse.data);
@@ -231,6 +287,7 @@ export const useStoreData = () => {
     filterByCategory,
     searchInCurrentMap,
     searchByKeyword,
+    updateToCurrentLocation,
     currentMapLevelInHook,
   };
 };
