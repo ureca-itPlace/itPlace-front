@@ -15,7 +15,10 @@ const SearchSection: React.FC<SearchSectionProps> = React.memo(
     // 1초 디바운스 적용
     const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
-    // defaultValue는 초기값으로만 사용 (이후 업데이트 안됨)
+    // defaultValue 변경 감지하여 검색어 업데이트
+    useEffect(() => {
+      setSearchQuery(defaultValue || '');
+    }, [defaultValue]);
 
     // 마지막으로 검색한 검색어 기억 (중복 검색 방지용)
     const lastSearchedQuery = useRef<string>('');

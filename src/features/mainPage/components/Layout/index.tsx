@@ -114,6 +114,7 @@ const MainPageLayout: React.FC = () => {
     (categoryId: string) => {
       setSelectedPlatform(null); // 선택된 가맹점 초기화
       setFilteredPlatforms([]); // 검색 결과 초기화
+      setSearchQuery(''); // 검색어 초기화
 
       // API 기반 카테고리 필터링 ('전체' -> null 변환)
       const categoryValue = categoryId === '전체' ? null : categoryId;
