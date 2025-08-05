@@ -294,3 +294,15 @@
     margin-bottom: 8px;
   }
 }
+
+@media (max-width: 767px) {
+  .Toastify__toast-container--bottom-center.custom-toast-container {
+    bottom: 20px !important; /* 원하는 만큼 위로 */
+  }
+
+  .Toastify__toast.custom-toast {
+    width: 92% !important;
+    min-width: 92% !important;
+    max-width: 92% !important;
+  }
+}

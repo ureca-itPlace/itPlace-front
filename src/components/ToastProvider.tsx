@@ -7,12 +7,14 @@ const ToastProvider: React.FC = () => {
   return (
     <ToastContainer
       position="top-center"
-      autoClose={3000}
+      autoClose={2000}
       hideProgressBar={true}
+      closeButton={false}
       closeOnClick
       pauseOnHover
       draggable
       limit={1}
+      className="custom-toast-container"
     />
   );
 };
