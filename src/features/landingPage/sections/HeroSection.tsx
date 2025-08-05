@@ -277,7 +277,7 @@ const HeroSection = () => {
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           alt="우주선 창문"
-          className="absolute inset-0 w-full h-[100vh] object-fill aspect-[16/9] z-40 max-lg:hidden bg-center pointer-events-none"
+          className="absolute inset-0 w-full h-[100vh] object-cover aspect-[16/9] z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <img
           ref={scrollArrowRef}
