@@ -47,7 +47,13 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
   // Viewport 내 플랫폼 필터링 함수
   const updateVisiblePlatforms = useCallback(() => {
     // 애니메이션 중이면 업데이트 중단
-    if (isAnimatingRef.current || !mapRef.current || !platforms.length) {
+    if (isAnimatingRef.current || !mapRef.current) {
+      return;
+    }
+
+    // platforms가 빈 배열이면 visiblePlatforms도 빈 배열로 설정
+    if (!platforms.length) {
+      setVisiblePlatforms([]);
       return;
     }
 
