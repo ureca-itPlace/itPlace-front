@@ -248,7 +248,10 @@ export default function MyHistoryPage() {
                             },
                             {
                               label: '사용 일시',
-                              value: dayjs(item.usedAt).format('YYYY-MM-DD hh:mm A'),
+                              value: dayjs
+                                .utc(item.usedAt)
+                                .tz('Asia/Seoul')
+                                .format('YYYY-MM-DD HH:mm:ss'),
                             },
                           ]}
                         />
