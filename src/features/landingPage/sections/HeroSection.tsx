@@ -1,9 +1,10 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { SlowMo } from 'gsap/EasePack';
 import { useLayoutEffect, useRef } from 'react';
 import { useResponsive } from '../../../hooks/useResponsive';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, SlowMo);
 
 const HeroSection = () => {
   // Hero Refs
@@ -11,8 +12,8 @@ const HeroSection = () => {
   const scrollArrowRef = useRef<HTMLImageElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const windowRef = useRef<HTMLImageElement>(null);
-  const subtitleRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLDivElement>(null);
+  const topTitleRef = useRef<HTMLDivElement>(null);
+  const bottomTitleRef = useRef<HTMLDivElement>(null);
   const whiteOverlayRef = useRef<HTMLDivElement>(null);
 
   // Map Refs
@@ -39,7 +40,7 @@ const HeroSection = () => {
     { name: 'uplus-tv', top: 'top-[-67%]', left: 'left-[4%]', width: 'w-[10vw]' },
     { name: 'domino', top: 'top-[-10%]', left: 'left-[60%]', width: 'w-[20vw]' },
     { name: 'ever-land', top: 'top-[-25%]', left: 'left-[80%]', width: 'w-[14vw]' },
-    { name: 'lotte-world', top: 'top-[-80%]', left: 'left-[50%]', width: 'w-[14vw]' },
+    { name: 'lotte-world', top: 'top-[-70%]', left: 'left-[50%]', width: 'w-[14vw]' },
     { name: 'trip-com', top: 'top-[-80%]', left: 'left-[20%]', width: 'w-[14vw]' },
     { name: 'shake-shack', top: 'top-[-80%]', left: 'left-[75%]', width: 'w-[20vw]' },
   ];
@@ -53,7 +54,7 @@ const HeroSection = () => {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: 'top top',
-          end: '+=7200',
+          end: '+=9400',
           scrub: 0.8,
           pin: true,
           anticipatePin: 1,
@@ -64,8 +65,8 @@ const HeroSection = () => {
 
       // 초기 세팅
       gsap.set(windowRef.current, { scale: 1, transformOrigin: 'center center' });
-      gsap.set(subtitleRef.current, { y: 100, opacity: 0 });
-      gsap.set(titleRef.current, { y: 100, opacity: 0 });
+      gsap.set(topTitleRef.current, { y: 100, opacity: 0 });
+      gsap.set(bottomTitleRef.current, { y: 100, opacity: 0 });
       gsap.set(whiteOverlayRef.current, { opacity: 0, pointerEvents: 'none' });
       gsap.set(mapContainerRef.current, { opacity: 0, visibility: 'hidden' });
       gsap.set(
@@ -103,22 +104,22 @@ const HeroSection = () => {
           ease: 'sine.out',
         });
         tl.to(scrollArrowRef.current, { opacity: 0, duration: 0.5, ease: 'sine.inOut' }, '<');
-        tl.to(subtitleRef.current, {
+        tl.to(topTitleRef.current, {
           opacity: 1,
           y: 0,
-          duration: 3,
+          duration: 5,
           ease: 'power1.out',
         });
-        tl.to(titleRef.current, {
+        tl.to(bottomTitleRef.current, {
           opacity: 1,
           y: 0,
-          duration: 3,
+          duration: 5,
           ease: 'power1.out',
         });
       } else {
         // lg 미만에서는 즉시 노출
-        gsap.set(subtitleRef.current, { opacity: 1, y: 0 });
-        gsap.set(titleRef.current, { opacity: 1, y: 0 });
+        gsap.set(topTitleRef.current, { opacity: 1, y: 0 });
+        gsap.set(bottomTitleRef.current, { opacity: 1, y: 0 });
       }
       tl.to(whiteOverlayRef.current, { opacity: 1, duration: 2.5, ease: 'sine.inOut' }, '+=0.3');
       tl.to(
@@ -140,26 +141,48 @@ const HeroSection = () => {
           { opacity: 1, filter: 'blur(0px)', duration: 1.5, ease: 'power1.out' },
           '<'
         )
+        .to({}, { duration: 4 })
         .to(
           firstMapImageRef.current,
-          { scale: 1.4, opacity: 0, duration: 2, filter: 'blur(3px)', ease: 'sine.out' },
+          {
+            scale: 1.4,
+            opacity: 0,
+            duration: 3,
+            filter: 'blur(3px)',
+            ease: 'slow(0.9, 0.1, false)',
+          },
           '+=2'
         )
-        .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '>-0.5')
-        .to({}, { duration: 2.5 })
+        .to(secondMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '-=0.5')
+        .to({}, { duration: 6 })
         .to(
           secondMapImageRef.current,
-          { scale: 1.7, x: 80, opacity: 0, duration: 2, filter: 'blur(3px)' },
+          {
+            scale: 1.7,
+            x: 80,
+            opacity: 0,
+            duration: 3,
+            ease: 'slow(0.9, 0.1, false)',
+            filter: 'blur(3px)',
+          },
           '+=1.2'
         )
-        .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '+=0.5')
-        .to({}, { duration: 2.5 })
+        .to(thirdMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1 }, '-=0.5')
+        .to({}, { duration: 6 })
         .to(
           thirdMapImageRef.current,
-          { scale: 1.5, x: xDistance, y: yDistance, opacity: 0, duration: 2, filter: 'blur(3px)' },
+          {
+            scale: 1.5,
+            x: xDistance,
+            y: yDistance,
+            opacity: 0,
+            duration: 5,
+            ease: 'slow(0.9, 0.1, false)',
+            filter: 'blur(3px)',
+          },
           '+=1.2'
         )
-        .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '+=0.2') // 네 번째 지도 등장
+        .to(fourthMapImageRef.current, { opacity: 1, filter: 'blur(0px)', duration: 1.5 }, '-=0.5') // 네 번째 지도 등장
         .from(
           locationTextRef.current, // location 텍스트 등장
           {
@@ -219,12 +242,12 @@ const HeroSection = () => {
             tl.to(
               el,
               {
-                y: '200vh',
-                opacity: 0.8,
-                ease: 'sine.inOut',
-                duration: 10,
+                y: '180vh',
+                opacity: 1,
+                ease: 'slow(0.9, 0.1, false)',
+                duration: 30,
               },
-              `<+${groupIndex * 0.4}`
+              `<+${groupIndex * 0.2}`
             );
           }
         });
@@ -247,11 +270,14 @@ const HeroSection = () => {
         <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
           <img src={bgImage} alt="배경" className="w-full h-full object-cover" />
         </div>
+        <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+          <img src={bgImage} alt="배경" className="w-full h-full object-cover" />
+        </div>
         <img
           ref={windowRef}
           src="/images/landing/hero/spaceship-window.webp"
           alt="우주선 창문"
-          className="absolute inset-0 w-full h-full object-fill z-40 max-lg:hidden bg-center pointer-events-none"
+          className="absolute inset-0 w-full h-[100vh] object-fill aspect-[16/9] z-40 max-lg:hidden bg-center pointer-events-none"
         />
         <img
           ref={scrollArrowRef}
@@ -261,10 +287,10 @@ const HeroSection = () => {
           loading="lazy"
         />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-10 z-50 max-md:gap-6">
-          <div ref={subtitleRef} className="custom-font text-[6vw] text-white leading-none">
+          <div ref={topTitleRef} className="custom-font text-[6vw] text-white leading-none">
             EXPLORE THE
           </div>
-          <div ref={titleRef} className="custom-font text-[12vw] text-white leading-none">
+          <div ref={bottomTitleRef} className="custom-font text-[12vw] text-white leading-none">
             IT:PLACE
           </div>
         </div>

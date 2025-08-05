@@ -27,13 +27,15 @@ const commonStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '8px 20px', // 세로로 납작
+  padding: '0px 20px', // 세로로 납작
   borderRadius: '8px', // 둥근 모서리
   fontSize: '16px', // 텍스트 크기
   fontWeight: 400,
   whiteSpace: 'nowrap', // 줄바꿈 안 하고 한 줄로
   width: 'auto', // 토스트 너비 글자 수에 따라 자동
+  minWidth: '250px',
   maxWidth: 'none', // 토스트 최대 너비 제한 해제
+  minHeight: '45px',
 };
 
 // ✅ 타입별 스타일
@@ -41,14 +43,14 @@ const toastStyles: Record<'success' | 'error' | 'info', ToastOptions> = {
   success: {
     style: {
       ...commonStyle,
-      backgroundColor: '#28A745', // 초록
+      backgroundColor: '#4CAF50', // 초록
       color: '#ffffff',
     },
   },
   error: {
     style: {
       ...commonStyle,
-      backgroundColor: '#DC3545', // 빨강
+      backgroundColor: '#D7263D', // 빨강
       color: '#ffffff',
     },
   },
@@ -107,6 +109,7 @@ export function showToast(
     icon,
     ...toastStyles[type],
     style: customStyle, // ✅ 맨 마지막에 최종 스타일을 덮어쓰기
+    className: isMobile ? 'custom-toast' : undefined,
   });
 }
 

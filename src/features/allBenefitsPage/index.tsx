@@ -94,7 +94,7 @@ const AllBenefitsLayout: React.FC = () => {
           // 즐겨찾기 삭제
           await removeFavorite(benefitId);
           setFavorites((prev) => prev.filter((id) => id !== benefitId));
-          showToast('관심 혜택에서 삭제되었습니다', 'success');
+          showToast('관심 혜택에서 삭제되었습니다', 'info');
         } else {
           // 즐겨찾기 추가
           await addFavorite(benefitId);
