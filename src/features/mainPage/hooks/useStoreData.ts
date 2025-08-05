@@ -149,7 +149,9 @@ export const useStoreData = () => {
       return platforms;
     };
 
-    executeRef.current(reloadByCategory);
+    if (executeRef.current) {
+      executeRef.current(reloadByCategory);
+    }
   }, [selectedCategory, currentMapLevelInHook]);
 
   /**
