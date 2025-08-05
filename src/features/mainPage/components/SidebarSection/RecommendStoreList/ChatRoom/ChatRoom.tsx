@@ -245,7 +245,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
       e.preventDefault(); // 기본 동작 방지
       void handleSend();
     }
@@ -257,6 +257,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({
 
     // 사용자 메시지 추가
     setMessages((prev) => [...prev, { sender: 'user', text: question }]);
+    setInput(''); // 입력창 비우기
     setIsBotLoading(true);
 
     try {
