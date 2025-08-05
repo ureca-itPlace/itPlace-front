@@ -74,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
       >
         {/* 닫기 버튼 */}
         <button onClick={onClose} className="absolute top-5 right-5 text-grey03 hover:text-grey04">
-          <TbX size={24} />
+          <TbX size={24} className="max-sm:w-5 max-sm:h-5" />
         </button>
 
         {/* 제목 */}
