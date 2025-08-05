@@ -32,7 +32,7 @@ const MapControls: React.FC<MapControlsProps> = ({
       )}
 
       {/* 로드뷰 버튼과 현재 위치 버튼 */}
-      <div className="absolute bottom-6 max-md:bottom-[100px] right-6 max-md:right-4 z-10 pointer-events-none">
+      <div className="absolute bottom-6 max-md:bottom-[160px] right-6 max-md:right-4 z-[9997] pointer-events-none">
         <div className="pointer-events-auto flex flex-col gap-3 max-md:flex-row max-md:gap-2">
           {/* 로드뷰 버튼 */}
           {onRoadviewToggle && (
