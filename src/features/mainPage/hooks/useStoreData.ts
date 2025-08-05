@@ -16,7 +16,7 @@ import { DEFAULT_RADIUS } from '../constants';
  * 가맹점 데이터 관리 훅
  * 위치 기반 가맹점 검색, 카테고리 필터링, 지도 연동 기능 제공
  */
-export const useStoreData = () => {
+export const useStoreData = (mapCenter?: { lat: number; lng: number } | null) => {
   // API 상태 관리
   const { data: platforms, isLoading, error, execute } = useApiCall<Platform[]>([]);
 
@@ -26,6 +26,10 @@ export const useStoreData = () => {
 
   // userCoords의 최신 값을 참조하기 위한 ref
   const userCoordsRef = useRef<{ lat: number; lng: number } | null>(null);
+
+  // mapCenter의 최신 값을 참조하기 위한 ref
+  const mapCenterRef = useRef<{ lat: number; lng: number } | null>(mapCenter);
+  mapCenterRef.current = mapCenter;
 
   // 카테고리 필터 상태
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -133,25 +137,30 @@ export const useStoreData = () => {
 
   // 카테고리나 맵레벨 변경 시에만 실행 (초기 로드 제외)
   useEffect(() => {
-    if (isInitialLoadRef.current || !userCoordsRef.current) {
-      return; // 초기 로드 중이거나 좌표가 없으면 스킵
+    if (isInitialLoadRef.current) {
+      return; // 초기 로드 중이면 스킵
     }
 
     // 카테고리 변경 시에만 실행되는 재로드
-    const reloadByCategory = async () => {
-      const coords = userCoordsRef.current!; // ref에서 최신 값 사용
+    const reloadByCategory = async (): Promise<Platform[]> => {
+      // 지도 중심이 있으면 지도 중심 사용, 없으면 사용자 위치 사용
+      const coords = mapCenterRef.current || userCoordsRef.current;
+
+      if (!coords) {
+        // 좌표가 없으면 빈 배열 반환 (마커 제거)
+        return [];
+      }
+
       const platforms = await loadStoresByCategoryRef.current(
         coords.lat,
         coords.lng,
         getRadiusByMapLevel(currentMapLevelInHook),
         selectedCategory
       );
-      return platforms;
+      return platforms || []; // null/undefined 방어
     };
 
-    if (executeRef.current) {
-      executeRef.current(reloadByCategory);
-    }
+    executeRef.current(reloadByCategory);
   }, [selectedCategory, currentMapLevelInHook]);
 
   /**
@@ -171,6 +180,14 @@ export const useStoreData = () => {
    * 카테고리 변경 시 useEffect가 자동으로 새 데이터를 로드함
    */
   const filterByCategory = useCallback((category: string | null, mapLevel: number) => {
+    setSelectedCategory(category);
+    setCurrentMapLevelInHook(mapLevel);
+  }, []);
+
+  /**
+   * 카테고리 상태만 설정 (useEffect 트리거하지 않음)
+   */
+  const setCategoryOnly = useCallback((category: string | null, mapLevel: number) => {
     setSelectedCategory(category);
     setCurrentMapLevelInHook(mapLevel);
   }, []);
@@ -303,6 +320,7 @@ export const useStoreData = () => {
     selectedCategory,
     updateLocationFromMap,
     filterByCategory,
+    setCategoryOnly,
     searchInCurrentMap,
     searchByKeyword,
     updateToCurrentLocation,

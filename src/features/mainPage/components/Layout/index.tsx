@@ -97,7 +97,7 @@ const MainPageLayout: React.FC = () => {
     searchByKeyword, // 키워드 검색
     updateToCurrentLocation, // 현재 위치 업데이트
     userCoords, // 사용자 초기 위치
-  } = useStoreData();
+  } = useStoreData(currentMapCenter);
 
   // ItPlace AI 추천 결과 상태 (SidebarSection에서 올려받음)
   const [itplaceAiResults, setItplaceAiResults] = useState<Platform[]>([]);
@@ -117,6 +117,7 @@ const MainPageLayout: React.FC = () => {
 
       // API 기반 카테고리 필터링 ('전체' -> null 변환)
       const categoryValue = categoryId === '전체' ? null : categoryId;
+
       filterByCategory(categoryValue, currentMapLevel);
     },
     [filterByCategory, currentMapLevel]
