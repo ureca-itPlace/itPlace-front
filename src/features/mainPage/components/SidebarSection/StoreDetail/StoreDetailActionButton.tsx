@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
+import { useResponsive } from '../../../../../hooks/useResponsive';
 import { TbStar, TbStarFilled } from 'react-icons/tb';
 import { RootState } from '../../../../../store';
 import { addFavorite, removeFavorite } from '../../../api/favoriteApi';
@@ -19,6 +20,7 @@ interface StoreDetailActionButtonProps {
   partnerName?: string;
   distance: number;
   hasCoupon?: boolean;
+  onBottomSheetReset?: () => void;
 }
 
 const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
@@ -29,6 +31,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   partnerName,
   distance,
   hasCoupon = false,
+  onBottomSheetReset,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +41,7 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
   const heartButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
   const isDesktop = useMediaQuery({ query: '(min-width: 768px)' });
+  const { isMobile } = useResponsive();
 
   // input 값 변경 핸들러 (콤마 포맷팅 적용)
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +53,55 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
 
   // 거리 조건 체크 (0.1km 이하만 사용 가능)
   const isDistanceValid = distance <= 0.5;
+
+  // 모달 열림/닫힘 시 바텀시트 제어 (ChatRoom과 동일한 로직)
+  useEffect(() => {
+    if (isModalOpen) {
+      // 모달이 열릴 때 현재 스크롤 위치 저장
+      const originalScrollY = window.scrollY;
+
+      // 모바일에서만 body 스크롤 방지 및 바텀시트 제어
+      if (isMobile) {
+        // 현재 body 스타일 저장
+        const originalBodyHeight = document.body.style.height;
+        const originalBodyOverflow = document.body.style.overflow;
+        const originalBodyPosition = document.body.style.position;
+
+        // body 스크롤 방지
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${originalScrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.overflow = 'hidden';
+
+        // 바텀시트를 초기 상태로 리셋
+        if (onBottomSheetReset) {
+          onBottomSheetReset();
+        }
+
+        // 모달이 닫힐 때 정리 함수 반환
+        return () => {
+          // body 스타일 복원
+          document.body.style.height = originalBodyHeight;
+          document.body.style.overflow = originalBodyOverflow;
+          document.body.style.position = originalBodyPosition;
+          document.body.style.top = '';
+          document.body.style.left = '';
+          document.body.style.right = '';
+
+          // 스크롤 위치 복원
+          requestAnimationFrame(() => {
+            window.scrollTo(0, originalScrollY);
+          });
+        };
+      } else {
+        // 모바일이 아닌 경우 바텀시트만 리셋
+        if (onBottomSheetReset) {
+          onBottomSheetReset();
+        }
+      }
+    }
+  }, [isModalOpen, onBottomSheetReset, isMobile]);
 
   const handleFavoriteToggle = async () => {
     if (!isLoggedIn) {

@@ -597,7 +597,11 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         // 상세 모드: StoreDetailCard만 전체 화면으로
         <div className="h-full overflow-y-auto">
           {selectedPlatform && (
-            <StoreDetailCard platform={selectedPlatform} onClose={handleDetailClose} />
+            <StoreDetailCard
+              platform={selectedPlatform}
+              onClose={handleDetailClose}
+              onBottomSheetReset={onBottomSheetReset}
+            />
           )}
         </div>
       )}

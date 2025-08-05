@@ -12,9 +12,14 @@ import LoadingSpinner from '../../../../../components/LoadingSpinner';
 interface StoreDetailCardProps {
   platform: Platform;
   onClose: () => void;
+  onBottomSheetReset?: () => void;
 }
 
-const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) => {
+const StoreDetailCard: React.FC<StoreDetailCardProps> = ({
+  platform,
+  onClose,
+  onBottomSheetReset,
+}) => {
   const [activeTab, setActiveTab] = useState<'default' | 'vipkok'>('default');
   const [detailData, setDetailData] = useState<BenefitDetailResponse | null>(null);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
@@ -163,6 +168,7 @@ const StoreDetailCard: React.FC<StoreDetailCardProps> = ({ platform, onClose }) 
           partnerName={detailData?.data?.benefitName}
           distance={platform.distance}
           hasCoupon={platform.hasCoupon}
+          onBottomSheetReset={onBottomSheetReset}
         />
       </div>
     </div>
