@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
-import { TbHeart, TbHeartFilled } from 'react-icons/tb';
+import { TbStar, TbStarFilled } from 'react-icons/tb';
 import { RootState } from '../../../../../store';
 import { addFavorite, removeFavorite } from '../../../api/favoriteApi';
 import { submitUsageAmount } from '../../../api/benefitDetail';
@@ -165,11 +165,11 @@ const StoreDetailActionButton: React.FC<StoreDetailActionButtonProps> = ({
         >
           {isFavorite ? (
             <span ref={heartButtonRef} className="inline-block">
-              <TbHeartFilled className="w-5 h-5 text-purple04 max-md:w-5 max-md:h-5 md:w-6 md:h-6" />
+              <TbStarFilled className="w-5 h-5 text-purple04 max-md:w-5 max-md:h-5 md:w-6 md:h-6" />
             </span>
           ) : (
             <span ref={heartButtonRef} className="inline-block">
-              <TbHeart
+              <TbStar
                 className={`w-5 h-5 max-md:w-5 max-md:h-5 md:w-6 md:h-6 ${isLoggedIn ? 'text-purple04' : 'text-grey03'}`}
               />
             </span>
