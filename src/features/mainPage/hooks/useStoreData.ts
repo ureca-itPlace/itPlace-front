@@ -325,5 +325,6 @@ export const useStoreData = (mapCenter?: { lat: number; lng: number } | null) =>
     searchByKeyword,
     updateToCurrentLocation,
     currentMapLevelInHook,
+    clearPlatforms: () => execute(async () => []), // 즉시 빈 배열로 설정
   };
 };

@@ -97,6 +97,7 @@ const MainPageLayout: React.FC = () => {
     searchByKeyword, // 키워드 검색
     updateToCurrentLocation, // 현재 위치 업데이트
     userCoords, // 사용자 초기 위치
+    clearPlatforms, // 플랫폼 데이터 즉시 초기화
   } = useStoreData(currentMapCenter);
 
   // ItPlace AI 추천 결과 상태 (SidebarSection에서 올려받음)
@@ -105,6 +106,7 @@ const MainPageLayout: React.FC = () => {
 
   // StarModal 상태
   const [isStarModalOpen, setIsStarModalOpen] = useState(false);
+  const [isCategoryChanging, setIsCategoryChanging] = useState(false);
 
   /**
    * 카테고리 선택 처리
@@ -112,16 +114,23 @@ const MainPageLayout: React.FC = () => {
    */
   const handleCategorySelect = useCallback(
     (categoryId: string) => {
+      setIsCategoryChanging(true); // 카테고리 변경 중 플래그
       setSelectedPlatform(null); // 선택된 가맹점 초기화
       setFilteredPlatforms([]); // 검색 결과 초기화
       setSearchQuery(''); // 검색어 초기화
+      setIsShowingItplaceAiResults(false); // AI 결과 숨기기
+      setItplaceAiResults([]); // AI 결과 초기화
+
+      // 카테고리 변경 시 즉시 마커 제거를 위해 플랫폼 데이터 초기화
+      clearPlatforms?.();
 
       // API 기반 카테고리 필터링 ('전체' -> null 변환)
       const categoryValue = categoryId === '전체' ? null : categoryId;
 
+      // 실제 API 호출은 useStoreData에서 처리됨
       filterByCategory(categoryValue, currentMapLevel);
     },
-    [filterByCategory, currentMapLevel]
+    [filterByCategory, currentMapLevel, clearPlatforms]
   );
 
   // 플랫폼 선택 핸들러
@@ -379,13 +388,37 @@ const MainPageLayout: React.FC = () => {
     setIsStarModalOpen(false);
   }, []);
 
+  // apiPlatforms가 업데이트되면 카테고리 변경 완료
+  useEffect(() => {
+    if (isCategoryChanging && !isLoading) {
+      setIsCategoryChanging(false);
+    }
+  }, [apiPlatforms, isLoading, isCategoryChanging]);
+
   // platforms 배열 안정화 (ItPlace AI 결과 우선 표시)
   const stablePlatforms = useMemo(() => {
     if (isShowingItplaceAiResults && itplaceAiResults.length > 0) {
       return itplaceAiResults;
     }
-    return filteredPlatforms.length > 0 ? filteredPlatforms : apiPlatforms;
-  }, [filteredPlatforms, apiPlatforms, itplaceAiResults, isShowingItplaceAiResults]);
+    // 카테고리 변경 중이면 빈 배열 반환 (이전 마커 제거)
+    if (isCategoryChanging) {
+      return [];
+    }
+
+    // 검색 결과가 있으면 검색 결과 사용
+    if (filteredPlatforms.length > 0) {
+      return filteredPlatforms;
+    }
+
+    // API 결과 반환 (빈 배열이어도 그대로 반환)
+    return apiPlatforms;
+  }, [
+    filteredPlatforms,
+    apiPlatforms,
+    itplaceAiResults,
+    isShowingItplaceAiResults,
+    isCategoryChanging,
+  ]);
 
   // 모바일에서 body 스크롤 방지
   useEffect(() => {
