@@ -117,9 +117,19 @@ const MainPageLayout: React.FC = () => {
 
       // API 기반 카테고리 필터링 ('전체' -> null 변환)
       const categoryValue = categoryId === '전체' ? null : categoryId;
-      filterByCategory(categoryValue, currentMapLevel);
+
+      // 현재 지도 중심이 있으면 지도 중심 기준으로, 없으면 사용자 위치 기준으로 카테고리 필터링
+      if (currentMapCenter && searchInCurrentMap) {
+        // 카테고리 상태 먼저 업데이트
+        filterByCategory(categoryValue, currentMapLevel);
+        // 그 다음 현재 지도 중심으로 검색
+        searchInCurrentMap(currentMapCenter.lat, currentMapCenter.lng, currentMapLevel);
+      } else {
+        // 지도 중심이 없으면 기존 방식 사용
+        filterByCategory(categoryValue, currentMapLevel);
+      }
     },
-    [filterByCategory, currentMapLevel]
+    [filterByCategory, currentMapLevel, currentMapCenter, searchInCurrentMap]
   );
 
   // 플랫폼 선택 핸들러
