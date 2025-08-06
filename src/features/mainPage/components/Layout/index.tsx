@@ -299,17 +299,36 @@ const MainPageLayout: React.FC = () => {
     const isMobile = window.innerWidth < 768;
     if (!isMobile) return;
 
-    const reset = () => {
-      window.scrollTo({ top: 0, behavior: 'auto' });
-      setBottomSheetHeight(MIN_HEIGHT);
+    // 1. 즉시 overflow 설정하여 스크롤 차단
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    // 2. 스크롤 위치 강제 초기화 (브라우저 스크롤 복원 비활성화로 이제 확실히 작동)
+    const resetScroll = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
+      if (document.scrollingElement) {
+        document.scrollingElement.scrollTop = 0;
+      }
     };
 
-    const timeoutId = setTimeout(() => {
-      requestAnimationFrame(reset);
-    }, 150);
+    // 3. 즉시 실행
+    resetScroll();
 
-    return () => clearTimeout(timeoutId);
-  }, [location.pathname]);
+    // 4. DOM 업데이트 후 재실행 및 바텀시트 초기화
+    const timeoutId = requestAnimationFrame(() => {
+      resetScroll();
+      setBottomSheetHeight(MIN_HEIGHT);
+    });
+
+    return () => {
+      cancelAnimationFrame(timeoutId);
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [location.pathname, MIN_HEIGHT]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
@@ -628,7 +647,7 @@ const MainPageLayout: React.FC = () => {
 
           {/* 바텀시트 */}
           <div
-            className={`absolute left-0 right-0 bg-white rounded-t-[18px] shadow-lg z-[9998] flex flex-col ${
+            className={`fixed left-0 right-0 bg-white rounded-t-[18px] shadow-lg z-[9998] flex flex-col ${
               isAnimating ? 'transition-all duration-300 ease-out' : ''
             }`}
             style={{

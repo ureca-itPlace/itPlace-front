@@ -1,12 +1,15 @@
 // src/components/ScrollToTop.tsx
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    // 경로가 바뀔 때마다 스크롤 맨 위로 이동
+  useLayoutEffect(() => {
+    // 메인 페이지는 자체 레이아웃에서 처리하므로 제외
+    if (pathname === '/main') return;
+
+    // 일반 페이지들은 단순 스크롤 초기화
     window.scrollTo(0, 0);
   }, [pathname]);
 
