@@ -300,7 +300,7 @@ const MainPageLayout: React.FC = () => {
     if (!isMobile) return;
 
     const reset = () => {
-      window.scrollTo({ top: 0, behavior: 'auto' });
+      window.scrollTo(0, 0);
       setBottomSheetHeight(MIN_HEIGHT);
     };
 
