@@ -300,23 +300,49 @@ const MainPageLayout: React.FC = () => {
     if (!isMobile) return;
 
     const reset = () => {
-      // 모바일에서 body overflow가 hidden이므로 임시로 해제 후 스크롤
-      const originalBodyOverflow = document.body.style.overflow;
-      const originalDocumentOverflow = document.documentElement.style.overflow;
+      // Safari의 경우 더 강력한 스크롤 초기화 방식 사용
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
+      if (isSafari) {
+        // Safari: viewport meta tag을 이용한 강제 초기화
+        const viewport = document.querySelector('meta[name=viewport]');
+        if (viewport) {
+          const originalContent = viewport.getAttribute('content') || '';
+          // 임시로 viewport 변경하여 강제로 레이아웃 재계산
+          viewport.setAttribute('content', originalContent + ', viewport-fit=cover');
 
-      // Safari 호환성을 위해 multiple 방식으로 스크롤 초기화
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+          // 모든 방법을 동원하여 스크롤 초기화
+          document.body.style.overflow = 'auto';
+          document.documentElement.style.overflow = 'auto';
 
-      // Safari에서 충분한 시간을 주기 위해 더 긴 지연
-      setTimeout(() => {
-        document.body.style.overflow = originalBodyOverflow;
-        document.documentElement.style.overflow = originalDocumentOverflow;
-      }, 50);
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          document.body.scrollTop = 0;
+
+          // 다시 원래 viewport로 복원
+          setTimeout(() => {
+            viewport.setAttribute('content', originalContent);
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+          }, 100);
+        }
+      } else {
+        // 다른 브라우저: 기존 방식
+        const originalBodyOverflow = document.body.style.overflow;
+        const originalDocumentOverflow = document.documentElement.style.overflow;
+
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+
+        setTimeout(() => {
+          document.body.style.overflow = originalBodyOverflow;
+          document.documentElement.style.overflow = originalDocumentOverflow;
+        }, 50);
+      }
 
       setBottomSheetHeight(MIN_HEIGHT);
     };
