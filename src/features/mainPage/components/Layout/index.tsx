@@ -647,7 +647,7 @@ const MainPageLayout: React.FC = () => {
 
           {/* 바텀시트 */}
           <div
-            className={`absolute left-0 right-0 bg-white rounded-t-[18px] shadow-lg z-[9998] flex flex-col ${
+            className={`fixed left-0 right-0 bg-white rounded-t-[18px] shadow-lg z-[9998] flex flex-col ${
               isAnimating ? 'transition-all duration-300 ease-out' : ''
             }`}
             style={{
