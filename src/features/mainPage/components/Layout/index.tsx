@@ -300,7 +300,21 @@ const MainPageLayout: React.FC = () => {
     if (!isMobile) return;
 
     const reset = () => {
+      // 모바일에서 body overflow가 hidden이므로 임시로 해제 후 스크롤
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalDocumentOverflow = document.documentElement.style.overflow;
+
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+
       window.scrollTo(0, 0);
+
+      // 스크롤 완료 후 다시 overflow hidden 적용
+      requestAnimationFrame(() => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalDocumentOverflow;
+      });
+
       setBottomSheetHeight(MIN_HEIGHT);
     };
 
