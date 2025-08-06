@@ -300,32 +300,50 @@ const MainPageLayout: React.FC = () => {
     if (!isMobile) return;
 
     const reset = () => {
-      // Safari의 경우 더 강력한 스크롤 초기화 방식 사용
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
       if (isSafari) {
-        // Safari: viewport meta tag을 이용한 강제 초기화
-        const viewport = document.querySelector('meta[name=viewport]');
-        if (viewport) {
-          const originalContent = viewport.getAttribute('content') || '';
-          // 임시로 viewport 변경하여 강제로 레이아웃 재계산
-          viewport.setAttribute('content', originalContent + ', viewport-fit=cover');
+        // Safari: 가장 공격적인 스크롤 초기화
+        const forceScrollReset = () => {
+          // 1. overflow 완전히 제거
+          document.body.style.overflow = 'visible';
+          document.documentElement.style.overflow = 'visible';
+          document.body.style.position = 'static';
 
-          // 모든 방법을 동원하여 스크롤 초기화
-          document.body.style.overflow = 'auto';
-          document.documentElement.style.overflow = 'auto';
-
+          // 2. 모든 스크롤 초기화 방법 동시 시도
           window.scrollTo(0, 0);
+          window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
           document.documentElement.scrollTop = 0;
           document.body.scrollTop = 0;
+          if (document.scrollingElement) {
+            document.scrollingElement.scrollTop = 0;
+          }
 
-          // 다시 원래 viewport로 복원
-          setTimeout(() => {
-            viewport.setAttribute('content', originalContent);
-            document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden';
-          }, 100);
-        }
+          // 3. 강제로 reflow 발생
+          void document.body.offsetHeight;
+
+          // 4. 다시 한 번 스크롤 초기화
+          requestAnimationFrame(() => {
+            window.scrollTo(0, 0);
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+
+            // 5. overflow hidden 복원
+            setTimeout(() => {
+              document.body.style.overflow = 'hidden';
+              document.documentElement.style.overflow = 'hidden';
+              document.body.style.position = '';
+            }, 100);
+          });
+        };
+
+        // 즉시 실행
+        forceScrollReset();
+
+        // 여러 시점에서 재시도
+        setTimeout(forceScrollReset, 50);
+        setTimeout(forceScrollReset, 150);
+        setTimeout(forceScrollReset, 300);
       } else {
         // 다른 브라우저: 기존 방식
         const originalBodyOverflow = document.body.style.overflow;
