@@ -307,13 +307,16 @@ const MainPageLayout: React.FC = () => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
 
-      window.scrollTo(0, 0);
+      // Safari 호환성을 위해 multiple 방식으로 스크롤 초기화
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
 
-      // 스크롤 완료 후 다시 overflow hidden 적용
-      requestAnimationFrame(() => {
+      // Safari에서 충분한 시간을 주기 위해 더 긴 지연
+      setTimeout(() => {
         document.body.style.overflow = originalBodyOverflow;
         document.documentElement.style.overflow = originalDocumentOverflow;
-      });
+      }, 50);
 
       setBottomSheetHeight(MIN_HEIGHT);
     };
