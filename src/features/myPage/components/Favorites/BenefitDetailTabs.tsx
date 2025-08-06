@@ -10,7 +10,7 @@ interface Props {
   userGrade?: string; // 현재 로그인한 유저 등급
 }
 
-export default function BenefitDetailTabs({ benefitId, image, name, userGrade }: Props) {
+export default function BenefitDetailTabs({ benefitId, image, name, userGrade = 'BASIC' }: Props) {
   const [detail, setDetail] = useState<FavoriteDetail | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<string | null>(null);
 
