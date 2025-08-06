@@ -10,7 +10,7 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(({ onVideoEnd, videoBoxRe
     >
       <video
         ref={ref}
-        src="/videos/hero-rabbit.mp4"
+        src="/videos/hero-video.mp4"
         muted
         loop={false}
         autoPlay={false}
