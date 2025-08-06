@@ -299,78 +299,36 @@ const MainPageLayout: React.FC = () => {
     const isMobile = window.innerWidth < 768;
     if (!isMobile) return;
 
-    const reset = () => {
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    // 1. 즉시 overflow 설정하여 스크롤 차단
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
 
-      if (isSafari) {
-        // Safari: 가장 공격적인 스크롤 초기화
-        const forceScrollReset = () => {
-          // 1. overflow 완전히 제거
-          document.body.style.overflow = 'visible';
-          document.documentElement.style.overflow = 'visible';
-          document.body.style.position = 'static';
+    // 2. 스크롤 위치 강제 초기화 (브라우저 스크롤 복원 비활성화로 이제 확실히 작동)
+    const resetScroll = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
 
-          // 2. 모든 스크롤 초기화 방법 동시 시도
-          window.scrollTo(0, 0);
-          window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-          document.documentElement.scrollTop = 0;
-          document.body.scrollTop = 0;
-          if (document.scrollingElement) {
-            document.scrollingElement.scrollTop = 0;
-          }
-
-          // 3. 강제로 reflow 발생
-          void document.body.offsetHeight;
-
-          // 4. 다시 한 번 스크롤 초기화
-          requestAnimationFrame(() => {
-            window.scrollTo(0, 0);
-            document.documentElement.scrollTop = 0;
-            document.body.scrollTop = 0;
-
-            // 5. overflow hidden 복원
-            setTimeout(() => {
-              document.body.style.overflow = 'hidden';
-              document.documentElement.style.overflow = 'hidden';
-              document.body.style.position = '';
-            }, 100);
-          });
-        };
-
-        // 즉시 실행
-        forceScrollReset();
-
-        // 여러 시점에서 재시도
-        setTimeout(forceScrollReset, 50);
-        setTimeout(forceScrollReset, 150);
-        setTimeout(forceScrollReset, 300);
-      } else {
-        // 다른 브라우저: 기존 방식
-        const originalBodyOverflow = document.body.style.overflow;
-        const originalDocumentOverflow = document.documentElement.style.overflow;
-
-        document.body.style.overflow = '';
-        document.documentElement.style.overflow = '';
-
-        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-        document.documentElement.scrollTop = 0;
-        document.body.scrollTop = 0;
-
-        setTimeout(() => {
-          document.body.style.overflow = originalBodyOverflow;
-          document.documentElement.style.overflow = originalDocumentOverflow;
-        }, 50);
+      if (document.scrollingElement) {
+        document.scrollingElement.scrollTop = 0;
       }
-
-      setBottomSheetHeight(MIN_HEIGHT);
     };
 
-    const timeoutId = setTimeout(() => {
-      requestAnimationFrame(reset);
-    }, 150);
+    // 3. 즉시 실행
+    resetScroll();
 
-    return () => clearTimeout(timeoutId);
-  }, [location.pathname]);
+    // 4. DOM 업데이트 후 재실행 및 바텀시트 초기화
+    const timeoutId = requestAnimationFrame(() => {
+      resetScroll();
+      setBottomSheetHeight(MIN_HEIGHT);
+    });
+
+    return () => {
+      cancelAnimationFrame(timeoutId);
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [location.pathname, MIN_HEIGHT]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
