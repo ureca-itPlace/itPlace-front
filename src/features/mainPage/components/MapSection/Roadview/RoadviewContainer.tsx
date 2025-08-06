@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { renderToString } from 'react-dom/server';
 import { Platform } from '../../../types';
 import { KakaoRoadview, KakaoCustomOverlay } from '../../../types/kakao';
-import { getStoreList } from '../../../api/storeApi';
+import { getStoreList, getCurrentLocation } from '../../../api/storeApi';
 import CustomMarker from '../KakaoMap/CustomMarker';
 import { showToast } from '../../../../../utils/toast';
 
@@ -112,10 +112,24 @@ const RoadviewContainer: React.FC<RoadviewContainerProps> = ({
 
   updateRoadviewOverlaysRef.current = async (lat: number, lng: number, roadview: KakaoRoadview) => {
     try {
+      // 사용자 현재 위치 가져오기
+      let userLat: number | undefined;
+      let userLng: number | undefined;
+
+      try {
+        const userLocation = await getCurrentLocation();
+        userLat = userLocation.lat;
+        userLng = userLocation.lng;
+      } catch {
+        // 사용자 위치를 가져올 수 없으면 undefined로 API 호출
+      }
+
       const response = await getStoreList({
         lat,
         lng,
         radiusMeters: 50,
+        userLat,
+        userLng,
       });
 
       // 기존 오버레이 제거
