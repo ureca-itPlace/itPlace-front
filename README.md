@@ -111,12 +111,11 @@
 
 | 기능                 | 미리보기               |
 | -------------------- | ---------------------- |
-| 랜딩페이지 | ![](./../demo/landing.gif)    |
 | 지도기반 제휴처 탐색 | ![](./demo/map.gif)    |
 | 혜택상세             | ![](./demo/detail.gif) |
 | 마이페이지           | ![](./demo/mypage.gif) |
 | 관리자 대시보드      | ![](./demo/admin.gif)  |
-| 이벤트 | ![](./../demo/event.gif)    |
+| 이벤트 | ![](./demo/event.gif)    |
 | 모바일 전용 레이아웃 | ![](./demo/mobile.gif) |
 
 </br>
