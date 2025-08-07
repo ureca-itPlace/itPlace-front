@@ -123,84 +123,6 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       const map = new window.kakao.maps.Map(mapContainer.current!, options);
       mapRef.current = map;
 
-      // 성능 최적화를 위한 debounce 및 중복 호출 방지
-      let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
-      let lastSize = { width: 0, height: 0 };
-
-      const performRelayout = () => {
-        if (map && map.relayout) {
-          map.relayout();
-        }
-      };
-
-      // 화면 크기 변경 시 지도 재조정을 위한 resize 이벤트 리스너
-      const handleResize = () => {
-        if (resizeTimeout) {
-          clearTimeout(resizeTimeout);
-        }
-        resizeTimeout = setTimeout(performRelayout, 350);
-      };
-
-      window.addEventListener('resize', handleResize);
-
-      // ResizeObserver로 컨테이너 크기 변경 감지 (개발자 도구 responsive 모드 지원)
-      let resizeObserver: ResizeObserver | null = null;
-      if (mapContainer.current && window.ResizeObserver) {
-        resizeObserver = new ResizeObserver((entries) => {
-          const entry = entries[0];
-          const { width, height } = entry.contentRect;
-
-          // 크기가 실제로 변경된 경우에만 relayout 실행
-          if (Math.abs(width - lastSize.width) > 1 || Math.abs(height - lastSize.height) > 1) {
-            lastSize = { width, height };
-
-            if (resizeTimeout) {
-              clearTimeout(resizeTimeout);
-            }
-            resizeTimeout = setTimeout(performRelayout, 100);
-          }
-        });
-        resizeObserver.observe(mapContainer.current);
-      }
-
-      // MutationObserver로 스타일 변경 감지 (responsive 모드에서 스타일 변경 감지)
-      let mutationObserver: MutationObserver | null = null;
-      if (mapContainer.current && window.MutationObserver) {
-        mutationObserver = new MutationObserver((mutations) => {
-          let shouldRelayout = false;
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-              shouldRelayout = true;
-            }
-          });
-
-          if (shouldRelayout) {
-            if (resizeTimeout) {
-              clearTimeout(resizeTimeout);
-            }
-            resizeTimeout = setTimeout(performRelayout, 150);
-          }
-        });
-        mutationObserver.observe(mapContainer.current, {
-          attributes: true,
-          attributeFilter: ['style'],
-        });
-      }
-
-      // cleanup function에서 이벤트 리스너 제거를 위해 참조 저장
-      const cleanup = () => {
-        if (resizeTimeout) {
-          clearTimeout(resizeTimeout);
-        }
-        window.removeEventListener('resize', handleResize);
-        if (resizeObserver) {
-          resizeObserver.disconnect();
-        }
-        if (mutationObserver) {
-          mutationObserver.disconnect();
-        }
-      };
-
       // 클러스터러 초기화
       if (window.kakao.maps.MarkerClusterer) {
         const clusterer = new window.kakao.maps.MarkerClusterer({
@@ -323,22 +245,17 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           map.relayout();
         }
       }, 100);
-
-      // cleanup function 반환
-      return cleanup;
     };
 
     // 카카오맵 API가 이미 로드되어 있으면 바로 초기화
     if (window.kakao && window.kakao.maps) {
-      const cleanupFn = initializeMap();
-      return cleanupFn;
+      initializeMap();
     } else {
       // 카카오맵 API 로드 대기
       const checkKakaoMaps = setInterval(() => {
         if (window.kakao && window.kakao.maps) {
           clearInterval(checkKakaoMaps);
-          const cleanupFn = initializeMap();
-          return cleanupFn;
+          initializeMap();
         }
       }, 100);
 
