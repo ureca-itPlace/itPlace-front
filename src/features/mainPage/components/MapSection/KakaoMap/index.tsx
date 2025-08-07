@@ -123,6 +123,22 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
       const map = new window.kakao.maps.Map(mapContainer.current!, options);
       mapRef.current = map;
 
+      // 화면 크기 변경 시 지도 재조정을 위한 resize 이벤트 리스너
+      const handleResize = () => {
+        setTimeout(() => {
+          if (map && map.relayout) {
+            map.relayout();
+          }
+        }, 350); // CSS transition 완료 후 실행
+      };
+
+      window.addEventListener('resize', handleResize);
+
+      // cleanup function에서 이벤트 리스너 제거를 위해 참조 저장
+      const cleanup = () => {
+        window.removeEventListener('resize', handleResize);
+      };
+
       // 클러스터러 초기화
       if (window.kakao.maps.MarkerClusterer) {
         const clusterer = new window.kakao.maps.MarkerClusterer({
@@ -245,17 +261,22 @@ const KakaoMap: React.FC<KakaoMapProps> = ({
           map.relayout();
         }
       }, 100);
+
+      // cleanup function 반환
+      return cleanup;
     };
 
     // 카카오맵 API가 이미 로드되어 있으면 바로 초기화
     if (window.kakao && window.kakao.maps) {
-      initializeMap();
+      const cleanupFn = initializeMap();
+      return cleanupFn;
     } else {
       // 카카오맵 API 로드 대기
       const checkKakaoMaps = setInterval(() => {
         if (window.kakao && window.kakao.maps) {
           clearInterval(checkKakaoMaps);
-          initializeMap();
+          const cleanupFn = initializeMap();
+          return cleanupFn;
         }
       }, 100);
 
